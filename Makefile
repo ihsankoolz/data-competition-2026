@@ -15,14 +15,14 @@ data:             ## run the generator with the default seed into data/generated
 fixtures:         ## freeze the demo dataset into data/fixtures/
 	@echo "make fixtures: not yet implemented (Fri)"
 
-dev:              ## api (8000), sap_mock (8001) and web (3000) together
+dev:              ## api (8000), sap_mock (8001) and web (3000) together. Python services do not auto-reload (uvicorn reload hangs on Windows): restart to pick up changes.
 	$(MAKE) -j3 dev-api dev-sap dev-web
 
 dev-api:
-	uv run uvicorn services.api.main:app --port 8000 --reload --reload-dir services --reload-dir ds
+	uv run uvicorn services.api.main:app --port 8000
 
 dev-sap:
-	uv run uvicorn services.sap_mock.main:app --port 8001 --reload --reload-dir services/sap_mock
+	uv run uvicorn services.sap_mock.main:app --port 8001
 
 dev-web:
 	cd $(WEB) && pnpm dev --port 3000

@@ -22,10 +22,166 @@
           }
         }
       }
+    },
+    "/clock": {
+      "get": {
+        "summary": "Get Clock",
+        "operationId": "getClock",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClockState"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clock/advance": {
+      "post": {
+        "summary": "Advance Clock",
+        "operationId": "advanceClock",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClockAdvance"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClockState"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clock/reset": {
+      "post": {
+        "summary": "Reset Clock",
+        "operationId": "resetClock",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClockState"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/personas": {
+      "get": {
+        "summary": "List Personas",
+        "operationId": "listPersonas",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Persona"
+                  },
+                  "type": "array",
+                  "title": "Response Listpersonas"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "ClockAdvance": {
+        "properties": {
+          "hours": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Hours",
+            "default": 0
+          },
+          "days": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Days",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "ClockAdvance"
+      },
+      "ClockState": {
+        "properties": {
+          "now": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Now",
+            "description": "Current simulated time (timezone-aware, SGT)"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At",
+            "description": "Simulated time after the last reset"
+          },
+          "elapsed_hours": {
+            "type": "number",
+            "title": "Elapsed Hours",
+            "description": "Simulated hours since the last reset"
+          }
+        },
+        "type": "object",
+        "required": [
+          "now",
+          "started_at",
+          "elapsed_hours"
+        ],
+        "title": "ClockState",
+        "description": "Simulated clock. All SLA logic uses `now`, never the wall clock."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
       "Health": {
         "properties": {
           "status": {
@@ -43,6 +199,98 @@
           "service"
         ],
         "title": "Health"
+      },
+      "Persona": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "roles": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "requestor",
+                "bu_head",
+                "finance",
+                "quality_regulatory",
+                "business_support",
+                "mdm_analyst"
+              ]
+            },
+            "type": "array",
+            "title": "Roles"
+          },
+          "entity": {
+            "type": "string",
+            "title": "Entity",
+            "description": "SPD | QTS | QTG | Group"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "description": "ISO-2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "name",
+          "title",
+          "roles",
+          "entity",
+          "country"
+        ],
+        "title": "Persona",
+        "description": "A seeded demo user. The web app sends the chosen `user_id` in the X-Acting-User header."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       }
     }
   }

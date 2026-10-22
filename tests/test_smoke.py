@@ -22,3 +22,11 @@ def test_ds_package_imports():
     import ds.forecasting  # noqa: F401
     import ds.generator  # noqa: F401
     import ds.interpreter  # noqa: F401
+
+
+def test_personas_cover_cast():
+    r = TestClient(api_app).get("/personas")
+    assert r.status_code == 200
+    names = {p["name"] for p in r.json()}
+    assert {"Amy", "Marcus", "Wei Jie", "Priya"} <= names
+    assert len(names) == 8
