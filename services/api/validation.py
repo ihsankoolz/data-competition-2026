@@ -71,6 +71,47 @@ ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 COST_CENTER_RULES = {"CenterName": ("Cost center name", 30), "EffectiveFrom": ("Effective from", 0)}
 
 
+# SAP codes are never shown to a person: yes/no flags read as plain words.
+PLAIN_WORDS = {"tYES": "Yes", "tNO": "No"}
+
+
+def _plain_choices(choices: list[Any]) -> str:
+    return ", ".join(PLAIN_WORDS.get(str(c), str(c)) for c in choices)
+
+
+def _trim(value: Any) -> Any:
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, list):
+        return [_trim(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _trim(v) for k, v in value.items()}
+    return value
+
+
+def clean_tax_id(country: str | None, value: str) -> str:
+    """The tax ID as it is stored: stray spaces always go; per country the separators that carry
+    no meaning go too (MY and TH: spaces and dashes; ID: spaces; SG: upper case)."""
+    text = value.strip()
+    if country in ("MY", "TH"):
+        return re.sub(r"[\s-]", "", text)
+    if country == "ID":
+        return re.sub(r"\s", "", text)
+    if country == "SG":
+        return text.upper()
+    return text
+
+
+def normalise_fields(fields: Mapping[str, Any], country: str | None) -> dict[str, Any]:
+    """What gets stored: every text trimmed (also inside registration and bank rows), and the
+    tax ID cleaned for its country. The validator then checks exactly what is stored."""
+    out = {k: _trim(v) for k, v in fields.items()}
+    tax = out.get("FederalTaxID")
+    if isinstance(tax, str) and tax:
+        out["FederalTaxID"] = clean_tax_id(country, tax)
+    return out
+
+
 def _empty(v: Any) -> bool:
     return v is None or (isinstance(v, (str, list, dict)) and len(v) == 0)
 
@@ -108,7 +149,7 @@ def _check_value(
             return issue("format", f"{label} must be text.")
         text = value.strip()
         if "enum" in spec and text not in spec["enum"]:
-            return issue("not_allowed", f"{label} must be one of: {', '.join(spec['enum'])}.")
+            return issue("not_allowed", f"{label} must be one of: {_plain_choices(spec['enum'])}.")
         limit = spec.get("maxLength")
         if limit and len(text) > limit:
             return issue("too_long", f"{label} can be at most {limit} characters long.")
@@ -137,7 +178,7 @@ def _check_value(
             return issue("format", f"{label} must be a list.")
         allowed = spec.get("items", {}).get("enum")
         if allowed and any(v not in allowed for v in value):
-            return issue("not_allowed", f"{label} can only include: {', '.join(allowed)}.")
+            return issue("not_allowed", f"{label} can only include: {_plain_choices(allowed)}.")
         if spec.get("uniqueItems") and len(set(map(str, value))) != len(value):
             return issue("format", f"{label} lists the same value twice.")
     return []

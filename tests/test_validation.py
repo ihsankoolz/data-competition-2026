@@ -106,7 +106,7 @@ def test_every_demo_email_prefill_passes_validation_of_its_values(monkeypatch):
         if e["email_id"].startswith("DEMO-")
     }
     assert len(emails) == 8
-    seen = 0
+    seen = []
     for email_id, e in sorted(emails.items()):
         interp = interpret_email(email_id, e["subject"], e["body"], e["from_address"])
         if interp.category != "mdm_request" or interp.domain not in FORM_DOMAINS:
@@ -119,8 +119,10 @@ def test_every_demo_email_prefill_passes_validation_of_its_values(monkeypatch):
             i for i in validate_fields(interp.domain, country, fields, TODAY) if i.kind != "missing"
         ]
         assert value_problems == [], (email_id, value_problems)
-        seen += 1
-    assert seen >= 3  # DEMO-01, 02 and 07 at least
+        seen.append(email_id)
+    # exactly these are master-data requests for a form; the rest are POs, enquiries and so on,
+    # and DEMO-06 is the prompt-injection email skipped above
+    assert seen == ["DEMO-01", "DEMO-02", "DEMO-07"]
     # DEMO-01's MST in particular
     pattern, _ = TAX_ID_RULES["VN"]
     assert pattern.fullmatch("0301234567")
@@ -445,3 +447,63 @@ def test_publish_refuses_an_item_whose_registration_lapsed_after_approval(client
     clock.reset()
     ok = client.post(f"/requests/{d['req_id']}/publish", headers=H("priya"))
     assert ok.status_code == 200 and ok.json()["state"] == "ACTIVE"
+
+
+# ---------------------------------------------------------------- what gets stored (trim, clean)
+
+
+@pytest.mark.parametrize(
+    ("country", "typed", "stored"),
+    [
+        ("SG", "  201912345k ", "201912345K"),
+        ("MY", " 2020 0101-2345 ", "202001012345"),
+        ("TH", "0105-556 123456", "0105556123456"),
+        ("ID", " 01.234.567.8-901 .000 ", "01.234.567.8-901.000"),
+        ("VN", " 0301234567 ", "0301234567"),
+    ],
+)
+def test_the_tax_id_is_cleaned_before_it_is_stored_and_then_validates(country, typed, stored):
+    from services.api.validation import normalise_fields
+
+    cleaned = normalise_fields({"FederalTaxID": typed, "CardName": "  Name  "}, country)
+    assert cleaned == {"FederalTaxID": stored, "CardName": "Name"}
+    assert TAX_ID_RULES[country][0].fullmatch(stored)
+
+
+def test_create_and_patch_store_trimmed_text_and_a_cleaned_tax_id(client):
+    req = new_request(
+        client,
+        "amy",
+        "customer",
+        "SPD",
+        "SG",
+        {**CUSTOMER, "CardName": "  Tidy Medical Pte Ltd ", "FederalTaxID": " 202600009t "},
+    )
+    assert req["fields"]["CardName"] == "Tidy Medical Pte Ltd"
+    assert req["fields"]["FederalTaxID"] == "202600009T"
+    assert req["issues"] == []
+    r = client.patch(
+        f"/requests/{req['req_id']}",
+        headers=H("amy"),
+        json={"fields": {"FederalTaxID": " 202600010u", "City": " Jurong  "}},
+    )
+    assert r.json()["fields"]["FederalTaxID"] == "202600010U"
+    assert r.json()["fields"]["City"] == "Jurong"
+    assert r.json()["issues"] == []
+    # a Thai customer: spaces and dashes are removed
+    th = new_request(
+        client,
+        "amy",
+        "customer",
+        "SPD",
+        "TH",
+        {**CUSTOMER, "Country": "TH", "FederalTaxID": "0105-556 123456"},
+    )
+    assert th["fields"]["FederalTaxID"] == "0105556123456" and th["issues"] == []
+
+
+def test_yes_no_codes_are_shown_as_plain_words():
+    got = by_field(validate_fields("item", "SG", {"ItemName": "X", "U_IVD": "maybe"}, TODAY))
+    assert got["U_IVD"].kind == "not_allowed"
+    assert got["U_IVD"].message == "In-vitro diagnostic (IVD)? must be one of: Yes, No."
+    assert "tYES" not in got["U_IVD"].message and "tNO" not in got["U_IVD"].message

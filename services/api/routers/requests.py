@@ -31,7 +31,12 @@ from services.api.schemas import (
     ValidationBlocked,
     ValidationReport,
 )
-from services.api.validation import ValidationFailed, submit_sentence, validate_fields
+from services.api.validation import (
+    ValidationFailed,
+    normalise_fields,
+    submit_sentence,
+    validate_fields,
+)
 from services.api.views import (
     detail_model,
     summary_model,
@@ -153,6 +158,7 @@ def _new_request(
     fields = dict(fields)
     if domain in ("customer", "vendor"):
         fields.setdefault("Country", country)
+    fields = normalise_fields(fields, str(fields.get("Country") or country))
     now = clock.now()
     req = m.Request(
         req_id=next_id(session, "request", "REQ", 4),
@@ -259,7 +265,10 @@ def update_request(req_id: str, body: RequestUpdate, actor: CurrentUser) -> Requ
         domain = req.domain.value
         _check_keys(domain, body.fields)
         old = bankfields.unseal(req.payload)
-        incoming = bankfields.merge_masked(old, body.fields)
+        tax_country = (
+            body.fields.get("Country") or old.get("Country") or body.country or req.country
+        )
+        incoming = normalise_fields(bankfields.merge_masked(old, body.fields), str(tax_country))
         new = dict(old)
         for key, value in incoming.items():
             if value is None:

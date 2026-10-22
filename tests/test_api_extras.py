@@ -170,7 +170,8 @@ def test_results_not_computed_yet_answer_503_with_a_plain_sentence(client, monke
             monkeypatch.setattr(module, name, not_written)
     r = client.get(url, headers=H("amy"))
     assert r.status_code == 503
-    assert "Run make eval" in r.json()["detail"]
+    assert r.json()["detail"] == analytics_router.NOT_READY
+    assert "make eval" not in r.text
 
 
 def test_missing_file_and_unexpected_shape_are_503_never_500(client, monkeypatch):
@@ -180,12 +181,12 @@ def test_missing_file_and_unexpected_shape_are_503_never_500(client, monkeypatch
     monkeypatch.setattr(analytics_router.backtest, "load_backtest", gone)
     r = client.get("/analytics/forecast/seasonal_trend")
     assert r.status_code == 503
-    assert r.json()["detail"] == "The forecast results have not been computed yet. Run make eval."
+    assert r.json()["detail"] == analytics_router.NOT_READY
     assert "json" not in r.text  # the path is not leaked
 
     monkeypatch.setattr(analytics_router.regional, "merge_impact", lambda d: {"oops": 1})
     r = client.get("/analytics/merge-impact")
-    assert r.status_code == 503 and "expected shape" in r.json()["detail"]
+    assert r.status_code == 503 and r.json()["detail"] == analytics_router.UNREADABLE
 
 
 # ---------------------------------------------------------------- SAP read-back
@@ -263,9 +264,26 @@ def test_readback_for_a_customer_and_an_item_names_the_right_resource(client, sa
     assert any(row["field"] == "FederalTaxID" and row["match"] for row in view["rows"])
 
 
-def test_readback_survives_reset_demo(client):
-    r = client.post("/admin/reset-demo")
-    assert r.status_code == 200
-    # the table is recreated empty with the rest of the database
+def test_reset_demo_clears_published_read_backs(client, sap_mock):
+    d = submit_customer(client, "Reset Readback Pte Ltd")
+    d = approve_stage_one(client, d, CUSTOMER_APPROVERS)
+    rid = d["req_id"]
+    assert client.post(f"/requests/{rid}/publish", headers=H("priya")).status_code == 200
+    assert client.get(f"/requests/{rid}/sap-readback", headers=H("priya")).status_code == 200
+    with session_scope() as s:
+        assert s.execute(text("SELECT COUNT(*) FROM sap_publish_results")).scalar_one() >= 1
+
+    assert client.post("/admin/reset-demo").status_code == 200
     with session_scope() as s:
         assert s.execute(text("SELECT COUNT(*) FROM sap_publish_results")).scalar_one() == 0
+    # the request itself is gone with the reset, so the read-back view is gone too
+    assert client.get(f"/requests/{rid}/sap-readback", headers=H("priya")).status_code == 404
+
+
+def test_a_bug_inside_a_ds_function_is_not_reported_as_missing_data(client, monkeypatch):
+    def broken(*args, **kwargs):
+        raise KeyError("a bug")
+
+    monkeypatch.setattr(analytics_router.regional, "merge_impact", broken)
+    with pytest.raises(KeyError):
+        client.get("/analytics/merge-impact")

@@ -8,6 +8,7 @@ sentence, never a 500.
 
 from __future__ import annotations
 
+import logging
 import os
 from collections.abc import Callable
 from pathlib import Path
@@ -51,23 +52,25 @@ def forecast_dir() -> Path:
 
 T = TypeVar("T", bound=BaseModel)
 
-NOT_READY = {
-    "regional": "The regional sales view has not been computed yet. Run make eval, then try again.",
-    "forecast": "The forecast results have not been computed yet. Run make eval.",
-    "ops": "The cycle-time results have not been computed yet. Run make eval, then try again.",
-}
+log = logging.getLogger(__name__)
+NOT_READY = "These numbers are not ready yet. Ask the team to refresh the results."
+UNREADABLE = "These numbers could not be read. Ask the team to refresh the results."
 
 
 def _serve(area: str, model: type[T], compute: Callable[[], dict[str, Any]]) -> T:
-    """Run one ds function and validate its dict. Not computed yet = 503 with a plain sentence."""
+    """Run one ds function and validate its dict. Not computed yet = 503 with a plain sentence.
+    Only "not written" and "file missing" count as not ready; any other error is a bug and
+    must not look like missing data."""
     try:
         return model.model_validate(compute())
-    except (NotImplementedError, FileNotFoundError, KeyError):
-        raise HTTPException(503, NOT_READY[area]) from None
+    except (NotImplementedError, FileNotFoundError) as exc:
+        log.warning(
+            "%s results not ready (%s). Refresh them with: make eval", area, type(exc).__name__
+        )
+        raise HTTPException(503, NOT_READY) from None
     except ValidationError:
-        raise HTTPException(
-            503, "These results are not in the expected shape. Run make eval again."
-        ) from None
+        log.error("%s results do not match the API model. Refresh them with: make eval", area)
+        raise HTTPException(503, UNREADABLE) from None
 
 
 @router.get("/analytics/regional", response_model=RegionalView, operation_id="getRegionalView")
