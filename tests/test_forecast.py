@@ -80,6 +80,16 @@ def test_load_backtest_validates(scenario, data):
     assert "improve" not in note
     if data == "clean":
         assert "does not change this forecast" in note
+    else:
+        assert "points compared with clean data" in note
+    assert scenario not in run.honest_note  # plain names, not raw scenario ids
+
+
+def test_fallback_model_counts_its_use():
+    m = bt._fallback_model()
+    before = bt.FALLBACKS["count"]
+    m.forecast(y=np.arange(24, dtype=float), h=3)
+    assert bt.FALLBACKS["count"] == before + 1
 
 
 def test_honest_note_names_the_winner():

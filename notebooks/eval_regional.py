@@ -227,7 +227,8 @@ def section() -> str:
         "a % of what they spent before. *Bridge* rows show US$ and (customers). A customer who "
         "moved to a new SAP record looks 'lost' on the old record and 'new' on the new one "
         "before merging. Before merging, cross-sell is 0% because each company (SPD, QTS, QTG) "
-        "keeps its own record for the same customer, and each record only sees its own product."
+        "keeps its own record for the same customer, and in our synthetic data each company "
+        "sells one product family, so each record only ever sees one product."
     )
     L.append("")
     L.append(

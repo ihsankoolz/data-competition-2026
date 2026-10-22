@@ -144,7 +144,7 @@ def section() -> str:
         for sc in bt.SCENARIOS
     }
     excel_wins = [
-        SC_LABEL[sc].lower()
+        bt.SCENARIO_NAMES[sc]
         for sc in bt.SCENARIOS
         if min(ov(sc)["excel_6m"]["wape_pct"], ov(sc)["excel_12m"]["wape_pct"])
         <= ov(sc)["combination"]["wape_pct"]
@@ -152,13 +152,20 @@ def section() -> str:
     L.append(
         f"> **For judges:** at country level the honest answer is *no real difference*. On "
         f"clean data our method never beats a 12-month Excel average by more than "
-        f"{max(gaps12.values()):.1f} points in any scenario, and a plain Excel average is as "
-        f"good or better in: {', '.join(excel_wins) or 'none'}. Demo scenario: "
+        f"{max(gaps12.values()):.1f} points in any scenario."
+        + (
+            f" In {' and '.join(excel_wins)}, a plain Excel average does as well as ours or better."
+            if excel_wins
+            else ""
+        )
+        + " Demo scenario: "
         f"{st['excel_6m']['wape_pct']:.1f}% error (Excel, 6 months) vs "
         f"{st['combination']['wape_pct']:.1f}% (ours); flat, noisy market: "
         f"{fn['excel_6m']['wape_pct']:.1f}% vs {fn['combination']['wape_pct']:.1f}% (Excel 12 "
-        f"months: {fn['excel_12m']['wape_pct']:.1f}%). Where ours clearly helps is service "
-        f"contracts (Product C, below), which renew on a yearly cycle a moving average cannot see."
+        f"months: {fn['excel_12m']['wape_pct']:.1f}%). Ours does better on service contracts "
+        f"(Product C) for the region as a whole, because they renew on a yearly cycle that a "
+        f"moving average cannot see; country by country that result is mixed (see the detail "
+        f"table)."
     )
     L.append("")
 
@@ -237,8 +244,10 @@ def section() -> str:
         "spreadsheet view | Overstated by |"
     )
     L.append("|---|---|---|---|---|")
+    a_leaks = []
     for s in bt.SCENARIOS:
         lk = leakage(s)
+        a_leaks.append(100 * (lk["A"][1] / lk["A"][0] - 1))
         for p, (c, dd) in lk.items():
             L.append(
                 f"| {SC_LABEL[s]} | {PRODUCT[p]} | {c:,.0f} | {dd:,.0f} | "
@@ -248,17 +257,51 @@ def section() -> str:
     L.append(
         "Merging duplicate customers leaves every country x product total unchanged: it "
         "regroups the same orders under fewer customers (asserted in "
-        "`tests/test_forecast.py`). Leaked enquiries and requests do change the totals, which "
-        "is why every method's bias moves up in the dirty runs above."
+        "`tests/test_forecast.py`). Leaked enquiries and requests do change the totals, and "
+        "almost all of the damage lands on equipment (Product B), where a few leaked enquiries "
+        "outnumber the real orders."
     )
     L.append("")
-    sd = {x["method"]: x for x in runs[("seasonal_trend", "dirty")]["overall"]}
+    L.append("Forecast error at region level, clean vs dirty data, WAPE (bias):")
+    L.append("")
     L.append(
-        f"> **For judges:** cleaning the customer list does not make the country forecast "
-        f"better, because the totals are the same. Keeping enquiries out of the order numbers "
-        f"does matter: in the demo scenario the Excel plan's bias moves from "
-        f"{st['excel_6m']['bias_pct']:+.1f}% on clean data to {sd['excel_6m']['bias_pct']:+.1f}% "
-        f"on the spreadsheet view."
+        "| Scenario | Product | Excel 6-month, clean | Excel 6-month, dirty | Ours, clean | "
+        "Ours, dirty |"
+    )
+    L.append("|---|---|---|---|---|---|")
+    prod: dict[tuple[str, str, str], dict] = {}
+    for s in bt.SCENARIOS:
+        for d in bt.DATAS:
+            for ser in runs[(s, d)]["series"]:
+                if ser["level"] == "product":
+                    prod[(s, d, ser["product"])] = scores(ser)
+        for p in ("A", "B", "C"):
+            c, dd = prod[(s, "clean", p)], prod[(s, "dirty", p)]
+            L.append(
+                f"| {SC_LABEL[s]} | {PRODUCT[p]} | {fmt(c['excel_6m'])} | {fmt(dd['excel_6m'])} "
+                f"| {fmt(c['combination'])} | {fmt(dd['combination'])} |"
+            )
+    L.append("")
+    L.append(
+        "The pooled 15-series error in the headline table barely moves between clean and dirty "
+        f"(it is dominated by test-kit units, where leakage is at most {max(a_leaks):.1f}%), so it "
+        "is the wrong place to look for the damage."
+    )
+    L.append("")
+    lk_st = leakage("seasonal_trend")
+    b_up = 100 * (lk_st["B"][1] / lk_st["B"][0] - 1)
+    a_up = 100 * (lk_st["A"][1] / lk_st["A"][0] - 1)
+    bst_c, bst_d = prod[("seasonal_trend", "clean", "B")], prod[("seasonal_trend", "dirty", "B")]
+    bfn_c, bfn_d = prod[("flat_noisy", "clean", "B")], prod[("flat_noisy", "dirty", "B")]
+    L.append(
+        f"> **For judges:** cleaning the customer list does not change the country forecast, "
+        f"because the totals are the same. Keeping enquiries out of the order numbers matters "
+        f"most for equipment: the spreadsheet view counts {b_up:.0f}% more Product B units than "
+        f"customers really ordered (test kits {a_up:+.1f}%), and the Excel plan's error on "
+        f"regional Product B goes from {bst_c['excel_6m']['wape_pct']:.1f}% on clean data to "
+        f"{bst_d['excel_6m']['wape_pct']:.0f}% on the spreadsheet view in the demo scenario "
+        f"({bfn_c['excel_6m']['wape_pct']:.0f}% to {bfn_d['excel_6m']['wape_pct']:.0f}% in the "
+        f"flat, noisy market)."
     )
     L.append("")
 
@@ -283,10 +326,22 @@ def section() -> str:
         if ser["level"] == "country_product" and ser["product"] == "A"
         for x in ser["scores"]
     ]
+    c_rows = [
+        ser
+        for ser in runs[("seasonal_trend", "clean")]["series"]
+        if ser["level"] == "country_product" and ser["product"] == "C"
+    ]
+    c_ours = sum(1 for ser in c_rows if ser["winner"] == "combination")
+    c_other = [
+        f"{bt.COUNTRY_NAMES[ser['country']]} ({SHORT[ser['winner']]} wins)"
+        for ser in c_rows
+        if ser["winner"] != "combination"
+    ]
     L.append(
         f"> **For judges:** test kits (A) are forecast within {min(a_rows):.0f}-"
-        f"{max(a_rows):.0f}% by every method; equipment (B) per country is too lumpy for any "
-        f"method, and service contracts (C) are where our method does clearly better."
+        f"{max(a_rows):.0f}% by every method, and equipment (B) per country is too lumpy for any "
+        f"method. For service contracts (C) ours is best in {c_ours} of {len(c_rows)} countries"
+        + (f"; not in {', '.join(c_other)}." if c_other else ".")
     )
     L.append("")
     L.append("Honest notes generated with each run (shown in the app):")

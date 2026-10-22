@@ -27,6 +27,7 @@ Design (fixed before the first run; nothing below was tuned on the test origins)
 from __future__ import annotations
 
 import json
+import logging
 import os
 import sys
 from pathlib import Path
@@ -34,6 +35,8 @@ from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
+
+log = logging.getLogger(__name__)
 
 Data = Literal["clean", "dirty"]
 
@@ -52,6 +55,11 @@ LABELS = {
     "excel_12m": "Excel average (last 12 months)",
     "combination": "Our method (ETS + Theta + seasonal naive, averaged)",
     "tsb": "Intermittent-demand method (TSB)",
+}
+SCENARIO_NAMES = {
+    "seasonal_trend": "the growing, seasonal market (the demo)",
+    "flat_noisy": "the flat, noisy market",
+    "intermittent": "the market where customers order only now and then",
 }
 COUNTRY_NAMES = {
     "SG": "Singapore",
@@ -112,14 +120,36 @@ def adi(y: np.ndarray) -> float:
 
 
 # -------------------------------------------------------------------------------- models
-def _cv(train: pd.DataFrame, models: list) -> pd.DataFrame:
-    from statsforecast import StatsForecast
+FALLBACKS: dict[str, int] = {"count": 0}  # model fits that failed and used SeasonalNaive instead
+
+
+def _fallback_model():
     from statsforecast.models import SeasonalNaive
 
-    sf = StatsForecast(
-        models=models, freq="MS", n_jobs=1, fallback_model=SeasonalNaive(season_length=SEASON)
-    )
-    return sf.cross_validation(df=train, h=H, n_windows=N_WINDOWS, step_size=STEP)
+    class CountingSeasonalNaive(SeasonalNaive):
+        """SeasonalNaive(12) that counts how often statsforecast had to fall back to it."""
+
+        def forecast(self, *args, **kwargs):
+            FALLBACKS["count"] += 1
+            return super().forecast(*args, **kwargs)
+
+        def new(self):
+            FALLBACKS["count"] += 1
+            return super().new()
+
+    return CountingSeasonalNaive(season_length=SEASON)
+
+
+def _cv(train: pd.DataFrame, models: list) -> pd.DataFrame:
+    from statsforecast import StatsForecast
+
+    before = FALLBACKS["count"]
+    sf = StatsForecast(models=models, freq="MS", n_jobs=1, fallback_model=_fallback_model())
+    out = sf.cross_validation(df=train, h=H, n_windows=N_WINDOWS, step_size=STEP)
+    n = FALLBACKS["count"] - before
+    if n:
+        log.warning("%d model fit(s) fell back to SeasonalNaive(12)", n)
+    return out
 
 
 def _forecasts(train: pd.DataFrame, with_tsb: bool, with_combo: bool = True) -> pd.DataFrame:
@@ -302,8 +332,15 @@ def run_backtest(data_dir: Path, scenario: str, data: Data) -> dict[str, Any]:
 
 
 def _honest_note(
-    scenario: str, data: Data, overall: list[dict[str, Any]], series: list[dict[str, Any]]
+    scenario: str,
+    data: Data,
+    overall: list[dict[str, Any]],
+    series: list[dict[str, Any]],
+    clean_overall: list[dict[str, Any]] | None = None,
 ) -> str:
+    """Plain-English verdict shown in the app. For a dirty run pass the clean run's `overall`
+    so the bias shift can be quoted."""
+    name = SCENARIO_NAMES.get(scenario, scenario)
     by = {s["method"]: s for s in overall}
     ex, co = by["excel_6m"], by["combination"]
     cp = [s for s in series if s["level"] == "country_product"]
@@ -316,18 +353,18 @@ def _honest_note(
     diff = ex["wape_pct"] - co["wape_pct"]
     if abs(diff) < 1.0:
         head = (
-            f"In {scenario} the two are effectively tied: our method's error is "
+            f"In {name} the two are effectively tied: our method's error is "
             f"{co['wape_pct']:.1f}% of volume against {ex['wape_pct']:.1f}% for the 6-month "
             f"Excel average."
         )
     elif diff > 0:
         head = (
-            f"In {scenario} our method's error is {co['wape_pct']:.1f}% of volume against "
+            f"In {name} our method's error is {co['wape_pct']:.1f}% of volume against "
             f"{ex['wape_pct']:.1f}% for the 6-month Excel average."
         )
     else:
         head = (
-            f"In {scenario} the 6-month Excel average wins: {ex['wape_pct']:.1f}% error against "
+            f"In {name} the 6-month Excel average wins: {ex['wape_pct']:.1f}% error against "
             f"{co['wape_pct']:.1f}% for our method."
         )
     head += f" Ours is better on {wins} of {len(cp)} country x product series."
@@ -341,9 +378,17 @@ def _honest_note(
     elif d12 < 0:
         head += f" A 12-month Excel average does better still ({e12['wape_pct']:.1f}%)."
     if data == "dirty":
+        clean_ex = {x["method"]: x for x in clean_overall or []}.get("excel_6m")
+        shift = (
+            f" pushes the Excel average's bias up by {ex['bias_pct'] - clean_ex['bias_pct']:.1f} "
+            f"points compared with clean data ({clean_ex['bias_pct']:+.1f}% to "
+            f"{ex['bias_pct']:+.1f}%)"
+            if clean_ex
+            else f" leaves the Excel average with a bias of {ex['bias_pct']:+.1f}%"
+        )
         tail = (
-            f" Planning from the spreadsheet view biases every method upwards (Excel average "
-            f"{ex['bias_pct']:+.1f}%), because leaked enquiries and requests are counted as orders."
+            f" Planning from the spreadsheet view{shift}, because leaked enquiries and requests "
+            f"are counted as orders. The damage is largest for equipment (Product B)."
         )
     else:
         tail = (
@@ -458,7 +503,12 @@ def refresh_notes(derived_dir: Path = DERIVED) -> None:
         for d in DATAS:
             if _path(derived_dir, s, d).exists():
                 run = load_backtest(derived_dir, s, d)
-                run["honest_note"] = _honest_note(s, d, run["overall"], run["series"])
+                clean = (
+                    load_backtest(derived_dir, s, "clean")["overall"]
+                    if d == "dirty" and _path(derived_dir, s, "clean").exists()
+                    else None
+                )
+                run["honest_note"] = _honest_note(s, d, run["overall"], run["series"], clean)
                 write_backtest(run, derived_dir)
 
 
@@ -469,6 +519,8 @@ def main(scenarios: tuple[str, ...] = SCENARIOS) -> None:
         for data in DATAS:
             path = write_backtest(run_backtest(d, s, data))
             print(f"wrote {path.relative_to(ROOT)}")
+    refresh_notes()  # dirty notes quote the clean run's bias
+    print(f"model fits that fell back to SeasonalNaive(12): {FALLBACKS['count']}")
 
 
 if __name__ == "__main__":

@@ -807,5 +807,5 @@
   }
  ],
  "chart_series": "Vietnam, Product A (units)",
- "honest_note": "In intermittent our method's error is 35.5% of volume against 37.8% for the 6-month Excel average. Ours is better on 11 of 15 country x product series. A 12-month Excel average (35.3%) does as well as ours, so we do not claim a better country-level forecast here. Planning from the spreadsheet view biases every method upwards (Excel average +0.6%), because leaked enquiries and requests are counted as orders."
+ "honest_note": "In the market where customers order only now and then our method's error is 35.5% of volume against 37.8% for the 6-month Excel average. Ours is better on 11 of 15 country x product series. A 12-month Excel average (35.3%) does as well as ours, so we do not claim a better country-level forecast here. Planning from the spreadsheet view pushes the Excel average's bias up by 10.4 points compared with clean data (-9.8% to +0.6%), because leaked enquiries and requests are counted as orders. The damage is largest for equipment (Product B)."
 }

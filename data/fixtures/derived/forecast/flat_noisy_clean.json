@@ -807,5 +807,5 @@
   }
  ],
  "chart_series": "Vietnam, Product A (units)",
- "honest_note": "In flat_noisy our method's error is 19.3% of volume against 21.4% for the 6-month Excel average. Ours is better on 10 of 15 country x product series. A 12-month Excel average (19.7%) does as well as ours, so we do not claim a better country-level forecast here. Merging duplicate customers does not change these country x product totals, so it does not change this forecast; it changes customer-level numbers. Removing leaked enquiries does change the totals (compare the dirty run)."
+ "honest_note": "In the flat, noisy market our method's error is 19.3% of volume against 21.4% for the 6-month Excel average. Ours is better on 10 of 15 country x product series. A 12-month Excel average (19.7%) does as well as ours, so we do not claim a better country-level forecast here. Merging duplicate customers does not change these country x product totals, so it does not change this forecast; it changes customer-level numbers. Removing leaked enquiries does change the totals (compare the dirty run)."
 }

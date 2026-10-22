@@ -60,6 +60,7 @@ class _Frames:
     golden_names: dict[str, str]  # cluster id -> display name
     months: list[pd.Timestamp]  # the 12 months of the stated period
     period_end: pd.Timestamp  # last day of the period
+    key: str  # resolved data_dir, the cache key
 
 
 def _month(s: pd.Series) -> pd.Series:
@@ -103,7 +104,7 @@ def _load(data_dir_key: str) -> _Frames:
     golden_names: dict[str, str] = {}
     for code in sorted(golden):
         golden_names.setdefault(golden[code], names.get(code, code))
-    return _Frames(orders, enq, mdm, names, golden, golden_names, months, period_end)
+    return _Frames(orders, enq, mdm, names, golden, golden_names, months, period_end, data_dir_key)
 
 
 def _frames(data_dir: Path) -> _Frames:
@@ -201,12 +202,12 @@ class _Core:
     families: pd.Series  # customer key -> set of families in the period
 
 
-_core_memo: dict[tuple[int, str, str | None], _Core] = {}
+_core_memo: dict[tuple[str, str, str | None], _Core] = {}
 
 
 def _core(f: _Frames, view: View, country: str | None) -> _Core:
     """Memoised per loaded dataset (frames are immutable), so API calls stay fast."""
-    memo_key = (id(f), view, country)
+    memo_key = (f.key, view, country)
     if memo_key not in _core_memo:
         _core_memo[memo_key] = _compute_core(f, view, country)
     return _core_memo[memo_key]
