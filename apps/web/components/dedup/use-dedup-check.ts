@@ -35,7 +35,7 @@ function unavailableMessage(e: unknown): string {
     return "The duplicate check can't reach the server right now. It will run again when you submit.";
   }
   if (isApiError(e) && e.status === 501) {
-    return "The duplicate check isn't switched on in this build yet. It will run again when you submit.";
+    return "The duplicate check isn't available right now. It will run again when you submit.";
   }
   return isApiError(e) ? e.message : "The duplicate check did not finish. Keep typing to retry.";
 }

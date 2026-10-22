@@ -2,8 +2,8 @@
 
 import { ArrowRight, Loader2, Mail, X } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { type DedupDecision, DuplicatePanel } from "@/components/dedup/duplicate-panel";
@@ -19,8 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api, isApiError, type Schema } from "@/lib/api/client";
-import { DEMO_RESET_EVENT } from "@/lib/demo-events";
+import { api, isApiError, issuesOf, type Schema } from "@/lib/api/client";
+import { announceWorkflowChange, DEMO_RESET_EVENT } from "@/lib/demo-events";
 import { countryName } from "@/lib/format";
 import {
   asFormSchema,
@@ -47,6 +47,12 @@ import { RegistrationsInput } from "./registrations";
 
 type FormDomain = (typeof FORM_DOMAINS)[number]["value"];
 type RequestDetail = Schema<"RequestDetail">;
+type FieldIssue = Schema<"FieldIssue">;
+
+/** "registrations.VN.reg_no" belongs to the registrations field; anything else to its own key. */
+function issueKey(issue: FieldIssue): string {
+  return issue.field.split(".")[0]!.split("[")[0]!;
+}
 
 /** The country is chosen in the bar at the top, so the schema's own field is not repeated. */
 const CONTEXT_FIELDS = new Set(["Country"]);
@@ -55,7 +61,7 @@ const WIDE_TYPES = new Set(["array"]);
 
 function readable(e: unknown, what: string): string {
   if (isApiError(e) && e.status === 501) {
-    return `${what} isn't switched on in this build yet. Your form is kept; try again once the server is updated.`;
+    return `${what} isn't available right now. Your form is kept; try again in a moment.`;
   }
   if (isApiError(e)) return e.message;
   return `${what} did not work. Please try again.`;
@@ -99,6 +105,7 @@ export function NewRequestForm() {
   const [picking, setPicking] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [issues, setIssues] = useState<FieldIssue[]>([]);
 
   // Load the form definition for this domain x country.
   useEffect(() => {
@@ -127,6 +134,7 @@ export function NewRequestForm() {
     setDecidedFor("");
     setDecisionError(null);
     setSubmitError(null);
+    setIssues([]);
   };
 
   /**
@@ -178,7 +186,8 @@ export function NewRequestForm() {
     dedup.status === "done" ? dedup.result : dedup.status === "checking" ? dedup.previous : null;
   const blocked = isBusinessPartner && !!blockingResult?.block_submit && !activeDecision;
 
-  const missing = specReady ? missingRequired(values, spec) : [];
+  // The country comes from the bar at the top, not from a form field, so count it as filled.
+  const missing = specReady ? missingRequired({ ...values, Country: country }, spec) : [];
 
   function payloadFields(): FieldValues {
     if (!schema || !spec) return {};
@@ -196,16 +205,18 @@ export function NewRequestForm() {
   async function ensureDraft(): Promise<string> {
     const fields = payloadFields();
     if (reqId) {
-      await api.PATCH("/requests/{req_id}", {
+      const updated = await api.PATCH("/requests/{req_id}", {
         path: { req_id: reqId },
         body: { fields, country },
       });
+      setIssues(updated.issues ?? []);
       return reqId;
     }
     const created = await api.POST("/requests", {
       body: { domain, entity, country, fields, source_email_id: prefill?.emailId ?? null },
     });
     setReqId(created.req_id);
+    setIssues(created.issues ?? []);
     return created.req_id;
   }
 
@@ -249,9 +260,14 @@ export function NewRequestForm() {
       const id = await ensureDraft();
       await api.POST("/requests/{req_id}/submit", { path: { req_id: id } });
       toast.success("Request submitted", { description: "Approvers have been notified." });
+      announceWorkflowChange();
       router.push(`/requests/${id}`);
     } catch (e) {
-      if (isApiError(e) && e.status === 422) setShowMissing(true);
+      if (isApiError(e) && e.status === 422) {
+        setShowMissing(true);
+        // Submit's 422 is {detail, issues}: the detail is the summary, issues go next to fields.
+        setIssues(issuesOf(e));
+      }
       setSubmitError(readable(e, "Submitting"));
     } finally {
       setSubmitting(false);
@@ -271,6 +287,7 @@ export function NewRequestForm() {
       // Never bank details or credit terms from the server, and nothing masked.
       setValues(prefillableFields(detail.fields, spec?.domain === detail.domain ? schema : null));
       setQuotes(detail.prefill_quotes ?? {});
+      setIssues(detail.issues ?? []);
       setReqId(detail.req_id);
       setPrefill({ emailId: email.email_id, subject: email.subject });
       setShowMissing(true);
@@ -285,7 +302,20 @@ export function NewRequestForm() {
     }
   }
 
-  const setField = (key: string, v: unknown) => setValues((prev) => ({ ...prev, [key]: v }));
+  const setField = (key: string, v: unknown) => {
+    setValues((prev) => ({ ...prev, [key]: v }));
+    // An edited field's server problem is out of date until the next check.
+    setIssues((prev) => prev.filter((i) => issueKey(i) !== key));
+  };
+
+  // A "missing" issue only shows once the person has tried to submit (like the red outline).
+  const shownIssues = issues.filter((i) => i.kind !== "missing" || showMissing);
+  const issuesFor = (key: string) =>
+    shownIssues.filter((i) => issueKey(i) === key).map((i) => i.message);
+  const placed = new Set(
+    schema ? schema["x-order"].filter((k) => !CONTEXT_FIELDS.has(k) && schema.properties[k]) : [],
+  );
+  const unplacedIssues = shownIssues.filter((i) => !placed.has(issueKey(i)));
 
   return (
     <div className="flex flex-col gap-8">
@@ -298,6 +328,9 @@ export function NewRequestForm() {
           </p>
         </div>
         <EmailPicker onPick={pickEmail} picking={picking} />
+        <Suspense>
+          <EmailHandoff ready={contextReady} onPick={pickEmail} />
+        </Suspense>
       </header>
 
       <section
@@ -443,6 +476,7 @@ export function NewRequestForm() {
                         help={field.description}
                         required={spec.required.includes(key)}
                         missing={isMissing}
+                        issues={issuesFor(key)}
                         quote={quotes[key]}
                         sensitive={field["x-sensitive"]}
                         asGroup={isGroupField(field)}
@@ -508,6 +542,18 @@ export function NewRequestForm() {
                 {submitError}
               </p>
             )}
+            {unplacedIssues.length > 0 && (
+              <ul
+                className="flex flex-col gap-1 text-sm text-destructive"
+                data-testid="other-issues"
+              >
+                {unplacedIssues.map((i) => (
+                  <li key={`${i.field}-${i.message}`}>
+                    <span className="font-medium">{i.label}:</span> {i.message}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </form>
 
@@ -530,6 +576,36 @@ export function NewRequestForm() {
       </div>
     </div>
   );
+}
+
+/**
+ * `/requests/new?email=DEMO-01` (from the messy inbox) pre-fills the form from
+ * that email once, through the same path as "Create from email".
+ */
+function EmailHandoff({
+  ready,
+  onPick,
+}: {
+  ready: boolean;
+  onPick: (email: Schema<"EmailSummary">) => Promise<boolean>;
+}) {
+  const router = useRouter();
+  const emailId = useSearchParams().get("email");
+  const handled = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!ready || !emailId || handled.current === emailId) return;
+    handled.current = emailId;
+    // Drop ?email= at once, so a reload does not create a second draft from the same email.
+    router.replace("/requests/new", { scroll: false });
+    api.GET("/emails/{email_id}", { path: { email_id: emailId } }).then(
+      (email) => void onPick(email),
+      (e: unknown) =>
+        toast.error("Could not open that email", { description: readable(e, "Opening the email") }),
+    );
+  }, [ready, emailId, onPick, router]);
+
+  return null;
 }
 
 function FormSkeleton() {

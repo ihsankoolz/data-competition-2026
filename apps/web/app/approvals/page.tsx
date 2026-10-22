@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { ScreenPlaceholder } from "@/components/shell/screen-placeholder";
+import { ApprovalsInbox } from "@/components/approvals/approvals-inbox";
 
 export const metadata: Metadata = { title: "Approvals" };
 
 export default function ApprovalsPage() {
-  return <ScreenPlaceholder href="/approvals" />;
+  return <ApprovalsInbox />;
 }

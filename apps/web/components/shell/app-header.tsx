@@ -3,6 +3,7 @@
 import { Separator } from "@/components/ui/separator";
 
 import { ApiOfflineNotice } from "./api-offline-notice";
+import { NotificationsBell } from "./notifications-bell";
 import { PersonaSwitcher } from "./persona-switcher";
 import { ResetDemoButton } from "./reset-demo-button";
 import { SimClock } from "./sim-clock";
@@ -36,6 +37,7 @@ export function AppHeader() {
           <Separator orientation="vertical" className="h-6!" />
           <ResetDemoButton />
           <Separator orientation="vertical" className="h-6!" />
+          <NotificationsBell />
           <PersonaSwitcher />
         </div>
       </div>
