@@ -1,0 +1,235 @@
+{
+  "cache_key": "ea812699337f0abe33d5fa04f6bdc53f5832bbef530a9fcb8f4f568437725a62",
+  "input": "Write 5 emails of category `purchase_order`, one per slot below, each with its label as described in the brief. Every email must be different in sender, organisation, products and wording.\n\nSlots:\n1. Bahasa Indonesia, terse, from the lab of a private hospital in Surabaya; PO number in the body; a calendar delivery date; one product line.\n2. English. A Lives Group sales rep in Singapore forwards a customer's email to the sales inbox with a one-line note on top ('pls process'); the customer's PO (two lines, PO number, attachment named like a PO PDF) is in the forwarded part.\n3. Vietnamese typed WITHOUT diacritics, from a district hospital in Can Tho; PO number; quantity in boxes ('hop'); no delivery date.\n4. Thai mixed with English (Thai script plus English product names), formal, from a private lab in Chiang Mai; orders a preventive maintenance visit; has a PO number.\n5. English, rambling, from procurement at a Malaysian hospital: accepts an earlier quotation and says please proceed; mentions budget approval and an earlier 'plan' in the quoted history, but this message is a firm order with a PO number.",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "emails": [
+      {
+        "attachments": [],
+        "body": "Selamat siang,\n\nMohon kirim HbA1c Reagent Kit 6 kit sesuai PO no. PO/LAB/2026/0417. Kirim paling lambat 15 Mei 2026 ya.\n\nTerima kasih.\nSri - Lab RS Mitra Bahari Surabaya",
+        "category": "purchase_order",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "RS Mitra Bahari",
+            "value": "RS Mitra Bahari"
+          },
+          {
+            "key": "po_number",
+            "source_quote": "PO/LAB/2026/0417",
+            "value": "PO/LAB/2026/0417"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "15 Mei 2026",
+            "value": "2026-05-15"
+          }
+        ],
+        "from_address": "lab@mitrabahari.co.id.example",
+        "from_name": "Sri Wahyuni - Lab RS Mitra Bahari",
+        "gist": "Private hospital lab in Surabaya orders 6 kits of HbA1c reagent under a PO number, to be delivered by 15 May 2026.",
+        "language": "Bahasa Indonesia",
+        "lines": [
+          {
+            "item_code": "A-HBA-1C",
+            "product_text": "HbA1c Reagent Kit",
+            "qty": 6.0,
+            "source_quote": "HbA1c Reagent Kit 6 kit"
+          }
+        ],
+        "messiness": [
+          "terse"
+        ],
+        "missing_fields": [],
+        "slot": 1,
+        "subject": "PO reagen HbA1c",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [
+          "PO_7700-3321_Greenfield.pdf"
+        ],
+        "body": "pls process\n\n---------- Forwarded message ---------\nFrom: Priya Nair <purchasing@greenfieldpoly.com.sg.example>\nDate: Tue, 14 Apr 2026 09:12\nSubject: PO 7700-3321\nTo: Daniel Koh <daniel.koh@livesgroup.example>\n\nHi Daniel,\n\nAttached is our PO 7700-3321 for the following:\n- Rapid Dengue NS1 Ag Test Kit x 40 boxes\n- CRP Quantitative Reagent x 10 kits\n\nPlease deliver to our Bishan clinic by 30 Apr 2026.\n\nRegards,\nPriya Nair\nPurchasing, Greenfield Polyclinic",
+        "category": "purchase_order",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Greenfield Polyclinic",
+            "value": "Greenfield Polyclinic"
+          },
+          {
+            "key": "po_number",
+            "source_quote": "PO 7700-3321",
+            "value": "7700-3321"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "30 Apr 2026",
+            "value": "2026-04-30"
+          }
+        ],
+        "from_address": "daniel.koh@livesgroup.example",
+        "from_name": "Daniel Koh",
+        "gist": "Sales rep forwards a polyclinic's PO for 40 boxes of Dengue NS1 kits and 10 CRP kits, asking the inbox to process it.",
+        "language": "English",
+        "lines": [
+          {
+            "item_code": "A-DEN-NS1",
+            "product_text": "Rapid Dengue NS1 Ag Test Kit",
+            "qty": 40.0,
+            "source_quote": "Rapid Dengue NS1 Ag Test Kit x 40 boxes"
+          },
+          {
+            "item_code": "A-CRP-QT",
+            "product_text": "CRP Quantitative Reagent",
+            "qty": 10.0,
+            "source_quote": "CRP Quantitative Reagent x 10 kits"
+          }
+        ],
+        "messiness": [
+          "forwarded",
+          "internal_forward",
+          "terse_note"
+        ],
+        "missing_fields": [],
+        "slot": 2,
+        "subject": "Fwd: PO 7700-3321 - Greenfield Polyclinic",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Kinh gui Quy cong ty Lives,\n\nBenh vien Quan Binh Thuy xin dat hang theo PO so BT-2026-088:\n- Bo test nhanh Dengue IgG/IgM: 30 hop\n\nNho cong ty xac nhan don hang giup. Cam on.\n\nDuoc si Tran Thi Mai\nKhoa Xet nghiem\nDT: 0292 3888 123",
+        "category": "purchase_order",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Benh vien Quan Binh Thuy",
+            "value": "Benh vien Quan Binh Thuy"
+          },
+          {
+            "key": "po_number",
+            "source_quote": "BT-2026-088",
+            "value": "BT-2026-088"
+          }
+        ],
+        "from_address": "khoaxetnghiem@bvbinhthuy.gov.vn.example",
+        "from_name": "Tran Thi Mai",
+        "gist": "District hospital in Can Tho orders 30 boxes of Dengue IgG/IgM rapid tests under PO BT-2026-088, no delivery date given.",
+        "language": "Vietnamese (no diacritics)",
+        "lines": [
+          {
+            "item_code": "A-DEN-IGM",
+            "product_text": "Bo test nhanh Dengue IgG/IgM",
+            "qty": 30.0,
+            "source_quote": "Bo test nhanh Dengue IgG/IgM: 30 hop"
+          }
+        ],
+        "messiness": [
+          "vi_no_diacritics",
+          "no_delivery_date"
+        ],
+        "missing_fields": [],
+        "slot": 3,
+        "subject": "Dat hang test nhanh Dengue - PO BT-2026-088",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "เรียน ฝ่ายขาย Lives Group\n\nบริษัท ล้านนา ไลฟ์ แล็บ จำกัด ขอสั่งซื้อบริการ Preventive Maintenance Visit สำหรับเครื่อง Automated Clinical Chemistry Analyser จำนวน 2 visit ตามใบสั่งซื้อเลขที่ PO-CM-2569-0123\n\nกรุณาติดต่อกลับเพื่อนัดวันเข้าบริการ\n\nขอแสดงความนับถือ\nคุณสมศรี ใจดี\nฝ่ายจัดซื้อ\nโทร 053-123-456",
+        "category": "purchase_order",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "บริษัท ล้านนา ไลฟ์ แล็บ จำกัด",
+            "value": "บริษัท ล้านนา ไลฟ์ แล็บ จำกัด"
+          },
+          {
+            "key": "po_number",
+            "source_quote": "PO-CM-2569-0123",
+            "value": "PO-CM-2569-0123"
+          }
+        ],
+        "from_address": "purchasing@lannalivelab.co.th.example",
+        "from_name": "คุณสมศรี ใจดี",
+        "gist": "Private lab in Chiang Mai orders 2 preventive maintenance visits for its chemistry analyser under a PO number and asks to schedule the visits.",
+        "language": "Thai mixed with English",
+        "lines": [
+          {
+            "item_code": "C-SVC-PM",
+            "product_text": "Preventive Maintenance Visit สำหรับเครื่อง Automated Clinical Chemistry Analyser",
+            "qty": 2.0,
+            "source_quote": "Preventive Maintenance Visit สำหรับเครื่อง Automated Clinical Chemistry Analyser จำนวน 2 visit"
+          }
+        ],
+        "messiness": [
+          "formal",
+          "th_en_mixed"
+        ],
+        "missing_fields": [],
+        "slot": 4,
+        "subject": "ใบสั่งซื้อบริการ Preventive Maintenance - PO-CM-2569-0123",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [
+          "PO_HSK-PO-2026-1190.pdf"
+        ],
+        "body": "Dear Sales Team,\n\nHope you are well and that the long weekend treated you nicely. Thank you for your quotation QT-26-0388 dated 2 March. Our finance committee finally approved the budget last Thursday so we are happy to accept the quotation as is. Please proceed with the order: our PO number is HSK/PO/2026/1190 (copy attached). Kindly deliver the Refrigerated Benchtop Centrifuge, 2 units, to our Lab Block at Hospital Seri Kenanga, Shah Alam, and please arrange the Installation and Validation Service together with it, 1 job. We would like everything by 29 May 2026 if possible, as the lab renovation will be done by then.\n\nAny issue, just call me.\n\nBest regards,\nNurul Aisyah binti Rahman\nProcurement Executive, Hospital Seri Kenanga\nTel: 03-5544 8821\n\nOn Mon, 23 Feb 2026 at 10:05, Lee Wei <lee.wei@livesgroup.example> wrote:\n> Noted on your plan to buy 2 centrifuges in Q2 once the budget is approved. We will send a quotation shortly.\n> Regards, Lee Wei",
+        "category": "purchase_order",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Hospital Seri Kenanga",
+            "value": "Hospital Seri Kenanga"
+          },
+          {
+            "key": "po_number",
+            "source_quote": "HSK/PO/2026/1190",
+            "value": "HSK/PO/2026/1190"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "29 May 2026",
+            "value": "2026-05-29"
+          }
+        ],
+        "from_address": "procurement@seri-kenanga.com.my.example",
+        "from_name": "Nurul Aisyah binti Rahman",
+        "gist": "Malaysian hospital accepts an earlier quotation and firmly orders 2 centrifuges plus installation under a PO number; the earlier plan in the quoted history is superseded.",
+        "language": "English",
+        "lines": [
+          {
+            "item_code": "B-CEN-REF",
+            "product_text": "Refrigerated Benchtop Centrifuge",
+            "qty": 2.0,
+            "source_quote": "Refrigerated Benchtop Centrifuge, 2 units"
+          },
+          {
+            "item_code": "C-INS-VAL",
+            "product_text": "Installation and Validation Service",
+            "qty": 1.0,
+            "source_quote": "Installation and Validation Service together with it, 1 job"
+          }
+        ],
+        "messiness": [
+          "rambling",
+          "quoted_history",
+          "ambiguous_order_vs_plan"
+        ],
+        "missing_fields": [],
+        "slot": 5,
+        "subject": "RE: Quotation QT-26-0388 - Refrigerated Centrifuge",
+        "to": "sales@livesgroup.example"
+      }
+    ]
+  },
+  "prompt_version": "holdout_gen_v1",
+  "recorded_at": "2026-10-22T12:56:17+00:00",
+  "system_sha256": "8e5f1d385ff051d0a5b2e35a022d7d8ba6bfd3100757481fc53c87f8aea3e1e8",
+  "task": "holdout_gen"
+}

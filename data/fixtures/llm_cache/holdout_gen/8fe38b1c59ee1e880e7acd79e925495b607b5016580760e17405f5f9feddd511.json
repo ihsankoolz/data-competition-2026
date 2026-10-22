@@ -1,0 +1,226 @@
+{
+  "cache_key": "8fe38b1c59ee1e880e7acd79e925495b607b5016580760e17405f5f9feddd511",
+  "input": "Write 5 emails of category `purchase_request`, one per slot below, each with its label as described in the brief. Every email must be different in sender, organisation, products and wording.\n\nSlots:\n1. English, from a Singapore polyclinic lab: plans to order next month and asks to reserve stock; no PO.\n2. Malay mixed with English, casual phone style, from a clinic in Kuala Lumpur: wants roughly 40 boxes next quarter, can you hold stock; no PO.\n3. Vietnamese WITH diacritics, from a provincial hospital planning next year's tender quantities for two reagents.\n4. Bahasa Indonesia, from hospital purchasing: an internal purchase requisition number (not a PO) and quantities; says the PO will follow after the director signs. Close call between order and plan, but no confirmed order yet.\n5. English, terse, from a Thai hospital: budget approved for one centrifuge in Q1, PO will come in January, please keep the price.",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "emails": [
+      {
+        "attachments": [],
+        "body": "Hi team,\n\nWe are planning to place an order next month for HbA1c Reagent Kit x 6 kits and CRP Quantitative Reagent x 4 kits for the lab at Tampines Heights Polyclinic. Could you please reserve the stock for us first? We will raise the PO once finance signs off, so there is no PO number yet.\n\nPlease let me know if the current stock can cover this.\n\nThanks and regards,\nRachel Tan\nSenior Medical Technologist, Laboratory\nTampines Heights Polyclinic\nTel: +65 6123 4567",
+        "category": "purchase_request",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Tampines Heights Polyclinic",
+            "value": "Tampines Heights Polyclinic"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "next month",
+            "value": "next month"
+          }
+        ],
+        "from_address": "rachel.tan@tampinesheightspoly.com.sg.example",
+        "from_name": "Rachel Tan",
+        "gist": "Singapore polyclinic lab plans to order HbA1c and CRP kits next month and asks Lives to reserve stock; PO to follow.",
+        "language": "English",
+        "lines": [
+          {
+            "item_code": "A-HBA-1C",
+            "product_text": "HbA1c Reagent Kit",
+            "qty": 6.0,
+            "source_quote": "HbA1c Reagent Kit x 6 kits"
+          },
+          {
+            "item_code": "A-CRP-QT",
+            "product_text": "CRP Quantitative Reagent",
+            "qty": 4.0,
+            "source_quote": "CRP Quantitative Reagent x 4 kits"
+          }
+        ],
+        "messiness": [
+          "signature_block",
+          "no_po_yet"
+        ],
+        "missing_fields": [],
+        "slot": 1,
+        "subject": "Reserve stock for next month - HbA1c and CRP kits",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Hi sis, ni Farid dari Klinik Pakar Setiawangsa, KL. Kitorang nak order around 40 boxes Dengue NS1 test kit untuk next quarter, boleh tolong hold stock dulu tak? Belum ada PO lagi ya, boss tengah tunggu approval. Nanti I confirm balik. Tq banyak2!\n\nFarid\n012-345 6789",
+        "category": "purchase_request",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Klinik Pakar Setiawangsa",
+            "value": "Klinik Pakar Setiawangsa"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "next quarter",
+            "value": "next quarter"
+          }
+        ],
+        "from_address": "farid@klinikpakarsetiawangsa.com.my.example",
+        "from_name": "Farid Hashim",
+        "gist": "KL clinic wants roughly 40 boxes of Dengue NS1 kits next quarter and asks Lives to hold stock; no PO yet.",
+        "language": "Malay-English mix",
+        "lines": [
+          {
+            "item_code": "A-DEN-NS1",
+            "product_text": "Dengue NS1 test kit",
+            "qty": 40.0,
+            "source_quote": "40 boxes Dengue NS1 test kit"
+          }
+        ],
+        "messiness": [
+          "casual_phone_style",
+          "terse",
+          "no_po_yet",
+          "approximate_quantity"
+        ],
+        "missing_fields": [],
+        "slot": 2,
+        "subject": "hold stock dengue NS1 ya",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Kính gửi Quý công ty,\n\nBệnh viện Đa khoa tỉnh Bình Hòa đang lập kế hoạch đấu thầu vật tư xét nghiệm cho năm 2027. Khoa Xét nghiệm dự kiến số lượng như sau:\n\n- Thuốc thử HbA1c: 120 kit\n- Thuốc thử CRP định lượng: 80 kit\n\nĐề nghị Quý công ty ghi nhận số lượng dự kiến này để chuẩn bị hồ sơ và hàng hóa. Chúng tôi sẽ thông báo chính thức khi kế hoạch được phê duyệt.\n\nTrân trọng,\nNguyễn Thị Lan\nKhoa Xét nghiệm - Bệnh viện Đa khoa tỉnh Bình Hòa\nĐT: 0274 3812 345",
+        "category": "purchase_request",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Bệnh viện Đa khoa tỉnh Bình Hòa",
+            "value": "Bệnh viện Đa khoa tỉnh Bình Hòa"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "năm 2027",
+            "value": "năm 2027"
+          }
+        ],
+        "from_address": "khoaxetnghiem@bvbinhhoa.vn.example",
+        "from_name": "Nguyễn Thị Lan",
+        "gist": "Provincial Vietnamese hospital shares forecast quantities of HbA1c and CRP reagents for its 2027 tender planning.",
+        "language": "Vietnamese",
+        "lines": [
+          {
+            "item_code": "A-HBA-1C",
+            "product_text": "Thuốc thử HbA1c",
+            "qty": 120.0,
+            "source_quote": "Thuốc thử HbA1c: 120 kit"
+          },
+          {
+            "item_code": "A-CRP-QT",
+            "product_text": "Thuốc thử CRP định lượng",
+            "qty": 80.0,
+            "source_quote": "Thuốc thử CRP định lượng: 80 kit"
+          }
+        ],
+        "messiness": [
+          "formal_letter",
+          "tender_planning",
+          "bulleted_list"
+        ],
+        "missing_fields": [],
+        "slot": 3,
+        "subject": "Dự kiến số lượng thuốc thử cho kế hoạch đấu thầu 2027",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Selamat siang Bapak/Ibu,\n\nBerikut kami sampaikan kebutuhan RS Mitra Sejahtera berdasarkan Purchase Requisition internal nomor PR-2026/0457 (bukan nomor PO):\n- Dengue IgG/IgM Rapid Test Kit: 30 box\n- SARS-CoV-2 Antigen Rapid Test Kit: 50 box\n\nPO resmi akan menyusul setelah PR ditandatangani oleh direktur. Rencananya barang dibutuhkan awal bulan depan. Mohon dibantu stok dan konfirmasi harga terlebih dahulu ya.\n\nTerima kasih.\nDewi Anggraini\nStaf Purchasing, RS Mitra Sejahtera Bekasi\nHP 0812-3456-7788",
+        "category": "purchase_request",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "RS Mitra Sejahtera",
+            "value": "RS Mitra Sejahtera"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "awal bulan depan",
+            "value": "awal bulan depan"
+          }
+        ],
+        "from_address": "purchasing@rsmitrasejahtera.co.id.example",
+        "from_name": "Dewi Anggraini",
+        "gist": "Indonesian hospital purchasing sends internal PR quantities for two rapid test kits; official PO will follow after the director signs, so not yet a confirmed order.",
+        "language": "Indonesian",
+        "lines": [
+          {
+            "item_code": "A-DEN-IGM",
+            "product_text": "Dengue IgG/IgM Rapid Test Kit",
+            "qty": 30.0,
+            "source_quote": "Dengue IgG/IgM Rapid Test Kit: 30 box"
+          },
+          {
+            "item_code": "A-COV-AG",
+            "product_text": "SARS-CoV-2 Antigen Rapid Test Kit",
+            "qty": 50.0,
+            "source_quote": "SARS-CoV-2 Antigen Rapid Test Kit: 50 box"
+          }
+        ],
+        "messiness": [
+          "ambiguous_order_vs_plan",
+          "internal_requisition_not_po",
+          "formal_tone"
+        ],
+        "missing_fields": [],
+        "slot": 4,
+        "subject": "Permintaan pembelian reagen - PR RS Mitra Sejahtera",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Hi,\n\nงบประมาณอนุมัติแล้ว for 1 unit Refrigerated Benchtop Centrifuge, Q1. PO will come in January. Please keep the price valid until then.\n\nThanks\nSomchai P.\nProcurement\nโรงพยาบาลศรีนครินทร์ธานี",
+        "category": "purchase_request",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "โรงพยาบาลศรีนครินทร์ธานี",
+            "value": "โรงพยาบาลศรีนครินทร์ธานี"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "Q1",
+            "value": "Q1"
+          }
+        ],
+        "from_address": "somchai.p@srinakarinthani-hosp.co.th.example",
+        "from_name": "Somchai Prasert",
+        "gist": "Thai hospital has budget approval for one refrigerated centrifuge in Q1, will send the PO in January, and asks Lives to hold the quoted price.",
+        "language": "Thai-English mix",
+        "lines": [
+          {
+            "item_code": "B-CEN-REF",
+            "product_text": "Refrigerated Benchtop Centrifuge",
+            "qty": 1.0,
+            "source_quote": "1 unit Refrigerated Benchtop Centrifuge"
+          }
+        ],
+        "messiness": [
+          "terse",
+          "thai_script_mixed",
+          "no_po_yet"
+        ],
+        "missing_fields": [],
+        "slot": 5,
+        "subject": "Centrifuge budget approved - Q1",
+        "to": "sales@livesgroup.example"
+      }
+    ]
+  },
+  "prompt_version": "holdout_gen_v1",
+  "recorded_at": "2026-10-22T12:57:01+00:00",
+  "system_sha256": "8e5f1d385ff051d0a5b2e35a022d7d8ba6bfd3100757481fc53c87f8aea3e1e8",
+  "task": "holdout_gen"
+}

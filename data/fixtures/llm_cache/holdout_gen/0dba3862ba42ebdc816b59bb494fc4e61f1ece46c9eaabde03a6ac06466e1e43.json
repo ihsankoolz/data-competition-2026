@@ -1,0 +1,199 @@
+{
+  "cache_key": "0dba3862ba42ebdc816b59bb494fc4e61f1ece46c9eaabde03a6ac06466e1e43",
+  "input": "Write 5 emails of category `enquiry`, one per slot below, each with its label as described in the brief. Every email must be different in sender, organisation, products and wording.\n\nSlots:\n1. English, from an Indonesian university lab: price and lead time for a biosafety cabinet and two microscopes.\n2. Mostly Thai script with English product names: is the HbA1c kit in stock and what is the price.\n3. Vietnamese WITHOUT diacritics: asks about a demo and pricing for the lab information system subscription.\n4. English, rambling, from a Singapore private lab: wants a quotation for operator training plus installation; uses the word 'order' ('before we order') but nothing is committed.\n5. Malay (Bahasa Melayu), from a hospital in Penang: asks whether dengue rapid tests are in stock and whether the product is registered in Malaysia.",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "emails": [
+      {
+        "attachments": [],
+        "body": "Dear Sales Team,\n\nWe are the Integrated Research Laboratory at Universitas Nusantara Mandiri in Bandung. We are equipping a new microbiology teaching room and would like to ask for the price and lead time to Bandung for the following:\n\n- 1 unit Class II biosafety cabinet\n- 2 units binocular microscope (for student practicals)\n\nCould you also tell us whether installation is included in the price? Thank you in advance.\n\nBest regards,\nDr. Rini Kusumawati\nHead of Laboratory\nUniversitas Nusantara Mandiri\nTel: +62 22 555 0188",
+        "category": "enquiry",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Universitas Nusantara Mandiri",
+            "value": "Universitas Nusantara Mandiri"
+          }
+        ],
+        "from_address": "rini.kusumawati@unmandiri.ac.id.example",
+        "from_name": "Dr. Rini Kusumawati",
+        "gist": "Indonesian university lab asks for price and lead time for one biosafety cabinet and two binocular microscopes.",
+        "language": "English",
+        "lines": [
+          {
+            "item_code": "B-BSC-II",
+            "product_text": "Class II biosafety cabinet",
+            "qty": 1.0,
+            "source_quote": "1 unit Class II biosafety cabinet"
+          },
+          {
+            "item_code": "B-MIC-BIN",
+            "product_text": "binocular microscope",
+            "qty": 2.0,
+            "source_quote": "2 units binocular microscope"
+          }
+        ],
+        "messiness": [
+          "signature_block",
+          "formal"
+        ],
+        "missing_fields": [],
+        "slot": 1,
+        "subject": "Price and lead time: biosafety cabinet and microscopes",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "สวัสดีค่ะ\n\nดิฉันสุนิสา จากห้องปฏิบัติการ โรงพยาบาลสุขสมบูรณ์ ต้องการสอบถามว่า HbA1c Reagent Kit (200 tests) ตอนนี้มีสต็อกพร้อมส่งไหมคะ และราคาต่อ kit เท่าไหร่ รบกวนแจ้งกลับทางอีเมลด้วยค่ะ\n\nขอบคุณค่ะ\nสุนิสา ใจดี\nโทร 02-555-0147",
+        "category": "enquiry",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "โรงพยาบาลสุขสมบูรณ์",
+            "value": "โรงพยาบาลสุขสมบูรณ์"
+          }
+        ],
+        "from_address": "sunisa.j@suksomboon-hospital.co.th.example",
+        "from_name": "สุนิสา ใจดี",
+        "gist": "Thai hospital lab asks whether the HbA1c reagent kit is in stock and its price per kit.",
+        "language": "Thai (mixed with English product names)",
+        "lines": [
+          {
+            "item_code": "A-HBA-1C",
+            "product_text": "HbA1c Reagent Kit (200 tests)",
+            "qty": null,
+            "source_quote": "HbA1c Reagent Kit (200 tests)"
+          }
+        ],
+        "messiness": [
+          "thai_english_mix",
+          "no_quantity"
+        ],
+        "missing_fields": [],
+        "slot": 2,
+        "subject": "สอบถามราคา HbA1c Reagent Kit",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Chao anh chi,\n\nBen em la Cong ty TNHH Xet Nghiem Y Khoa An Phu o TP.HCM. Ben em dang tim phan mem quan ly xet nghiem cho phong lab moi. Anh chi cho em hoi ben minh co the demo goi thue bao LIS cho ben em xem truoc duoc khong a? Va cho em xin bao gia thue bao LIS theo nam nua nhe.\n\nEm cam on anh chi nhieu.\nLan Anh\nDT: 0903 555 014",
+        "category": "enquiry",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Cong ty TNHH Xet Nghiem Y Khoa An Phu",
+            "value": "Cong ty TNHH Xet Nghiem Y Khoa An Phu"
+          }
+        ],
+        "from_address": "lananh.nguyen@anphumed.com.vn.example",
+        "from_name": "Nguyen Thi Lan Anh",
+        "gist": "Vietnamese lab company asks for a demo and annual pricing of the lab information system subscription.",
+        "language": "Vietnamese (no diacritics)",
+        "lines": [
+          {
+            "item_code": "C-LIS-SUB",
+            "product_text": "thue bao LIS",
+            "qty": null,
+            "source_quote": "thue bao LIS"
+          }
+        ],
+        "messiness": [
+          "vi_no_diacritics",
+          "terse",
+          "no_quantity"
+        ],
+        "missing_fields": [],
+        "slot": 3,
+        "subject": "Hoi demo va bao gia LIS",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Hi team,\n\nHope you are all well and the year is treating you kindly. Quick background: we are Meridian Pathology Laboratory Pte Ltd, a small private lab in Singapore, and we have been talking internally about moving to a bigger chemistry analyser for a while now. Nothing is decided yet, the directors still need to look at the numbers, so before we order anything I would like to get a feel for the cost of the services side.\n\nCould you send me a quotation for the operator training package and the installation and validation service? We are hoping to have things running around mid-July if it all goes ahead, but I can't promise anything at this point. Also happy to hear what the usual lead time is for booking your engineers.\n\nThanks a lot, and sorry for the long mail!\n\nMarcus Tan\nLab Manager, Meridian Pathology Laboratory Pte Ltd\nHP: +65 9123 4567",
+        "category": "enquiry",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Meridian Pathology Laboratory Pte Ltd",
+            "value": "Meridian Pathology Laboratory Pte Ltd"
+          },
+          {
+            "key": "requested_date",
+            "source_quote": "mid-July",
+            "value": "mid-July"
+          }
+        ],
+        "from_address": "marcus.tan@meridianpath.com.sg.example",
+        "from_name": "Marcus Tan",
+        "gist": "Singapore private lab wants a quotation for operator training and installation/validation services, with no commitment to order yet.",
+        "language": "English",
+        "lines": [
+          {
+            "item_code": "C-TRN-OPS",
+            "product_text": "operator training package",
+            "qty": null,
+            "source_quote": "operator training package"
+          },
+          {
+            "item_code": "C-INS-VAL",
+            "product_text": "installation and validation service",
+            "qty": null,
+            "source_quote": "installation and validation service"
+          }
+        ],
+        "messiness": [
+          "rambling",
+          "small_talk",
+          "ambiguous_order_vs_plan",
+          "no_quantity"
+        ],
+        "missing_fields": [],
+        "slot": 4,
+        "subject": "Quotation for training and installation",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Salam sejahtera,\n\nSaya dari Makmal Hospital Island Harmoni, Georgetown, Pulau Pinang. Kami nak tanya adakah Rapid Dengue NS1 Ag Test Kit ada stok sekarang? Kami perlukan lebih kurang 30 kotak kalau ada. Selain itu, boleh tolong sahkan sama ada produk ini sudah berdaftar di Malaysia (MDA)?\n\nHarap dapat balas secepat mungkin. Terima kasih.\n\nSiti Aminah\nPembantu Perubatan Makmal\nHospital Island Harmoni\nTel: 04-555 0123",
+        "category": "enquiry",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Hospital Island Harmoni",
+            "value": "Hospital Island Harmoni"
+          }
+        ],
+        "from_address": "siti.aminah@harmoniisland.com.my.example",
+        "from_name": "Puan Siti Aminah binti Rahman",
+        "gist": "Penang hospital lab asks if the Rapid Dengue NS1 kits are in stock (about 30 boxes) and whether the product is registered in Malaysia.",
+        "language": "Malay",
+        "lines": [
+          {
+            "item_code": "A-DEN-NS1",
+            "product_text": "Rapid Dengue NS1 Ag Test Kit",
+            "qty": 30.0,
+            "source_quote": "30 kotak"
+          }
+        ],
+        "messiness": [
+          "malay_english_mix",
+          "informal",
+          "no_commitment"
+        ],
+        "missing_fields": [],
+        "slot": 5,
+        "subject": "Pertanyaan: Rapid Dengue NS1 - stok & pendaftaran MDA",
+        "to": "sales@livesgroup.example"
+      }
+    ]
+  },
+  "prompt_version": "holdout_gen_v1",
+  "recorded_at": "2026-10-22T12:57:35+00:00",
+  "system_sha256": "8e5f1d385ff051d0a5b2e35a022d7d8ba6bfd3100757481fc53c87f8aea3e1e8",
+  "task": "holdout_gen"
+}

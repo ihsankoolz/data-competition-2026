@@ -1,0 +1,268 @@
+{
+  "cache_key": "c2f02710523d12f2f3c476c6ef494068f4ef0b9224eb257b07fe5a5a65619076",
+  "input": "Write 5 emails of category `mdm_request`, one per slot below, each with its label as described in the brief. Every email must be different in sender, organisation, products and wording.\n\nSlots:\n1. domain customer. English, internal from a QTS sales rep in Vietnam: please create a new customer, a hospital in Da Nang, with its tax code (MST) and address; no contact email given.\n2. domain customer. Bahasa Indonesia, from an outside clinic asking to be registered as a customer so they can buy test kits; gives its NPWP and a contact email; no address.\n3. domain vendor. English, from Lives Group procurement: onboard a new logistics supplier in Malaysia; gives SSM number, address and contact email; says bank details will come separately on the secure form.\n4. domain item. English, from an SPD product manager: create a new IVD rapid test item (not in the catalogue) to sell in Singapore, Malaysia and Thailand; gives only the Singapore registration number.\n5. domain cost_center. English, short, from finance: new cost center for the QTG Vietnam service team, effective 1 November 2026.",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "emails": [
+      {
+        "attachments": [],
+        "body": "Hi team,\n\nCan you please open a new customer account for Bệnh viện Đa khoa Hải Châu in Da Nang? MST 0401234567. Address: 38 Nguyen Van Linh, Hai Chau District, Da Nang. They are interested in our biosafety cabinet and a centrifuge, quotation to follow once the account is ready. I don't have a contact email for their procurement yet, will send it later.\n\nThanks,\nMinh Tuan\nSales Executive, QTS Vietnam\n+84 90 555 0142",
+        "category": "mdm_request",
+        "domain": "customer",
+        "expected_fields": [
+          {
+            "key": "name",
+            "source_quote": "Bệnh viện Đa khoa Hải Châu",
+            "value": "Bệnh viện Đa khoa Hải Châu"
+          },
+          {
+            "key": "tax_id",
+            "source_quote": "MST 0401234567",
+            "value": "0401234567"
+          },
+          {
+            "key": "city",
+            "source_quote": "Da Nang",
+            "value": "Da Nang"
+          },
+          {
+            "key": "country",
+            "source_quote": "Da Nang",
+            "value": "VN"
+          },
+          {
+            "key": "address",
+            "source_quote": "38 Nguyen Van Linh, Hai Chau District, Da Nang",
+            "value": "38 Nguyen Van Linh, Hai Chau District, Da Nang"
+          },
+          {
+            "key": "purpose",
+            "source_quote": "interested in our biosafety cabinet and a centrifuge",
+            "value": "buy biosafety cabinet and centrifuge"
+          }
+        ],
+        "from_address": "tuan.nguyen@livesgroup.example",
+        "from_name": "Nguyen Minh Tuan",
+        "gist": "QTS Vietnam sales rep asks MDM to create a customer account for a Da Nang hospital with MST and address but no contact email.",
+        "language": "English",
+        "lines": [],
+        "messiness": [
+          "internal",
+          "mixed_language_names",
+          "missing_contact_email"
+        ],
+        "missing_fields": [
+          "contact_email"
+        ],
+        "slot": 1,
+        "subject": "New customer - Hai Chau hospital, Da Nang",
+        "to": "mdm@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Selamat siang Tim Lives Group,\n\nKami Klinik Pratama Sehat Sentosa di Bandung ingin didaftarkan sebagai customer supaya bisa membeli rapid test kit (dengue dan antigen COVID) dari SPD. NPWP kami 02.345.678.9-423.000. Email kontak: admin@kliniksehatsentosa.co.id.example. Mohon info kalau ada dokumen lain yang diperlukan. Terima kasih banyak.\n\nSalam,\nDewi Lestari\nAdministrasi Klinik",
+        "category": "mdm_request",
+        "domain": "customer",
+        "expected_fields": [
+          {
+            "key": "name",
+            "source_quote": "Klinik Pratama Sehat Sentosa",
+            "value": "Klinik Pratama Sehat Sentosa"
+          },
+          {
+            "key": "tax_id",
+            "source_quote": "NPWP kami 02.345.678.9-423.000",
+            "value": "02.345.678.9-423.000"
+          },
+          {
+            "key": "city",
+            "source_quote": "Bandung",
+            "value": "Bandung"
+          },
+          {
+            "key": "country",
+            "source_quote": "Bandung",
+            "value": "ID"
+          },
+          {
+            "key": "contact_email",
+            "source_quote": "Email kontak: admin@kliniksehatsentosa.co.id.example",
+            "value": "admin@kliniksehatsentosa.co.id.example"
+          },
+          {
+            "key": "purpose",
+            "source_quote": "bisa membeli rapid test kit",
+            "value": "membeli rapid test kit"
+          }
+        ],
+        "from_address": "admin@kliniksehatsentosa.co.id.example",
+        "from_name": "Dewi Lestari",
+        "gist": "An outside clinic in Bandung asks to be registered as a customer to buy rapid test kits, giving NPWP and email but no address.",
+        "language": "Bahasa Indonesia",
+        "lines": [],
+        "messiness": [
+          "external_sender",
+          "missing_address"
+        ],
+        "missing_fields": [
+          "address"
+        ],
+        "slot": 2,
+        "subject": "Pendaftaran customer baru - Klinik Pratama Sehat Sentosa",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Hi MDM,\n\nPlease onboard a new logistics supplier for our Malaysia cold-chain deliveries. Details below:\n\nName: Kencana Cold Chain Logistics Sdn Bhd\nSSM no. 202201012345\nAddress: Lot 12, Jalan Perusahaan 3, Seksyen 23, Shah Alam, Selangor, Malaysia\nContact: accounts@kencanacoldchain.com.my.example\n\nBank details will follow separately on the secure vendor form, please do not ask them to email it.\n\nThank you,\nFarah Ismail\nProcurement Executive, Lives Group\n+60 3 5555 0188",
+        "category": "mdm_request",
+        "domain": "vendor",
+        "expected_fields": [
+          {
+            "key": "name",
+            "source_quote": "Kencana Cold Chain Logistics Sdn Bhd",
+            "value": "Kencana Cold Chain Logistics Sdn Bhd"
+          },
+          {
+            "key": "tax_id",
+            "source_quote": "SSM no. 202201012345",
+            "value": "202201012345"
+          },
+          {
+            "key": "city",
+            "source_quote": "Shah Alam",
+            "value": "Shah Alam"
+          },
+          {
+            "key": "country",
+            "source_quote": "Malaysia",
+            "value": "MY"
+          },
+          {
+            "key": "address",
+            "source_quote": "Lot 12, Jalan Perusahaan 3, Seksyen 23, Shah Alam, Selangor, Malaysia",
+            "value": "Lot 12, Jalan Perusahaan 3, Seksyen 23, Shah Alam, Selangor, Malaysia"
+          },
+          {
+            "key": "contact_email",
+            "source_quote": "accounts@kencanacoldchain.com.my.example",
+            "value": "accounts@kencanacoldchain.com.my.example"
+          },
+          {
+            "key": "purpose",
+            "source_quote": "Malaysia cold-chain deliveries",
+            "value": "Malaysia cold-chain deliveries"
+          }
+        ],
+        "from_address": "farah.ismail@livesgroup.example",
+        "from_name": "Farah Ismail",
+        "gist": "Procurement asks MDM to onboard a Malaysian cold-chain logistics vendor; bank details will come on the secure form.",
+        "language": "English",
+        "lines": [],
+        "messiness": [
+          "internal",
+          "structured_list",
+          "bank_details_deferred"
+        ],
+        "missing_fields": [],
+        "slot": 3,
+        "subject": "Vendor onboarding: Kencana Cold Chain Logistics Sdn Bhd (MY)",
+        "to": "mdm@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Hi MDM,\n\nPlease create a new item for the Influenza A/B Rapid Test Kit. It is an IVD and not in our catalogue yet. We will sell in Singapore, Malaysia and Thailand. The Singapore registration no. is HSA-IVD-26-03318. MY and TH are still pending with the authorities, will send the numbers once approved. Sales unit: box of 25.\n\nThanks,\nRachel Ong\nProduct Manager, SPD",
+        "category": "mdm_request",
+        "domain": "item",
+        "expected_fields": [
+          {
+            "key": "item_name",
+            "source_quote": "Influenza A/B Rapid Test Kit",
+            "value": "Influenza A/B Rapid Test Kit"
+          },
+          {
+            "key": "is_ivd",
+            "source_quote": "It is an IVD",
+            "value": "true"
+          },
+          {
+            "key": "selling_countries",
+            "source_quote": "Singapore, Malaysia and Thailand",
+            "value": "SG,MY,TH"
+          },
+          {
+            "key": "registration_number_SG",
+            "source_quote": "HSA-IVD-26-03318",
+            "value": "HSA-IVD-26-03318"
+          },
+          {
+            "key": "sales_unit",
+            "source_quote": "box of 25",
+            "value": "box of 25"
+          }
+        ],
+        "from_address": "rachel.ong@livesgroup.example",
+        "from_name": "Rachel Ong",
+        "gist": "SPD product manager requests a new IVD influenza rapid test item for SG, MY and TH, with only the Singapore registration number available.",
+        "language": "English",
+        "lines": [],
+        "messiness": [
+          "internal",
+          "missing_registration_numbers"
+        ],
+        "missing_fields": [
+          "registration_number_MY",
+          "registration_number_TH"
+        ],
+        "slot": 4,
+        "subject": "New item creation - Influenza A/B rapid test",
+        "to": "mdm@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Hi, pls create a new cost center for QTG Vietnam service team, effective 1 November 2026. Thanks, Hanh (Finance)",
+        "category": "mdm_request",
+        "domain": "cost_center",
+        "expected_fields": [
+          {
+            "key": "center_name",
+            "source_quote": "QTG Vietnam service team",
+            "value": "QTG Vietnam service team"
+          },
+          {
+            "key": "entity",
+            "source_quote": "QTG",
+            "value": "QTG"
+          },
+          {
+            "key": "effective_from",
+            "source_quote": "1 November 2026",
+            "value": "2026-11-01"
+          },
+          {
+            "key": "country",
+            "source_quote": "Vietnam",
+            "value": "VN"
+          }
+        ],
+        "from_address": "hanh.pham@livesgroup.example",
+        "from_name": "Pham Thi Hanh",
+        "gist": "Finance asks for a new cost center for the QTG Vietnam service team effective 1 November 2026.",
+        "language": "English",
+        "lines": [],
+        "messiness": [
+          "terse",
+          "phone_style",
+          "internal"
+        ],
+        "missing_fields": [],
+        "slot": 5,
+        "subject": "New cost center QTG VN service",
+        "to": "mdm@livesgroup.example"
+      }
+    ]
+  },
+  "prompt_version": "holdout_gen_v1",
+  "recorded_at": "2026-10-22T12:58:40+00:00",
+  "system_sha256": "8e5f1d385ff051d0a5b2e35a022d7d8ba6bfd3100757481fc53c87f8aea3e1e8",
+  "task": "holdout_gen"
+}
