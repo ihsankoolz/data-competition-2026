@@ -1,0 +1,63 @@
+# Legal-form words removed before names are compared (D-005 layer 2).
+# Applied after anyascii + lowercase + punctuation stripping, so write entries in plain ASCII
+# lower case ("cong ty tnhh", not "Công ty TNHH"). Thai-script forms are listed under
+# `thai_script` and removed from the original string before romanisation.
+# cleanco runs as an extra pass for any other form it knows (Inc, GmbH, AG ...).
+#
+# prefix: removed from the start of the name, longest phrase first.
+# suffix: removed from the end, repeatedly, longest phrase first ("ltd pte" typo swaps too).
+
+common:
+  suffix:
+    - private limited
+    - public company limited
+    - company limited
+    - co ltd
+    - pte ltd
+    - ltd pte
+    - limited
+    - ltd
+    - inc
+    - corporation
+    - corp
+    - llc
+    - gmbh
+    - ag
+    - sa
+    - plc
+
+SG:
+  suffix: [pte ltd, pte, private limited]
+
+MY:
+  suffix: [sendirian berhad, sdn bhd, sdn, bhd, berhad]
+
+ID:
+  prefix: [p t, pt]
+  suffix: [tbk, pt, persero]
+
+VN:
+  prefix:
+    - cong ty trach nhiem huu han
+    - cong ty tnhh mtv
+    - cong ty tnhh
+    - cong ty co phan
+    - cong ty cp
+    - cty tnhh
+    - cty co phan
+    - cty cp
+    - cong ty
+    - cty
+  suffix: [joint stock company, j s c, jsc, co ltd, company limited, tnhh, cong ty]
+
+TH:
+  suffix: [public company limited, p c l, pcl, co ltd, company limited, mhachn]
+
+# Thai-script legal words, removed from the raw string before romanisation.
+thai_script:
+  - "(มหาชน)"
+  - "บริษัท"
+  - "บจก."
+  - "บมจ."
+  - "จำกัด"
+  - "ห้างหุ้นส่วนจำกัด"

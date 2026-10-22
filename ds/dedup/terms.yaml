@@ -1,0 +1,157 @@
+# Multilingual dictionary for the duplicate check (D-005 layer 3).
+#
+# Order of use (see ds/dedup/normalize.py):
+#   1. thai_script: replaced in the ORIGINAL string (Thai has no spaces between words),
+#      before rough romanisation with anyascii.
+#   2. abbreviations: a short form typed by a user -> the long local form (token level).
+#   3. translations: local-language phrase -> one English canonical word (token level).
+#   4. canonical: spelling variants -> one spelling.
+#   5. stopwords: dropped.
+#   6. aliases: well-known acronyms and short names -> the full name they stand for.
+# All non-Thai entries are plain ASCII lower case (diacritics are stripped before lookup).
+# Generated acronyms (initials of every master name) are added at index time, not listed here.
+
+thai_script:
+  "โรงพยาบาล": " hospital "
+  "รพ.": " hospital "
+  "คลินิกเวชกรรม": " clinic "
+  "สหคลินิก": " clinic "
+  "คลินิก": " clinic "
+  "ห้องปฏิบัติการ": " laboratory "
+  "แล็บ": " laboratory "
+  "ศูนย์การแพทย์": " medical centre "
+  "ศูนย์": " centre "
+  "การแพทย์": " medical "
+  "เมดิคอล": " medical "
+  "ไดแอกนอสติกส์": " diagnostics "
+  "ซัพพลาย": " supply "
+  "เครื่องมือแพทย์": " medical equipment "
+  "(ประเทศไทย)": " thailand "
+  "ประเทศไทย": " thailand "
+  "กรุงเทพ": " bangkok "
+
+abbreviations:
+  rsup: rumah sakit umum pusat
+  rsud: rumah sakit umum daerah
+  rsu: rumah sakit umum
+  rsia: rumah sakit ibu dan anak
+  rs: rumah sakit
+  kp: klinik pratama
+  pp: pusat perubatan
+  bv: benh vien
+  bvdk: benh vien da khoa
+  pk: phong kham
+  pkdk: phong kham da khoa
+  dk: da khoa
+  tt: trung tam
+  ttxn: trung tam xet nghiem
+  xn: xet nghiem
+  tbyt: thiet bi y te
+  qt: quoc te
+  tw: trung uong
+  hosp: hospital
+  med: medical
+  ctr: centre
+  ctre: centre
+  labs: laboratory
+  lab: laboratory
+  diag: diagnostics
+  intl: international
+  natl: national
+  univ: university
+  spec: specialist
+  gen: general
+  supp: supply
+  sci: scientific
+  spore: singapore
+  w and c: womens and childrens
+  sg: singapore
+  kl: kuala lumpur
+  hcmc: ho chi minh city
+  tphcm: ho chi minh city
+
+translations:
+  # Indonesian / Malay
+  rumah sakit: hospital
+  klinik: clinic
+  poliklinik: polyclinic
+  laboratorium: laboratory
+  makmal: laboratory
+  patologi: pathology
+  pusat perubatan: medical centre
+  pusat kesehatan: health centre
+  perubatan: medical
+  kesihatan: health
+  kesehatan: health
+  medika: medical
+  diagnostik: diagnostics
+  saintifik: scientific
+  peralatan perubatan: medical equipment
+  alat kesehatan: medical equipment
+  umum: general
+  pusat: central
+  daerah: regional
+  ibu dan anak: mother and child
+  wanita: womens
+  kanak kanak: childrens
+  pratama: primary
+  utama: main
+  # Vietnamese (after diacritics are stripped)
+  benh vien: hospital
+  phong kham: clinic
+  da khoa: general
+  trung tam xet nghiem: laboratory centre
+  xet nghiem: laboratory
+  trung tam: centre
+  thiet bi y te: medical equipment
+  y te: medical
+  y khoa: medical
+  quoc te: international
+  trung uong: central
+  nhi dong: childrens
+  nhi: paediatric
+  phu san: womens
+  # Thai, romanised by hand (users type these)
+  rongphayaban: hospital
+  rong phayaban: hospital
+  khlinik: clinic
+  # English variants
+  center: centre
+  centres: centre
+  laboratories: laboratory
+  clinical: clinic
+  clinics: clinic
+  hospitals: hospital
+  pediatric: paediatric
+  paediatrics: paediatric
+  supplies: supply
+  childrens: childrens
+  children: childrens
+  women: womens
+  viet nam: vietnam
+
+stopwords: [and, of, the, dan, va, cua, s, m, n, dr, bs]
+
+# Acronyms and short names that are not simply initials (or are so common they deserve a row).
+aliases:
+  nuh: national university hospital
+  ttsh: tan tock seng hospital
+  kkh: kk womens and childrens hospital
+  sgh: singapore general hospital
+  cgh: changi general hospital
+  ktph: khoo teck puat hospital
+  ntfgh: ng teng fong general hospital
+  skh: sengkang general hospital
+  hkl: hospital kuala lumpur
+  ummc: university malaya medical centre
+  ppum: pusat perubatan universiti malaya
+  ppukm: pusat perubatan universiti kebangsaan malaysia
+  hukm: hospital universiti kebangsaan malaysia
+  rscm: rumah sakit cipto mangunkusumo
+  rspi: rumah sakit penyakit infeksi
+  bvcr: benh vien cho ray
+  siriraj: siriraj hospital
+  ramathibodi: ramathibodi hospital
+  chula: chulalongkorn hospital
+  kcmh: king chulalongkorn memorial hospital
+  bdms: bangkok dusit medical services
