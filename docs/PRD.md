@@ -150,4 +150,4 @@ DRAFT → SUBMITTED → IN_APPROVAL → APPROVED → PUBLISHED_INACTIVE → ACTI
 ## 10. Open items
 
 - ~~Repo public or private.~~ **Resolved (D-016):** the repo must be public at submission. Keep it private until Wed 28 Oct morning, run a secret scan, then flip it to public before the 10:00 submit.
-- ~~Finals format.~~ **Resolved (D-016):** 15-minute presentation + 5-minute Q&A, with a live demo. So the demo must be robust: `make reset-demo` restores the seeded state in under 10 seconds, and every demo step works in LLM replay mode with no network.
+- ~~Finals format.~~ **Resolved (D-016):** 15-minute presentation + 5-minute Q&A, with a live demo. So the demo must be robust: an in-app "Reset demo" button (`POST /admin/reset-demo`, also called by `make reset-demo`) restores the seeded state in under 10 seconds without stopping the API, and every demo step works in LLM replay mode with no network.

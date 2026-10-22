@@ -29,7 +29,7 @@ docs/                PRD, decisions, data spec, demo script, progress log
 - `make data` — run the generator with the default seed into `data/generated/`
 - `make fixtures` — freeze the demo dataset into `data/fixtures/`
 - `make dev` — run api (8000), sap_mock (8001) and web (3000) together
-- `make reset-demo` — restore the database to the seeded demo state
+- `make reset-demo` — restore the database to the seeded demo state (same code path as the in-app "Reset demo" button, `POST /admin/reset-demo`; D-016)
 - `make test` — all Python and web tests
 - `make eval` — dedup, classifier and forecast evaluations; writes `docs/results.md`
 
@@ -56,7 +56,7 @@ docs/                PRD, decisions, data spec, demo script, progress log
 5. **Bank details are never sent to the LLM**, never logged in plain text, and are masked by role.
 6. **The AI never approves and never merges on its own.** A human confirms every merge and every approval.
 7. **The email-reading model has no tools.** Its output is validated by Pydantic. Deterministic code does routing and publishing. Email text can never change approvers, bank details or credit terms.
-8. **All LLM calls go through `ds/interpreter/llm.py`:** temperature 0, JSON-schema output, response cache keyed by `sha256(model + prompt_version + input)`. `LLM_MODE` is `replay` (default, demo), `record`, or `live`.
+8. **All LLM calls go through `ds/interpreter/llm.py`:** deterministic via the replay cache (the API takes no `temperature`; D-017), JSON-schema output, response cache keyed by `sha256(model + prompt_version + input)`. `LLM_MODE` is `replay` (default, demo), `record`, or `live`.
 9. **Only confirmed customer POs feed demand.** Enquiries are a separate leading indicator. MDM requests are never demand.
 
 ## Scope discipline

@@ -178,5 +178,12 @@ Each decision: what, why, and what we rejected. Agents must follow these. Change
 
 - **The GitHub repo must be public at submission.** It stays private until Wed 28 Oct morning, then we run a secret scan and flip it to public before the 10:00 submit. Only `.env.example` is tracked; no keys, tokens or real bank data anywhere in the history.
 - **Finals are a 15-minute presentation + 5-minute Q&A,** with a live demo. The demo must be robust:
-  - `make reset-demo` restores the seeded demo state in **under 10 seconds**.
+  - **In-app reset is the actual requirement:** a "Reset demo" button in the app header, backed by `POST /admin/reset-demo`, restores the seeded demo state in **under 10 seconds WITHOUT stopping the API** (no restart, no file lock errors on Windows). `make reset-demo` calls the same code path.
   - **Every demo step works in LLM replay mode with no network** (`LLM_MODE=replay`, cache in `data/fixtures/llm_cache/`, see D-010).
+
+## D-017 Session 3 decisions (22 Oct, Ihsan)
+
+- **CLAUDE.md rule 8 reworded:** LLM calls are **deterministic via the replay cache**, not via temperature 0. `client.messages.parse` on the current API has no `temperature` parameter, so it is not sent (see `ds/interpreter/llm.py`). This replaces "Temperature 0" in D-006. JSON-schema output and the `sha256(model + prompt_version + input)` cache key are unchanged.
+- **Product B stays lumpy as generated.** We do not smooth the generator to make the forecast look better.
+- **Report Product B at product/regional level as well as per country.** Per-country B series are too sparse to judge a forecast on alone.
+- **Insight for the pitch and M8:** equipment demand (Product B) should be planned from the **enquiry / purchase-request pipeline**, not from a moving average of past POs. This becomes one of the 3–5 recommended actions in the M8 regional view. Enquiries stay a separate leading indicator (rule 9): they inform the plan, they are never counted as demand.
