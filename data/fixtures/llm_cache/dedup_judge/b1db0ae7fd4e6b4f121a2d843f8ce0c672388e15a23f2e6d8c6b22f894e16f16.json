@@ -1,0 +1,17 @@
+{
+  "cache_key": "b1db0ae7fd4e6b4f121a2d843f8ce0c672388e15a23f2e6d8c6b22f894e16f16",
+  "input": "{\"candidates\": [{\"card_code\": \"C00093\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"คลินิกเวชกรรมอุดมสุข\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Hat Yai\", \"country\": \"TH\", \"email_domain\": \"udomsukclinic.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Udomsuk Clinic\", \"tax_id\": \"0105527964701\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names are a plausible match (คลินิกเวชกรรมอุดมสุข is Udomsuk Medical Clinic), but the cities differ: Hat Yai vs Bangkok.",
+      "The candidate has no tax ID or email domain, so there is nothing to confirm the match, and different locations suggest different sites or branches.",
+      "Without a confirming identifier, a name-only match across different cities is too weak to call them the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:30:59+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

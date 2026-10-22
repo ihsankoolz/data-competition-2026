@@ -1,0 +1,17 @@
+{
+  "cache_key": "aed02ebbe92b366c9cbef956b05b1fa9765566699e03efaf3b110ca278a3a5c2",
+  "input": "{\"candidates\": [{\"card_code\": \"V00037\", \"city\": \"Hamburg\", \"country\": \"DE\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Elvion Global Biotech GmbH\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Hamburg\", \"country\": \"DE\", \"email_domain\": \"elvion.de.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Elvion Biotech GmbH\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match on the distinctive brand 'Elvion' and 'Biotech GmbH'; the candidate only adds 'Global', which is a minor descriptor.",
+      "Both records are in Hamburg, Germany, so city and country agree.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing conflicts; the different entity code is just a company in the shared database."
+    ],
+    "selected_card_code": "V00037"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:58+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

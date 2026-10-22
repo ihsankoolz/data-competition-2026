@@ -1,0 +1,35 @@
+{
+  "cache_key": "9083c503234f086f4fd46c96b9e4b350e55f0f2ea6e7b7aea8a21198cee51226",
+  "input": "<email>\nFrom domain: ntcl.id.example\nSubject: Re: pricing\n\nYth. Tim Sales,\n\nPls hold stock: 1 x PM visit for Nirmala Tirta Clinical Laboratory. We expect to raise the PO by 26 Jul.\n\nMohon konfirmasi ketersediaan stok dan perkiraan tanggal pengiriman.\n\nTerima kasih,\nFajar Purnomo\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.7,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Nirmala Tirta Clinical Laboratory",
+        "value": "Nirmala Tirta Clinical Laboratory"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "by 26 Jul",
+        "value": "26 Jul"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-SVC-PM",
+        "product_text": "PM visit",
+        "qty": 1.0,
+        "source_quote": "1 x PM visit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:50+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

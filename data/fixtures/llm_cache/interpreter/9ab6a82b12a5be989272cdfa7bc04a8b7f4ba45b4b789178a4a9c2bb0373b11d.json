@@ -1,0 +1,38 @@
+{
+  "cache_key": "9ab6a82b12a5be989272cdfa7bc04a8b7f4ba45b4b789178a4a9c2bb0373b11d",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: Quick request\n\nHi MDM team,\n\nPlease create a new item: Laboratory Refrigerator 2-8C (non-IVD, unit). We will sell it in Singapore, Malaysia and Indonesia.\n\nThanks,\nDarren Tan\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "item",
+    "fields": [
+      {
+        "key": "item_name",
+        "source_quote": "Please create a new item: Laboratory Refrigerator 2-8C",
+        "value": "Laboratory Refrigerator 2-8C"
+      },
+      {
+        "key": "is_ivd",
+        "source_quote": "non-IVD",
+        "value": "false"
+      },
+      {
+        "key": "selling_countries",
+        "source_quote": "We will sell it in Singapore, Malaysia and Indonesia.",
+        "value": "SG,MY,ID"
+      },
+      {
+        "key": "sales_unit",
+        "source_quote": "non-IVD, unit",
+        "value": "unit"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:50+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,17 @@
+{
+  "cache_key": "d16a45f53099f24e641f9abf96883952820c1a23d354456d145595724d7041a8",
+  "input": "{\"candidates\": [{\"card_code\": \"C00280\", \"city\": \"Chiang Mai\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Thai Med Chiang Mai Hospital Co., Ltd.\", \"tax_id\": \"\"}, {\"card_code\": \"C00427\", \"city\": \"Chiangmai\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Thai Med Chiang Mai Hospital Company Limited\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Chiang Mai\", \"country\": \"TH\", \"email_domain\": \"tmcml.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Thai Med Chiang Mai Lab\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is named \"Thai Med Chiang Mai Lab\", a lab, while both candidates are \"Thai Med Chiang Mai Hospital\", so it appears to be a different site or unit of the same brand.",
+      "No tax ID or matching email domain is available to confirm they are the same legal entity.",
+      "The candidates only match on brand and city, which is not enough to treat the lab as a duplicate of the hospital."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:05+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

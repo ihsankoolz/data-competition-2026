@@ -1,0 +1,17 @@
+{
+  "cache_key": "b5d3bd5711c19ac89377ffb56dc425a07d072d9a1b5ba8a590e5e02d209c6d9f",
+  "input": "{\"candidates\": [{\"card_code\": \"C00066\", \"city\": \"Kota Surabaya\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Kurnia Wijaya Clinical Laboratory\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Surabaya\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"PT Kurnia Wijaya Clinical Laboratory - Surabaya\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match once the PT legal prefix and the '- Surabaya' location suffix are ignored: 'Kurnia Wijaya Clinical Laboratory'.",
+      "Both are in Surabaya, Indonesia (Kota Surabaya is the same city), so there is no sign of a different site or branch.",
+      "Neither record has a tax ID or email domain to contradict the match; the different entity codes are just different companies in the shared database."
+    ],
+    "selected_card_code": "C00066"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:51+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

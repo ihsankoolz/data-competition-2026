@@ -1,0 +1,17 @@
+{
+  "cache_key": "1b0b3d863e66a62573bbae9b95036d3f18f65b5de0df588754f9f7b9946b55dd",
+  "input": "{\"candidates\": [{\"card_code\": \"V00037\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Solvia Calibration Services Pte Ltd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"veltra.sg.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Veltra Calibration Services Pte Ltd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The core names differ: Veltra vs Solvia, which is not a typo, abbreviation or language variant.",
+      "Only the generic words 'Calibration Services Pte Ltd' and the city match, which is not enough to show the same entity.",
+      "Neither record has a tax ID, and the email domain is missing on the candidate, so nothing else links them."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:58+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

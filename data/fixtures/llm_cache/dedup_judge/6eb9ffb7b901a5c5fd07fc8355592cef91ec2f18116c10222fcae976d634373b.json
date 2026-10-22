@@ -1,0 +1,17 @@
+{
+  "cache_key": "6eb9ffb7b901a5c5fd07fc8355592cef91ec2f18116c10222fcae976d634373b",
+  "input": "{\"candidates\": [{\"card_code\": \"C00211\", \"city\": \"Palembang\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Laboratorium Klinik Husada Amanah\", \"tax_id\": \"\"}, {\"card_code\": \"C00234\", \"city\": \"Palembang\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Laboratorium Klinik Husada Amanah (Palembang)\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bekasi\", \"country\": \"ID\", \"email_domain\": \"ahcl.id.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Laboratorium Klinik Amanah Husada\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is in Bekasi while both candidates are in Palembang, which points to different sites.",
+      "The name word order differs (Amanah Husada vs Husada Amanah), and there is no tax ID or email domain to confirm they are the same entity.",
+      "Matching one candidate would be a guess, so it is safer to treat the new record as a distinct entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:57+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

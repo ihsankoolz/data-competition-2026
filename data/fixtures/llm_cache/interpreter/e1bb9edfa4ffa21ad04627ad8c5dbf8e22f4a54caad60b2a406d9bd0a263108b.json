@@ -1,0 +1,30 @@
+{
+  "cache_key": "e1bb9edfa4ffa21ad04627ad8c5dbf8e22f4a54caad60b2a406d9bd0a263108b",
+  "input": "<email>\nFrom domain: maplediagnostics.my.example\nSubject: Upcoming PO - pricing\n\nHi team,\n\nWhat is your best price for 1 unit of the chemistry analyser? This is for Maple Diag..\n\nThanks,\nMei Fong Raman\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.8,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "This is for Maple Diag..",
+        "value": "Maple Diag"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-CHE-AUT",
+        "product_text": "chemistry analyser",
+        "qty": 1.0,
+        "source_quote": "1 unit of the chemistry analyser"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:42+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

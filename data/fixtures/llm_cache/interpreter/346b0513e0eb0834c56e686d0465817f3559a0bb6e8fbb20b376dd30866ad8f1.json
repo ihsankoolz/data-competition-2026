@@ -1,0 +1,30 @@
+{
+  "cache_key": "346b0513e0eb0834c56e686d0465817f3559a0bb6e8fbb20b376dd30866ad8f1",
+  "input": "<email>\nFrom domain: nuh.sg.example\nSubject: Quotation request\n\nHi team,\n\nCould you quote 2 units of biosafety cabinet for Natl University Hospital?\n\nThank you,\nShirley Lim\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Natl University Hospital",
+        "value": "Natl University Hospital"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-BSC-II",
+        "product_text": "biosafety cabinet",
+        "qty": 2.0,
+        "source_quote": "2 units of biosafety cabinet"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:46+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

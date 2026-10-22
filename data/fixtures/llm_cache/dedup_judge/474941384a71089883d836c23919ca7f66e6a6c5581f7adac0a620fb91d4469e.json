@@ -1,0 +1,17 @@
+{
+  "cache_key": "474941384a71089883d836c23919ca7f66e6a6c5581f7adac0a620fb91d4469e",
+  "input": "{\"candidates\": [{\"card_code\": \"C00093\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"คลินิกเวชกรรมอุดมสุข\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Hat Yai\", \"country\": \"TH\", \"email_domain\": \"udomsukclinic.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Udomsuk Clinic\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The cities differ: the new record is in Hat Yai and the existing candidate is in Bangkok, so they are likely different sites.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing confirms they are the same legal entity.",
+      "The names are only a plausible transliteration match (คลินิกเวชกรรมอุดมสุข vs Udomsuk Clinic), which is not enough given the location mismatch."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:37+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

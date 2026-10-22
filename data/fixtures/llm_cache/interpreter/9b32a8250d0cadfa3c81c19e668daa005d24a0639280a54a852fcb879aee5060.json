@@ -1,0 +1,46 @@
+{
+  "cache_key": "9b32a8250d0cadfa3c81c19e668daa005d24a0639280a54a852fcb879aee5060",
+  "input": "<email>\nFrom domain: pornpraserthospital.th.example\nSubject: Supplies for Pornprasert Hospital Co., Ltd.\n\nสวัสดีครับ\n\nConfirming our order under PO PO-46735:\n- 14 กล่อง A-DEN-IGM\n- 4 กล่อง A-CRP-QT\nBill to: Pornprasert Hospital Co., Ltd.\nRequired date: 28/08/2026\n\nขอบคุณครับ\nNongnuch Phetcharat\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Pornprasert Hospital Co., Ltd.",
+        "value": "Pornprasert Hospital Co., Ltd."
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO PO-46735",
+        "value": "PO-46735"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "28/08/2026",
+        "value": "2026-08-28"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "A-DEN-IGM",
+        "qty": 14.0,
+        "source_quote": "14 กล่อง A-DEN-IGM"
+      },
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "A-CRP-QT",
+        "qty": 4.0,
+        "source_quote": "4 กล่อง A-CRP-QT"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:59+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

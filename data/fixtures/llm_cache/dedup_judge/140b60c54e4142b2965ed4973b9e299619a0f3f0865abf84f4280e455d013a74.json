@@ -1,0 +1,17 @@
+{
+  "cache_key": "140b60c54e4142b2965ed4973b9e299619a0f3f0865abf84f4280e455d013a74",
+  "input": "{\"candidates\": [{\"card_code\": \"C00070\", \"city\": \"Nonthaburi\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"Thai Med Clinic\", \"name\": \"คลินิกไทยเมด\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"tmh.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Thai Med Hospital Co., Ltd.\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a Hospital in Bangkok, while the candidate is a Clinic (คลินิก) in Nonthaburi, so the entity type and city both differ.",
+      "Neither record has a tax ID or a matching email domain, so nothing confirms they are the same legal entity.",
+      "The similar 'Thai Med' name alone is not enough, since it could be a different site or a separate business."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:50+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

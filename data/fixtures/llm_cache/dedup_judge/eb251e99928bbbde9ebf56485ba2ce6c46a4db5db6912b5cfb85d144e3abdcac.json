@@ -1,0 +1,17 @@
+{
+  "cache_key": "eb251e99928bbbde9ebf56485ba2ce6c46a4db5db6912b5cfb85d144e3abdcac",
+  "input": "{\"candidates\": [{\"card_code\": \"C00172\", \"city\": \"Balikpapan\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Klinik Pratama Citra Bina\", \"tax_id\": \"\"}, {\"card_code\": \"C00287\", \"city\": \"Medan\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Klinik Pratama Sentra Bina\", \"tax_id\": \"\"}, {\"card_code\": \"C00499\", \"city\": \"Medan\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Klinik Pratama Sentra Bina\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Palembang\", \"country\": \"ID\", \"email_domain\": \"bpc.id.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Klinik Pratama Bina\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is in Palembang, while the candidates are in Balikpapan and Medan, so no city matches.",
+      "The names differ: 'Klinik Pratama Bina' versus 'Citra Bina' and 'Sentra Bina' look like different clinics, or different branches of one brand.",
+      "No tax ID or email domain is available on either side to confirm a match, so there is not enough evidence to call any candidate a duplicate."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:46+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

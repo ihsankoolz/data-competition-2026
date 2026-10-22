@@ -1,0 +1,17 @@
+{
+  "cache_key": "6e5e6eed51695f857b22fc7a880faaad2df435b689d885a4075ed743468850b9",
+  "input": "{\"candidates\": [{\"card_code\": \"C00037\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Pillai & Ong Surgery\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"oys.sg.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Ong & Yeo Surgery\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names are different: 'Ong & Yeo Surgery' versus 'Pillai & Ong Surgery' have different partner names, so this is not a typo or abbreviation variation.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing else links them.",
+      "Same city, country and entity alone is not enough to call them the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:34+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

@@ -1,0 +1,17 @@
+{
+  "cache_key": "67ac702aed4367074f0d76fd14b2f009795917a1fec0ccaa80b41e1d442357cb",
+  "input": "{\"candidates\": [{\"card_code\": \"C00028\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"Prachasuk Medical Clinic\", \"name\": \"คลินิกเวชกรรมประชาสุข\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Chiang Mai\", \"country\": \"TH\", \"email_domain\": \"pcmmc.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Prachasuk Chiang Mai Medical Clinic\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is explicitly a Chiang Mai branch, while the candidate C00028 is located in Bangkok, so they are different sites.",
+      "Same brand name (Prachasuk) but with a different city and a location-specific name suggests a separate entity.",
+      "Neither record has a tax ID or matching email domain to confirm they are the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:26+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

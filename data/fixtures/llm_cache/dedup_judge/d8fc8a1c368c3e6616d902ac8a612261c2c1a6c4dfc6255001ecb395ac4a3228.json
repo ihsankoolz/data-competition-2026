@@ -1,0 +1,17 @@
+{
+  "cache_key": "d8fc8a1c368c3e6616d902ac8a612261c2c1a6c4dfc6255001ecb395ac4a3228",
+  "input": "{\"candidates\": [{\"card_code\": \"C00504\", \"city\": \"Melaka\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hospital Melaka\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Melaka\", \"country\": \"MY\", \"email_domain\": \"mgh.my.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Hospital Melaka - Lab Dept\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The name 'Hospital Melaka - Lab Dept' is the same hospital with a department label added, and a department is not a separate legal entity.",
+      "Both records are in Melaka, Malaysia, and neither has a tax ID that would point to a different entity.",
+      "Nothing suggests a different site or branch, and the different company codes (SPD vs QTG) are expected in a shared database."
+    ],
+    "selected_card_code": "C00504"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:35+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

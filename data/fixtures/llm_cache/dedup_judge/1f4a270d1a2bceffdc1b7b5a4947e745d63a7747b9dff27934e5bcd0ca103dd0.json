@@ -1,0 +1,17 @@
+{
+  "cache_key": "1f4a270d1a2bceffdc1b7b5a4947e745d63a7747b9dff27934e5bcd0ca103dd0",
+  "input": "{\"candidates\": [{\"card_code\": \"C00407\", \"city\": \"JB\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Wellspring Medical Supplies Sdn Bhd (Johor Bahru)\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Johor Baharu\", \"country\": \"MY\", \"email_domain\": \"wms.my.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Wellspring Medical Supplies Sdn Bhd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match exactly apart from the '(Johor Bahru)' location tag, which is only a city descriptor.",
+      "City is the same: JB and Johor Baharu are both Johor Bahru, and the country is MY for both.",
+      "No tax ID or email domain exists on the candidate to conflict, and there is no sign of a different branch or site."
+    ],
+    "selected_card_code": "C00407"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:18+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

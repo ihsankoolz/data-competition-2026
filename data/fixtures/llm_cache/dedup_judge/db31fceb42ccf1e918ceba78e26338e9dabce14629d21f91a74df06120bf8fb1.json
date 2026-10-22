@@ -1,0 +1,17 @@
+{
+  "cache_key": "db31fceb42ccf1e918ceba78e26338e9dabce14629d21f91a74df06120bf8fb1",
+  "input": "{\"candidates\": [{\"card_code\": \"C00295\", \"city\": \"Bekasi\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Laboratorium Klinik Kasih Sinar\", \"tax_id\": \"\"}, {\"card_code\": \"C00343\", \"city\": \"Bekasi\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Laboratorium Klinik Kasih Sinar\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Medan\", \"country\": \"ID\", \"email_domain\": \"kcl.id.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"PT Laboratorium Klinik Kasih\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is in Medan while both candidates are in Bekasi, which points to different sites.",
+      "The name 'Laboratorium Klinik Kasih' is not the same as 'Laboratorium Klinik Kasih Sinar', so it may be a different brand or branch.",
+      "Neither record has a tax ID and the new record has an email domain the candidates lack, so nothing confirms they are the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:54+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

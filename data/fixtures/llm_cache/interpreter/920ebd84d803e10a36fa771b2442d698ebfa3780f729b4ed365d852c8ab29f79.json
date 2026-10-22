@@ -1,0 +1,30 @@
+{
+  "cache_key": "920ebd84d803e10a36fa771b2442d698ebfa3780f729b4ed365d852c8ab29f79",
+  "input": "<email>\nFrom domain: ppl.my.example\nSubject: Re: next order\n\nTuan/Puan,\n\nWhat is the lead time for 1 x the chemistry analyser? Asking on behalf of Permata Pathology Laboratory.\n\nKerjasama pihak tuan amat kami hargai. Sila hubungi kami jika ada pertanyaan.\n\nTerima kasih,\nMuthu Chong\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "on behalf of Permata Pathology Laboratory",
+        "value": "Permata Pathology Laboratory"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-CHE-AUT",
+        "product_text": "chemistry analyser",
+        "qty": 1.0,
+        "source_quote": "1 x the chemistry analyser"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:58+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

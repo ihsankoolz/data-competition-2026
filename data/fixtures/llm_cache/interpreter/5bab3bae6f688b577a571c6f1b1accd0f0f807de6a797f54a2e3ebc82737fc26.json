@@ -1,0 +1,40 @@
+{
+  "cache_key": "5bab3bae6f688b577a571c6f1b1accd0f0f807de6a797f54a2e3ebc82737fc26",
+  "input": "<email>\nFrom domain: kpl.sg.example\nSubject: Request\n\nDear Sales,\n\nConfirming our order under PO PO-45162:\n- 14 boxes HbA1c Reagent Kit\nBill to: Kingfisher Pathology Lab\nRequired date: 27/08/2026\n\nThanks,\nSanjay Chua\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Bill to: Kingfisher Pathology Lab",
+        "value": "Kingfisher Pathology Lab"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "Confirming our order under PO PO-45162:",
+        "value": "PO-45162"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "Required date: 27/08/2026",
+        "value": "2026-08-27"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "HbA1c Reagent Kit",
+        "qty": 14.0,
+        "source_quote": "14 boxes HbA1c Reagent Kit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:50+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

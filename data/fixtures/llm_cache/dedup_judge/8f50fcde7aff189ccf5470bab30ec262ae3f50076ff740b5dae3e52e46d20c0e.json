@@ -1,0 +1,17 @@
+{
+  "cache_key": "8f50fcde7aff189ccf5470bab30ec262ae3f50076ff740b5dae3e52e46d20c0e",
+  "input": "{\"candidates\": [{\"card_code\": \"V00028\", \"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Calder Global Express Logistics\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"ostaraglobal.id.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"PT Ostara Global Express Logistics\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The distinctive company names differ: 'Ostara' vs 'Calder', so they are not a typo or abbreviation of each other.",
+      "Only the generic words 'Global Express Logistics', the PT suffix, and the city Jakarta match, which is not enough to show the same legal entity.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing else confirms they are the same entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:47+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

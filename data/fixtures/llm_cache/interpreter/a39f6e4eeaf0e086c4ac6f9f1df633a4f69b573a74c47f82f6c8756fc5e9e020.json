@@ -1,0 +1,38 @@
+{
+  "cache_key": "a39f6e4eeaf0e086c4ac6f9f1df633a4f69b573a74c47f82f6c8756fc5e9e020",
+  "input": "<email>\nFrom domain: spd.lives.example\nSubject: New item request - Chikungunya IgM Rapid Test Kit\n\nHi MDM team,\n\nPlease create a new item: Chikungunya IgM Rapid Test Kit (IVD, box of 25). We will sell it in Singapore and Malaysia.\n\nThanks,\nJasmine Lee\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "item",
+    "fields": [
+      {
+        "key": "item_name",
+        "source_quote": "Chikungunya IgM Rapid Test Kit",
+        "value": "Chikungunya IgM Rapid Test Kit"
+      },
+      {
+        "key": "is_ivd",
+        "source_quote": "IVD, box of 25",
+        "value": "true"
+      },
+      {
+        "key": "selling_countries",
+        "source_quote": "We will sell it in Singapore and Malaysia.",
+        "value": "SG,MY"
+      },
+      {
+        "key": "sales_unit",
+        "source_quote": "IVD, box of 25",
+        "value": "box of 25"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:32+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

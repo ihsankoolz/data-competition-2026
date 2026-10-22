@@ -1,0 +1,30 @@
+{
+  "cache_key": "33782e2dbf358fc4343c0110aee9520661282c15d58d868bf5991406793ed1e3",
+  "input": "<email>\nFrom domain: qtg.lives.example\nSubject: (no subject)\n\nHi team, pls handle. Customer called me this morning as well.\n\nArjun Menon\n\n-----Original Message-----\nFrom: Rachel Teo <lab@banyanlaboratories.sg.example>\nSent: 18 Aug 2026 09:51\nTo: sales@qtg.lives.example\nSubject: Stock availability\n\nHello,\n\nDo you have stock of operator training (qty 3)? Banyan Labs may need it soon.\n\nThanks,\nRachel Teo\n\n> Rachel Teo wrote (23 Jul):\n> Can you also send the IFU and the latest certificate of analysis?\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.85,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Banyan Labs may need it soon.",
+        "value": "Banyan Labs"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-TRN-OPS",
+        "product_text": "operator training",
+        "qty": 3.0,
+        "source_quote": "operator training (qty 3)"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:05+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

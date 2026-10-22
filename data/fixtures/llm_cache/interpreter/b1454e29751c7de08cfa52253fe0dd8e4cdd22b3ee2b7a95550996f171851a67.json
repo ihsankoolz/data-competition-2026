@@ -1,0 +1,35 @@
+{
+  "cache_key": "b1454e29751c7de08cfa52253fe0dd8e4cdd22b3ee2b7a95550996f171851a67",
+  "input": "<email>\nFrom domain: nuh.sg.example\nSubject: Upcoming order - National Uni Hosp\n\nHello,\n\nWe plan to order 10 boxes of dengue NS1 test kits next month for National Uni Hosp. Please reserve stock.\n\nRegards,\nShirley Lim\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.88,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "National Uni Hosp",
+        "value": "National Uni Hosp"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "next month",
+        "value": "next month"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "dengue NS1 test kits",
+        "qty": 10.0,
+        "source_quote": "10 boxes of dengue NS1 test kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:10+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

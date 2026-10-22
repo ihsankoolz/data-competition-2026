@@ -1,0 +1,17 @@
+{
+  "cache_key": "3c8e317d1370bfae18f1aaa2f9445fffb3221beb75e81bb2af7e7689ee336802",
+  "input": "{\"candidates\": [{\"card_code\": \"C00218\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Brightway Pathology Lab Pte Ltd\", \"tax_id\": \"\"}, {\"card_code\": \"C00460\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Brightway Pathology Lab\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"SINGAPORE\", \"country\": \"SG\", \"email_domain\": \"bcl.sg.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Brightway Clinical Lab Pte Ltd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is named \"Brightway Clinical Lab\" while both candidates are \"Brightway Pathology Lab\", a different name and likely a different business.",
+      "No tax ID is present on any record, and the new email domain (bcl.sg.example) matches nothing on the candidates, so nothing confirms they are the same entity.",
+      "The shared city, country and brand prefix alone are too weak to treat this as a duplicate."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:03+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

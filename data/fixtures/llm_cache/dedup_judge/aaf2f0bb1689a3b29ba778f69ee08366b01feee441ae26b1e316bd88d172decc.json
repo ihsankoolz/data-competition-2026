@@ -1,0 +1,17 @@
+{
+  "cache_key": "aaf2f0bb1689a3b29ba778f69ee08366b01feee441ae26b1e316bd88d172decc",
+  "input": "{\"candidates\": [{\"card_code\": \"C00169\", \"city\": \"Hanoi\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Nhi BS. Anh Phuc Nguyen\", \"tax_id\": \"\"}, {\"card_code\": \"C00249\", \"city\": \"Hanoi\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"PK Nhi BS. Anh Phuc Nguyen\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Hanoi\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Nhi BSS. Anh Phuc Nuyen\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The name matches apart from typos (BSS for BS, Nuyen for Nguyen), so it is the same pediatric clinic and doctor.",
+      "Both records are in Hanoi, Vietnam, and both belong to the same entity, SPD.",
+      "C00249 is a similar clinic under a different entity (QTS) and uses the abbreviation PK, so C00169 is the closer duplicate."
+    ],
+    "selected_card_code": "C00169"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:12+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

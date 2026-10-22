@@ -1,0 +1,17 @@
+{
+  "cache_key": "71688fc9e06ff847ab3815dd78a82507d2bb4a501ee89ca5f1fd40ab94203e9a",
+  "input": "{\"candidates\": [{\"card_code\": \"C00090\", \"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"บริษัท โรงพยาบาลชัยพฤกษ์ พัทยา จำกัด\", \"tax_id\": \"\"}, {\"card_code\": \"C00145\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Chaiyaphruek Hospital\", \"tax_id\": \"\"}, {\"card_code\": \"C00555\", \"city\": \"BKK\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"Chaiyaphruek Hospital\", \"name\": \"โรงพยาบาลชัพฤกษ์\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"cph.th.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Chaiyaphruek Pattaya Hospital\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "C00090 is a Pattaya hospital whose Thai name, Chaiyaphruek Pattaya Hospital Co., Ltd, matches the new record's name and city.",
+      "C00145 and C00555 are in Bangkok under the plain Chaiyaphruek Hospital name, which looks like a different site than the Pattaya branch.",
+      "No tax IDs are available to confirm, but name, site and country all line up only for C00090."
+    ],
+    "selected_card_code": "C00090"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:18+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

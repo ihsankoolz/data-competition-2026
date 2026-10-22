@@ -1,0 +1,38 @@
+{
+  "cache_key": "21dbc138ac6b713b41e3c2bc42b273f5a104bc092ee69e550e5741ffc350acdb",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: New customer - Restu Kurnia Hospital\n\nHi MDM team,\n\nPls create new customer Restu Kurnia Hospital, Jakarta, for an analyser purchase.\n\nThanks,\nAgus Setiawan\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "customer",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Restu Kurnia Hospital",
+        "value": "Restu Kurnia Hospital"
+      },
+      {
+        "key": "city",
+        "source_quote": "Jakarta",
+        "value": "Jakarta"
+      },
+      {
+        "key": "country",
+        "source_quote": "Jakarta",
+        "value": "ID"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "for an analyser purchase",
+        "value": "analyser purchase"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:12+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

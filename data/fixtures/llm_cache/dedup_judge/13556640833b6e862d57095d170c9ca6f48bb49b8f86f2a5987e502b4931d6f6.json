@@ -1,0 +1,17 @@
+{
+  "cache_key": "13556640833b6e862d57095d170c9ca6f48bb49b8f86f2a5987e502b4931d6f6",
+  "input": "{\"candidates\": [{\"card_code\": \"C00268\", \"city\": \"Bangkok 10700\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Charoensuk Hospital Co., Ltd.\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"charoensukclinic.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Charoensuk Clinic\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a Clinic while the candidate is a Hospital, which points to different facility types and likely different entities.",
+      "Neither record has a tax ID, and the candidate has no email domain, so nothing confirms they are the same legal entity.",
+      "The shared brand name and the Bangkok location are not enough on their own to treat them as a duplicate."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:41+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

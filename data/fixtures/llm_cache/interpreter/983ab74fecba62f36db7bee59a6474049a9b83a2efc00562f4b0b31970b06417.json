@@ -1,0 +1,30 @@
+{
+  "cache_key": "983ab74fecba62f36db7bee59a6474049a9b83a2efc00562f4b0b31970b06417",
+  "input": "<email>\nFrom domain: spd.lives.example\nSubject: Fw: RFQ - Avalon Diagnostics\n\nForwarding for action.\n\nJasmine Lee\n\n---------- Forwarded message ---------\nFrom: Farhan Chua <lab@avalondiagnostics.sg.example>\nDate: 21 Sep 2026 14:05\nSubject: RFQ - Avalon Diagnostics\n\nGood morning,\n\nRequest for quotation from Avalon Diagnostics:\n- PM visit (qty 2)\nPlease include delivery and warranty terms.\n\nRegards,\nFarhan Chua\n\n> On 30 Jul 2026, Farhan Chua wrote:\n> Thank you for the quotation last month. We will revert.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Request for quotation from Avalon Diagnostics",
+        "value": "Avalon Diagnostics"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-SVC-PM",
+        "product_text": "PM visit",
+        "qty": 2.0,
+        "source_quote": "PM visit (qty 2)"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:04+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

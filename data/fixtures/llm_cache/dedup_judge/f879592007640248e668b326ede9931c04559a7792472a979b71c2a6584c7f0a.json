@@ -1,0 +1,17 @@
+{
+  "cache_key": "f879592007640248e668b326ede9931c04559a7792472a979b71c2a6584c7f0a",
+  "input": "{\"candidates\": [{\"card_code\": \"C00416\", \"city\": \"DKI Jakarta\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"RSPAD Gatot Soebroto\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"gsh.id.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Gatot Soebroto Hospital\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "\"Gatot Soebroto Hospital\" is the English form of \"RS Gatot Soebroto\" (RS = Rumah Sakit = Hospital), and RSPAD is just the Army hospital prefix.",
+      "Both records are in Jakarta, Indonesia, and there is no tax ID on either side to indicate a different entity.",
+      "The different company entity codes (SPD vs QTG) are not a conflict, since the shared database serves several companies and the same customer can be set up under more than one."
+    ],
+    "selected_card_code": "C00416"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:23+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

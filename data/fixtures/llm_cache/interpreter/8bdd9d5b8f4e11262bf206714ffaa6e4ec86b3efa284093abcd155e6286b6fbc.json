@@ -1,0 +1,43 @@
+{
+  "cache_key": "8bdd9d5b8f4e11262bf206714ffaa6e4ec86b3efa284093abcd155e6286b6fbc",
+  "input": "<email>\nFrom domain: qtg.lives.example\nSubject: New customer - Benh vien Cho Ray\n\nHi MDM team,\n\nPls create new customer Benh vien Cho Ray, HCMC, MST 0301234567, for service contract (annual analyser service).\n\nThanks,\nMarcus\nQTG Vietnam\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "customer",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Benh vien Cho Ray",
+        "value": "Benh vien Cho Ray"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "MST 0301234567",
+        "value": "0301234567"
+      },
+      {
+        "key": "city",
+        "source_quote": "HCMC",
+        "value": "Ho Chi Minh City"
+      },
+      {
+        "key": "country",
+        "source_quote": "HCMC",
+        "value": "VN"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "for service contract (annual analyser service)",
+        "value": "service contract (annual analyser service)"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:34+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

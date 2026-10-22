@@ -1,0 +1,17 @@
+{
+  "cache_key": "d6268f469cd01404b739668d300caf9d06926e3436a98bf2245585fba44b316a",
+  "input": "{\"candidates\": [{\"card_code\": \"C00114\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phatthana Hospital\", \"tax_id\": \"\"}, {\"card_code\": \"C00122\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Phatthana Hospital\", \"tax_id\": \"\"}, {\"card_code\": \"C00134\", \"city\": \"กรุงเทพมหานคร\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phatthana Hospital Co., Ltd. (Bangkok)\", \"tax_id\": \"\"}, {\"card_code\": \"C00144\", \"city\": \"กรุงเทพมหานคร\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"บริษัท โรงพยาบาลพัฒนา จำกัด\", \"tax_id\": \"\"}, {\"card_code\": \"C00173\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"โรงพยาบาลพัฒนา\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"กรุงเทพมหานคร\", \"country\": \"TH\", \"email_domain\": \"phatthanalaboratory.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phatthana Laboratory\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is Phatthana Laboratory, while every candidate is Phatthana Hospital (or its Thai equivalent), which is a different type of business.",
+      "The email domain refers to a laboratory, which supports it being a separate entity from the hospital.",
+      "No tax IDs are present on any record to confirm a match, so the name difference decides it."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:03+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

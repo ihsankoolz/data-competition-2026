@@ -1,0 +1,17 @@
+{
+  "cache_key": "8fc05a5aff11fde319331e1225cc65596758cef9497861511fdeb31325a1469d",
+  "input": "{\"candidates\": [{\"card_code\": \"C00292\", \"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Nam Viet Laboratory Center\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bien Hoa\", \"country\": \"VN\", \"email_domain\": \"nvbhlc.vn.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Trung tâm Xét nghiệm Nam Việt Biên Hòa\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is the Bien Hoa branch (Nam Việt Biên Hòa), while the candidate is in Ho Chi Minh City with no branch name, so they are likely different sites.",
+      "Cities differ (Bien Hoa vs Ho Chi Minh City) and neither record has a tax ID or matching email domain to confirm they are the same legal entity.",
+      "A different site of the same brand usually means a different entity, so there is not enough evidence to call it a duplicate."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:31+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

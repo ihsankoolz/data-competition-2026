@@ -1,0 +1,30 @@
+{
+  "cache_key": "a432389d885e3d87a2a2c4f5a2282fc8ce993161cf23627ea34d8fc637e495a8",
+  "input": "<email>\nFrom domain: pgh.my.example\nSubject: Brochure and pricing\n\nGood morning,\n\nPlease send the brochure and pricing for biosafety cabinet. We are evaluating options at Penang General Hospital.\n\nRegards,\nSiew Ling Ahmad\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Penang General Hospital",
+        "value": "Penang General Hospital"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-BSC-II",
+        "product_text": "biosafety cabinet",
+        "qty": null,
+        "source_quote": "biosafety cabinet"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:34+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

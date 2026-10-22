@@ -1,0 +1,35 @@
+{
+  "cache_key": "c0e1808d6f2b8adacf0526670f772b5d53f3b3c211be1dbb793e0ce7700b3f63",
+  "input": "<email>\nFrom domain: qtg.lives.example\nSubject: Delivery request - TFCTB\n\nCan someone pick this up? I'm on leave until Monday.\n\nSharon Koh\n\n---------- Forwarded message ---------\nFrom: Michelle Goh <purchasing@tfctb.sg.example>\nDate: 25 Sep 2026 15:13\nSubject: New PO PR20260029\n\nPO PR20260029\n\n- 1 unit of Class II Biosafety Cabinet\n\nShip to TFCTB. Thanks.\nMichelle Goh\n\n> On 23 Aug 2026, Michelle Goh wrote:\n> Thank you for the quotation last month. We will revert.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Ship to TFCTB",
+        "value": "TFCTB"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO PR20260029",
+        "value": "PR20260029"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-BSC-II",
+        "product_text": "Class II Biosafety Cabinet",
+        "qty": 1.0,
+        "source_quote": "1 unit of Class II Biosafety Cabinet"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:22+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

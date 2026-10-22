@@ -1,0 +1,17 @@
+{
+  "cache_key": "10f8e794d78a1a87fca5ba2a0d8e4198245360515388468cc285e8bda57b8df3",
+  "input": "{\"candidates\": [{\"card_code\": \"C00024\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Orchid Family Clinic Tampines\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"ofcb.sg.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Orchid Family Clinic Bedok\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is Orchid Family Clinic Bedok, while the candidate is Orchid Family Clinic Tampines, so they are different branches of the same brand.",
+      "Neither record has a tax ID, and the email domain is missing on the candidate, so nothing links them as one legal entity.",
+      "Same city, country and entity are not enough to confirm a duplicate when the branch names differ."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:57+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

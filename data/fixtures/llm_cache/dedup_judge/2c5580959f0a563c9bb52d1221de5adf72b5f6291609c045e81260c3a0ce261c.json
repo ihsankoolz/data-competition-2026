@@ -1,0 +1,17 @@
+{
+  "cache_key": "2c5580959f0a563c9bb52d1221de5adf72b5f6291609c045e81260c3a0ce261c",
+  "input": "{\"candidates\": [{\"card_code\": \"C00207\", \"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Trung tam Xet nghiem Viet Nhat\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"nalc.vn.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Trung tâm Xét nghiệm Nhân Ái\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names differ in substance: 'Viet Nhat' (Vietnam-Japan) versus 'Nhan Ai' are different proper names, not accent or spelling variants.",
+      "Only the generic part 'Trung tam Xet nghiem' (Testing Center), the city and the country match, which is not enough to identify one entity.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing else links them."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:40+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

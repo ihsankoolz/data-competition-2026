@@ -1,0 +1,46 @@
+{
+  "cache_key": "56c84c729fc590516747e4afcbb88d1e57903760b26116786af65eca3a52112b",
+  "input": "<email>\nFrom domain: spd.lives.example\nSubject: Re: our discussion\n\nForwarding for action.\n\nAisyah Ismail\n\n________________________________\nFrom: Noraini Ismail <procurement@klh.my.example>\nSent: 19 Aug 2026 13:21\nSubject: PO 0084/PO/26\n\nDear Sales,\n\nKindly supply 28 kits A-DEN-NS1 and covid ART kits x 16, PO 0084/PO/26. Delivery to Hosp. Kuala Lumpur before 7 Sep.\n\nThank you,\nNoraini Ismail\n\n> From: Aisyah Ismail\n> Sent: 17/07/2026\n> Noted with thanks. Will check stock and come back to you.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Delivery to Hosp. Kuala Lumpur",
+        "value": "Hosp. Kuala Lumpur"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO 0084/PO/26",
+        "value": "0084/PO/26"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "before 7 Sep",
+        "value": "before 7 Sep"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "A-DEN-NS1",
+        "qty": 28.0,
+        "source_quote": "28 kits A-DEN-NS1"
+      },
+      {
+        "item_code": "A-COV-AG",
+        "product_text": "covid ART kits",
+        "qty": 16.0,
+        "source_quote": "covid ART kits x 16"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:14+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -55,7 +55,11 @@ class Interpretation(BaseModel):
     injection_suspected: bool = Field(
         default=False, description="Flagged for a human; never acted on (rule 7)"
     )
-    needs_review: bool = Field(default=False, description="confidence < 0.6 -> human review queue")
+    needs_review: bool = Field(
+        default=False,
+        description="confidence < 0.6, or the email looks like it is instructing the AI "
+        "-> human review queue",
+    )
     method: Literal["llm", "keyword_fallback"] = Field(
         description="keyword_fallback = AI offline (no cached answer); show the badge"
     )

@@ -1,0 +1,30 @@
+{
+  "cache_key": "d434ef848a226c1a660a58dcca20b620b4c5f0c7c4e02c8f0800ef737ae5a725",
+  "input": "<email>\nFrom domain: tdlc2.vn.example\nSubject: Quotation request\n\nKính gửi Quý công ty,\n\nCould you quote 1 unit of B-CEN-REF for Công ty TNHH Xét nghiệm Y khoa Tín Đức?\n\nCảm ơn,\nHoàng Thị Hồng\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Công ty TNHH Xét nghiệm Y khoa Tín Đức",
+        "value": "Công ty TNHH Xét nghiệm Y khoa Tín Đức"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-CEN-REF",
+        "product_text": "B-CEN-REF",
+        "qty": 1.0,
+        "source_quote": "1 unit of B-CEN-REF"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:06+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

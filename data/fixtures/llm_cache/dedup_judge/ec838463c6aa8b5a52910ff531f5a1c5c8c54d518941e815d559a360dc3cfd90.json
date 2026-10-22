@@ -1,0 +1,17 @@
+{
+  "cache_key": "ec838463c6aa8b5a52910ff531f5a1c5c8c54d518941e815d559a360dc3cfd90",
+  "input": "{\"candidates\": [{\"card_code\": \"C00062\", \"city\": \"Krung Thep\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"คลินิกประชาสุข\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"prachasuklaboratory.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Prachasuk Laboratory\", \"tax_id\": \"0105513945647\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a laboratory (Prachasuk Laboratory), while the candidate is a clinic (คลินิกประชาสุข = Prachasuk Clinic), so they are different business types under a shared brand word.",
+      "The candidate has no tax ID or email domain, so there is no evidence to confirm they are the same legal entity.",
+      "Matching city (Bangkok = Krung Thep) and country are not enough on their own to link them."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:26+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

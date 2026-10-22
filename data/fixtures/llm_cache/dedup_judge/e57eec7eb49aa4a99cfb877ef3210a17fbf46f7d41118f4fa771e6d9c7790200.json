@@ -1,0 +1,17 @@
+{
+  "cache_key": "e57eec7eb49aa4a99cfb877ef3210a17fbf46f7d41118f4fa771e6d9c7790200",
+  "input": "{\"candidates\": [{\"card_code\": \"C00491\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Siriraj Hospital\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"sirirajhospital.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"โรงพยาบาลศิริราช\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "โรงพยาบาลศิริราช is the Thai script name for Siriraj Hospital (โรงพยาบาล = Hospital), so the names match across language and script.",
+      "Both records are in Bangkok, Thailand, and the new record's email domain (sirirajhospital) points to the same hospital.",
+      "Neither record has a tax ID and there is no sign of a different branch, so nothing contradicts a match. The different SAP entity codes (QTS vs SPD) do not mean different legal entities."
+    ],
+    "selected_card_code": "C00491"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:06+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

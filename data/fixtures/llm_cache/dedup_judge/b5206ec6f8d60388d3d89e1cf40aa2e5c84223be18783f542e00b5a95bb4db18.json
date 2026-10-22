@@ -1,0 +1,17 @@
+{
+  "cache_key": "b5206ec6f8d60388d3d89e1cf40aa2e5c84223be18783f542e00b5a95bb4db18",
+  "input": "{\"candidates\": [{\"card_code\": \"C00202\", \"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Cong ty Co phan Benh vien Da khoa Tan Phu Sai Gon\", \"tax_id\": \"\"}, {\"card_code\": \"C00440\", \"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Cong ty Co phan Benh vien Da khoa Tan Phu Sai Gon\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"hpsggc.vn.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Da khoa Hanh Phuc Sai Gon\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is 'Phong kham Da khoa Hanh Phuc Sai Gon' (a general clinic), while both candidates are 'Cong ty Co phan Benh vien Da khoa Tan Phu Sai Gon' (a hospital named Tan Phu); the distinctive names Hanh Phuc and Tan Phu differ.",
+      "Clinic (Phong kham) versus hospital (Benh vien) are different facility types, and no tax ID or matching email domain exists to link them.",
+      "Only the city and generic words like Da khoa and Sai Gon overlap, which is not enough to call them the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:01+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

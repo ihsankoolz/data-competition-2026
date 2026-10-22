@@ -1,0 +1,17 @@
+{
+  "cache_key": "b612029a00753f8775b27c1c2654dcf2512351b8920e9d698ca1d364d878a6ab",
+  "input": "{\"candidates\": [{\"card_code\": \"C00320\", \"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Gatot Soebroto Hospital\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"DKI Jakarta\", \"country\": \"ID\", \"email_domain\": \"gsh.id.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"RSPAD Gatot Soebroto\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "\"RSPAD Gatot Soebroto\" and \"Gatot Soebroto Hospital\" share the distinctive name, and RS/RSPAD translates to Hospital, so the difference is only language and abbreviation.",
+      "Both are in Jakarta, Indonesia (DKI Jakarta is the same area), and RSPAD Gatot Soebroto is the well-known army hospital there.",
+      "No tax ID or email domain is available to contradict the match, and nothing suggests a different branch or site."
+    ],
+    "selected_card_code": "C00320"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:35+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

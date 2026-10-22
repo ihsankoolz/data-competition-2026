@@ -1,0 +1,30 @@
+{
+  "cache_key": "172c366d91b8c6b2ee0ae248f506b969a3eb8a61d24f370b3b6aa3f438b407ad",
+  "input": "<email>\nFrom domain: ch2.vn.example\nSubject: Request\n\nKinh gui Quy cong ty,\n\nPlease send the brochure and pricing for 5-part haem analyser. We are evaluating options at Benh vien Nhi Dong 2.\n\nTran trong,\nBui Quang Huy\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Benh vien Nhi Dong 2",
+        "value": "Benh vien Nhi Dong 2"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-HEM-5P",
+        "product_text": "5-part haem analyser",
+        "qty": null,
+        "source_quote": "pricing for 5-part haem analyser"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:13+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

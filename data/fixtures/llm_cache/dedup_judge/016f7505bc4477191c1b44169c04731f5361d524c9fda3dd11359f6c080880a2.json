@@ -1,0 +1,17 @@
+{
+  "cache_key": "016f7505bc4477191c1b44169c04731f5361d524c9fda3dd11359f6c080880a2",
+  "input": "{\"candidates\": [{\"card_code\": \"V00054\", \"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Aster Global Medical Manufacturing\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"veltraglobal.id.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"PT Veltra Global Medical Manufacturing\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The distinctive brand names differ: Veltra versus Aster, so the names point to different companies.",
+      "Only the generic words 'Global Medical Manufacturing', the city (Jakarta) and the country (ID) match, which is not enough to show they are the same entity.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing else links them."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:50+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

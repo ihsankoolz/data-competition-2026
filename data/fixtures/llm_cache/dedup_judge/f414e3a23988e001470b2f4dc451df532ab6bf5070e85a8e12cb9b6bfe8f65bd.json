@@ -1,0 +1,17 @@
+{
+  "cache_key": "f414e3a23988e001470b2f4dc451df532ab6bf5070e85a8e12cb9b6bfe8f65bd",
+  "input": "{\"candidates\": [{\"card_code\": \"C00234\", \"city\": \"Palembang\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Laboratorium Klinik Husada Amanah (Palembang)\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bekasi\", \"country\": \"ID\", \"email_domain\": \"ahcl.id.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Laboratorium Klinik Amanah Husada\", \"tax_id\": \"088368933749000\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Cities differ: the new record is in Bekasi while the candidate is in Palembang, which suggests different branches or sites.",
+      "The candidate name is explicitly tagged as the Palembang site, and the word order differs (Husada Amanah vs Amanah Husada).",
+      "The candidate has no tax ID or email domain, so there is nothing to confirm they are the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:30:39+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

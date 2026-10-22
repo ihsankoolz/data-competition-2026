@@ -1,0 +1,38 @@
+{
+  "cache_key": "d91190736819de5e957e9c31c11ebecf40365f78df9e62156a057b860a76b91a",
+  "input": "<email>\nFrom domain: klinik.utama.sehat.bersa.id.example\nSubject: Question\n\nDengan hormat,\n\nKami dari Klinik Utama Sehat Bersama Bekasi, Bekasi ingin membuka akun pelanggan untuk reagent orders. Mohon informasikan dokumen apa saja yang diperlukan.\n\nTerima kasih,\nAgustina Rahayu\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "customer",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Klinik Utama Sehat Bersama Bekasi",
+        "value": "Klinik Utama Sehat Bersama Bekasi"
+      },
+      {
+        "key": "city",
+        "source_quote": "Bekasi",
+        "value": "Bekasi"
+      },
+      {
+        "key": "country",
+        "source_quote": "Bekasi",
+        "value": "ID"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "reagent orders",
+        "value": "reagent orders"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:29+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

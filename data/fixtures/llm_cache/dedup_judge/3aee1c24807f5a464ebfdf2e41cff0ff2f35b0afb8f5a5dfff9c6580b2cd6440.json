@@ -1,0 +1,17 @@
+{
+  "cache_key": "3aee1c24807f5a464ebfdf2e41cff0ff2f35b0afb8f5a5dfff9c6580b2cd6440",
+  "input": "{\"candidates\": [{\"card_code\": \"C00275\", \"city\": \"Bangkok 10700\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Prachasuk Lat Phrao Laboratory Co., Ltd.\", \"tax_id\": \"\"}, {\"card_code\": \"C00352\", \"city\": \"Bangkok 10700\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Prachasuk Lat Phrao Laboratory\", \"tax_id\": \"\"}, {\"card_code\": \"C00493\", \"city\": \"Bangkok 10700\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Prachasuk Lat Phrao Lab Co., Ltd.\", \"tax_id\": \"\"}, {\"card_code\": \"C00547\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Prachasuk Lat Phrao Laboratory Co., Ltd.\", \"tax_id\": \"\"}, {\"card_code\": \"C00028\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"Prachasuk Medical Clinic\", \"name\": \"คลินิกเวชกรรมประชาสุข\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"prachasuklaboratory.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Prachasuk Laboratory\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is 'Prachasuk Laboratory' with no Lat Phrao site name, and four candidates are named for the Lat Phrao laboratory, so none can be tied to it with confidence.",
+      "Several near-identical Lat Phrao records (C00275, C00352, C00493, C00547) exist with no tax ID or email domain on either side, so no single one can be picked over the others.",
+      "C00028 is Prachasuk Medical Clinic, a different type of entity from a laboratory."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:42+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

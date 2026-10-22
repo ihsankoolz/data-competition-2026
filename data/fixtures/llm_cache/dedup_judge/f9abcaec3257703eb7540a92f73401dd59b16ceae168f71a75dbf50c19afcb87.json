@@ -1,0 +1,17 @@
+{
+  "cache_key": "f9abcaec3257703eb7540a92f73401dd59b16ceae168f71a75dbf50c19afcb87",
+  "input": "{\"candidates\": [{\"card_code\": \"C00440\", \"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Cong ty Co phan Benh vien Da khoa Tan Phu Sai Gon\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"hpsggc.vn.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Da khoa Hanh Phuc Sai Gon\", \"tax_id\": \"0307861735\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a general clinic (Phong kham Da khoa Hanh Phuc Sai Gon), while the candidate is a different hospital joint-stock company (Benh vien Da khoa Tan Phu Sai Gon).",
+      "The names share only generic words (Da khoa, Sai Gon) and the distinctive parts (Hanh Phuc vs Tan Phu) differ.",
+      "Tax ID and email domain are missing on the candidate so nothing confirms a match; same city and entity alone are not enough."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:34+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

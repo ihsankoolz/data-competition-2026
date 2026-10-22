@@ -1,0 +1,17 @@
+{
+  "cache_key": "ce7e80efcec857457902c8d75fe0f02aedecf767d39af19dad5bbc6dbd785f0c",
+  "input": "{\"candidates\": [{\"card_code\": \"C00154\", \"city\": \"Surabaya\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Kurnia Primary Clinic\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Kota Surabaya\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Kurnia Primary Clinic - Surabaya\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match once the PT legal prefix and the '- Surabaya' location suffix are ignored: 'Kurnia Primary Clinic'.",
+      "Same country (ID) and same city (Kota Surabaya = Surabaya).",
+      "Neither record has a tax ID or email domain to contradict a match, and the different entity code (SPD vs QTS) just reflects the shared database across companies."
+    ],
+    "selected_card_code": "C00154"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:21+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

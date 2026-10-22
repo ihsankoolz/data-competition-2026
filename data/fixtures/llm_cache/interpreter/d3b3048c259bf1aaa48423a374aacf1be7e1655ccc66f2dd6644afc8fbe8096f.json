@@ -1,0 +1,48 @@
+{
+  "cache_key": "d3b3048c259bf1aaa48423a374aacf1be7e1655ccc66f2dd6644afc8fbe8096f",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: Hi\n\nHi MDM,\n\nPlease create a new vendor: Kinetica Reagents Pte Ltd, UEN 202214567W, 8 Kaki Bukit Road, Singapore 415937. Contact ar@kineticareagents.sg.example. Payment terms 45 days.\nPayment details will be submitted in the secure form.\n\nThanks,\nDarren Tan\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "vendor",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Kinetica Reagents Pte Ltd",
+        "value": "Kinetica Reagents Pte Ltd"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "UEN 202214567W",
+        "value": "202214567W"
+      },
+      {
+        "key": "city",
+        "source_quote": "Singapore",
+        "value": "Singapore"
+      },
+      {
+        "key": "country",
+        "source_quote": "Singapore 415937",
+        "value": "SG"
+      },
+      {
+        "key": "address",
+        "source_quote": "8 Kaki Bukit Road, Singapore 415937",
+        "value": "8 Kaki Bukit Road, Singapore 415937"
+      },
+      {
+        "key": "contact_email",
+        "source_quote": "ar@kineticareagents.sg.example",
+        "value": "ar@kineticareagents.sg.example"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:48+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

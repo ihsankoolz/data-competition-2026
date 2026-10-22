@@ -1,0 +1,33 @@
+{
+  "cache_key": "485474b19ec3748b2a509f35bcf7206a055fea425144bae5bc39e8661de9ac16",
+  "input": "<email>\nFrom domain: nusantaracoldchain.id.example\nSubject: Supplier registration\n\nDear Procurement team,\n\nWe would like to register PT Nusantara Cold Chain as a supplier for cold chain deliveries. Our NPWP is 02.345.678.9-012.000. Please send us your vendor registration form.\n\nBest regards,\nRizal Hakim\nBusiness Development\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "vendor",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "register PT Nusantara Cold Chain as a supplier",
+        "value": "PT Nusantara Cold Chain"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "Our NPWP is 02.345.678.9-012.000",
+        "value": "02.345.678.9-012.000"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "supplier for cold chain deliveries",
+        "value": "cold chain deliveries"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:23+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,35 @@
+{
+  "cache_key": "703a18eafc6540fa6fb152bb965554a7a70a33651c69a80eaaa92d99a600bbca",
+  "input": "<email>\nFrom domain: nvlc.vn.example\nSubject: Upcoming PO\n\nKinh gui phong kinh doanh,\n\nFor planning: Trung tam Xet nghiem Nam Viet will need PM visit (qty 2) next quarter. No PO yet, just a heads-up.\n\nCam on,\nDang Quang Huy\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.8,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Trung tam Xet nghiem Nam Viet",
+        "value": "Trung tam Xet nghiem Nam Viet"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "next quarter",
+        "value": "next quarter"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-SVC-PM",
+        "product_text": "PM visit",
+        "qty": 2.0,
+        "source_quote": "PM visit (qty 2)"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:05+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

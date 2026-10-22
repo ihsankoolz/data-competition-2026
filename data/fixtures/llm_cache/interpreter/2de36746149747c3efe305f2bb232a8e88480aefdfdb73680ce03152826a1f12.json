@@ -1,0 +1,35 @@
+{
+  "cache_key": "2de36746149747c3efe305f2bb232a8e88480aefdfdb73680ce03152826a1f12",
+  "input": "<email>\nFrom domain: cmh.id.example\nSubject: PO RSCM/2026/118\n\nDengan hormat,\n\nMohon dikirim 50 box A-DEN-NS1, PO RSCM/2026/118. Pengiriman ke Gudang Farmasi RSCM, Jakarta.\n\nTerima kasih,\nDewi Anggraini\nInstalasi Farmasi, RS Cipto Mangunkusumo\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.95,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "RS Cipto Mangunkusumo",
+        "value": "RS Cipto Mangunkusumo"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO RSCM/2026/118",
+        "value": "RSCM/2026/118"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "A-DEN-NS1",
+        "qty": 50.0,
+        "source_quote": "50 box A-DEN-NS1"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:40+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

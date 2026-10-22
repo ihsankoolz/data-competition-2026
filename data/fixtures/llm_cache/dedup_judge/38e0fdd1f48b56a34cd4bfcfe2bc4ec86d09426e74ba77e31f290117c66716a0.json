@@ -1,0 +1,17 @@
+{
+  "cache_key": "38e0fdd1f48b56a34cd4bfcfe2bc4ec86d09426e74ba77e31f290117c66716a0",
+  "input": "{\"candidates\": [{\"card_code\": \"C00449\", \"city\": \"Kota Surabaya\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Kurnia Primary Clinic - Surabaya\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Surabaya\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Kurnia Primary Clinic\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match once the PT legal prefix and the '- Surabaya' location suffix are ignored: 'Kurnia Primary Clinic'.",
+      "Both are in Surabaya, Indonesia (Kota Surabaya is the city administrative name).",
+      "No tax ID or email domain on either record to conflict, and no sign of a different branch."
+    ],
+    "selected_card_code": "C00449"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:16+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

@@ -1,0 +1,17 @@
+{
+  "cache_key": "483a211b153dafa870d57eac5b333a726e10c4613b2064d6bebac4ecb1744a45",
+  "input": "{\"candidates\": [{\"card_code\": \"C00074\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"National Heart Centre Singapore Pte Ltd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore 119074\", \"country\": \"SG\", \"email_domain\": \"nccs.sg.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"National Cancer Centre Singapore Pte Ltd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is National Cancer Centre Singapore, while the candidate is National Heart Centre Singapore, which are different institutions despite the similar naming pattern.",
+      "The email domain (nccs) points to the cancer centre, and no tax ID is available to link the two records.",
+      "Only the country and city match, which is not enough to treat them as the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:22+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

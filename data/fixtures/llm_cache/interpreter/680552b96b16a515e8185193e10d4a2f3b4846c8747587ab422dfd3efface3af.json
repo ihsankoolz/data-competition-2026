@@ -1,0 +1,35 @@
+{
+  "cache_key": "680552b96b16a515e8185193e10d4a2f3b4846c8747587ab422dfd3efface3af",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: Stock replenishment\n\nCan someone pick this up? I'm on leave until Monday.\n\nHendra Gunawan\n\n________________________________\nFrom: Bambang Wibowo <lab@bpc.id.example>\nSent: 17 Sep 2026 14:21\nSubject: Purchase Order 0071/PO/26\n\nDengan hormat,\n\nKindly arrange delivery of 27 kit dengue IgG/IgM kits to Klinik Pratama Bina. PO no. 0071/PO/26 attached.\n\nFaktur mohon dikirim ke bagian keuangan kami. Jika ada kendala, mohon segera dikabari.\n\nHormat kami,\nBambang Wibowo\n\n> Bambang Wibowo wrote (10 Aug):\n> Can you also send the IFU and the latest certificate of analysis?\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Klinik Pratama Bina",
+        "value": "Klinik Pratama Bina"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO no. 0071/PO/26",
+        "value": "0071/PO/26"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "dengue IgG/IgM kits",
+        "qty": 27.0,
+        "source_quote": "27 kit dengue IgG/IgM kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:01+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

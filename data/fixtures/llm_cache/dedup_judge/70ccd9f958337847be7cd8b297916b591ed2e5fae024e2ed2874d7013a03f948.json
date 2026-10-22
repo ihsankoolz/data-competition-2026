@@ -1,0 +1,17 @@
+{
+  "cache_key": "70ccd9f958337847be7cd8b297916b591ed2e5fae024e2ed2874d7013a03f948",
+  "input": "{\"candidates\": [{\"card_code\": \"C00443\", \"city\": \"Bekasi\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hikmah Clinical Laboratory\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Palembang\", \"country\": \"ID\", \"email_domain\": \"khcl.id.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Laboratorium Klinik Kurnia Hikmah\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names are only loosely similar: 'Hikmah Clinical Laboratory' vs 'Laboratorium Klinik Kurnia Hikmah' share just the word Hikmah, and the new name has an extra 'Kurnia'.",
+      "Cities differ (Bekasi vs Palembang), which suggests different sites or entities.",
+      "No tax ID or email domain exists on the candidate to confirm a match, so the evidence is insufficient."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:47+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

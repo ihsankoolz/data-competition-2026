@@ -1,0 +1,17 @@
+{
+  "cache_key": "4c62581ca30764ad3a2e904266e2237891bf6e98f3873cc1ed371ab97b546630",
+  "input": "{\"candidates\": [{\"card_code\": \"C00415\", \"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Bệnh viện Nhân dân Gia Định\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"gdph.vn.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Gia Dinh People's Hospital\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match across languages: Bệnh viện Nhân dân Gia Định is Vietnamese for Gia Dinh People's Hospital, with accents dropped.",
+      "Both records are in Ho Chi Minh City, Vietnam, so the location agrees.",
+      "Neither record has a tax ID and the existing one has no email domain, so nothing conflicts; the different entity code (QTG vs SPD) just reflects separate companies sharing the database."
+    ],
+    "selected_card_code": "C00415"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:09+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

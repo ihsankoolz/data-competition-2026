@@ -1,0 +1,17 @@
+{
+  "cache_key": "f4db1706faedae1ee434a63728ab6f8d20b17443f5a8f557d109118e8afca083",
+  "input": "{\"candidates\": [{\"card_code\": \"C00404\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"บริษัท เมอร์ไลออน ไดแอกนอสติกส์ (ประเทศไทย) จำกัด\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"mdt.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Merlion Diagnostics Thailand\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The Thai name translates to 'Merlion Diagnostics (Thailand) Co., Ltd', which matches 'Merlion Diagnostics Thailand' apart from script and legal suffix.",
+      "Both records are in Bangkok, Thailand, so country and city agree.",
+      "Neither record has a tax ID and no conflicting site or branch name appears, so nothing points to a different entity."
+    ],
+    "selected_card_code": "C00404"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:40+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

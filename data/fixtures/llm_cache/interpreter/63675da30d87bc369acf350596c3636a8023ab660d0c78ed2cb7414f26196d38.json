@@ -1,0 +1,43 @@
+{
+  "cache_key": "63675da30d87bc369acf350596c3636a8023ab660d0c78ed2cb7414f26196d38",
+  "input": "<email>\nFrom domain: lives.example\nSubject: New vendor - Precision Diagnostics Asia\n\nHi MDM team,\n\nPlease create a new vendor: Precision Diagnostics Asia Pte Ltd, UEN 201845123K, 10 Science Park Road, Singapore 117684. Contact ar@precisiondx.sg.example. Payment terms 30 days.\n\nBank details: DBS Bank Ltd, [bank details removed], [bank details removed].\n\nThanks,\nGrace Teo\nProcurement, Singapore\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "vendor",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Precision Diagnostics Asia Pte Ltd",
+        "value": "Precision Diagnostics Asia Pte Ltd"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "UEN 201845123K",
+        "value": "201845123K"
+      },
+      {
+        "key": "country",
+        "source_quote": "Singapore 117684",
+        "value": "SG"
+      },
+      {
+        "key": "address",
+        "source_quote": "10 Science Park Road, Singapore 117684",
+        "value": "10 Science Park Road, Singapore 117684"
+      },
+      {
+        "key": "contact_email",
+        "source_quote": "ar@precisiondx.sg.example",
+        "value": "ar@precisiondx.sg.example"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:48+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

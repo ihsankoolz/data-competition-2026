@@ -1,0 +1,17 @@
+{
+  "cache_key": "ecab5091f44adc981bda7b119cefcaff7aafacfca9121834f759272d16be257f",
+  "input": "{\"candidates\": [{\"card_code\": \"V00006\", \"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Norvel Global Medical Manufacturing\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"yarrowglobal.id.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"PT Yarrow Global Medical Manufacturing\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The core brand names differ: 'Yarrow' vs 'Norvel', so these are not a typo or abbreviation variant of each other.",
+      "Only the generic words 'Global Medical Manufacturing', the PT suffix, and the city/country (Jakarta, ID) match, which is not enough to show the same entity.",
+      "No tax ID or matching email domain is available to confirm a link, so there is no supporting evidence."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:48+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

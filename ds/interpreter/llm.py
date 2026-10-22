@@ -101,7 +101,9 @@ def write_cache(task: str, key: str, entry: dict) -> Path:
     p = _cache_path(task, key)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(
-        json.dumps(entry, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(entry, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",  # LF on Windows too: the cache is committed (.gitattributes eol=lf)
     )
     return p
 

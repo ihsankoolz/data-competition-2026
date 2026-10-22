@@ -1,0 +1,30 @@
+{
+  "cache_key": "1249ee4235d219e8aa2ccb21153bd691c14a118be9cbf9335f18fa7705fff4ef",
+  "input": "<email>\nFrom domain: pgh.th.example\nSubject: Upcoming PO - pricing\n\nสวัสดีค่ะ Sales team,\n\nช่วย quote 1 unit of binocular microscope ให้ โรงพยาบาลตำรวจ หน่อยครับ\n\nขอบคุณครับ\nDuangjai Boonyarat\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.85,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "โรงพยาบาลตำรวจ",
+        "value": "โรงพยาบาลตำรวจ"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-MIC-BIN",
+        "product_text": "binocular microscope",
+        "qty": 1.0,
+        "source_quote": "1 unit of binocular microscope"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:31+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,17 @@
+{
+  "cache_key": "b7a8f6c9f4ae8cea30abcc4c8534171d17bfacb1c6f8581511fd68d76e5a0649",
+  "input": "{\"candidates\": [{\"card_code\": \"C00089\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Mount Elizabeth Novena Hospital Pte Ltd\", \"tax_id\": \"\"}, {\"card_code\": \"C00151\", \"city\": \"SINGAPORE\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Mount Elizabeth Novena Hospital Pte Ltd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"SINGAPORE\", \"country\": \"SG\", \"email_domain\": \"meh.sg.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Mount Elizabeth Hospital Pte Ltd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is Mount Elizabeth Hospital, while both candidates are Mount Elizabeth Novena Hospital, which is a different site of the same brand.",
+      "Neither side has a tax ID, and the email domain is missing on the candidates, so nothing confirms they are the same legal entity.",
+      "Both candidates match each other but not the new record, so selecting either would risk merging two separate hospitals."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:18+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

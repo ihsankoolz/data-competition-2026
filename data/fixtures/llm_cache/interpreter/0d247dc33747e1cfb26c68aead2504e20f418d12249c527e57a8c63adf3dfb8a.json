@@ -1,0 +1,35 @@
+{
+  "cache_key": "0d247dc33747e1cfb26c68aead2504e20f418d12249c527e57a8c63adf3dfb8a",
+  "input": "<email>\nFrom domain: sbpc.id.example\nSubject: Following our call\n\nSelamat pagi,\n\nOur budget has been approved. KP Sentra Bina intends to purchase 3 x Preventive Maintenance Visit around 9 Aug. Formal PO will follow.\n\nAtas perhatian dan kerja samanya kami ucapkan terima kasih.\n\nHormat kami,\nBambang Lestari\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "KP Sentra Bina",
+        "value": "KP Sentra Bina"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "around 9 Aug",
+        "value": "9 Aug"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-SVC-PM",
+        "product_text": "Preventive Maintenance Visit",
+        "qty": 3.0,
+        "source_quote": "3 x Preventive Maintenance Visit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:34+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

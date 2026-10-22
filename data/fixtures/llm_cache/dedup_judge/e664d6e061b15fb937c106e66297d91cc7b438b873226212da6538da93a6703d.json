@@ -1,0 +1,17 @@
+{
+  "cache_key": "e664d6e061b15fb937c106e66297d91cc7b438b873226212da6538da93a6703d",
+  "input": "{\"candidates\": [{\"card_code\": \"C00173\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"โรงพยาบาลพัฒนา\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"กรุงเทพมหานคร\", \"country\": \"TH\", \"email_domain\": \"phatthanalaboratory.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phatthana Laboratory\", \"tax_id\": \"0105510995789\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a laboratory (Phatthana Laboratory), while the candidate is a hospital (โรงพยาบาลพัฒนา = Phatthana Hospital), which are different types of entity.",
+      "The candidate has no tax ID or email domain, so nothing confirms they are the same legal entity beyond a shared brand name and city.",
+      "Sharing only the Phatthana name in Bangkok is not enough, and a different site or business type usually means a different entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:09+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}
