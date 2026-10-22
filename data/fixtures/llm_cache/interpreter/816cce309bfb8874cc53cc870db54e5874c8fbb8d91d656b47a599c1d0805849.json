@@ -1,0 +1,35 @@
+{
+  "cache_key": "816cce309bfb8874cc53cc870db54e5874c8fbb8d91d656b47a599c1d0805849",
+  "input": "<email>\nFrom domain: spl.sg.example\nSubject: Re: our discussion\n\nGood morning,\n\nAs discussed with your sales rep, please process PO PO-45053: Covid antigen test kits x 35. Invoice to Starlight Pathology Lab Pte Ltd.\n\nThank you,\nShirley Yeo\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Starlight Pathology Lab Pte Ltd",
+        "value": "Starlight Pathology Lab Pte Ltd"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO PO-45053",
+        "value": "PO-45053"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-COV-AG",
+        "product_text": "Covid antigen test kits",
+        "qty": 35.0,
+        "source_quote": "Covid antigen test kits x 35"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:43+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

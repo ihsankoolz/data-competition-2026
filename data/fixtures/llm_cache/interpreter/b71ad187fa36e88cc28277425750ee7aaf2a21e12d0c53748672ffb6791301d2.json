@@ -1,0 +1,46 @@
+{
+  "cache_key": "b71ad187fa36e88cc28277425750ee7aaf2a21e12d0c53748672ffb6791301d2",
+  "input": "<email>\nFrom domain: ssmc.th.example\nSubject: Supplies for คลินิกเวชกรรมสยาม สาทร\n\nสวัสดีครับ\n\nรบกวน send 1 kits dengue IgG/IgM kits and 1 boxes CRP reagent, PO PO-43773. Delivery to คลินิกเวชกรรมสยาม สาทร before 18 Jul 2026.\n\nขอบคุณครับ\nPrasert Thongchai\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.95,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Delivery to คลินิกเวชกรรมสยาม สาทร",
+        "value": "คลินิกเวชกรรมสยาม สาทร"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO PO-43773",
+        "value": "PO-43773"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "before 18 Jul 2026",
+        "value": "2026-07-18"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "dengue IgG/IgM kits",
+        "qty": 1.0,
+        "source_quote": "1 kits dengue IgG/IgM kits"
+      },
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "CRP reagent",
+        "qty": 1.0,
+        "source_quote": "1 boxes CRP reagent"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:26:53+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

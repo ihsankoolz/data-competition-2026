@@ -1,0 +1,17 @@
+{
+  "cache_key": "1fa4252d2238ea92cfd0178e8223813da3fc9ac21ba25bd4a0452f033f147fb8",
+  "input": "{\"candidates\": [{\"card_code\": \"C00508\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"Pornprasert Bang Na Lab\", \"name\": \"พรประเสริฐ บางนา แล็บ\", \"tax_id\": \"\"}, {\"card_code\": \"C00529\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"พรประเสริฐ บางนา แล็บ\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"pornprasertlab.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"พรประเสริฐ แล็บ\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Both candidates carry the site name \"Bang Na\" (บางนา), but the new record is just \"Pornprasert Lab\" with no site, so it could be a different site or the main entity.",
+      "Neither side has a tax ID, and the candidates have no email domain, so nothing confirms they are the same legal entity.",
+      "A different site of the same brand usually means a different entity, so a match is too risky."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:46+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

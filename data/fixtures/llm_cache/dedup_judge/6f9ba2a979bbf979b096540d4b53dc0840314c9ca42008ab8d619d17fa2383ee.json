@@ -1,0 +1,17 @@
+{
+  "cache_key": "6f9ba2a979bbf979b096540d4b53dc0840314c9ca42008ab8d619d17fa2383ee",
+  "input": "{\"candidates\": [{\"card_code\": \"C00263\", \"city\": \"Kajang\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Hospital Serdang (Kajang)\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Kajang\", \"country\": \"MY\", \"email_domain\": \"serdanghospital.my.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hospital Serdang\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names match: 'Hospital Serdang (Kajang)' only adds the city in brackets, and the new record is in Kajang.",
+      "Country and city are the same (Kajang, MY), and no tax ID or other detail points to a different site or branch.",
+      "The different entity codes (QTG vs SPD) are just different group companies in the shared database, so they do not make this a different legal entity."
+    ],
+    "selected_card_code": "C00263"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:01+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

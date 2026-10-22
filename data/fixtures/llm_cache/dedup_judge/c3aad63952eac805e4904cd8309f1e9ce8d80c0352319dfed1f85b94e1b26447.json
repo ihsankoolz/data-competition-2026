@@ -1,0 +1,17 @@
+{
+  "cache_key": "c3aad63952eac805e4904cd8309f1e9ce8d80c0352319dfed1f85b94e1b26447",
+  "input": "{\"candidates\": [{\"card_code\": \"V00026\", \"city\": \"Hamburg\", \"country\": \"DE\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Elvion Biotech GmbH\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Hamburg\", \"country\": \"DE\", \"email_domain\": \"elvionglobal.de.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Elvion Global Biotech GmbH\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Both are Elvion Biotech GmbH in Hamburg, Germany; the new name only adds the descriptor \"Global\", which does not point to a different site or branch.",
+      "The legal suffix, city and country are identical, and neither record has a tax ID that conflicts.",
+      "The records sit in different companies (QTS and SPD) of the shared database, so this is a likely duplicate of the same legal entity. Confidence is moderate because there is no tax ID and the candidate has no email domain."
+    ],
+    "selected_card_code": "V00026"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:36:11+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

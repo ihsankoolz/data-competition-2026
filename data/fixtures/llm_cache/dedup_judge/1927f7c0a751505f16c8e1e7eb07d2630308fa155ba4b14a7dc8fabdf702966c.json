@@ -1,0 +1,17 @@
+{
+  "cache_key": "1927f7c0a751505f16c8e1e7eb07d2630308fa155ba4b14a7dc8fabdf702966c",
+  "input": "{\"candidates\": [{\"card_code\": \"C00525\", \"city\": \"Melaka\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Hospital Melaka - Lab Dept\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Melaka\", \"country\": \"MY\", \"email_domain\": \"mgh.my.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hospital Melaka\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The existing record is \"Hospital Melaka - Lab Dept\", a department, while the new record is the whole \"Hospital Melaka\", so they are likely different entities or sites.",
+      "Neither record has a tax ID and the existing one has no email domain, so there is nothing to confirm they are the same legal entity.",
+      "Only the city and country match, which is not enough on its own to treat them as duplicates."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:30+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

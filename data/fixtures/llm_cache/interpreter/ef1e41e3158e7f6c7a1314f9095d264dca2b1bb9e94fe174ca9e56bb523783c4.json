@@ -1,0 +1,40 @@
+{
+  "cache_key": "ef1e41e3158e7f6c7a1314f9095d264dca2b1bb9e94fe174ca9e56bb523783c4",
+  "input": "<email>\nFrom domain: lcpje.sg.example\nSubject: Order 0063/PO/26\n\nHello,\n\nPlease deliver 10 boxes of Covid antigen test kits, PO 0063/PO/26 attached.\n\nBest regards,\nHui Ting Ong\nLion City Pathology (Jurong East) Pte Ltd\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Lion City Pathology (Jurong East) Pte Ltd",
+        "value": "Lion City Pathology (Jurong East) Pte Ltd"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO 0063/PO/26 attached",
+        "value": "0063/PO/26"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "",
+        "value": ""
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-COV-AG",
+        "product_text": "Covid antigen test kits",
+        "qty": 10.0,
+        "source_quote": "10 boxes of Covid antigen test kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:26:43+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

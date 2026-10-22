@@ -1,0 +1,38 @@
+{
+  "cache_key": "4a2983cbe74bde990c681a36c1a4705fa234f50e16ee095d7d024513fd5a4812",
+  "input": "<email>\nFrom domain: spd.lives.example\nSubject: Customer creation request\n\nHi team,\n\nPlease set up the following customer:\nName: Baan Suan Medical Clinic\nTIN: 0505565012345\nCountry: Thailand\nBuys: reagent orders\n\nRegards,\nPimchanok Srisuk\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "customer",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Name: Baan Suan Medical Clinic",
+        "value": "Baan Suan Medical Clinic"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "TIN: 0505565012345",
+        "value": "0505565012345"
+      },
+      {
+        "key": "country",
+        "source_quote": "Country: Thailand",
+        "value": "TH"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "Buys: reagent orders",
+        "value": "reagent orders"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:28:07+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

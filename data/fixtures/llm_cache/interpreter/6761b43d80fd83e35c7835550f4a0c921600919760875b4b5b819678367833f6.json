@@ -1,0 +1,40 @@
+{
+  "cache_key": "6761b43d80fd83e35c7835550f4a0c921600919760875b4b5b819678367833f6",
+  "input": "<email>\nFrom domain: bksggh.vn.example\nSubject: PO PR20260063\n\nChao anh/chi,\n\nDe nghi giao 4 units of binocular microscope, PO PR20260063. Delivery to Cong ty Co phan Benh vien Da khoa Bach Khoa Sai Gon before 04/09/2026.\n\nCam on,\nTran Duc Anh\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Cong ty Co phan Benh vien Da khoa Bach Khoa Sai Gon",
+        "value": "Cong ty Co phan Benh vien Da khoa Bach Khoa Sai Gon"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO PR20260063",
+        "value": "PR20260063"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "before 04/09/2026",
+        "value": "2026-09-04"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-MIC-BIN",
+        "product_text": "binocular microscope",
+        "qty": 4.0,
+        "source_quote": "4 units of binocular microscope"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:28:50+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

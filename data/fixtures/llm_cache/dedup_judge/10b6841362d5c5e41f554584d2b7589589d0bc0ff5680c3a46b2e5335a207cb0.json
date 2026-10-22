@@ -1,0 +1,17 @@
+{
+  "cache_key": "10b6841362d5c5e41f554584d2b7589589d0bc0ff5680c3a46b2e5335a207cb0",
+  "input": "{\"candidates\": [{\"card_code\": \"C00313\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Orchid Family Clinic Bedok - Procurement\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Orchid Family Clinic (Tampines) Pte Ltd\", \"tax_id\": \"201077270N\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is the Tampines site of Orchid Family Clinic, while the candidate is the Bedok site, so they are different branches.",
+      "The candidate has no tax ID or email domain, so nothing links it to the new record's tax ID 201077270N.",
+      "The only shared details are the brand name and city, which is not enough to call them the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:30:37+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

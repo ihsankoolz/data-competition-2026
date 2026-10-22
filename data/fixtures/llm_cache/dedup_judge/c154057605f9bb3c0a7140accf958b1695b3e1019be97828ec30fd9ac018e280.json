@@ -1,0 +1,17 @@
+{
+  "cache_key": "c154057605f9bb3c0a7140accf958b1695b3e1019be97828ec30fd9ac018e280",
+  "input": "{\"candidates\": [{\"card_code\": \"C00036\", \"city\": \"Bogor\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Klinik Kurnia Insani\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Semarang\", \"country\": \"ID\", \"email_domain\": \"insaniclinic.id.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Klinik Insani\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Cities differ: the new record is in Semarang while the candidate is in Bogor, which points to different sites.",
+      "Names are not the same: 'Klinik Insani' vs 'Klinik Kurnia Insani' differ by a distinctive word, and neither record has a tax ID or matching email domain to confirm they are one entity.",
+      "Insufficient evidence of a match, so it is safer to treat the new record as a separate clinic."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:10+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

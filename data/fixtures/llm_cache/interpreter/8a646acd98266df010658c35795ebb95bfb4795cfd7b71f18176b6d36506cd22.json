@@ -1,0 +1,41 @@
+{
+  "cache_key": "8a646acd98266df010658c35795ebb95bfb4795cfd7b71f18176b6d36506cd22",
+  "input": "<email>\nFrom domain: dsagh.id.example\nSubject: FYI\n\nDengan hormat,\n\nWe are pleased to place the following order (our ref 0064/PO/26) for Rumah Sakit Umum Daerah Dr. Saiful Anwar.\n- 9 kotak the HbA1c kits\n- 10 box CRP Quantitative Reagent\nKindly confirm the delivery date.\n\nFaktur mohon dikirim ke bagian keuangan kami. Jika ada kendala, mohon segera dikabari.\n\nSalam,\nYuni Kusuma\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Rumah Sakit Umum Daerah Dr. Saiful Anwar",
+        "value": "Rumah Sakit Umum Daerah Dr. Saiful Anwar"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "our ref 0064/PO/26",
+        "value": "0064/PO/26"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "HbA1c kits",
+        "qty": 9.0,
+        "source_quote": "9 kotak the HbA1c kits"
+      },
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "CRP Quantitative Reagent",
+        "qty": 10.0,
+        "source_quote": "10 box CRP Quantitative Reagent"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:28:10+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

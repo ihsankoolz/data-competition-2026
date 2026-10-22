@@ -1,0 +1,17 @@
+{
+  "cache_key": "2c33e8c96b742ef6c40075edcb19124641bf53f359cd12aa2030786997057ada",
+  "input": "{\"candidates\": [{\"card_code\": \"C00307\", \"city\": \"Johor Baharu\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Wellspring Medical Supplies Sdn Bhd\", \"tax_id\": \"202201865797\"}], \"new_record\": {\"city\": \"JB\", \"country\": \"MY\", \"email_domain\": \"wms.my.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Wellspring Medical Supplies Sdn Bhd (Johor Bahru)\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match exactly apart from the \"(Johor Bahru)\" suffix, which is just a location note and the candidate's city is Johor Baharu.",
+      "Same country (MY) and same city: JB is an abbreviation of Johor Bahru, a spelling variant of Johor Baharu.",
+      "The new record has no tax ID and no email domain to conflict, so nothing points to a different entity; the different SAP entity code (QTS vs QTG) is expected in a shared database."
+    ],
+    "selected_card_code": "C00307"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:30:55+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

@@ -1,0 +1,17 @@
+{
+  "cache_key": "f5ea625705229f2ff479f40c328a4e9e4c96f959e076fc385c91f9de0dff4232",
+  "input": "{\"candidates\": [{\"card_code\": \"C00449\", \"city\": \"Hat Yai\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Udomsuk Clinic\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"umc.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"คลินิกเวชกรรมอุดมสุข\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names are similar: คลินิกเวชกรรมอุดมสุข is Thai for Udomsuk Medical Clinic, which is close to Udomsuk Clinic.",
+      "The cities differ (Bangkok vs Hat Yai), so they are likely different sites or branches.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing confirms they are the same entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:29+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

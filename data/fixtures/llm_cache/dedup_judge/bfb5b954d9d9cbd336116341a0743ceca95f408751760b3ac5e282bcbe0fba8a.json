@@ -1,0 +1,17 @@
+{
+  "cache_key": "bfb5b954d9d9cbd336116341a0743ceca95f408751760b3ac5e282bcbe0fba8a",
+  "input": "{\"candidates\": [{\"card_code\": \"C00212\", \"city\": \"Singapore 119074\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Orchid Family Clinic Bedok\", \"tax_id\": \"\"}, {\"card_code\": \"C00313\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Orchid Family Clinic Bedok - Procurement\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Orchid Family Clinic (Tampines) Pte Ltd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is the Tampines branch of Orchid Family Clinic, while both candidates are the Bedok branch, so the sites differ.",
+      "Neither record has a tax ID or email domain, so nothing links the new record to either candidate.",
+      "C00313 is also a procurement account for Bedok, which makes it even less likely to be the Tampines entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:49+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

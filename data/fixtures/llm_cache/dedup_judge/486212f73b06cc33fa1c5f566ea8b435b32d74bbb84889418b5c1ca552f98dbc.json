@@ -1,0 +1,17 @@
+{
+  "cache_key": "486212f73b06cc33fa1c5f566ea8b435b32d74bbb84889418b5c1ca552f98dbc",
+  "input": "{\"candidates\": [{\"card_code\": \"C00529\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"พรประเสริฐ บางนา แล็บ\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"pornprasertlab.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"พรประเสริฐ แล็บ\", \"tax_id\": \"0105401931607\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The existing record name includes \"บางนา\" (Bangna), which points to a specific branch or site, while the new record has no site qualifier.",
+      "The existing record has no tax ID or email domain, so there is no evidence to confirm it is the same legal entity as the new record.",
+      "Name and city alone are not enough to rule out a different branch of the same brand, so the safer answer is no match."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:32+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

@@ -1,0 +1,17 @@
+{
+  "cache_key": "cc6dd82bb16b74ceaed209d161506752a307a4a33e3e019c1d7397ee63b68550",
+  "input": "{\"candidates\": [{\"card_code\": \"C00183\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Merlion Diagnostics Thailand\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"mdt.th.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"บริษัท เมอร์ไลออน ไดแอกนอสติกส์ (ประเทศไทย) จำกัด\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The Thai name \"บริษัท เมอร์ไลออน ไดแอกนอสติกส์ (ประเทศไทย) จำกัด\" transliterates to \"Merlion Diagnostics (Thailand) Co., Ltd\", which matches \"Merlion Diagnostics Thailand\".",
+      "Both records are in Bangkok, Thailand, and neither has a tax ID that would conflict.",
+      "The different entity codes (QTG vs SPD) are separate companies in the shared database, and no branch or site marker suggests a different legal entity."
+    ],
+    "selected_card_code": "C00183"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:29+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

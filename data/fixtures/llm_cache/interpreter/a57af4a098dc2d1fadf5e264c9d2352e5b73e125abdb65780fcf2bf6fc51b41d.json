@@ -1,0 +1,38 @@
+{
+  "cache_key": "a57af4a098dc2d1fadf5e264c9d2352e5b73e125abdb65780fcf2bf6fc51b41d",
+  "input": "<email>\nFrom domain: spd.lives.example\nSubject: New cost center\n\nHi Priya,\n\nPlease open a new cost center \"SPD TH Tender Desk\" for SPD Thailand, effective 1 Nov 2026.\n\nThanks,\nAnan Chaiyaporn\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "cost_center",
+    "fields": [
+      {
+        "key": "center_name",
+        "source_quote": "SPD TH Tender Desk",
+        "value": "SPD TH Tender Desk"
+      },
+      {
+        "key": "entity",
+        "source_quote": "SPD Thailand",
+        "value": "SPD"
+      },
+      {
+        "key": "country",
+        "source_quote": "SPD Thailand",
+        "value": "TH"
+      },
+      {
+        "key": "effective_from",
+        "source_quote": "effective 1 Nov 2026",
+        "value": "2026-11-01"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:29:48+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

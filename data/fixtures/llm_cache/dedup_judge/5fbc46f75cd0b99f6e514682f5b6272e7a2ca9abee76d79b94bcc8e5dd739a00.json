@@ -1,0 +1,17 @@
+{
+  "cache_key": "5fbc46f75cd0b99f6e514682f5b6272e7a2ca9abee76d79b94bcc8e5dd739a00",
+  "input": "{\"candidates\": [{\"card_code\": \"C00128\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phramongkutklao Hospital\", \"tax_id\": \"\"}, {\"card_code\": \"C00393\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Phramongkutklao Hospital - Laboratory\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Phramongkutklao Hospital - Procurement\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is the Procurement department of Phramongkutklao Hospital in Bangkok, and C00128 is the main hospital record with the same name, city and country.",
+      "C00393 is the Laboratory, a different department, so it is a worse match than the main hospital record.",
+      "Neither record has a tax ID or email domain, so the match rests on the name; a department suffix likely refers to the same legal entity."
+    ],
+    "selected_card_code": "C00128"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:26+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

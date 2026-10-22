@@ -1,0 +1,17 @@
+{
+  "cache_key": "83e7f5f1b2ef1a5a7ca0323382129b7e244d6d77e92ebd97d9f3c51b21cd9985",
+  "input": "{\"candidates\": [{\"card_code\": \"C00201\", \"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"My Duc General Clinic\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Nha Trang\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Da khoa My Duc Nha Trang\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a Nha Trang branch, while the candidate is in Ho Chi Minh City, so they are different sites of the same brand.",
+      "Names match on brand (My Duc General Clinic = Phong kham Da khoa My Duc), but the new one carries a location suffix, which indicates a separate branch.",
+      "Neither record has a tax ID or email domain to confirm they are the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:15+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

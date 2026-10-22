@@ -1,0 +1,17 @@
+{
+  "cache_key": "50879a1267c631c2e5d67835ba842ab23eb19b120493aeae06c0c1948c762387",
+  "input": "{\"candidates\": [{\"card_code\": \"V00003\", \"city\": \"San Diego\", \"country\": \"US\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Junova Global Life Sciences Inc.\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"San Diego\", \"country\": \"US\", \"email_domain\": \"corvexglobal.us.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Corvex Global Life Sciences Inc.\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names differ in the distinctive brand word: Corvex vs Junova, which is not a typo, abbreviation or translation.",
+      "Only the generic words 'Global Life Sciences Inc.', the city and the country match, which is not enough to show the same entity.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing else links them."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:56+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

@@ -49,13 +49,14 @@ test-web:
 
 eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
 	LLM_MODE=replay uv run python notebooks/eval_dedup.py
+	LLM_MODE=replay uv run python notebooks/eval_interpreter.py
 
 api-types:        ## regenerate the typed API client from the FastAPI OpenAPI spec
 	uv run python -m services.api.export_openapi $(WEB)/lib/api/openapi.json
 	cd $(WEB) && pnpm gen:api
 
-record:           ## re-record the LLM replay cache (needs ANTHROPIC_API_KEY)
-	@echo "make record: not yet implemented (Fri)"
+record:           ## record the LLM replay cache: 88 emails + dedup judge cases (needs ANTHROPIC_API_KEY; prints a cost estimate, stops over US$5)
+	LLM_MODE=record uv run python -m ds.interpreter.record
 
 stop:             ## stop whatever is listening on 8000, 8001, 3000 (Windows-friendly)
 	-@for p in 8000 8001 3000; do \

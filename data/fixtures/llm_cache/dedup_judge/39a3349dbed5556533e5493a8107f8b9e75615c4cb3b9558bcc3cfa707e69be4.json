@@ -1,0 +1,17 @@
+{
+  "cache_key": "39a3349dbed5556533e5493a8107f8b9e75615c4cb3b9558bcc3cfa707e69be4",
+  "input": "{\"candidates\": [{\"card_code\": \"C00468\", \"city\": \"SINGAPORE\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Vista Medical Clinic Bukit Merah Pte Ltd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore 119074\", \"country\": \"SG\", \"email_domain\": \"vmcbm2.sg.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Vertex Medical Clinic Bukit Merah\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The brand names differ: 'Vertex Medical Clinic' versus 'Vista Medical Clinic', which is a different word rather than a typo or abbreviation.",
+      "Both are in Singapore with the same location name (Bukit Merah), but a shared location is not enough to confirm the same entity.",
+      "No tax ID or email domain is available on the existing record to confirm a match, so there is not enough evidence."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:24+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

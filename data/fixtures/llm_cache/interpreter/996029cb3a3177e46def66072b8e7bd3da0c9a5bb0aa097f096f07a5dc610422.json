@@ -1,0 +1,30 @@
+{
+  "cache_key": "996029cb3a3177e46def66072b8e7bd3da0c9a5bb0aa097f096f07a5dc610422",
+  "input": "<email>\nFrom domain: pgh.th.example\nSubject: Order question\n\nสวัสดีครับ\n\nDo you have stock of A-HBA-1C x 146? โรงพยาบาลตำรวจ may need it soon.\n\nThanks ค่ะ\nDuangjai Boonyarat\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "โรงพยาบาลตำรวจ",
+        "value": "โรงพยาบาลตำรวจ"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "A-HBA-1C",
+        "qty": 146.0,
+        "source_quote": "A-HBA-1C x 146"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:56+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

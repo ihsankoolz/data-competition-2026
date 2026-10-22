@@ -1,0 +1,17 @@
+{
+  "cache_key": "da92ccd76d68e311e77cafe1fb55ae27a77d9f6fa04f50891bb10d6ad615775f",
+  "input": "{\"candidates\": [{\"card_code\": \"C00561\", \"city\": \"Khon Kaen\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"Khon Kaen Hospital\", \"name\": \"โรงพยาบาลขอนแก่น - Khon Kaen\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Khon Kaen\", \"country\": \"TH\", \"email_domain\": \"rkkh.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Raksuk Khon Kaen Hospital\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is 'Raksuk Khon Kaen Hospital', a brand-prefixed name, while the candidate is the public 'โรงพยาบาลขอนแก่น' (Khon Kaen Hospital), so they are likely different hospitals in the same city.",
+      "Both are in Khon Kaen, but a shared city and the word 'Hospital' are not enough to confirm the same entity.",
+      "Neither record has a tax ID and the candidate has no email domain, so there is no evidence to confirm a match."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:32+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

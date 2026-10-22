@@ -1,0 +1,30 @@
+{
+  "cache_key": "d446e78484b72fe702bb919bbe34e2af4030827778dabacaf1bf2ae5993878ee",
+  "input": "<email>\nFrom domain: mrh.th.example\nSubject: Order question\n\nDear team, สวัสดีครับ\n\nWhat is the lead time for 3 units of the haematology analyser? Asking on behalf of โรงพยาบาลเมตตา รังสิต.\n\nThanks ค่ะ\nApichart Srisawat\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "โรงพยาบาลเมตตา รังสิต",
+        "value": "โรงพยาบาลเมตตา รังสิต"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-HEM-5P",
+        "product_text": "haematology analyser",
+        "qty": 3.0,
+        "source_quote": "3 units of the haematology analyser"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:26:32+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

@@ -1,0 +1,43 @@
+{
+  "cache_key": "d324735d14df8cea3ed5a695d9c5a708442bf41bb5a5db3c4fa11e803e852430",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: Customer creation request\n\nHi team,\n\nPlease set up the following customer:\nName: Benh vien Da khoa Trung uong Can Tho\nMST: 0495829037\nCountry: Vietnam\nBuys: an analyser purchase\n\nRegards,\nVo Quoc Bao\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.95,
+    "domain": "customer",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Benh vien Da khoa Trung uong Can Tho",
+        "value": "Benh vien Da khoa Trung uong Can Tho"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "0495829037",
+        "value": "0495829037"
+      },
+      {
+        "key": "city",
+        "source_quote": "Can Tho",
+        "value": "Can Tho"
+      },
+      {
+        "key": "country",
+        "source_quote": "Vietnam",
+        "value": "VN"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "Buys: an analyser purchase",
+        "value": "an analyser purchase"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:14+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

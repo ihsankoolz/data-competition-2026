@@ -1,0 +1,17 @@
+{
+  "cache_key": "aab53e0da345edbd0476d987c2fde5ba1ca2380aa73bf3475763affed3b8844f",
+  "input": "{\"candidates\": [{\"card_code\": \"C00252\", \"city\": \"Bien Hoa\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Benh vien Da khoa Kim Ngan\", \"tax_id\": \"\"}, {\"card_code\": \"C00285\", \"city\": \"Bien Hoa\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Bệnh viện Đa khoa Kim Ngân\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bien Hoa\", \"country\": \"VN\", \"email_domain\": \"knlc.vn.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Trung tâm Xét nghiệm Kim Ngân\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a testing/laboratory center (Trung tam Xet nghiem Kim Ngan), while both candidates are a general hospital (Benh vien Da khoa Kim Ngan), which is a different type of entity.",
+      "Sharing the Kim Ngan brand and the Bien Hoa city suggests a possible affiliation, but not the same legal entity or site.",
+      "No tax ID or matching email domain is available to confirm they are the same, so no candidate can be selected."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:27+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

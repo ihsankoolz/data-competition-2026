@@ -1,0 +1,35 @@
+{
+  "cache_key": "7f6816ad42a136154f3b4bd7e97f53c4935ad7b2319ceeadfb73ca4c320915dd",
+  "input": "<email>\nFrom domain: alexandrahospital.sg.example\nSubject: Alexandra Hospital Pte Ltd\n\nHi team,\n\nOur lab has raised an internal purchase request for 2 units of the haematology analyser. Pending approval at Alexandra Hospital Pte Ltd; we will confirm by 29 Jul.\n\nThanks,\nVanessa Teo\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Alexandra Hospital Pte Ltd",
+        "value": "Alexandra Hospital Pte Ltd"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "we will confirm by 29 Jul",
+        "value": "29 Jul"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-HEM-5P",
+        "product_text": "haematology analyser",
+        "qty": 2.0,
+        "source_quote": "2 units of the haematology analyser"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:26:46+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

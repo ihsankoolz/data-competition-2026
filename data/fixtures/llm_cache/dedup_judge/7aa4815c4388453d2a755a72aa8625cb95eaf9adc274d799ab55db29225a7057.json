@@ -1,0 +1,17 @@
+{
+  "cache_key": "7aa4815c4388453d2a755a72aa8625cb95eaf9adc274d799ab55db29225a7057",
+  "input": "{\"candidates\": [{\"card_code\": \"C00371\", \"city\": \"TP. Hồ Chí Minh\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Cong ty Co phan Benh vien Da khoa My Duc\", \"tax_id\": \"\"}, {\"card_code\": \"C00535\", \"city\": \"TP. Hồ Chí Minh\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Benh vien Da khoa My Duc\", \"tax_id\": \"\"}, {\"card_code\": \"C00041\", \"city\": \"Nha Trang\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Da khoa My Duc Nha Trang\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Ho Chi Minh City\", \"country\": \"VN\", \"email_domain\": \"mdgc.vn.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"My Duc General Clinic\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is a clinic (General Clinic, Phong kham Da khoa) in Ho Chi Minh City, while both HCMC candidates are the hospital (Benh vien Da khoa My Duc), which is a different facility type.",
+      "The only clinic candidate, C00041, is in Nha Trang, a different city and site, so it is likely a different branch.",
+      "No tax ID is present on any record to confirm a match, so there is not enough evidence to call any of them the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:44+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

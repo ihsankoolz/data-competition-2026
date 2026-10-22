@@ -1,0 +1,17 @@
+{
+  "cache_key": "18effbe9b440ef303d307a587184076e7b46071907dadae035a5131157a976a1",
+  "input": "{\"candidates\": [{\"card_code\": \"C00169\", \"city\": \"Hanoi\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Nhi BS. Anh Phuc Nguyen\", \"tax_id\": \"0145054791\"}, {\"card_code\": \"C00249\", \"city\": \"Hanoi\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"PK Nhi BS. Anh Phuc Nguyen\", \"tax_id\": \"0145054791\"}], \"new_record\": {\"city\": \"Hanoi\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Phong kham Nhi BSS. Anh Phuc Nuyen\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new name is a close match to C00169 apart from small typos (BSS for BS, Nuyen for Nguyen), and both are a pediatric clinic in Hanoi.",
+      "C00169 is in the same entity (SPD) and spells out 'Phong kham Nhi' exactly like the new record, whereas C00249 abbreviates it to 'PK Nhi' and sits in a different entity (QTS).",
+      "The new record has no tax ID, so it cannot conflict with the candidate's tax ID, and nothing points to a different site or branch."
+    ],
+    "selected_card_code": "C00169"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:30:43+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

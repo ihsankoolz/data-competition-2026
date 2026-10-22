@@ -1,0 +1,17 @@
+{
+  "cache_key": "0890174da6d27db2194f9aa5a4b56cdb68044a07a8e78727cdd5c841b8843285",
+  "input": "{\"candidates\": [{\"card_code\": \"C00247\", \"city\": \"Kajang\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hospital Serdang\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Kajang\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Hospital Serdang (Kajang)\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match on the core brand 'Hospital Serdang'; the new record only adds '(Kajang)', which is the city and not a different site.",
+      "Both records are in Kajang, Malaysia, so location is consistent.",
+      "Neither record has a tax ID or email domain to contradict the match, and a different company entity code (SPD vs QTG) is expected in a shared database."
+    ],
+    "selected_card_code": "C00247"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:08+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

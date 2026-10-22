@@ -1,0 +1,17 @@
+{
+  "cache_key": "ed1455408beeafbb2f0e3e569102685f79be9470a8e5bc02382a346e86f5b8b7",
+  "input": "{\"candidates\": [{\"card_code\": \"C00429\", \"city\": \"Da Nang\", \"country\": \"VN\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"Tam Duc Da Nang Laboratory Center\", \"name\": \"Công Ty Tnhh Xét Nghiệm Y Khoa Tâm Đức Đà Nẵng\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Nha Trang\", \"country\": \"VN\", \"email_domain\": \"dtlc.vn.example\", \"entity\": \"SPD\", \"foreign_name\": \"Duc Tam Laboratory Center\", \"name\": \"Trung tâm Xét nghiệm Đức Tâm\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names differ: the new record is Đức Tâm (Duc Tam) while the candidate is Tâm Đức (Tam Duc), so the order of the name words is reversed.",
+      "The cities differ: Nha Trang vs Da Nang, and the candidate name includes Đà Nẵng as a site, suggesting a different branch or entity.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing confirms they are the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:35+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

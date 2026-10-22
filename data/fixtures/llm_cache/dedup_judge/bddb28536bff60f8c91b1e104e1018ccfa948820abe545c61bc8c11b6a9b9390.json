@@ -1,0 +1,17 @@
+{
+  "cache_key": "bddb28536bff60f8c91b1e104e1018ccfa948820abe545c61bc8c11b6a9b9390",
+  "input": "{\"candidates\": [{\"card_code\": \"C00175\", \"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Chaiyaphruek Pattaya Hospital\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"cph.th.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"บริษัท โรงพยาบาลชัยพฤกษ์ พัทยา จำกัด\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The Thai name 'บริษัท โรงพยาบาลชัยพฤกษ์ พัทยา จำกัด' transliterates to 'Chaiyaphruek Pattaya Hospital Co., Ltd', matching the candidate name once the legal suffix is ignored.",
+      "Both records are in Pattaya, Thailand, with no sign of a different site or branch.",
+      "Neither record has a tax ID, so nothing contradicts the match; the different entity codes (QTS vs QTG) just mean different companies in the shared database."
+    ],
+    "selected_card_code": "C00175"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:34:00+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

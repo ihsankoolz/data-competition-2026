@@ -1,0 +1,17 @@
+{
+  "cache_key": "f84c74331e50d494548b9f6ac172cff544f7cd0d8091edd3e85afb5adedb1cac",
+  "input": "{\"candidates\": [{\"card_code\": \"C00115\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"โรงพยาบาลศิริราช\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Siriraj Hospital\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "โรงพยาบาลศิริราช is the Thai-script name for Siriraj Hospital, so the names match across languages.",
+      "Both records are in Bangkok, Thailand, with no branch or site qualifier that points to a different location.",
+      "Neither record has a tax ID or email domain, so nothing conflicts; the different entity codes (SPD vs QTS) are separate companies sharing one database, not separate legal customers."
+    ],
+    "selected_card_code": "C00115"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:28+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

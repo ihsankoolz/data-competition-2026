@@ -1,0 +1,35 @@
+{
+  "cache_key": "21d58c09c48d46effecb08a5130ee1824f87ba85d5dfc892e0a0c8ba560b0d2d",
+  "input": "<email>\nFrom domain: qeh.my.example\nSubject: Update\n\nHi team,\n\nKindly arrange delivery of 23 kits Dengue IgG/IgM Rapid Test Kit to HQE. PO no. PR20260056 attached.\n\nThank you,\nSiew Ling Wong\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "to HQE",
+        "value": "HQE"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO no. PR20260056",
+        "value": "PR20260056"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "Dengue IgG/IgM Rapid Test Kit",
+        "qty": 23.0,
+        "source_quote": "23 kits Dengue IgG/IgM Rapid Test Kit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:28:27+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

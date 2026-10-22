@@ -1,0 +1,35 @@
+{
+  "cache_key": "951cbfb7c41eed652fff6fbab4d23997ee6074d269bcca91378e2927e45dc40f",
+  "input": "<email>\nFrom domain: sejahterapolyclinic.my.example\nSubject: Quick one\n\nHello,\n\nFor planning: Poliklinik Sejahtera will need C-TRN-OPS (qty 2) next quarter. No PO yet, just a heads-up.\n\nThank you,\nZainal Hashim\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Poliklinik Sejahtera",
+        "value": "Poliklinik Sejahtera"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "next quarter",
+        "value": "next quarter"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-TRN-OPS",
+        "product_text": "Operator Training Package",
+        "qty": 2.0,
+        "source_quote": "C-TRN-OPS (qty 2)"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:00+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

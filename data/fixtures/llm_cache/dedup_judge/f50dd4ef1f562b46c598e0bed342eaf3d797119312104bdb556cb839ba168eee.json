@@ -1,0 +1,17 @@
+{
+  "cache_key": "f50dd4ef1f562b46c598e0bed342eaf3d797119312104bdb556cb839ba168eee",
+  "input": "{\"candidates\": [{\"card_code\": \"C00484\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Lion City Pathology (Jurong East) Pte Ltd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Lion City Pathology (Novena) Pte Ltd\", \"tax_id\": \"199397472X\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is the Novena branch, while the candidate is the Jurong East branch, so these are different sites of the same brand.",
+      "The candidate has no tax ID, so nothing confirms they are the same legal entity.",
+      "Names differ by the site qualifier in brackets, which usually signals separate entities."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:33:11+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

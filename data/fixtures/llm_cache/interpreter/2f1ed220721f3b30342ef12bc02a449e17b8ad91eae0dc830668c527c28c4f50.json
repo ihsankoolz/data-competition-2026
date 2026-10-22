@@ -1,0 +1,30 @@
+{
+  "cache_key": "2f1ed220721f3b30342ef12bc02a449e17b8ad91eae0dc830668c527c28c4f50",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: Fw: Brochure and pricing\n\nHi team, pls handle. Customer called me this morning as well.\n\nDarren Tan\n\nBegin forwarded message:\n\nFrom: Hui Ting Nair <purchasing@mms.sg.example>\nDate: 16 Jul 2026 11:30\nSubject: Brochure and pricing\n\nGood morning,\n\nPlease send the brochure and pricing for Class II Biosafety Cabinet. We are evaluating options at Maple Medical Supplies Pte Ltd.\n\nThanks,\nHui Ting Nair\n\n> On 30 May 2026, Hui Ting Nair wrote:\n> Thank you for the quotation last month. We will revert.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Maple Medical Supplies Pte Ltd",
+        "value": "Maple Medical Supplies Pte Ltd"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-BSC-II",
+        "product_text": "Class II Biosafety Cabinet",
+        "qty": null,
+        "source_quote": "Class II Biosafety Cabinet"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:11+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

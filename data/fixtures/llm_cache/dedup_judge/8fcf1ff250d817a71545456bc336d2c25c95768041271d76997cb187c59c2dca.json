@@ -1,0 +1,17 @@
+{
+  "cache_key": "8fcf1ff250d817a71545456bc336d2c25c95768041271d76997cb187c59c2dca",
+  "input": "{\"candidates\": [{\"card_code\": \"C00307\", \"city\": \"Johor Baharu\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Wellspring Medical Supplies Sdn Bhd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"JB\", \"country\": \"MY\", \"email_domain\": \"wms.my.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Wellspring Medical Supplies Sdn Bhd (Johor Bahru)\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match exactly apart from the '(Johor Bahru)' location tag, which agrees with the candidate's city of Johor Baharu.",
+      "Same country (MY) and the city 'JB' is a common abbreviation of Johor Bahru, so the location is consistent.",
+      "Neither record has a tax ID, so nothing conflicts; the different entity codes (QTG vs QTS) just reflect separate companies sharing one database."
+    ],
+    "selected_card_code": "C00307"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:31+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

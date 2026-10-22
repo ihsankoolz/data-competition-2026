@@ -1,0 +1,17 @@
+{
+  "cache_key": "c9e796596360f884584fd7772af625c2b8bd756b7d7c7f43908a979676e95620",
+  "input": "{\"candidates\": [{\"card_code\": \"V00011\", \"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"PT Yarrow Global Medical Manufacturing\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Jakarta\", \"country\": \"ID\", \"email_domain\": \"norvelglobal.id.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"PT Norvel Global Medical Manufacturing\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The distinctive brand names differ: 'Norvel' versus 'Yarrow'; only the generic words 'Global Medical Manufacturing' match.",
+      "Both are in Jakarta, Indonesia, but neither record has a tax ID and the candidate has no email domain, so nothing else links them.",
+      "Without a matching distinctive name or identifier, treating them as the same legal entity is not supported."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:35:45+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

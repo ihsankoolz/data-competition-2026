@@ -1,0 +1,17 @@
+{
+  "cache_key": "b4071c8f121e519ea27ed1d5b8802678cd6806ec1aa181fedf7d5b6b3a5b3073",
+  "input": "{\"candidates\": [{\"card_code\": \"V00030\", \"city\": \"Suzhou\", \"country\": \"CN\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Veltra Life Sciences Co., Ltd.\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Suzhou\", \"country\": \"CN\", \"email_domain\": \"aster.cn.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Aster Life Sciences Co., Ltd.\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The brand names differ: Aster Life Sciences versus Veltra Life Sciences. Only the generic 'Life Sciences Co., Ltd.' part is shared.",
+      "City and country match (Suzhou, CN), but that alone is not enough to show they are the same legal entity.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing links the two. No match."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:36:13+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

@@ -1,0 +1,48 @@
+{
+  "cache_key": "5349038d7a406a0cac32a7041b5e2075e97d62096763c51b3dd03761accf81ff",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: Fw: new account\n\nHi Priya,\n\nSee below, can we open an account for them? They want reagent orders.\n\nPhạm Thu Hà\n\n---------- Forwarded message ---------\nFrom: info@phong.kham.da.khoa.a.example\n\nDear Sir/Madam, we are Phòng khám Đa khoa An Khang Thủ Đức, HCMC. Our MST is 0318899123. Please register us as a customer.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "customer",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Phòng khám Đa khoa An Khang Thủ Đức",
+        "value": "Phòng khám Đa khoa An Khang Thủ Đức"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "MST is 0318899123",
+        "value": "0318899123"
+      },
+      {
+        "key": "city",
+        "source_quote": "HCMC",
+        "value": "Ho Chi Minh City"
+      },
+      {
+        "key": "country",
+        "source_quote": "HCMC",
+        "value": "VN"
+      },
+      {
+        "key": "contact_email",
+        "source_quote": "info@phong.kham.da.khoa.a.example",
+        "value": "info@phong.kham.da.khoa.a.example"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "They want reagent orders",
+        "value": "reagent orders"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:29+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

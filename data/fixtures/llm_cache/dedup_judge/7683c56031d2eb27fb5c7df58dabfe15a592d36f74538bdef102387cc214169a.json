@@ -1,0 +1,17 @@
+{
+  "cache_key": "7683c56031d2eb27fb5c7df58dabfe15a592d36f74538bdef102387cc214169a",
+  "input": "{\"candidates\": [{\"card_code\": \"C00280\", \"city\": \"Chiang Mai\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Thai Med Chiang Mai Hospital Co., Ltd.\", \"tax_id\": \"\"}, {\"card_code\": \"C00427\", \"city\": \"Chiangmai\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Thai Med Chiang Mai Hospital Company Limited\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"BKK\", \"country\": \"TH\", \"email_domain\": \"tmh.th.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Thai Med Hospital Co., Ltd.\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is \"Thai Med Hospital Co., Ltd.\" in Bangkok (BKK), while both candidates are \"Thai Med Chiang Mai Hospital\" in Chiang Mai, which looks like a different site of the same brand.",
+      "The cities differ (Bangkok vs Chiang Mai) and no tax ID or matching email domain is available to confirm they are the same legal entity.",
+      "A site-specific name in the candidates versus a generic name in the new record suggests separate entities, so there is no confident match."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:32:45+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

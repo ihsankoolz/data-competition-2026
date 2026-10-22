@@ -1,0 +1,35 @@
+{
+  "cache_key": "e42e1ef7cd8c4dd5a29bed2945ae52be2c1d627bf39a592b04cf38bc3c85bbb3",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: (no subject)\n\nCan someone pick this up? I'm on leave until Monday.\n\nSiriporn Khamsri\n\n-----Original Message-----\nFrom: Ratana Kaewmanee <purchasing@cnl.th.example>\nSent: 14 Sep 2026 12:58\nTo: sales@qts.lives.example\nSubject: Please hold stock\n\nDear team, สวัสดีครับ\n\nPls hold stock: 28 kits dengue IgG/IgM kits for Chaiyaphruek Nonthaburi Laboratory. We expect to raise the PO by 25 Sep.\n\nขอบคุณค่ะ\nRatana Kaewmanee\n\n> On 08 Aug 2026, Siriporn Khamsri wrote:\n> Dear customer, attached is our updated price list. Let me know if you\n> need samples.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.85,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Chaiyaphruek Nonthaburi Laboratory",
+        "value": "Chaiyaphruek Nonthaburi Laboratory"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "We expect to raise the PO by 25 Sep.",
+        "value": "25 Sep"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "dengue IgG/IgM kits",
+        "qty": 28.0,
+        "source_quote": "28 kits dengue IgG/IgM kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:29:27+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

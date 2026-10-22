@@ -1,0 +1,30 @@
+{
+  "cache_key": "791f43b87cfce22a3980829972ecb6d51db223b2cdc7e51a0126ff6fae7813f2",
+  "input": "<email>\nFrom domain: mbh.id.example\nSubject: Following our call\n\nYth. Tim Sales,\n\nRequest for quotation from PT Rumah Sakit Makmur Bakti:\n- A-DEN-IGM x 15\nPlease include delivery and warranty terms.\n\nAtas perhatian dan kerja samanya kami ucapkan terima kasih.\n\nSalam,\nAndi Anggraini\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "PT Rumah Sakit Makmur Bakti",
+        "value": "PT Rumah Sakit Makmur Bakti"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "A-DEN-IGM",
+        "qty": 15.0,
+        "source_quote": "A-DEN-IGM x 15"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:08+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

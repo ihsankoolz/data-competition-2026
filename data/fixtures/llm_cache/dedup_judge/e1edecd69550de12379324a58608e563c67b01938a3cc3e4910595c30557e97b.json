@@ -1,0 +1,17 @@
+{
+  "cache_key": "e1edecd69550de12379324a58608e563c67b01938a3cc3e4910595c30557e97b",
+  "input": "{\"candidates\": [{\"card_code\": \"C00237\", \"city\": \"กรุงเทพมหานคร\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"บริษัท ห้องปฏิบัติการไทยเมด จำกัด\", \"tax_id\": \"\"}, {\"card_code\": \"C00474\", \"city\": \"Krung Thep\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"บจก. ห้องปฏิบัติการไทยเมด จำกัด\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"tmrl.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"บริษัท ไทยเมด รัชดา แล็บ จำกัด\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is named \"ไทยเมด รัชดา แล็บ\" (Thaimed Ratchada Lab), which points to a specific Ratchada site or entity, while both candidates are the general \"ห้องปฏิบัติการไทยเมด\" (Thaimed Laboratory) with no site name.",
+      "Same brand but different site or name suggests a different entity, and no tax ID or matching email domain is available to confirm a match.",
+      "Both candidates are in Bangkok, but city alone is not enough evidence; matching on the brand name alone would risk a false duplicate."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-22T08:31:02+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

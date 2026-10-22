@@ -1,0 +1,17 @@
+{
+  "cache_key": "5e3cc024188ebc397cef6d7352d0779692fa09e725224c278349871c684c3f89",
+  "input": "<email>\nFrom domain: pgh.my.example\nSubject: Re: our discussion\n\nSalam sejahtera,\n\nAny update on my request from last week?\n\nKerjasama pihak tuan amat kami hargai. Sila hubungi kami jika ada pertanyaan.\n\nTerima kasih,\nSiew Ling Ahmad\n\nOn 15 Jul 2026, Siew Ling Ahmad wrote:\n\n> Good morning,\n> \n> Please send the brochure and pricing for biosafety cabinet. We are evaluating options at Penang General Hospital.\n> \n> Regards,\n> Siew Ling Ahmad\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "follow_up",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:25+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}

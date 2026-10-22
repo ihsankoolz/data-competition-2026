@@ -1,0 +1,35 @@
+{
+  "cache_key": "b77bc0741cb24af87005f7c3475438889fea8d32b73677779930186541f34e4e",
+  "input": "<email>\nFrom domain: mdgc.vn.example\nSubject: Hi\n\nPO MDGC/2026/076\n\n- A-DEN-NS1 x 1\n\nShip to Phong kham Da khoa My Duc. Thanks.\nLe Minh Chau\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Phong kham Da khoa My Duc",
+        "value": "Phong kham Da khoa My Duc"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO MDGC/2026/076",
+        "value": "MDGC/2026/076"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "A-DEN-NS1",
+        "qty": 1.0,
+        "source_quote": "A-DEN-NS1 x 1"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v1",
+  "recorded_at": "2026-10-22T08:27:50+00:00",
+  "system_sha256": "e4fd5b91bcb9429cbff87b0f712a1410d03eef1de7defa058db2097e5c6a3391",
+  "task": "interpreter"
+}
