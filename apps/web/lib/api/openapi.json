@@ -2071,6 +2071,66 @@
         "title": "ClockState",
         "description": "Simulated clock. All SLA logic uses `now`, never the wall clock."
       },
+      "CountryBias": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "product": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "A",
+                  "B",
+                  "C"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product",
+            "description": "None = all products of the country added up"
+          },
+          "growth_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Pct",
+            "description": "Units ordered, last 12 full months vs the 12 before (% change)"
+          },
+          "scores": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastScore"
+            },
+            "type": "array",
+            "title": "Scores",
+            "description": "WAPE and bias for each method"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "growth_pct",
+          "scores"
+        ],
+        "title": "CountryBias",
+        "description": "D-020 item 1: forecast bias per country, next to how fast that market grew."
+      },
       "CycleTimeStat": {
         "properties": {
           "process": {
@@ -2548,6 +2608,27 @@
             "type": "string",
             "title": "Honest Note",
             "description": "e.g. 'In flat_noisy the Excel average wins.'"
+          },
+          "bias_by_country": {
+            "items": {
+              "$ref": "#/components/schemas/CountryBias"
+            },
+            "type": "array",
+            "title": "Bias By Country",
+            "description": "D-020 item 1: does each method run high or low per country?",
+            "default": []
+          },
+          "bias_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bias Note",
+            "description": "Plain-English caption for bias_by_country, whatever it shows"
           }
         },
         "type": "object",
@@ -2898,6 +2979,54 @@
           "customers"
         ],
         "title": "HeatCell"
+      },
+      "InfoRequestView": {
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task Id"
+          },
+          "asked_by_user_id": {
+            "type": "string",
+            "title": "Asked By User Id"
+          },
+          "asked_by_name": {
+            "type": "string",
+            "title": "Asked By Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "requestor",
+              "bu_head",
+              "finance",
+              "quality_regulatory",
+              "business_support",
+              "mdm_analyst"
+            ],
+            "title": "Role"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "asked_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Asked At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "task_id",
+          "asked_by_user_id",
+          "asked_by_name",
+          "role",
+          "question",
+          "asked_at"
+        ],
+        "title": "InfoRequestView",
+        "description": "The approver's question shown above the edit-and-resubmit form."
       },
       "Interpretation": {
         "properties": {
@@ -4022,6 +4151,15 @@
             "description": "Form field -> source quote, when created from an email",
             "default": {}
           },
+          "prefill_suggested": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Prefill Suggested",
+            "description": "Form field -> plain-English reason, for values suggested by deterministic rules rather than quoted from the email (e.g. item group, product family; session 5)",
+            "default": {}
+          },
           "dedup_decision": {
             "anyOf": [
               {
@@ -4042,6 +4180,29 @@
               }
             ],
             "title": "Linked Card Code"
+          },
+          "linked_card_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linked Card Name",
+            "description": "CardName of the linked existing record (session 5)"
+          },
+          "info_request": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InfoRequestView"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set while the request is INFO_REQUESTED: who asked what. The requestor edits and resubmits with POST /requests/{id}/submit (session 5)"
           },
           "stages": {
             "items": {

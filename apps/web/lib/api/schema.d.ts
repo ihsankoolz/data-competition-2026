@@ -749,6 +749,32 @@ export interface components {
              */
             elapsed_hours: number;
         };
+        /**
+         * CountryBias
+         * @description D-020 item 1: forecast bias per country, next to how fast that market grew.
+         */
+        CountryBias: {
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Product
+             * @description None = all products of the country added up
+             */
+            product?: ("A" | "B" | "C") | null;
+            /**
+             * Growth Pct
+             * @description Units ordered, last 12 full months vs the 12 before (% change)
+             */
+            growth_pct: number | null;
+            /**
+             * Scores
+             * @description WAPE and bias for each method
+             */
+            scores: components["schemas"]["ForecastScore"][];
+        };
         /** CycleTimeStat */
         CycleTimeStat: {
             /**
@@ -1009,6 +1035,17 @@ export interface components {
              * @description e.g. 'In flat_noisy the Excel average wins.'
              */
             honest_note: string;
+            /**
+             * Bias By Country
+             * @description D-020 item 1: does each method run high or low per country?
+             * @default []
+             */
+            bias_by_country?: components["schemas"]["CountryBias"][];
+            /**
+             * Bias Note
+             * @description Plain-English caption for bias_by_country, whatever it shows
+             */
+            bias_note?: string | null;
         };
         /** ForecastPoint */
         ForecastPoint: {
@@ -1156,6 +1193,30 @@ export interface components {
              * @description Customer count (records before merge, golden after)
              */
             customers: number;
+        };
+        /**
+         * InfoRequestView
+         * @description The approver's question shown above the edit-and-resubmit form.
+         */
+        InfoRequestView: {
+            /** Task Id */
+            task_id: string;
+            /** Asked By User Id */
+            asked_by_user_id: string;
+            /** Asked By Name */
+            asked_by_name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "requestor" | "bu_head" | "finance" | "quality_regulatory" | "business_support" | "mdm_analyst";
+            /** Question */
+            question: string;
+            /**
+             * Asked At
+             * Format: date-time
+             */
+            asked_at: string;
         };
         /** Interpretation */
         Interpretation: {
@@ -1691,9 +1752,24 @@ export interface components {
             prefill_quotes?: {
                 [key: string]: string;
             };
+            /**
+             * Prefill Suggested
+             * @description Form field -> plain-English reason, for values suggested by deterministic rules rather than quoted from the email (e.g. item group, product family; session 5)
+             * @default {}
+             */
+            prefill_suggested?: {
+                [key: string]: string;
+            };
             dedup_decision?: components["schemas"]["DedupDecisionOut"] | null;
             /** Linked Card Code */
             linked_card_code?: string | null;
+            /**
+             * Linked Card Name
+             * @description CardName of the linked existing record (session 5)
+             */
+            linked_card_name?: string | null;
+            /** @description Set while the request is INFO_REQUESTED: who asked what. The requestor edits and resubmits with POST /requests/{id}/submit (session 5) */
+            info_request?: components["schemas"]["InfoRequestView"] | null;
             /**
              * Stages
              * @default []

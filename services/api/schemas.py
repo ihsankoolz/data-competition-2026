@@ -205,8 +205,21 @@ class RequestDetail(RequestSummary):
     prefill_quotes: dict[str, str] = Field(
         default={}, description="Form field -> source quote, when created from an email"
     )
+    prefill_suggested: dict[str, str] = Field(
+        default={},
+        description="Form field -> plain-English reason, for values suggested by deterministic "
+        "rules rather than quoted from the email (e.g. item group, product family; session 5)",
+    )
     dedup_decision: DedupDecisionOut | None = None
     linked_card_code: str | None = None
+    linked_card_name: str | None = Field(
+        default=None, description="CardName of the linked existing record (session 5)"
+    )
+    info_request: "InfoRequestView | None" = Field(
+        default=None,
+        description="Set while the request is INFO_REQUESTED: who asked what. The requestor edits "
+        "and resubmits with POST /requests/{id}/submit (session 5)",
+    )
     stages: list[Stage] = []
     allowed_actions: list[
         Literal["edit", "submit", "decide_duplicate", "approve", "reject", "ask_info", "publish"]
@@ -217,6 +230,17 @@ class RequestDetail(RequestSummary):
     sap_publish: "SapPublishView | None" = Field(
         default=None, description="Set once published: the SAP read-back check"
     )
+
+
+class InfoRequestView(BaseModel):
+    """The approver's question shown above the edit-and-resubmit form."""
+
+    task_id: str
+    asked_by_user_id: str
+    asked_by_name: str
+    role: Role
+    question: str
+    asked_at: datetime
 
 
 class ApprovalDecisionIn(BaseModel):
@@ -451,6 +475,25 @@ class ForecastBacktest(BaseModel):
     )
     chart_series: str = Field(description="e.g. 'Vietnam, Product A (units)'")
     honest_note: str = Field(description="e.g. 'In flat_noisy the Excel average wins.'")
+    bias_by_country: list["CountryBias"] = Field(
+        default=[], description="D-020 item 1: does each method run high or low per country?"
+    )
+    bias_note: str | None = Field(
+        default=None, description="Plain-English caption for bias_by_country, whatever it shows"
+    )
+
+
+class CountryBias(BaseModel):
+    """D-020 item 1: forecast bias per country, next to how fast that market grew."""
+
+    country: CountryCode
+    product: ProductFamily | None = Field(
+        default=None, description="None = all products of the country added up"
+    )
+    growth_pct: float | None = Field(
+        description="Units ordered, last 12 full months vs the 12 before (% change)"
+    )
+    scores: list[ForecastScore] = Field(description="WAPE and bias for each method")
 
 
 class ForecastSummary(BaseModel):
@@ -488,5 +531,7 @@ class OpsImpact(BaseModel):
     caption: str = Field(description="'Modelled, not measured' framing in plain English")
 
 
-# Resolves the session 4 forward references on RequestDetail (FieldIssue, SapPublishView).
+# Resolves the forward references on RequestDetail (FieldIssue, SapPublishView, InfoRequestView)
+# and ForecastBacktest (CountryBias).
 RequestDetail.model_rebuild()
+ForecastBacktest.model_rebuild()
