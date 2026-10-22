@@ -1,30 +1,12 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
-venv/
-env/
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Data and outputs
-data/
-outputs/
-*.csv
-*.parquet
-*.xlsx
-*.zip
-*.pkl
-*.joblib
-*.h5
-
-# Secrets
 .env
-
-# Editors / OS
-.vscode/
-.idea/
+__pycache__/
+.venv/
+node_modules/
+.next/
+data/generated/
+data/app.db
+*.pyc
 .DS_Store
-Thumbs.db
+
+# Competition material (keep out of the repo in case it goes public)
+*.pdf

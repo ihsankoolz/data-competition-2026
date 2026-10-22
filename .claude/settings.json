@@ -1,0 +1,20 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "uv run --no-project python \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect_files.py\"" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "uv run --no-project python \"$CLAUDE_PROJECT_DIR/.claude/hooks/format_file.py\"", "timeout": 60 }
+        ]
+      }
+    ]
+  }
+}
