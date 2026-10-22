@@ -3,7 +3,7 @@ SEED ?= 42
 SCENARIO ?= seasonal_trend
 WEB := apps/web
 
-.PHONY: setup data fixtures dev dev-api dev-sap dev-web reset-demo test test-py test-web eval api-types record
+.PHONY: setup data fixtures dev dev-api dev-sap dev-web reset-demo test test-py test-web eval api-types record stop
 
 setup:            ## install Python (uv) and Node deps
 	uv sync
@@ -47,3 +47,10 @@ api-types:        ## regenerate the typed API client from the FastAPI OpenAPI sp
 
 record:           ## re-record the LLM replay cache (needs ANTHROPIC_API_KEY)
 	@echo "make record: not yet implemented (Fri)"
+
+stop:             ## stop whatever is listening on 8000, 8001, 3000 (Windows-friendly)
+	-@for p in 8000 8001 3000; do \
+		for pid in $$(netstat -ano | grep -E "[:.]$$p .*LISTENING" | awk '{print $$5}' | sort -u); do \
+			taskkill //PID $$pid //T //F >/dev/null 2>&1 && echo "stopped :$$p (pid $$pid)"; \
+		done; \
+	done
