@@ -66,10 +66,14 @@ function requestDetail(state: string, extra: Record<string, unknown> = {}) {
   };
 }
 
-type Captured = { checks: Record<string, unknown>[]; decisions: Record<string, unknown>[] };
+type Captured = {
+  checks: Record<string, unknown>[];
+  decisions: Record<string, unknown>[];
+  creates: Record<string, unknown>[];
+};
 
 async function stubBackend(page: Page): Promise<Captured> {
-  const captured: Captured = { checks: [], decisions: [] };
+  const captured: Captured = { checks: [], decisions: [], creates: [] };
   const json = (route: Route, body: unknown, status = 200) =>
     route.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
 
@@ -79,6 +83,7 @@ async function stubBackend(page: Page): Promise<Captured> {
   });
   await page.route("**/api/requests", async (route) => {
     if (route.request().method() !== "POST") return route.fallback();
+    captured.creates.push(route.request().postDataJSON());
     await json(route, requestDetail("DRAFT"), 201);
   });
   await page.route("**/api/requests/REQ-E2E-1", async (route) => {
@@ -194,4 +199,72 @@ test("not a duplicate: a reason is required, then submit is allowed", async ({ p
     { action: "not_duplicate", reason: "A different legal entity: the QTG service arm." },
   ]);
   await expect(page.getByTestId("submit")).toBeEnabled();
+});
+
+test("vendor: bank details are never sent to the duplicate check (rule 5)", async ({ page }) => {
+  const captured = await stubBackend(page);
+  await openAsMarcus(page);
+  await page.getByRole("radio", { name: "Vendor" }).click();
+  await expect(page.getByLabel("Account number")).toBeVisible();
+
+  // Bank first, then the name: every check after this sees a filled bank row.
+  await page.getByLabel("Bank code").fill("VCB");
+  await page.getByLabel("Account number").fill("0071000123456");
+  await page.getByLabel("Account name").fill("Cong ty Thiet bi Y te ABC");
+  await page.getByLabel("SWIFT / BIC").fill("BFTVVNVX");
+  await page.getByLabel("IBAN (if any)").fill("VN00TEST0071000123456");
+  await page.getByLabel("Legal name").fill("Cong ty Thiet bi Y te ABC");
+  await page.getByLabel("Tax ID").fill("0309876543");
+  await expect(page.getByTestId("verdict")).toBeVisible();
+
+  const vendorChecks = captured.checks.filter((c) => c.domain === "vendor");
+  expect(vendorChecks.length).toBeGreaterThan(0);
+  const bankKeys = [
+    "BPBankAccounts",
+    "BankCode",
+    "AccountNo",
+    "AccountName",
+    "BICSwiftCode",
+    "IBAN",
+  ];
+  for (const body of vendorChecks) {
+    const sent = JSON.stringify(body);
+    for (const key of bankKeys) expect(sent).not.toContain(key);
+    expect(sent).not.toContain("0071000123456");
+    expect(sent).not.toContain("BFTVVNVX");
+  }
+
+  await page.getByTestId("not-duplicate").click();
+  await expect(page.getByRole("dialog")).toContainText("Why is this a different vendor?");
+});
+
+test("changing the domain starts a fresh draft and drops the old decision", async ({ page }) => {
+  const captured = await stubBackend(page);
+  await openAsMarcus(page);
+  await typeChoRay(page);
+
+  const panel = page.getByTestId("dup-panel");
+  await panel.getByTestId("not-duplicate").click();
+  await page.getByRole("dialog").getByLabel("Reason").fill("A different legal entity, own MST.");
+  await page.getByRole("dialog").getByRole("button", { name: "Save reason" }).click();
+  await expect(panel.getByTestId("override-saved")).toBeVisible();
+  expect(captured.creates).toHaveLength(1);
+  expect(captured.creates[0]).toMatchObject({ domain: "customer", entity: "QTG" });
+
+  await page.getByRole("radio", { name: "Vendor" }).click();
+  // The customer decision does not carry over: the vendor check blocks again.
+  await expect(panel.getByTestId("verdict")).toHaveAttribute("data-verdict", "likely");
+  await expect(panel.getByTestId("override-saved")).toHaveCount(0);
+  await expect(page.getByTestId("submit")).toBeDisabled();
+
+  await panel.getByTestId("not-duplicate").click();
+  await page
+    .getByRole("dialog")
+    .getByLabel("Reason")
+    .fill("We buy from them too: separate record.");
+  await page.getByRole("dialog").getByRole("button", { name: "Save reason" }).click();
+  await expect(panel.getByTestId("override-saved")).toBeVisible();
+  // A new draft for the vendor, not a PATCH of the customer draft.
+  expect(captured.creates).toHaveLength(2);
+  expect(captured.creates[1]).toMatchObject({ domain: "vendor", entity: "QTG" });
 });

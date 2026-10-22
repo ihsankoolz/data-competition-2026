@@ -36,6 +36,10 @@ test("pre-fills the form from an email and shows where each value came from", as
           FederalTaxID: "0301234567",
           City: "HCMC",
           purpose: "service contract (annual analyser service)",
+          // Never taken from the server into the form: credit terms, and anything masked.
+          CreditLimit: 5000000,
+          PayTermsGrpCode: 3,
+          Phone1: "••••1849",
         },
         missing_fields: ["Street", "EmailAddress"],
         prefill_quotes: {
@@ -72,4 +76,9 @@ test("pre-fills the form from an email and shows where each value came from", as
   await expect(page.getByTestId("field-EmailAddress")).toHaveAttribute("data-missing", "true");
   await expect(page.getByTestId("field-CardName")).not.toHaveAttribute("data-missing", "true");
   await expect(page.getByTestId("verdict")).toHaveAttribute("data-verdict", "none");
+
+  // Credit terms are typed by a person, and a masked value is never shown as real.
+  await expect(page.getByLabel("Credit limit (local currency)")).toHaveValue("");
+  await expect(page.locator("#PayTermsGrpCode")).toContainText("Choose one");
+  await expect(page.getByLabel("Phone")).toHaveValue("");
 });
