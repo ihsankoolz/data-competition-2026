@@ -23,7 +23,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api, isApiError, issuesOf, type Schema } from "@/lib/api/client";
 import { announceWorkflowChange, DEMO_RESET_EVENT } from "@/lib/demo-events";
 import { countryName, sgtDay } from "@/lib/format";
-import { rememberLinkedName } from "@/lib/linked-names";
 import {
   asFormSchema,
   COUNTRIES,
@@ -59,6 +58,7 @@ function issueKey(issue: FieldIssue): string {
 
 /** The country is chosen in the bar at the top, so the schema's own field is not repeated. */
 const CONTEXT_FIELDS = new Set(["Country"]);
+const NO_CONTEXT_FIELDS = new Set<string>();
 /** Long fields span both columns. */
 const WIDE_TYPES = new Set(["array"]);
 
@@ -96,6 +96,7 @@ export function NewRequestForm() {
 
   const [values, setValues] = useState<FieldValues>({});
   const [quotes, setQuotes] = useState<Record<string, string>>({});
+  const [suggested, setSuggested] = useState<Record<string, string>>({});
   const [prefill, setPrefill] = useState<Prefill | null>(null);
   const [reqId, setReqId] = useState<string | null>(null);
   const [showMissing, setShowMissing] = useState(false);
@@ -130,6 +131,7 @@ export function NewRequestForm() {
   const clearAll = () => {
     setValues({});
     setQuotes({});
+    setSuggested({});
     setPrefill(null);
     setReqId(null);
     setShowMissing(false);
@@ -167,12 +169,19 @@ export function NewRequestForm() {
   const specReady = spec !== null && spec.domain === domain && (spec.country ?? null) === country;
   const schema = specReady ? asFormSchema(spec) : null;
   const isBusinessPartner = domain === "customer" || domain === "vendor";
+  // A vendor may be based anywhere (D-020 #2): its address country is a real field, defaulting
+  // to the operating country. For customers the operating country is the address country.
+  const vendorCountry = domain === "vendor";
+  const contextFields = vendorCountry ? NO_CONTEXT_FIELDS : CONTEXT_FIELDS;
+  const withCountry: FieldValues = vendorCountry
+    ? { ...values, Country: isFilled(values.Country) ? values.Country : country }
+    : { ...values, Country: country };
 
   const dedup = useDedupCheck({
     enabled: isBusinessPartner && decision?.action !== "link_to_existing",
     domain: domain === "vendor" ? "vendor" : "customer",
     entity,
-    fields: { ...values, Country: country },
+    fields: withCountry,
     requestId: reqId,
   });
 
@@ -190,7 +199,7 @@ export function NewRequestForm() {
   const blocked = isBusinessPartner && !!blockingResult?.block_submit && !activeDecision;
 
   // The country comes from the bar at the top, not from a form field, so count it as filled.
-  const missing = specReady ? missingRequired({ ...values, Country: country }, spec) : [];
+  const missing = specReady ? missingRequired(withCountry, spec) : [];
   // Registrations already expired on the demo clock (never the wall clock); the server checks too.
   const { clock } = useClock();
   const today = clock ? sgtDay(clock.now) : null;
@@ -206,7 +215,7 @@ export function NewRequestForm() {
       // A masked value ("••••1234") is never sent back as if it were the real one.
       if (isFilled(values[key]) && !looksMasked(values[key])) out[key] = values[key];
     }
-    if ("Country" in schema.properties) out.Country = country;
+    if ("Country" in schema.properties) out.Country = withCountry.Country;
     if (domain === "item") out.registrations = syncRegistrations(values, spec);
     return out;
   }
@@ -246,7 +255,6 @@ export function NewRequestForm() {
       );
       setDecidedFor(candidateKey);
       if (body.action === "link_to_existing") {
-        if (cardName && body.card_code) rememberLinkedName(id, body.card_code, cardName);
         const label = cardName ? `${cardName} (${body.card_code})` : body.card_code;
         toast.success(`Linked to ${label}`, {
           description: "No approval needed; nothing was sent to an approver.",
@@ -302,6 +310,7 @@ export function NewRequestForm() {
       // Never bank details or credit terms from the server, and nothing masked.
       setValues(prefillableFields(detail.fields, spec?.domain === detail.domain ? schema : null));
       setQuotes(detail.prefill_quotes ?? {});
+      setSuggested(detail.prefill_suggested ?? {});
       setIssues(detail.issues ?? []);
       setReqId(detail.req_id);
       setPrefill({ emailId: email.email_id, subject: email.subject });
@@ -330,12 +339,14 @@ export function NewRequestForm() {
         (i) =>
           (i.kind !== "missing" || showMissing) &&
           // The live expiry message under the row already says this; don't say it twice.
-          !(i.kind === "expired" && (expired as Record<string, string>)[i.field.split(".")[1] ?? ""]),
+          !(
+            i.kind === "expired" && (expired as Record<string, string>)[i.field.split(".")[1] ?? ""]
+          ),
       );
   const issuesFor = (key: string) =>
     shownIssues.filter((i) => issueKey(i) === key).map((i) => i.message);
   const placed = new Set(
-    schema ? schema["x-order"].filter((k) => !CONTEXT_FIELDS.has(k) && schema.properties[k]) : [],
+    schema ? schema["x-order"].filter((k) => !contextFields.has(k) && schema.properties[k]) : [],
   );
   const unplacedIssues = shownIssues.filter((i) => !placed.has(issueKey(i)));
 
@@ -484,7 +495,7 @@ export function NewRequestForm() {
             <fieldset disabled={linked} className="grid grid-cols-2 gap-x-6 gap-y-5">
               <legend className="sr-only">{schema.title}</legend>
               {schema["x-order"]
-                .filter((key) => !CONTEXT_FIELDS.has(key) && schema.properties[key])
+                .filter((key) => !contextFields.has(key) && schema.properties[key])
                 .map((key) => {
                   const field = schema.properties[key]!;
                   const wide = WIDE_TYPES.has(field.type ?? "") || (field.maxLength ?? 0) >= 200;
@@ -500,6 +511,7 @@ export function NewRequestForm() {
                         missing={isMissing}
                         issues={issuesFor(key)}
                         quote={quotes[key]}
+                        suggestion={suggested[key]}
                         sensitive={field["x-sensitive"]}
                         asGroup={isGroupField(field)}
                       >
@@ -516,7 +528,7 @@ export function NewRequestForm() {
                           <SchemaInput
                             id={key}
                             field={field}
-                            value={values[key]}
+                            value={key === "Country" ? withCountry.Country : values[key]}
                             invalid={isMissing}
                             onChange={(v) => setField(key, v)}
                           />

@@ -8,7 +8,6 @@ import {
   Clock,
   Forward,
   Link2,
-  Loader2,
   MessageCircleQuestion,
   SendHorizontal,
   UserRound,
@@ -24,12 +23,12 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SlaBadge, StateBadge } from "@/components/workflow/badges";
 import { DecisionActions } from "@/components/workflow/decision-actions";
+import { ResubmitForm } from "@/components/requests/resubmit-form";
 import { RequestFields } from "@/components/workflow/request-fields";
 import { ReadbackUnavailable, SapReadback } from "@/components/workflow/sap-readback";
 import { useActingUserId } from "@/lib/acting-user";
 import { api, isApiError, type Schema } from "@/lib/api/client";
 import { countryName, formatSgt } from "@/lib/format";
-import { linkedLabel } from "@/lib/linked-names";
 import { cn } from "@/lib/utils";
 import { type ApprovalTask, requestContext, roleLabel, TASK_TEXT } from "@/lib/workflow";
 
@@ -186,8 +185,8 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
         <div className="flex items-start gap-3 rounded-xl border border-success/40 bg-success/8 p-4">
           <Link2 className="mt-0.5 size-5 shrink-0 text-success-foreground" />
           <p>
-            Linked to {linkedLabel(detail.req_id, detail.linked_card_code)}. No approval needed; the
-            duplicate never reached an approver.
+            Linked to {linkedLabel(detail)}. No approval needed; the duplicate never reached an
+            approver.
           </p>
         </div>
       )}
@@ -239,6 +238,13 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
  * The person who can decide a task right now, if we know their name: the
  * assignee, or a backup approver who is one of the personas.
  */
+/** "Bệnh viện Chợ Rẫy (C00084)", from the API (D-020 #3); the code alone if the name is unknown. */
+function linkedLabel(detail: RequestDetail): string {
+  const code = detail.linked_card_code;
+  if (!code) return "the existing record";
+  return detail.linked_card_name ? `${detail.linked_card_name} (${code})` : code;
+}
+
 function useDecider(t: ApprovalTask): { userId: string; name: string } | null {
   const { personas } = usePersona();
   if (!t.escalated_to_user_id) return { userId: t.assignee_user_id, name: t.assignee_name };
@@ -321,26 +327,20 @@ function YourTurn({
   onDecided: (d: RequestDetail) => void;
   onChanged: () => void;
 }) {
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
   const canDecide = actions.includes("approve") && myTask;
   const canPublish = actions.includes("publish");
   const canResubmit = actions.includes("submit") && detail.state === "INFO_REQUESTED";
   if (!canDecide && !canPublish && !canResubmit) return null;
 
-  async function resubmit() {
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      await api.POST("/requests/{req_id}/submit", { path: { req_id: detail.req_id } });
-      toast.success("Sent back to the approvers");
-      onChanged();
-    } catch (e) {
-      setSubmitError(isApiError(e) ? e.message : "The request was not sent. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
+  // Keyed by the question, so the 8-second refresh never wipes what the requestor is typing.
+  if (canResubmit) {
+    return (
+      <ResubmitForm
+        key={`${detail.req_id}-${detail.info_request?.task_id ?? "ask"}`}
+        detail={detail}
+        onResubmitted={onChanged}
+      />
+    );
   }
 
   return (
@@ -371,25 +371,6 @@ function YourTurn({
               Go to Publish to SAP
             </Link>
           </Button>
-        </div>
-      )}
-      {canResubmit && (
-        <div className="flex flex-col gap-2">
-          <p className="text-sm">
-            An approver asked you a question (their comment is in the stage below). Answer it, then
-            send the request back to the approvers.
-          </p>
-          <div>
-            <Button onClick={() => void resubmit()} disabled={submitting} data-testid="resubmit">
-              {submitting && <Loader2 className="animate-spin" data-icon="inline-start" />}
-              Send back to approvers
-            </Button>
-          </div>
-          {submitError && (
-            <p className="text-sm text-destructive" role="alert">
-              {submitError}
-            </p>
-          )}
         </div>
       )}
     </section>
