@@ -5,15 +5,16 @@
  *
  *   pnpm e2e                 all specs
  *   pnpm e2e -- dup-panel    one spec
+ *   E2E_WEB_PORT / E2E_API_PORT / E2E_SAP_PORT move the ports (two worktrees at once)
  */
 import path from "node:path";
 
 import { defineConfig, devices } from "@playwright/test";
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-const WEB_PORT = 3100;
-const API_PORT = 8100;
-const SAP_PORT = 8101;
+const WEB_PORT = Number(process.env.E2E_WEB_PORT ?? 3100);
+const API_PORT = Number(process.env.E2E_API_PORT ?? 8100);
+const SAP_PORT = Number(process.env.E2E_SAP_PORT ?? 8101);
 
 export default defineConfig({
   testDir: "./e2e",
