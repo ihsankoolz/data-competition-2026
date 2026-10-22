@@ -4,11 +4,13 @@
  * A small renderer for the JSON Schema subset in `config/forms/*.schema.json`.
  * One component per kind of input; `SchemaField` picks the right one.
  */
-import { Lock, Mail, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronsUpDown, Lightbulb, Lock, Mail, Plus, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -18,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { countryName } from "@/lib/format";
-import { type FieldSchema, optionsOf } from "@/lib/forms/schema";
+import { type FieldSchema, type Option, optionsOf } from "@/lib/forms/schema";
 import { cn } from "@/lib/utils";
 
 type FieldShellProps = {
@@ -28,6 +30,8 @@ type FieldShellProps = {
   required?: boolean;
   missing?: boolean;
   quote?: string;
+  /** Why a rule suggested this value (not quoted from the email), e.g. item group. */
+  suggestion?: string;
   sensitive?: boolean;
   children: React.ReactNode;
   /** Groups (chips, rows) are labelled with a legend instead of a <label>. */
@@ -43,6 +47,7 @@ export function FieldShell({
   required,
   missing,
   quote,
+  suggestion,
   sensitive,
   children,
   asGroup,
@@ -92,6 +97,18 @@ export function FieldShell({
           </span>
         </p>
       )}
+      {suggestion && (
+        <p
+          className="flex items-start gap-1.5 text-xs text-muted-foreground"
+          data-testid="suggested"
+        >
+          <Lightbulb className="mt-0.5 size-3 shrink-0" />
+          <span>
+            <span className="font-medium text-foreground">Suggested</span>, please check:{" "}
+            {suggestion}
+          </span>
+        </p>
+      )}
       {issues.length > 0
         ? issues.map((m) => (
             <p key={m} className="text-xs font-medium text-destructive" data-testid="field-issue">
@@ -122,10 +139,24 @@ type InputProps = {
   compact?: boolean;
 };
 
+/** Above this many choices a plain dropdown is too long to scan: type to filter instead. */
+const SEARCHABLE_FROM = 20;
+
 /** A select from `oneOf` or `enum`. Values keep their schema type (number stays number). */
 function SelectInput({ id, field, value, onChange, invalid }: InputProps) {
   const options = optionsOf(field, enumLabel) ?? [];
   const current = value === undefined || value === null ? "" : String(value);
+  if (options.length > SEARCHABLE_FROM) {
+    return (
+      <SearchableSelect
+        id={id}
+        options={options}
+        current={current}
+        onChange={onChange}
+        invalid={invalid}
+      />
+    );
+  }
   return (
     <Select
       value={current}
@@ -145,6 +176,97 @@ function SelectInput({ id, field, value, onChange, invalid }: InputProps) {
         ))}
       </SelectContent>
     </Select>
+  );
+}
+
+function SearchableSelect({
+  id,
+  options,
+  current,
+  onChange,
+  invalid,
+}: {
+  id: string;
+  options: Option[];
+  current: string;
+  onChange: (value: unknown) => void;
+  invalid?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const selected = options.find((o) => String(o.value) === current);
+  const q = query.trim().toLowerCase();
+  const shown = q
+    ? options.filter(
+        (o) => o.label.toLowerCase().includes(q) || String(o.value).toLowerCase() === q,
+      )
+    : options;
+  const pick = (o: Option) => {
+    onChange(o.value);
+    setOpen(false);
+    setQuery("");
+  };
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          id={id}
+          type="button"
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          aria-invalid={invalid || undefined}
+          className="w-full justify-between font-normal"
+          data-testid={`${id}-combobox`}
+        >
+          <span className={cn("truncate", !selected && "text-muted-foreground")}>
+            {selected ? selected.label : "Choose one"}
+          </span>
+          <ChevronsUpDown className="opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-(--radix-popover-trigger-width) min-w-64 p-0">
+        <div className="flex items-center gap-2 border-b px-3">
+          <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+          <input
+            autoFocus
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && shown[0]) {
+                e.preventDefault();
+                pick(shown[0]);
+              }
+            }}
+            placeholder="Type to search"
+            aria-label="Search the list"
+            className="h-9 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+        <ul role="listbox" aria-label="Choices" className="max-h-64 overflow-y-auto p-1">
+          {shown.map((o) => {
+            const on = String(o.value) === current;
+            return (
+              <li
+                key={String(o.value)}
+                role="option"
+                aria-selected={on}
+                tabIndex={-1}
+                onClick={() => pick(o)}
+                onKeyDown={(e) => e.key === "Enter" && pick(o)}
+                className="flex cursor-default items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+              >
+                <span>{o.label}</span>
+                {on && <Check className="size-4" aria-hidden />}
+              </li>
+            );
+          })}
+          {shown.length === 0 && (
+            <li className="px-2 py-3 text-sm text-muted-foreground">Nothing matches.</li>
+          )}
+        </ul>
+      </PopoverContent>
+    </Popover>
   );
 }
 

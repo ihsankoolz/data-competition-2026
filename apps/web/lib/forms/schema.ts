@@ -42,6 +42,8 @@ export type FieldSchema = {
   required?: string[];
   "x-sensitive"?: boolean;
   "x-sap-path"?: string;
+  /** Code -> English label for a long enum (e.g. ISO country codes on the vendor form). */
+  "x-enum-labels"?: Record<string, string>;
 };
 
 export type FormSchema = {
@@ -69,9 +71,10 @@ export type Option = { value: string | number; label: string };
 export function optionsOf(field: FieldSchema, labelFor?: (v: string) => string): Option[] | null {
   if (field.oneOf) return field.oneOf.map((o) => ({ value: o.const, label: o.title }));
   if (field.enum) {
+    const labels = field["x-enum-labels"];
     return field.enum.map((v) => ({
       value: v,
-      label: labelFor && typeof v === "string" ? labelFor(v) : String(v),
+      label: labels?.[String(v)] ?? (labelFor && typeof v === "string" ? labelFor(v) : String(v)),
     }));
   }
   return null;

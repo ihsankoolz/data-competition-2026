@@ -18,6 +18,10 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-viz-accent: var(--viz-accent);
+  --color-viz-excel: var(--viz-excel);
+  --color-viz-loss: var(--viz-loss);
+  --color-viz-neutral: var(--viz-neutral);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -90,9 +94,25 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  /* Data colours for the regional view (validated dataviz reference palette). One accent hue
+     (blue) for "our method" and gains; orange only for the Excel line; red only for losses. */
+  --viz-accent: #2a78d6;
+  --viz-excel: #eb6834;
+  --viz-loss: #e34948;
+  --viz-neutral: #a3a29b;
+  --viz-ink: #0b0b0b;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #898781;
 }
 
 .dark {
+  --viz-accent: #3987e5;
+  --viz-excel: #d95926;
+  --viz-loss: #e66767;
+  --viz-neutral: #6b6a64;
+  --viz-ink: #f0efec;
+  --viz-grid: #2c2c2a;
+  --viz-axis: #898781;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
