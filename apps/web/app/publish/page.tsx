@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { ScreenPlaceholder } from "@/components/shell/screen-placeholder";
+import { PublishScreen } from "@/components/publish/publish-screen";
 
 export const metadata: Metadata = { title: "Publish to SAP" };
 
 export default function PublishPage() {
-  return <ScreenPlaceholder href="/publish" />;
+  return <PublishScreen />;
 }

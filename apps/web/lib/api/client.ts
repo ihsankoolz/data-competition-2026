@@ -74,13 +74,19 @@ export class ApiError extends Error {
   readonly status: number;
   readonly offline: boolean;
   readonly detail: unknown;
+  /** The whole JSON error body, e.g. submit's 422 `{detail, issues}`. */
+  readonly body: unknown;
 
-  constructor(message: string, opts: { status: number; offline?: boolean; detail?: unknown }) {
+  constructor(
+    message: string,
+    opts: { status: number; offline?: boolean; detail?: unknown; body?: unknown },
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = opts.status;
     this.offline = opts.offline ?? false;
     this.detail = opts.detail;
+    this.body = opts.body;
   }
 }
 
@@ -187,6 +193,7 @@ async function request(
     throw new ApiError(describeDetail(detail, res.status), {
       status: res.status,
       detail,
+      body: payload,
     });
   }
   return payload;
@@ -209,6 +216,23 @@ export const api = {
   PATCH: method("patch"),
   DELETE: method("delete"),
 };
+
+/**
+ * The field problems in an error body (submit's 422 is `{detail, issues}`, D-018 #3).
+ * Anything that does not look like a FieldIssue is ignored.
+ */
+export function issuesOf(e: unknown): components["schemas"]["FieldIssue"][] {
+  if (!isApiError(e) || !e.body || typeof e.body !== "object" || !("issues" in e.body)) return [];
+  const raw = (e.body as { issues: unknown }).issues;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(
+    (i): i is components["schemas"]["FieldIssue"] =>
+      !!i &&
+      typeof i === "object" &&
+      typeof (i as { field?: unknown }).field === "string" &&
+      typeof (i as { message?: unknown }).message === "string",
+  );
+}
 
 /** Shorthand for a schema type, e.g. `Schema<"Persona">`. */
 export type Schema<K extends keyof components["schemas"]> = components["schemas"][K];
