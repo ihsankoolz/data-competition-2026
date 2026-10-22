@@ -197,3 +197,22 @@ Each decision: what, why, and what we rejected. Agents must follow these. Change
 5. **After-merge view uses our own dedup clusters** (`ds/analytics/golden.py`), not the ground-truth golden map; ground truth is used only to score them.
 6. **Session 4 defers** the M8 regional-view screen and the M10 summary card to session 5 (APIs and numbers land now).
 7. **Note (22 Oct, orchestrator):** the M10 model is stricter than #4's "no missing-field bounces": it removes only bounces for fields the form checks at entry; bounces for fields it does not check (credit terms, risk class ...) stay (about 21% of requests). Its new-process median is set mostly by our SLA caps, and results.md quantifies that. Forecast endpoints read `data/fixtures/derived/` (the backtest module adds `forecast/`).
+
+## D-019 Plan against the judging rubric (22 Oct, Ihsan + orchestrator)
+
+Source: the brief's §8 Evaluation Criteria (`Data Case Competition 2026 Brief.pdf`, p. 8) and §7 Deliverables. Session 5 onwards plans from this table.
+
+| Criterion | Weight | Where we stand (end of session 4) | What closes the gap |
+|---|---|---|---|
+| Problem understanding | 20% | Strong: every §4 pain point maps to a feature; personas and Amy's 18 days used directly. | Answer the §6 constraints head on: M365 backbone, no dedicated IT team. |
+| Solution quality | 30% | Strong working prototype, end to end to an SAP B1-shaped mock with read-back. | A feasibility slide: what the MDM team configures themselves vs what needs outside help, with the production path (Teams/Outlook front door, Power Automate notifications, rule tables the MDM team edits, one small hosted service, real Service Layer). |
+| Business impact | 25% | Numbers exist (30 of 63 lost alerts were duplicates; Amy 18 -> ~4 business days, modelled; NRR 80.7% -> 91.0%), but no screen yet. | **The regional business view screen (compulsory, §7)** and the ops-impact card. Adoption plan in the summary. |
+| Innovation | 15% | Strong: email interpreter with source quotes, held-out test, "rules where rules work, AI only where they fail". | Keep it honest; no new AI features needed. |
+| Communication | 10% | Not started: video, 2-page summary, slides. | Five-beat demo with one number on screen per beat; plain English for non-technical judges. |
+
+Decisions:
+1. **Forecasting is a supporting result, not the headline.** §7 asks how data science or AI improves "forecasting *or productivity*". The productivity story (email intake, duplicates stopped at entry, parallel approvals) carries that requirement. The forecast is presented as an honest backtest: the Excel average ties at country level; ours helps on Product C at region level; leakage wrecks Product B planning, so plan equipment from the enquiry pipeline (D-017).
+2. **Adoption answer (scored in Business impact, asked for in §7):** "keep emailing if you want; the system turns your email into a clean, pre-filled request". The messy inbox is the bridge off email, not a replacement users must learn first.
+3. **"Without going back to IT" (§5 design prompt):** routing rules and required fields already live in `config/routing_rules.yaml` and `config/forms/`. Build at least a read-only Admin/config view that shows where an approval step or required field is added; the live editor stays Stretch (S2).
+4. **Session 5 priority order:** (1) regional business view screen: country x product, stated 12-month period, growth measure defined, before/after merge toggle, lost customers that were duplicates, POs vs enquiries vs MDM requests separated, recommended actions; (2) ops-impact card; (3) Admin/config view; (4) 2-page summary with cost/effort sized for no dedicated IT team and the adoption plan; (5) 2-3 minute video in five beats.
+5. **Finals logistics from the brief:** submission 28 Oct 12:00 SGT via the form in §9; Top 10 announced 29 Oct; live finals 30 Oct 2-7 PM.
