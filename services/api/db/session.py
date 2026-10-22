@@ -44,6 +44,10 @@ def make_engine(db_path: str | Path | None = None) -> Engine:
         dbapi_connection.isolation_level = None
         cur = dbapi_connection.cursor()
         cur.execute("PRAGMA foreign_keys=ON")
+        # WAL: readers never block the writer and the writer never blocks readers, so the
+        # in-app demo reset (D-016) can rewrite the database while requests are being served.
+        cur.execute("PRAGMA journal_mode=WAL")
+        cur.execute("PRAGMA synchronous=NORMAL")
         cur.execute("PRAGMA busy_timeout=30000")
         # Belt and braces for the audit log: REPLACE conflicts also fire DELETE triggers.
         cur.execute("PRAGMA recursive_triggers=ON")

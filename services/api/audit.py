@@ -39,6 +39,7 @@ class AuditAction(enum.StrEnum):
     state_change = "state_change"
     field_edit = "field_edit"
     dedup_decision = "dedup_decision"
+    dedup_check = "dedup_check"
     approval = "approval"
     sap_call = "sap_call"
     seed = "seed"

@@ -1,13 +1,36 @@
 """Lives MDM API (port 8000): workflow, dedup, interpreter, analytics."""
 
-from fastapi import FastAPI
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
+from services.api import clock
 from services.api.clock import router as clock_router
 from services.api.personas import PERSONAS
 from services.api.routers import admin, approvals, dedup, emails, forms, requests
 from services.api.schemas import Health, Persona
 
-app = FastAPI(title="Lives MDM API", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    clock.restore()  # the simulated time survives a restart
+    yield
+
+
+app = FastAPI(title="Lives MDM API", version="0.1.0", lifespan=lifespan)
+
+
+@app.exception_handler(RequestValidationError)
+async def _validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:
+    """FastAPI's default 422 echoes the submitted values (`input`). A form can carry bank
+    details (domain rule 5), so only where and why is returned."""
+    errors = [{k: e[k] for k in ("type", "loc", "msg") if k in e} for e in exc.errors()]
+    return JSONResponse(status_code=422, content={"detail": errors})
+
+
 app.include_router(clock_router)
 for _module in (forms, emails, dedup, requests, approvals, admin):
     app.include_router(_module.router)

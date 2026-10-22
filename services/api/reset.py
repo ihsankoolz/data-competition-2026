@@ -1,0 +1,90 @@
+"""In-app demo reset (D-016): restore the seeded state in seconds, without stopping the API.
+
+What is reset, in this order:
+
+1. the database, reloaded **in place** through the live engine in one transaction
+   (`services.api.db.seed.reload_in_place`): other requests see the old complete database until
+   the commit and the new complete one after it, never a half-loaded one. This includes the
+   append-only audit log, which goes back to its seeded rows (its tables and triggers are
+   recreated inside the same transaction; no application code can delete or update audit rows);
+2. the simulated clock (back to Mon 5 Oct 2026 09:00 SGT, also saved in the database);
+3. the duplicate-check index (rebuilt from the reloaded master data);
+4. the SAP mock (`POST /_mock/reset`, outside `/b1s/v2`). If the mock is down the reset still
+   succeeds and reports `sap_mock_reset=false`.
+
+`make reset-demo` goes through the same function (see `services.api.db.seed.main`).
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import threading
+import time
+from pathlib import Path
+
+import httpx
+from sqlalchemy import func, select
+
+from services.api import clock, dedup_service
+from services.api.crypto import require_key
+from services.api.db import models as m
+from services.api.db.seed import (
+    SeedError,
+    check_files_exist,
+    read_fixtures,
+    reload_in_place,
+)
+from services.api.db.session import REPO_ROOT, get_engine, session_scope
+from services.api.schemas import ResetResult
+
+log = logging.getLogger(__name__)
+DEFAULT_FIXTURES = REPO_ROOT / "data" / "fixtures" / "seasonal_trend"
+SAP_BASE_PATH = "/b1s/v2"
+_lock = threading.Lock()  # one reset at a time
+
+
+def sap_mock_root() -> str:
+    base = os.environ.get("SAP_BASE_URL", f"http://localhost:8001{SAP_BASE_PATH}").rstrip("/")
+    return base.removesuffix(SAP_BASE_PATH)
+
+
+def reset_sap_mock(timeout: float = 3.0) -> bool:
+    """Clear the SAP mock's records and sessions. False if it can't be reached."""
+    try:
+        resp = httpx.post(f"{sap_mock_root()}/_mock/reset", timeout=timeout)
+        return resp.status_code == 200
+    except httpx.HTTPError:
+        return False
+
+
+def table_counts() -> dict[str, int]:
+    counts: dict[str, int] = {}
+    with session_scope() as session:
+        for table in m.Base.metadata.sorted_tables:
+            counts[table.name] = session.scalar(select(func.count()).select_from(table)) or 0
+    return counts
+
+
+def reset_demo(fixtures: Path | str | None = None) -> ResetResult:
+    t0 = time.perf_counter()
+    fixtures_dir = Path(fixtures) if fixtures else DEFAULT_FIXTURES
+    # Everything that can fail on bad input happens before the database is touched.
+    check_files_exist(fixtures_dir)
+    require_key()
+    data = read_fixtures(fixtures_dir)
+    with _lock:
+        reload_in_place(get_engine(), data, fixtures_dir)
+        clock.reset()
+        dedup_service.rebuild_index()
+    sap_ok = reset_sap_mock()
+    return ResetResult(
+        ok=True,
+        duration_ms=round((time.perf_counter() - t0) * 1000, 1),
+        counts=table_counts(),
+        clock=clock.state(),
+        sap_mock_reset=sap_ok,
+    )
+
+
+__all__ = ["SeedError", "reset_demo", "reset_sap_mock"]

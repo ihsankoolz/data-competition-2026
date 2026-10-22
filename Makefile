@@ -36,8 +36,8 @@ dev-sap:
 dev-web:
 	cd $(WEB) && pnpm dev --port 3000
 
-reset-demo:       ## restore the database to the seeded demo state (needs FIELD_ENCRYPTION_KEY in .env)
-	uv run python -m services.api.db.seed --fixtures data/fixtures/seasonal_trend --db data/app.db
+reset-demo:       ## restore the seeded demo state: asks the running API (same code as the Reset demo button), else reloads data/app.db directly (needs FIELD_ENCRYPTION_KEY in .env)
+	uv run python -m services.api.db.seed --fixtures data/fixtures/seasonal_trend
 
 test: test-py test-web   ## all Python and web tests
 

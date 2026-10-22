@@ -304,6 +304,17 @@ def create_app(clock: Callable[[], float] | None = None) -> FastAPI:
         register(resource)
 
     app.include_router(router)
+
+    @app.post("/_mock/reset")
+    def mock_reset() -> dict[str, Any]:
+        """Mock-only (NOT part of the Service Layer contract, so outside `/b1s/v2`): forget every
+        record and session. The in-app demo reset (D-016) calls it."""
+        cleared = {name: len(store) for name, store in stores.items()}
+        sessions.clear()
+        for store in stores.values():
+            store.clear()
+        return {"reset": True, "cleared": cleared}
+
     return app
 
 

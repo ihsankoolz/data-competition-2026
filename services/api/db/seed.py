@@ -2,10 +2,11 @@
 
     uv run python -m services.api.db.seed --fixtures data/fixtures/seasonal_trend [--db data/app.db]
 
-Drops every table, recreates the schema (with the audit-log triggers), loads the fixture files
-and writes the first audit row. Running it twice gives the same database. Missing files, missing
-columns, unreadable values and a missing encryption key are all caught before anything is
-dropped, so they leave the old database alone.
+Reloads the database in place (one transaction, through a normal engine): drops and recreates
+every table (with the audit-log triggers), loads the fixture files and writes the first audit
+row. Running it twice gives the same database. Missing files, missing columns, unreadable
+values and a missing encryption key are all caught before anything is dropped. The running API
+uses `reload_in_place` too (`POST /admin/reset-demo`, D-016).
 
 Fixture layout is the contract in D-015 (it mirrors data-spec §10). Only the files listed in
 `FILES` are read. `customers_golden.csv` and everything under `ground_truth/` are ground truth
@@ -29,20 +30,15 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any, get_args
 
-from sqlalchemy import Engine, func, insert, select
+from sqlalchemy import Engine, MetaData, func, insert, select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from services.api import clock
 from services.api.audit import AuditAction, append_audit
 from services.api.crypto import EncryptionKeyError, require_key
 from services.api.db import models as m
-from services.api.db.session import (
-    default_db_path,
-    dispose_default,
-    make_engine,
-    make_session_factory,
-    reset_schema,
-)
+from services.api.db.session import default_db_path, make_engine
 from services.api.schemas import Role
 
 
@@ -433,51 +429,67 @@ def _users_in_dependency_order(rows: list[dict[str, Any]]) -> list[dict[str, Any
     return ordered
 
 
-def _load_into(engine: Engine, data: Loaded, fixtures_dir: Path) -> dict[str, int]:
-    reset_schema(engine)
-    clock.reset()  # the simulated clock is in memory; a reset starts it at CLOCK_START
-    with make_session_factory(engine).begin() as session:
-        try:
-            session.execute(insert(m.User), _users_in_dependency_order(data.tables["users"]))
-            for table, model in (
-                ("business_partners", m.BusinessPartner),
-                ("items", m.Item),
-                ("item_registrations", m.ItemRegistration),
-                ("orders", m.Order),
-                ("enquiries", m.Enquiry),
-                ("dirty_demand", m.DirtyDemand),
-                ("mdm_history", m.MdmHistory),
-                ("emails", m.Email),
-            ):
-                if data.tables[table]:
-                    session.execute(insert(model), data.tables[table])
-            if data.bank_rows:
-                session.execute(insert(m.BankAccount), data.bank_rows)
-        except IntegrityError as exc:
-            raise SeedError(f"Fixture data breaks a database rule: {exc.orig}") from None
+def reload_in_place(engine: Engine, data: Loaded, fixtures_dir: Path) -> dict[str, int]:
+    """Replace the whole database content with the fixtures, through a live engine.
 
-        counts = {
-            name: session.scalar(select(func.count()).select_from(model)) or 0
-            for name, model in _COUNT_TABLES.items()
-        }
-        append_audit(
-            session,
-            actor="system",
-            action=AuditAction.seed,
-            entity_type="database",
-            entity_id="app.db",
-            payload={"fixtures": fixtures_dir.name, "rows": counts},
-        )
-        counts["audit_log"] = 1
-        counts["requests"] = 0
+    One transaction: every table (including the append-only audit tables, whose triggers go
+    with them) is dropped and recreated, the fixtures are bulk-inserted and the first audit row
+    is written. Other connections keep reading the old, complete database until the commit and
+    see the new, complete one afterwards: nobody can see a half-loaded database. No file is
+    replaced, so an open session or connection held by the running API does not get in the way
+    (the old temp-file-and-`os.replace` approach fails on Windows).
+    """
+    with engine.begin() as conn:
+        existing = MetaData()
+        existing.reflect(bind=conn)
+        existing.drop_all(bind=conn)  # a table this code no longer knows is dropped too
+        m.Base.metadata.create_all(conn)  # audit triggers and the audit_head row come with it
+        with Session(bind=conn) as session:
+            try:
+                session.execute(insert(m.User), _users_in_dependency_order(data.tables["users"]))
+                for table, model in (
+                    ("business_partners", m.BusinessPartner),
+                    ("items", m.Item),
+                    ("item_registrations", m.ItemRegistration),
+                    ("orders", m.Order),
+                    ("enquiries", m.Enquiry),
+                    ("dirty_demand", m.DirtyDemand),
+                    ("mdm_history", m.MdmHistory),
+                    ("emails", m.Email),
+                ):
+                    if data.tables[table]:
+                        session.execute(insert(model), data.tables[table])
+                if data.bank_rows:
+                    session.execute(insert(m.BankAccount), data.bank_rows)
+            except IntegrityError as exc:
+                raise SeedError(f"Fixture data breaks a database rule: {exc.orig}") from None
+
+            counts = {
+                name: session.scalar(select(func.count()).select_from(model)) or 0
+                for name, model in _COUNT_TABLES.items()
+            }
+            clock.persist(session, clock.CLOCK_START)
+            append_audit(
+                session,
+                actor="system",
+                action=AuditAction.seed,
+                entity_type="database",
+                entity_id="app.db",
+                payload={"fixtures": fixtures_dir.name, "rows": counts},
+            )
+            session.flush()
+    counts["audit_log"] = 1
+    for name in ("requests", "approval_tasks", "notifications", "dedup_decisions"):
+        counts[name] = 0
     return counts
 
 
 def seed_database(fixtures: str | Path, db_path: str | Path | None = None) -> dict[str, int]:
     """Rebuild the database from fixtures. Returns row counts per table.
 
-    The new database is built in a temporary file next to the target and moved into place only
-    when everything loaded, so a failure at any point leaves the existing database untouched.
+    Everything that can fail on the way in (missing files, bad columns, no encryption key) is
+    checked before the database is touched. The reload itself is one transaction, so a failure
+    leaves the existing content as it was.
     """
     fixtures_dir = Path(fixtures)
     check_files_exist(fixtures_dir)
@@ -485,30 +497,13 @@ def seed_database(fixtures: str | Path, db_path: str | Path | None = None) -> di
     data = read_fixtures(fixtures_dir)
 
     target = Path(db_path) if db_path is not None else default_db_path()
-    target.parent.mkdir(parents=True, exist_ok=True)
-    tmp = target.with_name(target.name + ".seed-tmp")
-    _remove_sqlite_files(tmp)
-    engine = make_engine(tmp)
+    engine = make_engine(target)
     try:
-        counts = _load_into(engine, data, fixtures_dir)
-        engine.dispose()  # release the file before the move (Windows)
-        dispose_default()  # and any in-process engine that points at the old file
-        try:
-            os.replace(tmp, target)
-        except PermissionError:
-            raise SeedError(
-                f"{target} is in use by another program (is the API running? try `make stop`). "
-                "The existing database was not changed."
-            ) from None
+        counts = reload_in_place(engine, data, fixtures_dir)
     finally:
         engine.dispose()
-        _remove_sqlite_files(tmp)
+    clock.reset()  # the in-memory clock follows the database
     return counts
-
-
-def _remove_sqlite_files(path: Path) -> None:
-    for suffix in ("", "-journal", "-wal", "-shm"):
-        Path(str(path) + suffix).unlink(missing_ok=True)
 
 
 _COUNT_TABLES: dict[str, type[m.Base]] = {
@@ -525,13 +520,45 @@ _COUNT_TABLES: dict[str, type[m.Base]] = {
 }
 
 
+def _reset_via_running_api() -> dict[str, int] | None:
+    """If the API is running, ask it to reset (it also resets its clock, duplicate index and the
+    SAP mock). None if it is not reachable."""
+    import httpx
+
+    url = os.environ.get("API_URL", "http://localhost:8000").rstrip("/") + "/admin/reset-demo"
+    try:
+        resp = httpx.post(url, timeout=60)
+    except httpx.HTTPError:
+        return None
+    if resp.status_code != 200:
+        raise SeedError(f"The running API could not reset the demo: {resp.text[:300]}")
+    body = resp.json()
+    print(
+        f"reset by the running API in {body['duration_ms']:.0f} ms; "
+        f"SAP mock reset: {body['sap_mock_reset']}"
+    )
+    return body["counts"]
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Reset the app database from fixture files.")
     parser.add_argument("--fixtures", required=True, help="e.g. data/fixtures/seasonal_trend")
-    parser.add_argument("--db", default=None, help="SQLite file (default: data/app.db)")
+    parser.add_argument(
+        "--db",
+        default=None,
+        help="SQLite file. Given: reload that file directly. Not given (what `make reset-demo` "
+        "does): ask the running API (same code path as the Reset demo button), and if it is "
+        "not running reload data/app.db directly.",
+    )
     args = parser.parse_args(argv)
     try:
-        counts = seed_database(args.fixtures, args.db)
+        counts = _reset_via_running_api() if args.db is None else None
+        if counts is None:
+            counts = seed_database(args.fixtures, args.db)
+            if args.db is None:
+                from services.api.reset import reset_sap_mock
+
+                reset_sap_mock(timeout=1.0)  # best effort: the mock may not be running
     except (SeedError, EncryptionKeyError) as exc:
         print(f"seed failed: {exc}", file=sys.stderr)
         return 1

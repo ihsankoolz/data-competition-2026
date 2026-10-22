@@ -50,10 +50,15 @@ def test_all_tables_are_created(engine):
         "requests",
         "audit_log",
         "audit_head",
+        "approval_tasks",
+        "notifications",
+        "dedup_decisions",
+        "app_state",
     }
 
 
 def test_db_path_is_configurable(tmp_path, monkeypatch):
+    monkeypatch.delenv(DB_PATH_ENV)  # tests/conftest.py points it at a throw-away path
     assert default_db_path() == DEFAULT_DB_PATH
     assert DEFAULT_DB_PATH.parts[-2:] == ("data", "app.db")
     monkeypatch.setenv(DB_PATH_ENV, str(tmp_path / "elsewhere" / "x.db"))
