@@ -49,7 +49,7 @@ def sap_mock_root() -> str:
     return base.removesuffix(SAP_BASE_PATH)
 
 
-def reset_sap_mock(timeout: float = 3.0) -> bool:
+def reset_sap_mock(timeout: float = 1.0) -> bool:
     """Clear the SAP mock's records and sessions. False if it can't be reached."""
     try:
         resp = httpx.post(f"{sap_mock_root()}/_mock/reset", timeout=timeout)

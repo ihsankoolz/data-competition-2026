@@ -167,6 +167,25 @@ def route(session: Session, req: m.Request, actor: Actor) -> list[m.ApprovalTask
     return tasks
 
 
+def _edited_since_info_request(session: Session, req: m.Request) -> bool:
+    """Did the requestor change any field after the last time information was requested?"""
+    rows = session.execute(
+        select(m.AuditLog.id, m.AuditLog.action, m.AuditLog.payload)
+        .where(
+            m.AuditLog.request_id == req.req_id,
+            m.AuditLog.action.in_(("state_change", "field_edit")),
+        )
+        .order_by(m.AuditLog.id)
+    ).all()
+    edited = False
+    for _id, action, payload in rows:
+        if action == "state_change" and '"to":"INFO_REQUESTED"' in payload:
+            edited = False
+        elif action == "field_edit":
+            edited = True
+    return edited
+
+
 def _resync_tasks(
     session: Session,
     req: m.Request,
@@ -227,8 +246,23 @@ def submit(session: Session, req: m.Request, actor: Actor) -> None:
     names = user_names(session)
     if req.state == S.INFO_REQUESTED:
         tasks = tasks_for(session, req.req_id)
+        edited = _edited_since_info_request(session, req)
         for task in tasks:
-            if task.status == "info_requested":
+            if edited and task.status == "approved" and task.stage == 1:
+                # What they approved is not what is there now: they decide again.
+                _open_task(task)
+                task.decided_at = task.decided_by = None
+                _audit_task(
+                    session, actor.user_id, req, task,
+                    f"{role_label(task)} approval reopened because the request changed",
+                    action="reopen",
+                )  # fmt: skip
+                notify(
+                    session, task.assignee_user_id, "task_assigned", req,
+                    f"{actor.name} changed {_describe(req, names)} after you approved it. "
+                    "Please look at it again.", task,
+                )  # fmt: skip
+            elif task.status == "info_requested":
                 _open_task(task)
                 _audit_task(
                     session, actor.user_id, req, task, f"{role_label(task)} approval reopened"
@@ -425,9 +459,8 @@ def check_publish_allowed(req: m.Request, tasks: list[m.ApprovalTaskRow], actor:
 # ---------------------------------------------------------------- SLA sweep
 
 
-def run_sla_sweep(session: Session) -> int:
-    """Reminder at 50% of the SLA, escalation to the backup at 100%. Returns how many tasks
-    changed. Uses the simulated clock only; call it whenever the clock moves and on reads."""
+def _due_tasks(session: Session) -> list[tuple[m.ApprovalTaskRow, bool, bool]]:
+    """Pending tasks that owe a reminder and/or an escalation right now."""
     rules = load_rules()
     now = clock.now()
     pending = session.scalars(
@@ -435,13 +468,22 @@ def run_sla_sweep(session: Session) -> int:
             m.ApprovalTaskRow.status == "pending", m.ApprovalTaskRow.assigned_at.is_not(None)
         )
     ).all()
-    candidates = []
+    out = []
     for task in pending:
         assert task.assigned_at is not None
         remind_due = task.reminded_at is None and now >= sla.reminder_time(task.assigned_at, rules)
         escalate_due = task.escalated_at is None and now >= sla.due_time(task.assigned_at, rules)
         if remind_due or escalate_due:
-            candidates.append((task, remind_due, escalate_due))
+            out.append((task, remind_due, escalate_due))
+    return out
+
+
+def run_sla_sweep(session: Session) -> int:
+    """Reminder at 50% of the SLA, escalation to the backup at 100%. Returns how many tasks
+    changed. Uses the simulated clock only; call it whenever the clock moves and on reads."""
+    rules = load_rules()
+    now = clock.now()
+    candidates = _due_tasks(session)
     if not candidates:
         return 0
     names = user_names(session)
@@ -471,7 +513,8 @@ def run_sla_sweep(session: Session) -> int:
                 task.escalated_to_user_id = backup.user_id
                 notify(
                     session, backup.user_id, "escalated", req,
-                    f"Escalated to you: {what} passed its 2-business-day limit with "
+                    f"Escalated to you: {what} passed its "
+                    f"{rules.business_days:g}-business-day limit with "
                     f"{names.get(task.assignee_user_id)} ({role_label(task)}). "
                     "It stays in both inboxes until someone decides.", task,
                 )  # fmt: skip
@@ -499,7 +542,10 @@ def run_sla_sweep_safely() -> int:
     if not default_db_path().exists():
         return 0
     try:
-        with session_scope() as session:
+        with session_scope() as session:  # a cheap read first: most reads have nothing to do
+            if not _due_tasks(session):
+                return 0
+        with session_scope(write=True) as session:
             return run_sla_sweep(session)
     except SQLAlchemyError as exc:
         log.warning("SLA sweep skipped: %s", type(exc).__name__)

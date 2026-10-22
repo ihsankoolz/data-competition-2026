@@ -31,29 +31,35 @@ def _field_label(domain: str | None, path: str) -> str:
     return key
 
 
+# (what happened, what it tried to do when it failed)
 _SAP_WORDS = {
-    ("POST", "/Login"): "signed in to SAP",
-    ("POST", "/Logout"): "signed out of SAP",
-    ("GET", None): "read the record back from SAP to check it",
+    ("POST", "/Login"): ("signed in to SAP", "sign in to SAP"),
+    ("POST", "/Logout"): ("signed out of SAP", "sign out of SAP"),
+    ("GET", None): (
+        "read the record back from SAP to check it",
+        "read the record back from SAP to check it",
+    ),
 }
 
 
 def _sap_summary(p: dict[str, Any]) -> str:
     method, path, status = p.get("method"), str(p.get("path") or ""), p.get("status")
     if (method, path) in _SAP_WORDS:
-        what = _SAP_WORDS[(method, path)]
+        done, attempted = _SAP_WORDS[(method, path)]
     elif method == "POST":
-        what = "created the record in SAP (inactive until checked)"
+        done = "created the record in SAP (inactive until checked)"
+        attempted = "create the record in SAP"
     elif method == "GET":
-        what = _SAP_WORDS[("GET", None)]
+        done, attempted = _SAP_WORDS[("GET", None)]
     elif method == "PATCH":
-        what = "activated the record in SAP"
+        done = "activated the record in SAP"
+        attempted = "activate the record in SAP"
     else:
-        what = f"{method} {path}"
+        done = attempted = f"{method} {path}"
     if status is None or status >= 400:
         err = p.get("b1_error_message")
-        return f"SAP: tried to {what}, but it failed" + (f" ({err})" if err else "")
-    return f"SAP: {what}"
+        return f"SAP: tried to {attempted}, but it failed" + (f" ({err})" if err else "")
+    return f"SAP: {done}"
 
 
 def summarize(row: m.AuditLog, names: dict[str, str], domain: str | None) -> str:

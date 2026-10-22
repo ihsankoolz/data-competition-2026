@@ -363,6 +363,9 @@ class DedupDecisionRow(Base):
     decided_by: Mapped[str] = mapped_column(String(32))
     decided_at: Mapped[datetime] = mapped_column(SimTimestamp)
     verdict_at_decision: Mapped[str] = mapped_column(String(8))
+    # CardCodes the check offered when the human decided. A "not a duplicate" decision only
+    # covers those records: a different candidate showing up later needs a new decision.
+    covered_codes: Mapped[list[str]] = mapped_column(JSON, default=list)
 
 
 class AppState(Base):

@@ -40,6 +40,9 @@ from services.api.workflow import engine, publishing
 
 router = APIRouter(tags=["requests"])
 EDITABLE = (m.RequestState.DRAFT, m.RequestState.INFO_REQUESTED)
+MIN_REASON_CHARS = 10
+# Changing any of these makes an earlier "not a duplicate" decision meaningless.
+IDENTITY_FIELDS = ("CardName", "CardForeignName", "FederalTaxID", "Country")
 
 
 # ---------------------------------------------------------------- helpers
@@ -186,7 +189,8 @@ def _new_request(
         payload={
             "from": None,
             "to": "DRAFT",
-            "summary": f"{actor.name} started a {domain.replace('_', ' ')} request"
+            "summary": f"{actor.name} started "
+            f"{'an' if domain == 'item' else 'a'} {domain.replace('_', ' ')} request"
             + (f" from email {source_email_id}" if source_email_id else ""),
             "fields": sorted(fields),
         },
@@ -199,7 +203,7 @@ def _new_request(
 )
 def create_request(body: RequestCreate, actor: CurrentUser) -> RequestDetail:
     """Creates a DRAFT for the acting user."""
-    with session_scope() as session:
+    with session_scope(write=True) as session:
         req = _new_request(
             session, actor, body.domain, body.entity, body.country, body.fields,
             body.source_email_id,
@@ -237,7 +241,7 @@ def create_request_from_email(email_id: str, actor: CurrentUser) -> RequestDetai
     if country not in ("SG", "MY", "ID", "VN", "TH"):
         country = actor.country if actor.country in ("SG", "MY", "ID", "VN", "TH") else "SG"
     entity = actor.entity if actor.entity in ("SPD", "QTS", "QTG") else "SPD"
-    with session_scope() as session:
+    with session_scope(write=True) as session:
         req = _new_request(
             session, actor, interp.domain, entity, country, fields, email_id, quotes
         )  # fmt: skip
@@ -253,7 +257,7 @@ def get_request(req_id: str, actor: CurrentUser) -> RequestDetail:
 
 @router.patch("/requests/{req_id}", response_model=RequestDetail, operation_id="updateRequest")
 def update_request(req_id: str, body: RequestUpdate, actor: CurrentUser) -> RequestDetail:
-    with session_scope() as session:
+    with session_scope(write=True) as session:
         req = _get(session, req_id)
         _require_owner(req, actor)
         if req.state not in EDITABLE:
@@ -278,12 +282,30 @@ def update_request(req_id: str, body: RequestUpdate, actor: CurrentUser) -> Requ
                     session, actor=actor.user_id, entity_type="request", entity_id=req_id,
                     field=path, old=o, new=n, request_id=req_id,
                 )  # fmt: skip
-        if body.country and body.country != req.country:
+        country_changed = bool(body.country and body.country != req.country)
+        if body.country and country_changed:
             audit_field_edit(
                 session, actor=actor.user_id, entity_type="request", entity_id=req_id,
                 field="country", old=req.country, new=body.country, request_id=req_id,
             )  # fmt: skip
             req.country = body.country
+        changed_identity = country_changed or any(old.get(k) != new.get(k) for k in IDENTITY_FIELDS)
+        if changed_identity:
+            stale = session.scalars(
+                select(m.DedupDecisionRow).where(m.DedupDecisionRow.req_id == req_id)
+            ).all()
+            if stale:
+                for row in stale:
+                    session.delete(row)
+                append_audit(
+                    session, actor=actor.user_id, action=AuditAction.dedup_decision,
+                    entity_type="request", entity_id=req_id, request_id=req_id,
+                    payload={
+                        "action": "cleared",
+                        "summary": "The earlier 'not a duplicate' decision was cleared because "
+                        "the name, tax ID or country changed; the check must be decided again",
+                    },
+                )  # fmt: skip
         req.payload = bankfields.seal(new)
         req.updated_at = clock.now()
         session.flush()
@@ -301,7 +323,7 @@ def update_request(req_id: str, body: RequestUpdate, actor: CurrentUser) -> Requ
 def decide_duplicate(req_id: str, body: DedupDecisionIn, actor: CurrentUser) -> RequestDetail:
     """Link to the existing record (-> LINKED_TO_EXISTING, no approvals) or confirm it is not
     a duplicate with a reason. Always a human decision; always audited."""
-    with session_scope() as session:
+    with session_scope(write=True) as session:
         req = _get(session, req_id)
         _require_owner(req, actor)
         domain = req.domain.value
@@ -326,18 +348,22 @@ def decide_duplicate(req_id: str, body: DedupDecisionIn, actor: CurrentUser) -> 
                     f"record. A {domain} request can only link to a {domain} record "
                     "(a company that is both needs two separate records).",
                 )
-        elif not (body.reason or "").strip():
+        elif len((body.reason or "").strip()) < MIN_REASON_CHARS:
             raise HTTPException(
-                422, "Please say why this is a different company (at least 10 characters)."
+                422,
+                "Please say why this is a different company, in at least "
+                f"{MIN_REASON_CHARS} characters.",
             )
         plain = bankfields.unseal(req.payload)
-        verdict = dedup_service.run_check(domain, req.entity, plain).verdict
+        check = dedup_service.run_check(domain, req.entity, plain)  # rules only, no AI
+        verdict = check.verdict
         now = clock.now()
         session.add(
             m.DedupDecisionRow(
                 req_id=req_id, action=body.action, card_code=body.card_code,
                 reason=(body.reason or "").strip() or None, decided_by=actor.user_id,
                 decided_at=now, verdict_at_decision=verdict,
+                covered_codes=[c.CardCode for c in check.candidates],
             )
         )  # fmt: skip
         if link is not None:
@@ -373,7 +399,7 @@ def decide_duplicate(req_id: str, body: DedupDecisionIn, actor: CurrentUser) -> 
 def submit_request(req_id: str, actor: CurrentUser) -> RequestDetail:
     """Re-runs the duplicate check. 409 if a Likely duplicate has no human decision; 422 if
     required fields are missing. Otherwise routes approvals (config/routing_rules.yaml)."""
-    with session_scope() as session:
+    with session_scope(write=True) as session:
         req = _get(session, req_id)
         _require_owner(req, actor)
         if req.state not in EDITABLE:
@@ -400,8 +426,14 @@ def submit_request(req_id: str, actor: CurrentUser) -> RequestDetail:
                 .order_by(m.DedupDecisionRow.id.desc())
                 .limit(1)
             ).first()
-            if result.block_submit and not (decision and decision.action == "not_duplicate"):
-                top = result.candidates[0] if result.candidates else None
+            top = result.candidates[0] if result.candidates else None
+            covered = bool(
+                decision
+                and decision.action == "not_duplicate"
+                and top is not None
+                and top.CardCode in (decision.covered_codes or [])
+            )
+            if result.block_submit and not covered:
                 what = f"{top.CardCode} {top.CardName}" if top else "an existing record"
                 raise HTTPException(
                     409,

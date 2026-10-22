@@ -72,7 +72,11 @@ def judge_enabled() -> bool:
     return os.environ.get("LLM_MODE", "replay").strip().lower() == "replay"
 
 
-def run_check(domain: str, entity: str | None, fields: dict[str, Any]) -> DedupResult:
+def run_check(
+    domain: str, entity: str | None, fields: dict[str, Any], *, use_judge: bool = False
+) -> DedupResult:
+    """Rules only by default. Only `/dedup/check` passes `use_judge=judge_enabled()`: the AI
+    second opinion never sits on the submit or decision path (it only ever advises)."""
     query = dedup_query(domain, entity, fields)  # type: ignore[arg-type]
     if query is None:
         return DedupResult(
@@ -80,4 +84,4 @@ def run_check(domain: str, entity: str | None, fields: dict[str, Any]) -> DedupR
             message="Enter the name and country and we will check for existing records.",
             block_submit=False,
         )
-    return check(query, get_index(), use_judge=judge_enabled())
+    return check(query, get_index(), use_judge=use_judge and judge_enabled())

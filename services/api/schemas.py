@@ -122,8 +122,8 @@ class DedupDecisionIn(BaseModel):
     card_code: str | None = Field(default=None, description="Required for link_to_existing")
     reason: str | None = Field(
         default=None,
-        min_length=10,
-        description="Required for not_duplicate: why this is a different customer/vendor",
+        description="Required for not_duplicate, at least 10 characters (checked by the API with "
+        "a plain-English message): why this is a different customer/vendor",
     )
 
 
