@@ -246,9 +246,11 @@ def create_request_from_email(email_id: str, actor: CurrentUser) -> RequestDetai
     entity = actor.entity if actor.entity in ("SPD", "QTS", "QTG") else "SPD"
     with session_scope(write=True) as session:
         if interp.domain == "item":  # deterministic suggestions; the email's own values win
-            for name, (value, _why) in item_suggestions.suggest_item_fields(
-                str(fields.get("ItemName") or ""), entity, fields, item_suggestions.catalogue(session)
-            ).items():
+            known = item_suggestions.catalogue(session)
+            suggestions = item_suggestions.suggest_item_fields(
+                str(fields.get("ItemName") or ""), entity, fields, known
+            )
+            for name, (value, _why) in suggestions.items():
                 fields.setdefault(name, value)
         req = _new_request(
             session, actor, interp.domain, entity, country, fields, email_id, quotes
