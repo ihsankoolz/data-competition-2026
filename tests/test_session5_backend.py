@@ -127,7 +127,7 @@ def test_resubmit_keeps_given_approvals_and_reopens_only_the_asker(client):
     assert note["kind"] == "task_assigned" and "answered your question" in note["message"]
     audit = client.get(f"/requests/{rid}/audit", headers=H("amy")).json()
     summaries = [e["summary"] for e in audit]
-    assert any("sent the request back for approval; back with Quality / Regulatory (SG)" in s
+    assert any("changed: registrations; back with Quality / Regulatory (SG)" in s
                for s in summaries)  # fmt: skip
     # the edit itself was audited field by field
     assert any(e["action"] == "field_edit" for e in audit)
@@ -220,3 +220,100 @@ def test_resubmit_after_bank_change_still_reopens_finance(client):
     t = tasks_by_role(client.post(f"/requests/{d['req_id']}/submit", headers=H("amy")).json())
     assert t[("finance", None)]["status"] == "pending"
     assert t[("business_support", None)]["status"] == "approved"  # untouched by the change
+
+
+# ---------------------------------------------------------------- resubmit governance (D-020 #3)
+
+
+def _approved_item_with_question(client, name):
+    """BU head and Business Support approved; Q/R (SG) asked a question."""
+    d = _submit_item(client, name)
+    t = tasks_by_role(d)
+    decide(client, t[("bu_head", None)]["task_id"], "daniel")
+    decide(client, t[("business_support", None)]["task_id"], "meiling")
+    qr = t[("quality_regulatory", "SG")]
+    assert (
+        decide(client, qr["task_id"], "joanne", "ask_info", "Is the name right?").status_code == 200
+    )
+    return d["req_id"]
+
+
+def _audit_summaries(client, rid):
+    return [e["summary"] for e in client.get(f"/requests/{rid}/audit", headers=H("amy")).json()]
+
+
+def test_an_identity_edit_reopens_every_earlier_approval(client):
+    rid = _approved_item_with_question(client, "Identity Edit Rapid Test")
+    client.patch(
+        f"/requests/{rid}", headers=H("amy"), json={"fields": {"ItemName": "Identity Edit Test v2"}}
+    )
+    d = client.post(f"/requests/{rid}/submit", headers=H("amy")).json()
+    t = tasks_by_role(d)
+    assert d["state"] == "IN_APPROVAL"
+    assert {t[k]["status"] for k in t if k[0] != "mdm_analyst"} == {"pending"}
+    assert any("changed: ItemName; back with" in s for s in _audit_summaries(client, rid))
+
+
+def test_a_non_identity_edit_keeps_the_other_approvals(client):
+    rid = _approved_item_with_question(client, "Plain Edit Rapid Test")
+    client.patch(f"/requests/{rid}", headers=H("amy"), json={"fields": {"purpose": "Tender 7"}})
+    t = tasks_by_role(client.post(f"/requests/{rid}/submit", headers=H("amy")).json())
+    assert t[("bu_head", None)]["status"] == "approved"
+    assert t[("business_support", None)]["status"] == "approved"
+    assert t[("quality_regulatory", "SG")]["status"] == "pending"
+
+
+def test_dropping_the_asking_task_reopens_the_others_and_never_jumps_to_approved(client):
+    rid = _approved_item_with_question(client, "Dropped Asker Rapid Test")
+    r = client.patch(
+        f"/requests/{rid}",
+        headers=H("amy"),
+        json={"fields": {"U_IVD": "tNO", "registrations": []}},
+    )
+    assert r.status_code == 200, r.text
+    d = client.post(f"/requests/{rid}/submit", headers=H("amy")).json()
+    t = tasks_by_role(d)
+    assert d["state"] == "IN_APPROVAL"  # not APPROVED
+    assert t[("quality_regulatory", "SG")]["status"] == "cancelled"
+    assert t[("bu_head", None)]["status"] == "pending"
+    assert t[("business_support", None)]["status"] == "pending"
+
+
+def test_the_resubmit_summary_names_changed_fields_but_never_bank_values(client):
+    bank = [{"BankCode": "7171", "AccountNo": "4444555566", "AccountName": "N", "Country": "SG"}]
+    fields = {
+        "CardName": "Audit Names Vendor Pte Ltd",
+        "Country": "SG",
+        "FederalTaxID": "202600003S",
+        "Street": "1 Road",
+        "City": "Singapore",
+        "EmailAddress": "a@b.example",
+        "BPBankAccounts": bank,
+    }
+    req = new_request(client, "amy", "vendor", "SPD", "SG", fields)
+    d = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).json()
+    decide(client, tasks_by_role(d)[("bu_head", None)]["task_id"], "daniel", "ask_info", "Bank?")
+    client.patch(
+        f"/requests/{req['req_id']}",
+        headers=H("amy"),
+        json={"fields": {"BPBankAccounts": [{**bank[0], "AccountNo": "7777888899"}]}},
+    )
+    client.post(f"/requests/{req['req_id']}/submit", headers=H("amy"))
+    text = " ".join(_audit_summaries(client, req["req_id"]))
+    assert "changed: BPBankAccounts" in text
+    assert "7777888899" not in text and "4444555566" not in text
+
+
+def test_reset_reports_a_failing_sap_mock_reset_instead_of_swallowing_it(
+    client, monkeypatch, caplog
+):
+    from services.api import reset as reset_mod
+
+    def boom(*_a, **_k):
+        raise RuntimeError("mock exploded")
+
+    monkeypatch.setattr(reset_mod, "reset_sap_mock", boom)
+    r = client.post("/admin/reset-demo")
+    assert r.status_code == 200 and r.json()["ok"] is True
+    assert r.json()["sap_mock_reset"] is False
+    assert "SAP mock reset failed" in caplog.text

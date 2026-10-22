@@ -165,9 +165,7 @@ def catalogue(session: Session) -> list[tuple[str, int | None]]:
     return [(n, g) for n, g in session.execute(select(m.Item.ItemName, m.Item.ItemsGroupCode))]
 
 
-def shown_reasons(
-    session: Session, req: m.Request, fields: Mapping[str, Any]
-) -> dict[str, str]:
+def shown_reasons(session: Session, req: m.Request, fields: Mapping[str, Any]) -> dict[str, str]:
     """Reasons for the suggested values that are still on the form of an item created from an
     email. A value the requestor has since changed is theirs now, so its reason is dropped."""
     if req.domain != m.RequestDomain.item or not req.source_email_id:

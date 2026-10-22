@@ -171,3 +171,13 @@ def test_german_vendor_is_approved_by_the_normal_route_and_published_to_sap(clie
     view = client.get(f"/requests/{d['req_id']}/sap-readback", headers=H("priya"))
     assert view.status_code == 200
     assert view.json()["all_match"] is True and view.json()["active"] is True
+
+
+def test_a_bad_bank_country_gets_a_short_message_not_the_whole_list(client):
+    bad = [{**BANK[0], "Country": "ZZ"}]
+    req = new_request(
+        client, "amy", "vendor", "SPD", "SG", {**GERMAN_VENDOR, "BPBankAccounts": bad}
+    )
+    (issue,) = [i for i in req["issues"] if i["field"] == "BPBankAccounts.0.Country"]
+    assert "two-letter country code" in issue["message"] and len(issue["message"]) < 120
+    assert "Customers" not in issue["message"]

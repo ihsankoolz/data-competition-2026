@@ -22,7 +22,13 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from ds.forms import FORM_DOMAINS, country_names, load_form_schema, regulated_countries
+from ds.forms import (
+    FORM_DOMAINS,
+    country_names,
+    home_countries,
+    load_form_schema,
+    regulated_countries,
+)
 from services.api.bankfields import BANK_KEY
 from services.api.formfields import missing_form_fields
 from services.api.schemas import FieldIssue
@@ -137,7 +143,7 @@ def _is_number(v: Any, *, whole: bool) -> bool:
 
 def _country_message(label: str, value: str, allowed: list[Any]) -> str:
     names = country_names()
-    if len(allowed) > len(COUNTRY_NAME):  # the long list (vendors): any ISO code is fine
+    if set(allowed) != set(home_countries()):  # the full ISO list (vendors, bank countries)
         return f"{label} must be a two-letter country code from the list, like DE or US."
     place = names.get(value.upper())
     where = [COUNTRY_NAME.get(str(c), str(c)) for c in allowed]
@@ -162,7 +168,7 @@ def _check_value(
             return issue("format", f"{label} must be text.")
         text = value.strip()
         if "enum" in spec and text not in spec["enum"]:
-            if field == "Country":
+            if field.rsplit(".", 1)[-1] == "Country":  # also BPBankAccounts.N.Country
                 return issue("not_allowed", _country_message(label, text, spec["enum"]))
             return issue("not_allowed", f"{label} must be one of: {_plain_choices(spec['enum'])}.")
         limit = spec.get("maxLength")

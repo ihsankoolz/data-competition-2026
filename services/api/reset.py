@@ -9,8 +9,8 @@ What is reset, in this order:
    recreated inside the same transaction; no application code can delete or update audit rows);
 2. the simulated clock (back to Mon 5 Oct 2026 09:00 SGT, also saved in the database);
 3. the duplicate-check index (rebuilt from the reloaded master data);
-4. the SAP mock (`POST /_mock/reset`, outside `/b1s/v2`), concurrently with 1-3. If the mock is
-   down the reset still succeeds and reports `sap_mock_reset=false`.
+4. the SAP mock (`POST /_mock/reset`, outside `/b1s/v2`), after 1-3 succeeded. If the mock is
+   down or fails the reset still succeeds and reports `sap_mock_reset=false`.
 
 `make reset-demo` goes through the same function (see `services.api.db.seed.main`).
 """
@@ -80,18 +80,17 @@ def reset_demo(fixtures: Path | str | None = None) -> ResetResult:
     # Everything that can fail on bad input happens before the database is touched.
     check_files_exist(fixtures_dir)
     require_key()
-    # The SAP mock is a separate process and independent of the database: reset it while the
-    # database reloads, so a slow or absent mock never adds to the wait.
-    sap_result: list[bool] = []
-    sap_thread = threading.Thread(target=lambda: sap_result.append(reset_sap_mock()), daemon=True)
-    sap_thread.start()
     data = read_fixtures(fixtures_dir)
     with _lock:
         reload_in_place(get_engine(), data, fixtures_dir)
         clock.reset()
         dedup_service.rebuild_index()
-    sap_thread.join()
-    sap_ok = bool(sap_result and sap_result[0])
+    # Only after the database reload succeeded (a failed reload must leave the mock alone).
+    try:
+        sap_ok = reset_sap_mock()
+    except Exception:  # noqa: BLE001 - the demo reset must still report; the cause is logged
+        log.exception("SAP mock reset failed")
+        sap_ok = False
     return ResetResult(
         ok=True,
         duration_ms=round((time.perf_counter() - t0) * 1000, 1),
