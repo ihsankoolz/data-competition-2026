@@ -332,9 +332,11 @@ export function ResubmitForm({
               : `Saves your changes and sends the request back to ${ask ? ask.asked_by_name : "the approvers"}.`}
           </p>
         </div>
-        <p className="text-xs text-muted-foreground" data-testid="finance-note">
-          Changing bank details or credit terms sends the request back to Finance.
-        </p>
+        {isBusinessPartner && (
+          <p className="text-xs text-muted-foreground" data-testid="finance-note">
+            Changing bank details or credit terms sends the request back to Finance.
+          </p>
+        )}
         {error && (
           <p className="text-sm text-destructive" role="alert" data-testid="resubmit-error">
             {error}

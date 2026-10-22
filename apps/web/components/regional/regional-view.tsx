@@ -233,6 +233,16 @@ export function RegionalView() {
                   })}
                 />
               </dl>
+              {view === "before" && data.cross_sell_pct === 0 && (
+                <p
+                  className="-mt-2 border-l-2 border-warning pl-3 text-xs text-muted-foreground"
+                  data-testid="cross-sell-note"
+                >
+                  <span className="font-medium text-foreground">Why cross-sell shows 0%: </span>
+                  in this synthetic data each company keeps its own record of a customer and sells
+                  one product line, so before merging no record buys two. 0% is expected.
+                </p>
+              )}
               <div className="flex flex-col gap-1">
                 <p className="flex items-center gap-1 text-sm font-medium">
                   Revenue bridge

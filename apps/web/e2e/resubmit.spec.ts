@@ -50,6 +50,29 @@ test.afterEach(async ({ page }) => {
   await page.unrouteAll({ behavior: "ignoreErrors" });
 });
 
+test("real backend: Amy answers Mei Ling's question and the request goes back to her", async ({
+  page,
+}) => {
+  const { id } = await askedForInfo(page, "Zorvath Kestrel Biolabs Pte Ltd");
+  await openAs(page, "amy", `/requests/${id}`);
+  await expect(page.getByTestId("request-state")).toHaveAttribute("data-state", "INFO_REQUESTED");
+  const form = page.getByTestId("resubmit-form");
+  await expect(form.getByTestId("info-question")).toHaveText(QUESTION);
+  await expect(form).toContainText("Mei Ling");
+  await expect(form.getByTestId("finance-note")).toBeVisible();
+
+  await form.getByLabel("Phone").fill("+65 6123 4567");
+  await form.getByTestId("resubmit").click();
+
+  await expect(page.getByText("Sent back to Mei Ling")).toBeVisible();
+  await expect(page.getByTestId("request-state")).toHaveAttribute("data-state", "IN_APPROVAL");
+  await expect(page.locator('[data-testid="task"][data-assignee="meiling"]')).toHaveAttribute(
+    "data-status",
+    "pending",
+  );
+  await expect(page.getByTestId("request-fields")).toContainText("+65 6123 4567");
+});
+
 test("the requestor sees the question, edits a field and resubmits", async ({ page }) => {
   const { id, taskId } = await askedForInfo(page, "Quillon Resubmit Medical Pte Ltd");
   await stubQuestion(page, id, taskId);

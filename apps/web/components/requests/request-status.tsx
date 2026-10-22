@@ -332,11 +332,12 @@ function YourTurn({
   const canResubmit = actions.includes("submit") && detail.state === "INFO_REQUESTED";
   if (!canDecide && !canPublish && !canResubmit) return null;
 
-  // Keyed by the question, so the 8-second refresh never wipes what the requestor is typing.
+  // Keyed by request + state only: the 8-second refresh (or info_request arriving) never wipes
+  // what the requestor is typing.
   if (canResubmit) {
     return (
       <ResubmitForm
-        key={`${detail.req_id}-${detail.info_request?.task_id ?? "ask"}`}
+        key={`${detail.req_id}-INFO_REQUESTED`}
         detail={detail}
         onResubmitted={onChanged}
       />
