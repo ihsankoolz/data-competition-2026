@@ -29,22 +29,30 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   );
 
   // Before merge (the default): duplicate alerts are marked.
+  // Read the counts from the sentence, then wait for the list to match it:
+  // count() does not wait, so counting rows first races the render.
   const lost = page.getByTestId("lost-customers");
-  const before = await lost.getByTestId("lost-row").count();
-  const markers = await lost.getByTestId("duplicate-marker").count();
-  expect(markers).toBeGreaterThan(0);
-  await expect(page.getByTestId("lost-count")).toContainText(
-    `${before} alerts, of which ${markers}`,
+  await expect(page.getByTestId("lost-count")).toContainText(/\d+ alerts, of which \d+/);
+  const counts = (await page.getByTestId("lost-count").textContent())?.match(
+    /(\d+) alerts, of which (\d+)/,
   );
+  const before = Number(counts?.[1]);
+  const markers = Number(counts?.[2]);
+  expect(markers).toBeGreaterThan(0);
+  await expect(lost.getByTestId("lost-row")).toHaveCount(before);
+  await expect(lost.getByTestId("duplicate-marker")).toHaveCount(markers);
   const customersBefore = await page.getByTestId("kpi-customers-value").textContent();
   await expect(page.getByTestId("cross-sell-note")).toContainText("0% is expected");
 
   // After merge: fewer alerts, none of them duplicates, fewer customers.
   await page.getByTestId("view-after").click();
   await expect(lost.getByTestId("duplicate-marker")).toHaveCount(0);
-  const after = await lost.getByTestId("lost-row").count();
+  await expect(page.getByTestId("lost-count")).not.toContainText(`${before} alerts`);
+  const after = Number(
+    (await page.getByTestId("lost-count").textContent())?.match(/(\d+) alerts/)?.[1],
+  );
   expect(after).toBeLessThan(before);
-  await expect(page.getByTestId("lost-count")).toContainText(`${after} alerts`);
+  await expect(lost.getByTestId("lost-row")).toHaveCount(after);
   await expect(page.getByTestId("kpi-customers-value")).not.toHaveText(customersBefore ?? "");
 
   // The country filter narrows the strip and the heatmap.
