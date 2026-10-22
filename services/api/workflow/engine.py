@@ -167,6 +167,61 @@ def route(session: Session, req: m.Request, actor: Actor) -> list[m.ApprovalTask
     return tasks
 
 
+def _resync_tasks(
+    session: Session,
+    req: m.Request,
+    actor: Actor,
+    tasks: list[m.ApprovalTaskRow],
+    names: dict[str, str],
+) -> None:
+    """After the requestor edited an answer: the rule table is applied again. A newly needed
+    task (say, one more selling country for an IVD item) is opened, and a task that is no longer
+    needed is cancelled. Approvals already given stay."""
+    plain = bankfields.unseal(req.payload)
+    plans = plan_tasks(req.domain.value, plain)
+    live = [t for t in tasks if t.status != "cancelled"]
+    existing = {(t.stage, t.role, t.country) for t in live}
+    wanted = {(p.stage, p.role, p.country) for p in plans}
+    for t in live:
+        if (t.stage, t.role, t.country) not in wanted and t.status != "approved":
+            t.status = "cancelled"
+            _audit_task(
+                session, actor.user_id, req, t, f"{role_label(t)} approval no longer needed",
+                action="cancel",
+            )  # fmt: skip
+    dir_ = directory(session)
+    taken = {(t.stage, t.role, t.assignee_user_id) for t in live}
+    for plan in plans:
+        if (plan.stage, plan.role, plan.country) in existing:
+            continue
+        person = assign(plan, req.entity, dir_, taken)
+        task = m.ApprovalTaskRow(
+            task_id=next_id(session, "task", "TSK", 4),
+            req_id=req.req_id,
+            stage=plan.stage,
+            stage_name=plan.stage_name,
+            role=plan.role,
+            country=plan.country,
+            assignee_user_id=person.user_id,
+            status="waiting",
+        )
+        if plan.stage == 1:
+            _open_task(task)
+        session.add(task)
+        session.flush()
+        _audit_task(
+            session, actor.user_id, req, task,
+            f"{role_label(task)} approval added for {person.name} (details changed)",
+            assignee=person.user_id,
+        )  # fmt: skip
+        if task.status == "pending":
+            notify(
+                session, person.user_id, "task_assigned", req,
+                f"New request to approve: {_describe(req, names)}. "
+                f"Your part: {role_label(task)}.", task,
+            )  # fmt: skip
+
+
 def submit(session: Session, req: m.Request, actor: Actor) -> None:
     """DRAFT -> SUBMITTED -> IN_APPROVAL, or INFO_REQUESTED -> IN_APPROVAL (tasks reopen)."""
     names = user_names(session)
@@ -187,6 +242,7 @@ def submit(session: Session, req: m.Request, actor: Actor) -> None:
                     "It is back in your inbox.",
                     task,
                 )
+        _resync_tasks(session, req, actor, tasks, names)
         audit_state(
             session,
             req,
@@ -194,6 +250,7 @@ def submit(session: Session, req: m.Request, actor: Actor) -> None:
             S.IN_APPROVAL,
             f"{actor.name} sent the request back for approval",
         )
+        advance_if_complete(session, req, actor, tasks_for(session, req.req_id), names)
         return
     audit_state(session, req, actor.user_id, S.SUBMITTED, f"{actor.name} submitted the request")
     route(session, req, actor)
@@ -252,6 +309,39 @@ def check_decision_allowed(
         raise HTTPException(409, f"This request is {req.state.value.replace('_', ' ').lower()}.")
 
 
+def advance_if_complete(
+    session: Session,
+    req: m.Request,
+    actor: Actor,
+    tasks: list[m.ApprovalTaskRow],
+    names: dict[str, str],
+) -> None:
+    """When every stage-1 task is approved the request is APPROVED and stage 2 opens."""
+    stage1 = [t for t in tasks if t.stage == 1 and t.status != "cancelled"]
+    if not stage1 or not all(t.status == "approved" for t in stage1):
+        return
+    audit_state(
+        session, req, actor.user_id, S.APPROVED,
+        "Every stage-1 approval is in; the MDM publish step is open",
+    )  # fmt: skip
+    for t in tasks:
+        if t.stage == 2 and t.status == "waiting":
+            _open_task(t)
+            _audit_task(
+                session, actor.user_id, req, t, f"{role_label(t)} step opened",
+                assignee=t.assignee_user_id,
+            )  # fmt: skip
+            notify(
+                session, t.assignee_user_id, "task_assigned", req,
+                f"Ready to publish: {_describe(req, names)} is fully approved.", t,
+            )  # fmt: skip
+    notify(
+        session, req.requestor_user_id, "approved", req,
+        f"Your request '{title_of(req.domain.value, bankfields.unseal(req.payload))}' "
+        "is fully approved and waiting to be published to SAP.",
+    )  # fmt: skip
+
+
 def decide(
     session: Session,
     req: m.Request,
@@ -279,28 +369,7 @@ def decide(
             session, actor.user_id, req, task, f"{actor.name} approved ({label})",
             action=action, comment=comment,
         )  # fmt: skip
-        stage1 = [t for t in tasks if t.stage == 1]
-        if all(t.status == "approved" for t in stage1):
-            audit_state(
-                session, req, actor.user_id, S.APPROVED,
-                "Every stage-1 approval is in; the MDM publish step is open",
-            )  # fmt: skip
-            for t in tasks:
-                if t.stage == 2 and t.status == "waiting":
-                    _open_task(t)
-                    _audit_task(
-                        session, actor.user_id, req, t, f"{role_label(t)} step opened",
-                        assignee=t.assignee_user_id,
-                    )  # fmt: skip
-                    notify(
-                        session, t.assignee_user_id, "task_assigned", req,
-                        f"Ready to publish: {_describe(req, names)} is fully approved.", t,
-                    )  # fmt: skip
-            notify(
-                session, req.requestor_user_id, "approved", req,
-                f"Your request '{title_of(req.domain.value, bankfields.unseal(req.payload))}' "
-                "is fully approved and waiting to be published to SAP.",
-            )  # fmt: skip
+        advance_if_complete(session, req, actor, tasks, names)
     elif action == "reject":
         task.status = "rejected"
         _audit_task(

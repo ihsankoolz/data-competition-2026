@@ -491,6 +491,49 @@ def test_ivd_item_gets_one_quality_task_per_selling_country(client):
     assert len(stage1) == 5
 
 
+def test_resubmit_after_a_question_re_applies_the_routing_rules(client):
+    fields = {
+        "ItemName": "Resync Rapid Test",
+        "U_IVD": "tYES",
+        "selling_countries": ["SG", "MY"],
+        "registrations": [
+            {"country": "SG", "reg_no": "S-1"},
+            {"country": "MY", "reg_no": "M-1"},
+        ],
+    }
+    req = new_request(client, "amy", "item", "SPD", "SG", fields)
+    d = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).json()
+    my = tasks_by_role(d)[("quality_regulatory", "MY")]
+    r = decide(
+        client, my["task_id"], "nurul", "ask_info", "We do not sell this in Malaysia, do we?"
+    )
+    assert r.json()["state"] == "INFO_REQUESTED"
+    r = client.patch(
+        f"/requests/{req['req_id']}",
+        headers=H("amy"),
+        json={
+            "fields": {
+                "selling_countries": ["SG", "VN"],
+                "registrations": [
+                    {"country": "SG", "reg_no": "S-1"},
+                    {"country": "VN", "reg_no": "V-1"},
+                ],
+            }
+        },
+    )
+    assert r.status_code == 200
+    d = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).json()
+    assert d["state"] == "IN_APPROVAL"
+    qr = {
+        t["country"]: t["status"]
+        for t in d["stages"][0]["tasks"]
+        if t["role"] == "quality_regulatory"
+    }
+    assert qr == {"SG": "pending", "MY": "cancelled", "VN": "pending"}
+    lan = tasks_by_role(d)[("quality_regulatory", "VN")]
+    assert lan["assignee_user_id"] == "lan"
+
+
 def test_non_ivd_item_has_no_quality_task(client):
     req = new_request(
         client, "amy", "item", "SPD", "SG",
@@ -741,6 +784,77 @@ def test_publish_ends_active_and_the_new_customer_is_found_by_the_next_check(cli
     assert client.post(f"/requests/{rid}/publish", headers=H("priya")).status_code == 409
 
 
+def test_vendor_with_bank_details_and_ivd_item_publish_to_the_mock(client, sap_mock):
+    bank = [
+        {
+            "BankCode": "7171",
+            "AccountNo": "9876543210",
+            "AccountName": "Bank Vendor Pte Ltd",
+            "BICSwiftCode": "DBSSSGSG",
+            "Country": "SG",
+        }
+    ]
+    vendor = {**CUSTOMER, "CardName": "Bank Vendor Pte Ltd", "FederalTaxID": "V2026-77"}
+    req = new_request(client, "amy", "vendor", "SPD", "SG", {**vendor, "BPBankAccounts": bank})
+    d = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).json()
+    assert d["state"] == "IN_APPROVAL"
+    d = approve_stage_one(client, d, CUSTOMER_APPROVERS)
+    assert (
+        client.post(f"/requests/{d['req_id']}/publish", headers=H("priya")).json()["state"]
+        == "ACTIVE"
+    )
+    with session_scope() as s:
+        row = s.scalar(
+            select(m.BusinessPartner).where(m.BusinessPartner.U_MDM_ReqID == d["req_id"])
+        )
+        assert row.CardCode.startswith("V") and row.CardType == "cSupplier"
+        acct = s.scalar(select(m.BankAccount).where(m.BankAccount.CardCode == row.CardCode))
+        assert acct.AccountNo == "9876543210"
+        raw = s.execute(
+            text("SELECT AccountNo FROM bank_accounts WHERE CardCode = :c"), {"c": row.CardCode}
+        ).scalar_one()
+        assert raw != "9876543210"
+        audit_text = " ".join(
+            s.scalars(select(m.AuditLog.payload).where(m.AuditLog.request_id == d["req_id"]))
+        )
+    sent = sap_mock.app.state.stores["BusinessPartners"][row.CardCode]
+    assert sent["BPBankAccounts"][0]["AccountNo"] == "9876543210" and sent["Frozen"] == "tNO"
+    assert "9876543210" not in audit_text  # not even in the SAP call rows
+
+    fields = {
+        "ItemName": "Malaria Pf/Pan Antigen Rapid Test Kit",
+        "U_IVD": "tYES",
+        "selling_countries": ["SG", "MY"],
+        "registrations": [
+            {"country": "SG", "reg_no": "DIV-001"},
+            {"country": "MY", "reg_no": "MDA-002"},
+        ],
+        "product_family": "A",
+    }
+    req = new_request(client, "amy", "item", "SPD", "SG", fields)
+    d = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).json()
+    who = {
+        ("bu_head", None): "daniel",
+        ("business_support", None): "meiling",
+        ("quality_regulatory", "SG"): "joanne",
+        ("quality_regulatory", "MY"): "nurul",
+    }
+    d = approve_stage_one(client, d, who)
+    assert d["state"] == "APPROVED"
+    d = client.post(f"/requests/{d['req_id']}/publish", headers=H("priya")).json()
+    assert d["state"] == "ACTIVE"
+    with session_scope() as s:
+        item = s.scalar(select(m.Item).where(m.Item.U_MDM_ReqID == d["req_id"]))
+        regs = s.scalars(
+            select(m.ItemRegistration).where(m.ItemRegistration.item_code == item.ItemCode)
+        ).all()
+    assert item.ItemCode.startswith("A-MAL-") and item.U_IVD == "tYES" and len(regs) == 2
+    assert (
+        sap_mock.app.state.stores["Items"][item.ItemCode]["U_RegSummary"]
+        == "SG: DIV-001; MY: MDA-002"
+    )
+
+
 def test_publish_reports_a_plain_message_when_sap_is_down(client):
     d = submit_customer(client, "Unreachable Pte Ltd")
     d = approve_stage_one(client, d, CUSTOMER_APPROVERS)
@@ -750,6 +864,13 @@ def test_publish_reports_a_plain_message_when_sap_is_down(client):
 
 
 # ---------------------------------------------------------------- in-app reset (D-016)
+
+
+def test_make_reset_demo_falls_back_to_the_database_when_the_api_is_not_running(monkeypatch):
+    from services.api.db import seed
+
+    monkeypatch.setenv("API_URL", "http://127.0.0.1:9")  # nothing listens here
+    assert seed._reset_via_running_api() is None
 
 
 def test_sap_mock_reset_endpoint_clears_records_and_sessions():
