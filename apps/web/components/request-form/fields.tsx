@@ -194,6 +194,7 @@ function SearchableSelect({
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0);
   const selected = options.find((o) => String(o.value) === current);
   const q = query.trim().toLowerCase();
   const shown = q
@@ -201,13 +202,30 @@ function SearchableSelect({
         (o) => o.label.toLowerCase().includes(q) || String(o.value).toLowerCase() === q,
       )
     : options;
+  const activeIndex = Math.min(active, Math.max(0, shown.length - 1));
+  const listId = `${id}-listbox`;
+  const optionId = (i: number) => `${id}-option-${i}`;
   const pick = (o: Option) => {
     onChange(o.value);
     setOpen(false);
     setQuery("");
   };
+  const moveTo = (i: number) => {
+    setActive(i);
+    document.getElementById(optionId(i))?.scrollIntoView({ block: "nearest" });
+  };
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (next) {
+          // Start on the current choice, so Enter keeps it.
+          const at = options.findIndex((o) => String(o.value) === current);
+          setActive(Math.max(0, at));
+        }
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           id={id}
@@ -215,6 +233,7 @@ function SearchableSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-haspopup="listbox"
           aria-invalid={invalid || undefined}
           className="w-full justify-between font-normal"
           data-testid={`${id}-combobox`}
@@ -225,17 +244,37 @@ function SearchableSelect({
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-(--radix-popover-trigger-width) min-w-64 p-0">
+      <PopoverContent
+        align="start"
+        className="w-(--radix-popover-trigger-width) min-w-64 p-0"
+        onOpenAutoFocus={() => {
+          window.requestAnimationFrame(() => moveTo(activeIndex));
+        }}
+      >
         <div className="flex items-center gap-2 border-b px-3">
           <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
           <input
             autoFocus
+            role="combobox"
+            aria-expanded
+            aria-controls={listId}
+            aria-autocomplete="list"
+            aria-activedescendant={shown.length > 0 ? optionId(activeIndex) : undefined}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActive(0);
+            }}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && shown[0]) {
+              if (e.key === "ArrowDown") {
                 e.preventDefault();
-                pick(shown[0]);
+                moveTo(Math.min(shown.length - 1, activeIndex + 1));
+              } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                moveTo(Math.max(0, activeIndex - 1));
+              } else if (e.key === "Enter" && shown[activeIndex]) {
+                e.preventDefault();
+                pick(shown[activeIndex]);
               }
             }}
             placeholder="Type to search"
@@ -243,18 +282,24 @@ function SearchableSelect({
             className="h-9 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
-        <ul role="listbox" aria-label="Choices" className="max-h-64 overflow-y-auto p-1">
-          {shown.map((o) => {
+        <ul
+          id={listId}
+          role="listbox"
+          aria-label="Choices"
+          className="max-h-64 overflow-y-auto p-1"
+        >
+          {shown.map((o, i) => {
             const on = String(o.value) === current;
             return (
               <li
                 key={String(o.value)}
+                id={optionId(i)}
                 role="option"
                 aria-selected={on}
-                tabIndex={-1}
+                data-active={i === activeIndex ? "true" : undefined}
                 onClick={() => pick(o)}
-                onKeyDown={(e) => e.key === "Enter" && pick(o)}
-                className="flex cursor-default items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                onMouseMove={() => i !== activeIndex && setActive(i)}
+                className="flex cursor-default items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm data-[active=true]:bg-muted"
               >
                 <span>{o.label}</span>
                 {on && <Check className="size-4" aria-hidden />}

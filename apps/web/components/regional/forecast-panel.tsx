@@ -241,7 +241,17 @@ export function ForecastPanel({ summary }: { summary: Summary }) {
                 isAnimationActive={false}
               />
             </LineChart>
-            <p className="text-xs text-muted-foreground">{run.setup}</p>
+            <p className="text-xs text-muted-foreground">
+              Dashed and blue lines start where the test starts: each month we pretended it was that
+              month, let both methods plan the next 3 months, then checked against what was really
+              ordered.
+            </p>
+            <details className="text-xs text-muted-foreground" data-testid="forecast-setup">
+              <summary className="cursor-pointer font-medium text-foreground">
+                How this was tested
+              </summary>
+              <p className="mt-1 leading-relaxed">{run.setup}</p>
+            </details>
           </div>
 
           <div className="flex flex-col gap-5">

@@ -37,6 +37,7 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
     `${before} alerts, of which ${markers}`,
   );
   const customersBefore = await page.getByTestId("kpi-customers-value").textContent();
+  await expect(page.getByTestId("cross-sell-note")).toContainText("0% is expected");
 
   // After merge: fewer alerts, none of them duplicates, fewer customers.
   await page.getByTestId("view-after").click();
@@ -63,6 +64,12 @@ test("forecast: switching to today's spreadsheet data changes the scores", async
   await openAs(page, "daniel", "/regional");
   const panel = page.getByTestId("forecast-panel");
   await expect(panel.getByTestId("data-headline")).toContainText("Equipment (Product B)");
+
+  // Real backtest data: five country rows, the long caption collapsed behind "More".
+  await expect(panel.getByTestId("bias-row")).toHaveCount(5);
+  await expect(panel.getByTestId("bias-note-more")).toHaveText("More");
+  // The technical setup sits behind an expander.
+  await expect(panel.getByTestId("forecast-setup")).not.toHaveAttribute("open");
 
   const productB = panel.getByTestId("product-row-B");
   await expect(productB).toBeVisible();
@@ -144,6 +151,13 @@ test("ops impact card shows modelled cycle time and its assumptions", async ({ p
   await expect(card.getByTestId("ops-ftr")).toContainText("%");
   await expect(card.getByTestId("ops-dupes-value")).toHaveText(/\d+/);
   await expect(card.getByTestId("assumptions").locator("tbody tr")).not.toHaveCount(0);
-  await expect(card.getByTestId("assumptions")).toContainText("The case brief");
+  const assumptions = card.getByTestId("assumptions");
+  await expect(assumptions).toContainText("The brief");
+  await expect(assumptions).toContainText("Our past request history");
+  // Judges never see file names or decision numbers.
+  await expect(card).not.toContainText(".csv");
+  await expect(card).not.toContainText(/\bD-0\d\d\b/);
+  // Amy's long explanation starts collapsed.
+  await expect(card.getByTestId("amy-explanation-more")).toHaveText("More");
   expect(errors).toEqual([]);
 });

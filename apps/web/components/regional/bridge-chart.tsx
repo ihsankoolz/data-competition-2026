@@ -7,14 +7,31 @@ import type { Schema } from "@/lib/api/client";
 
 type BridgeStep = Schema<"BridgeStep">;
 
+// Two short lines each, so six labels never run into each other at 1440 px.
 const LABELS: Record<BridgeStep["step"], string> = {
-  start: "Prior 3 mo.",
-  new: "New",
-  expansion: "Bought more",
-  contraction: "Bought less",
-  lost: "Stopped",
-  end: "Last 3 mo.",
+  start: "Prior|3 months",
+  new: "New|customers",
+  expansion: "Bought|more",
+  contraction: "Bought|less",
+  lost: "Stopped|buying",
+  end: "Last|3 months",
 };
+
+function TwoLineTick({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) {
+  const [first, second] = String(payload?.value ?? "").split("|");
+  return (
+    <text x={x} y={y} textAnchor="middle" fontSize={11} fill="var(--viz-axis)">
+      <tspan x={x} dy={12}>
+        {first}
+      </tspan>
+      {second && (
+        <tspan x={x} dy={13}>
+          {second}
+        </tspan>
+      )}
+    </text>
+  );
+}
 
 type Row = {
   label: string;
@@ -67,7 +84,7 @@ function BridgeTooltip({ active, payload }: { active?: boolean; payload?: { payl
   const who = `${row.customers} ${row.customers === 1 ? "customer" : "customers"}`;
   return (
     <div className="rounded-md border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-sm">
-      <p className="font-medium">{row.label}</p>
+      <p className="font-medium">{row.label.replace("|", " ")}</p>
       <p className="tabular-nums">
         {row.kind === "total"
           ? usdFull(row.value)
@@ -85,7 +102,7 @@ export function BridgeChart({ bridge }: { bridge: BridgeStep[] }) {
       <BarChart
         data={data}
         responsive
-        style={{ width: "100%", height: 230 }}
+        style={{ width: "100%", height: 244 }}
         margin={{ top: 22, right: 4, bottom: 0, left: 4 }}
         barCategoryGap={10}
         accessibilityLayer
@@ -94,7 +111,8 @@ export function BridgeChart({ bridge }: { bridge: BridgeStep[] }) {
           dataKey="label"
           tickLine={false}
           axisLine={{ stroke: "var(--viz-grid)" }}
-          tick={{ fontSize: 11, fill: "var(--viz-axis)" }}
+          tick={<TwoLineTick />}
+          height={34}
           interval={0}
         />
         <YAxis hide domain={[0, "dataMax"]} />
@@ -118,7 +136,7 @@ export function BridgeChart({ bridge }: { bridge: BridgeStep[] }) {
         <tbody>
           {data.map((r) => (
             <tr key={r.label}>
-              <th scope="row">{r.label}</th>
+              <th scope="row">{r.label.replace("|", " ")}</th>
               <td>{usdFull(r.signed)}</td>
               <td>{r.customers} customers</td>
             </tr>

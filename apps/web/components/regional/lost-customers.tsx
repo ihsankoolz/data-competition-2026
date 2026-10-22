@@ -56,9 +56,15 @@ export function LostCustomers({
             <div className="flex min-w-0 flex-col">
               <span className="truncate text-sm font-medium">{l.name}</span>
               <span className="text-xs text-muted-foreground">
-                {l.card_code}, {countryName(l.country)}, last order {formatDay(l.last_order)}
+                {countryName(l.country)}, last order {formatDay(l.last_order)}
               </span>
             </div>
+            <span
+              className="ml-auto shrink-0 text-xs text-muted-foreground/80 tabular-nums"
+              title={view === "after" ? "Merged customer ID" : "SAP record"}
+            >
+              {l.card_code}
+            </span>
             {l.is_duplicate_artefact && (
               <Badge
                 variant="secondary"

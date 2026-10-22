@@ -8,7 +8,8 @@ import { countryName, formatDay } from "@/lib/format";
 
 export type FormSpec = Schema<"FormSpec">;
 export type Domain = FormSpec["domain"];
-export type Country = NonNullable<FormSpec["country"]>;
+/** The operating country of a request (one of the five). A vendor address country can be any ISO code. */
+export type Country = Schema<"RequestCreate">["country"];
 export type Entity = Schema<"RequestCreate">["entity"];
 
 export const COUNTRIES: Country[] = ["SG", "MY", "ID", "VN", "TH"];

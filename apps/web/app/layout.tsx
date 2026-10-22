@@ -38,8 +38,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <ClockProvider>
               <div className="grid min-h-dvh grid-cols-[15rem_minmax(0,1fr)] grid-rows-[auto_1fr]">
                 <AppHeader />
-                <aside className="sticky top-16 h-[calc(100dvh-4rem)] overflow-y-auto border-r bg-sidebar">
-                  <SideNav />
+                {/* The column runs the full page height; the nav inside it stays in view. */}
+                <aside className="border-r bg-sidebar">
+                  <div className="sticky top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto">
+                    <SideNav />
+                  </div>
                 </aside>
                 <div className="flex min-w-0 flex-col">
                   <main className="flex-1 px-10 py-8">{children}</main>
