@@ -56,7 +56,7 @@ def test_form_schema_is_consistent(domain):
         assert key in mapped, f"{domain}: required key {key} has no form field"
 
 
-def test_form_endpoint_lists_required_fields_and_stubs_answer_501():
+def test_form_endpoint_lists_required_fields():
     from fastapi.testclient import TestClient
 
     from services.api.main import app
@@ -68,7 +68,6 @@ def test_form_endpoint_lists_required_fields_and_stubs_answer_501():
     item = client.get("/forms/item").json()
     assert item["regulated_countries"] == ["SG", "MY", "ID", "VN", "TH"]
     assert client.get("/forms/cost_center").status_code == 404
-    assert client.post("/admin/reset-demo").status_code == 501
 
 
 def test_dedup_query_from_demo_01_form_finds_cho_ray():

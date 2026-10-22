@@ -22,3 +22,5 @@ data/e2e.db-*
 
 # Claude Code agent worktrees
 .claude/worktrees/
+data/app.db-wal
+data/app.db-shm

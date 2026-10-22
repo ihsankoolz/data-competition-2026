@@ -282,7 +282,8 @@ class Email(Base):
 
 
 class Request(Base):
-    """Minimal MDM request (approval tasks arrive with M5)."""
+    """An MDM request. `payload` holds the form fields (SAP names). Bank values inside it
+    (`BPBankAccounts[].AccountNo` / `IBAN`) are Fernet ciphertext (`services/api/bankfields.py`)."""
 
     __tablename__ = "requests"
 
@@ -301,6 +302,79 @@ class Request(Base):
     payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(SimTimestamp)
     updated_at: Mapped[datetime] = mapped_column(SimTimestamp)
+    source_email_id: Mapped[str | None] = mapped_column(String(32))
+    prefill_quotes: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    linked_card_code: Mapped[str | None] = mapped_column(String(15))
+    published_by: Mapped[str | None] = mapped_column(String(32))
+    published_key: Mapped[str | None] = mapped_column(
+        String(32)
+    )  # CardCode / ItemCode / CenterCode
+
+
+class ApprovalTaskRow(Base):
+    """One approval task. Stage-1 tasks open together; stage 2 stays `waiting` until they pass."""
+
+    __tablename__ = "approval_tasks"
+
+    task_id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    req_id: Mapped[str] = mapped_column(ForeignKey("requests.req_id"), index=True)
+    stage: Mapped[int] = mapped_column(Integer)
+    stage_name: Mapped[str] = mapped_column(String(64))
+    role: Mapped[str] = mapped_column(String(32))
+    country: Mapped[str | None] = mapped_column(String(2))
+    assignee_user_id: Mapped[str] = mapped_column(ForeignKey("users.user_id"), index=True)
+    status: Mapped[str] = mapped_column(String(16), index=True)
+    assigned_at: Mapped[datetime | None] = mapped_column(SimTimestamp)
+    due_at: Mapped[datetime | None] = mapped_column(SimTimestamp)
+    reminded_at: Mapped[datetime | None] = mapped_column(SimTimestamp)
+    escalated_at: Mapped[datetime | None] = mapped_column(SimTimestamp)
+    escalated_to_user_id: Mapped[str | None] = mapped_column(
+        ForeignKey("users.user_id"), index=True
+    )
+    decided_at: Mapped[datetime | None] = mapped_column(SimTimestamp)
+    decided_by: Mapped[str | None] = mapped_column(String(32))
+    comment: Mapped[str | None] = mapped_column(Text)
+
+
+class NotificationRow(Base):
+    """In-app stand-in for Teams / Outlook messages."""
+
+    __tablename__ = "notifications"
+
+    notification_id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.user_id"), index=True)
+    kind: Mapped[str] = mapped_column(String(24))
+    req_id: Mapped[str] = mapped_column(String(32), index=True)
+    task_id: Mapped[str | None] = mapped_column(String(32))
+    message: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(SimTimestamp)
+
+
+class DedupDecisionRow(Base):
+    """A human decision on a duplicate warning. The newest row per request is the current one."""
+
+    __tablename__ = "dedup_decisions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    req_id: Mapped[str] = mapped_column(ForeignKey("requests.req_id"), index=True)
+    action: Mapped[str] = mapped_column(String(24))
+    card_code: Mapped[str | None] = mapped_column(String(15))
+    reason: Mapped[str | None] = mapped_column(Text)
+    decided_by: Mapped[str] = mapped_column(String(32))
+    decided_at: Mapped[datetime] = mapped_column(SimTimestamp)
+    verdict_at_decision: Mapped[str] = mapped_column(String(8))
+    # CardCodes the check offered when the human decided. A "not a duplicate" decision only
+    # covers those records: a different candidate showing up later needs a new decision.
+    covered_codes: Mapped[list[str]] = mapped_column(JSON, default=list)
+
+
+class AppState(Base):
+    """Small key/value store: the simulated clock and the id counters."""
+
+    __tablename__ = "app_state"
+
+    key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    value: Mapped[str] = mapped_column(String(200))
 
 
 # ---------------------------------------------------------------- audit (M6)
