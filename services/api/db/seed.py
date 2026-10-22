@@ -449,7 +449,12 @@ def reload_in_place(engine: Engine, data: Loaded, fixtures_dir: Path) -> dict[st
         m.Base.metadata.create_all(conn)  # audit triggers and the audit_head row come with it
         with Session(bind=conn) as session:
             try:
-                session.execute(insert(m.User), _users_in_dependency_order(data.tables["users"]))
+                # Core inserts on the connection: one executemany per table. The ORM bulk path
+                # splits rows by which values are None and issues thousands of statements.
+                bulk = session.connection()
+                bulk.execute(
+                    insert(m.User.__table__), _users_in_dependency_order(data.tables["users"])
+                )
                 for table, model in (
                     ("business_partners", m.BusinessPartner),
                     ("items", m.Item),
@@ -461,9 +466,9 @@ def reload_in_place(engine: Engine, data: Loaded, fixtures_dir: Path) -> dict[st
                     ("emails", m.Email),
                 ):
                     if data.tables[table]:
-                        session.execute(insert(model), data.tables[table])
+                        bulk.execute(insert(model.__table__), data.tables[table])
                 if data.bank_rows:
-                    session.execute(insert(m.BankAccount), data.bank_rows)
+                    bulk.execute(insert(m.BankAccount.__table__), data.bank_rows)
             except IntegrityError as exc:
                 raise SeedError(f"Fixture data breaks a database rule: {exc.orig}") from None
 

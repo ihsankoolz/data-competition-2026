@@ -68,7 +68,10 @@ class FormSpec(BaseModel):
     """Everything the web app needs to render a request form for one domain x country."""
 
     domain: Domain
-    country: CountryCode | None = None
+    country: str | None = Field(
+        default=None,
+        description="ISO 3166 alpha-2 code. SG/MY/ID/VN/TH, or any other country for a vendor",
+    )
     json_schema: dict[str, Any] = Field(description="config/forms/<domain>.schema.json")
     required: list[str] = Field(
         description="Required form fields (SAP names) for this country, in display order"

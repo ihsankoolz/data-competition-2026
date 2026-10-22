@@ -9,8 +9,8 @@ What is reset, in this order:
    recreated inside the same transaction; no application code can delete or update audit rows);
 2. the simulated clock (back to Mon 5 Oct 2026 09:00 SGT, also saved in the database);
 3. the duplicate-check index (rebuilt from the reloaded master data);
-4. the SAP mock (`POST /_mock/reset`, outside `/b1s/v2`). If the mock is down the reset still
-   succeeds and reports `sap_mock_reset=false`.
+4. the SAP mock (`POST /_mock/reset`, outside `/b1s/v2`), after 1-3 succeeded. If the mock is
+   down or fails the reset still succeeds and reports `sap_mock_reset=false`.
 
 `make reset-demo` goes through the same function (see `services.api.db.seed.main`).
 """
@@ -51,8 +51,16 @@ def sap_mock_root() -> str:
 
 def reset_sap_mock(timeout: float = 1.0) -> bool:
     """Clear the SAP mock's records and sessions. False if it can't be reached."""
+    url = f"{sap_mock_root()}/_mock/reset"
     try:
-        resp = httpx.post(f"{sap_mock_root()}/_mock/reset", timeout=timeout)
+        # A short connect timeout: a mock that is not running refuses slowly on Windows (about a
+        # second), and the reset must not wait for it. No TLS context for a plain http URL
+        # (building one costs 0.2-0.5 s per call).
+        resp = httpx.post(
+            url,
+            timeout=httpx.Timeout(timeout, connect=min(timeout, 0.3)),
+            verify=not url.startswith("http://"),
+        )
         return resp.status_code == 200
     except httpx.HTTPError:
         return False
@@ -77,7 +85,12 @@ def reset_demo(fixtures: Path | str | None = None) -> ResetResult:
         reload_in_place(get_engine(), data, fixtures_dir)
         clock.reset()
         dedup_service.rebuild_index()
-    sap_ok = reset_sap_mock()
+    # Only after the database reload succeeded (a failed reload must leave the mock alone).
+    try:
+        sap_ok = reset_sap_mock()
+    except Exception:  # noqa: BLE001 - the demo reset must still report; the cause is logged
+        log.exception("SAP mock reset failed")
+        sap_ok = False
     return ResetResult(
         ok=True,
         duration_ms=round((time.perf_counter() - t0) * 1000, 1),

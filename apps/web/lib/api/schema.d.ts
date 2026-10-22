@@ -62,7 +62,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get Form */
+        /**
+         * Get Form
+         * @description `country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns
+         *     the shorter foreign-vendor required list (D-020 #2).
+         */
         get: operations["getForm"];
         put?: never;
         post?: never;
@@ -1128,8 +1132,11 @@ export interface components {
              * @enum {string}
              */
             domain: "customer" | "vendor" | "item" | "cost_center";
-            /** Country */
-            country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+            /**
+             * Country
+             * @description ISO 3166 alpha-2 code. SG/MY/ID/VN/TH, or any other country for a vendor
+             */
+            country?: string | null;
             /**
              * Json Schema
              * @description config/forms/<domain>.schema.json
@@ -2045,7 +2052,7 @@ export interface operations {
     getForm: {
         parameters: {
             query?: {
-                country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+                country?: string | null;
             };
             header?: never;
             path: {

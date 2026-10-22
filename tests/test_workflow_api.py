@@ -913,9 +913,7 @@ def test_reset_restores_everything_with_a_connection_held_open(client, monkeypat
         "/b1s/v2/BusinessPartners",
         json={"CardCode": "C1", "CardName": "x", "CardType": "cCustomer"},
     )
-    monkeypatch.setattr(
-        reset_mod.httpx, "post", lambda url, timeout=None: mock.post("/_mock/reset")
-    )
+    monkeypatch.setattr(reset_mod.httpx, "post", lambda url, **_kw: mock.post("/_mock/reset"))
 
     # readers keep working while the reset runs and never see a half-loaded database
     seen: list[int] = []
