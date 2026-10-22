@@ -1,0 +1,35 @@
+{
+  "cache_key": "832f33ca1c96cf4db20d0e9d6791e3a0b591c65e8b12051ad44c7f4a17458b86",
+  "input": "<email>\nFrom domain: p1h.th.example\nSubject: Quick one\n\nDear team, สวัสดีครับ\n\nWe are pleased to place the following order (our ref 0073/PO/26) for โรงพยาบาลพญาไท 1.\n- dengue NS1 strips x 32\nKindly confirm the delivery date.\n\nThanks ค่ะ\nKittipong Kaewmanee\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "โรงพยาบาลพญาไท 1",
+        "value": "โรงพยาบาลพญาไท 1"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "our ref 0073/PO/26",
+        "value": "0073/PO/26"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "dengue NS1 strips",
+        "qty": 32.0,
+        "source_quote": "dengue NS1 strips x 32"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:29+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

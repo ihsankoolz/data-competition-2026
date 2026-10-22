@@ -1,0 +1,30 @@
+{
+  "cache_key": "fc7c26430465a905758a17c1e78a59d514da0d9659ed0c5b698580d269b53cb9",
+  "input": "<email>\nFrom domain: dmhgh.id.example\nSubject: Tender preparation\n\nDengan hormat,\n\nDr. Mohammad Hoesin General Hospital is preparing a tender and is likely to buy Operator Training Package (qty 3) in the coming months. Please keep allocation.\n\nMohon konfirmasi ketersediaan stok dan perkiraan tanggal pengiriman.\n\nTerima kasih,\nYuni Pratama\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.7,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Dr. Mohammad Hoesin General Hospital",
+        "value": "Dr. Mohammad Hoesin General Hospital"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-TRN-OPS",
+        "product_text": "Operator Training Package",
+        "qty": 3.0,
+        "source_quote": "Operator Training Package (qty 3)"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:45+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

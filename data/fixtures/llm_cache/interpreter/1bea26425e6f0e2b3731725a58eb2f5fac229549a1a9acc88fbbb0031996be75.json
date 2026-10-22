@@ -1,0 +1,30 @@
+{
+  "cache_key": "1bea26425e6f0e2b3731725a58eb2f5fac229549a1a9acc88fbbb0031996be75",
+  "input": "<email>\nFrom domain: pcl.id.example\nSubject: (no subject)\n\nDengan hormat,\n\nDo you have stock of 1 unit of B-CHE-AUT? Lab. Klinik Permata may need it soon.\n\nAtas perhatian dan kerja samanya kami ucapkan terima kasih.\n\nHormat kami,\nDian Anggraini\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Lab. Klinik Permata",
+        "value": "Lab. Klinik Permata"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-CHE-AUT",
+        "product_text": "B-CHE-AUT",
+        "qty": 1.0,
+        "source_quote": "1 unit of B-CHE-AUT"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:37+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

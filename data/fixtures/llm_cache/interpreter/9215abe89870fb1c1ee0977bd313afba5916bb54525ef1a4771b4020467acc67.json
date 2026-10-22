@@ -1,0 +1,35 @@
+{
+  "cache_key": "9215abe89870fb1c1ee0977bd313afba5916bb54525ef1a4771b4020467acc67",
+  "input": "<email>\nFrom domain: pmcc.sg.example\nSubject: Budget approved: Primacare Medical Clinic Clementi Pte Ltd\n\nHello,\n\nOur budget has been approved. Primacare Medical Clinic Clementi Pte Ltd intends to purchase 1 boxes of covid ART kits around 7 Aug 2026. Formal PO will follow.\n\nThanks,\nMichelle Teo\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.85,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Primacare Medical Clinic Clementi Pte Ltd",
+        "value": "Primacare Medical Clinic Clementi Pte Ltd"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "around 7 Aug 2026",
+        "value": "7 Aug 2026"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-COV-AG",
+        "product_text": "covid ART kits",
+        "qty": 1.0,
+        "source_quote": "1 boxes of covid ART kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:31+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

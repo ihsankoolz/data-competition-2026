@@ -1,0 +1,35 @@
+{
+  "cache_key": "84023cd49540e90adf7cbe5bd8911346197ecad20b350869672677ecf783803b",
+  "input": "<email>\nFrom domain: ntcl.id.example\nSubject: PO PR20260071 as discussed\n\nYth. Tim Sales,\n\nAs discussed with your sales rep, please process PO PR20260071: CRP reagent x 24. Invoice to PT Laboratorium Klinik Nirmala Tirta.\n\nMohon konfirmasi ketersediaan stok dan perkiraan tanggal pengiriman.\n\nSalam,\nFajar Purnomo\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Invoice to PT Laboratorium Klinik Nirmala Tirta",
+        "value": "PT Laboratorium Klinik Nirmala Tirta"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO PR20260071",
+        "value": "PR20260071"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "CRP reagent",
+        "qty": 24.0,
+        "source_quote": "CRP reagent x 24"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:42+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

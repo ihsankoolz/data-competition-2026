@@ -1,0 +1,38 @@
+{
+  "cache_key": "00e6dfa4c1a0259815fb25009be9ec8ac712e422e2920f50dbeb95677efaeb92",
+  "input": "<email>\nFrom domain: qts.lives.example\nSubject: Quick one\n\nHi,\n\nCan we get an item code for Urine Chemistry Analyser? Selling in Vietnam and Thailand. IVD. VN registration no. 26001234ĐKLH/BYT-HTTB.\n\nĐặng Thị Mai\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "item",
+    "fields": [
+      {
+        "key": "item_name",
+        "source_quote": "Urine Chemistry Analyser",
+        "value": "Urine Chemistry Analyser"
+      },
+      {
+        "key": "is_ivd",
+        "source_quote": "IVD",
+        "value": "true"
+      },
+      {
+        "key": "selling_countries",
+        "source_quote": "Selling in Vietnam and Thailand",
+        "value": "VN,TH"
+      },
+      {
+        "key": "registration_number_VN",
+        "source_quote": "VN registration no. 26001234ĐKLH/BYT-HTTB",
+        "value": "26001234ĐKLH/BYT-HTTB"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:48+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,35 @@
+{
+  "cache_key": "2b7dc6ff1ebc5d92f2e72864b68d2e7de622b37a4ca7301f21e96650f44a4b0e",
+  "input": "<email>\nFrom domain: tscl.id.example\nSubject: Request\n\nYth. Tim Sales,\n\nPlease deliver A-HBA-1C x 39, PO PR20260065 attached.\n\nMohon konfirmasi ketersediaan stok dan perkiraan tanggal pengiriman.\n\nTerima kasih,\nRini Anggraini\nLaboratorium Klinik Tirta Sehat\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Laboratorium Klinik Tirta Sehat",
+        "value": "Laboratorium Klinik Tirta Sehat"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO PR20260065",
+        "value": "PR20260065"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "A-HBA-1C",
+        "qty": 39.0,
+        "source_quote": "A-HBA-1C x 39"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:55+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

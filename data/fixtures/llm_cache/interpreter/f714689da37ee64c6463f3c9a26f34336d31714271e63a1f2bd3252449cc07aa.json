@@ -1,0 +1,30 @@
+{
+  "cache_key": "f714689da37ee64c6463f3c9a26f34336d31714271e63a1f2bd3252449cc07aa",
+  "input": "<email>\nFrom domain: qtg.lives.example\nSubject: Upcoming PO - pricing\n\nFYI, customer email below. Can you key this in?\n\nPriscilla Ng\n\n________________________________\nFrom: Kumar Yeo <lab@keystonescientific.sg.example>\nSent: 13 Jul 2026 09:29\nSubject: Quotation request\n\nGood morning,\n\nCould you quote 66 kits SARS-CoV-2 Antigen Rapid Test Kit for Keystone Scientific?\n\nThanks,\nKumar Yeo\n\n> On 13 Jun 2026, Priscilla Ng wrote:\n> Dear customer, attached is our updated price list. Let me know if you\n> need samples.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "for Keystone Scientific",
+        "value": "Keystone Scientific"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-COV-AG",
+        "product_text": "SARS-CoV-2 Antigen Rapid Test Kit",
+        "qty": 66.0,
+        "source_quote": "66 kits SARS-CoV-2 Antigen Rapid Test Kit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:29+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,30 @@
+{
+  "cache_key": "515a6fac961b6a5799abc02031eaab237cae78909bc29bb4675b49141f2258c1",
+  "input": "<email>\nFrom domain: bhp.th.example\nSubject: Specs needed\n\nสวัสดีครับ\n\nCan you share specs and a price for biosafety cabinet? Bangkok Hospital Pattaya is comparing vendors.\n\nThanks ค่ะ\nSupaporn Inthara\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Bangkok Hospital Pattaya",
+        "value": "Bangkok Hospital Pattaya"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-BSC-II",
+        "product_text": "biosafety cabinet",
+        "qty": null,
+        "source_quote": "biosafety cabinet"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:52+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

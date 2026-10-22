@@ -1,0 +1,17 @@
+{
+  "cache_key": "ad48e9b79bab51d318cf96b88b5dde989eabdf24dd92e520ebaac78b55eabba3",
+  "input": "<email>\nFrom domain: kcmh.th.example\nSubject: Question\n\nสวัสดีค่ะ Sales team,\n\nGentle reminder: we have not received a reply to the email below.\n\nขอบคุณครับ\nSomsak Srisawat\n\nOn 23 Sep 2026, Somsak Srisawat wrote:\n\n> สวัสดีครับ\n> \n> ช่วย quote A-CRP-QT x 86 ให้ King Chulalongkorn Memorial Hospital หน่อยครับ\n> \n> ขอบคุณครับ\n> Somsak Srisawat\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "follow_up",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:31+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,30 @@
+{
+  "cache_key": "2bbf40dfb4d87307c94c8e037acae51520929c85346929e262a6262c35bc2582",
+  "input": "<email>\nFrom domain: kcmh.th.example\nSubject: Following our call\n\nสวัสดีครับ\n\nช่วย quote A-CRP-QT x 86 ให้ King Chulalongkorn Memorial Hospital หน่อยครับ\n\nขอบคุณครับ\nSomsak Srisawat\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "King Chulalongkorn Memorial Hospital",
+        "value": "King Chulalongkorn Memorial Hospital"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "A-CRP-QT",
+        "qty": 86.0,
+        "source_quote": "A-CRP-QT x 86"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:11+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

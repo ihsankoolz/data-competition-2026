@@ -1,0 +1,30 @@
+{
+  "cache_key": "cfd49ab7236b4ec87afe82d58e1d2b488d04d55b6835dc728afd6b7e80642502",
+  "input": "<email>\nFrom domain: nrh.th.example\nSubject: Price enquiry\n\nสวัสดีค่ะ Sales team,\n\nWhat is your best price for C-SVC-PM (qty 2)? This is for โรงพยาบาลนพรัตนราชธานี.\n\nขอบคุณครับ\nKittipong Sukhum\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "โรงพยาบาลนพรัตนราชธานี",
+        "value": "โรงพยาบาลนพรัตนราชธานี"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-SVC-PM",
+        "product_text": "C-SVC-PM",
+        "qty": 2.0,
+        "source_quote": "C-SVC-PM (qty 2)"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:22+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

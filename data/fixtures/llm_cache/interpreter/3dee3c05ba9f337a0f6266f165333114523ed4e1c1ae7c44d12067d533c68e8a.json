@@ -1,0 +1,35 @@
+{
+  "cache_key": "3dee3c05ba9f337a0f6266f165333114523ed4e1c1ae7c44d12067d533c68e8a",
+  "input": "<email>\nFrom domain: bpl.my.example\nSubject: Forecast Makmal Patologi Bakti\n\nHi team, salam,\n\nSharing our forecast. Expected requirement:\n- 2 x Installation and Validation Service\nThis is not an order yet.\n\nMohon pihak tuan sahkan stok sebelum hujung minggu ini.\n\nSekian, terima kasih,\nHasnah Osman\nMakmal Patologi Bakti\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Makmal Patologi Bakti",
+        "value": "Makmal Patologi Bakti"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "sebelum hujung minggu ini",
+        "value": "hujung minggu ini"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-INS-VAL",
+        "product_text": "Installation and Validation Service",
+        "qty": 2.0,
+        "source_quote": "2 x Installation and Validation Service"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:18+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

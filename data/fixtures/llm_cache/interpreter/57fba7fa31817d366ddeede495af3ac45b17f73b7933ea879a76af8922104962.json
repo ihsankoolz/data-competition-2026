@@ -1,0 +1,30 @@
+{
+  "cache_key": "57fba7fa31817d366ddeede495af3ac45b17f73b7933ea879a76af8922104962",
+  "input": "<email>\nFrom domain: sirirajhospital.th.example\nSubject: Quotation: haematology analyser\n\nDear sales team, สวัสดีครับ\n\nCould you quote 2 units of haematology analyser for Siriraj? We need 5-part differential.\n\nขอบคุณครับ\nWichai Srisawat\nDepartment of Clinical Pathology\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Siriraj",
+        "value": "Siriraj"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-HEM-5P",
+        "product_text": "haematology analyser",
+        "qty": 2.0,
+        "source_quote": "2 units of haematology analyser"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:41+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

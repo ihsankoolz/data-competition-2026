@@ -1,0 +1,30 @@
+{
+  "cache_key": "28743023fb3b9449d39bf2fece5839e0672c5cb90db2a21533165413fe421a87",
+  "input": "<email>\nFrom domain: tnh.vn.example\nSubject: Price enquiry\n\nKinh gui phong kinh doanh,\n\nWhat is your best price for 3 x Installation and Validation Service? This is for Thong Nhat Hospital.\n\nTran trong,\nLe Kim Oanh\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Thong Nhat Hospital",
+        "value": "Thong Nhat Hospital"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-INS-VAL",
+        "product_text": "Installation and Validation Service",
+        "qty": 3.0,
+        "source_quote": "3 x Installation and Validation Service"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:09+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,46 @@
+{
+  "cache_key": "178239b545ce6125b3d417552c5b6c915c7c5f34338dadaafc84c01f18f2a3e4",
+  "input": "<email>\nFrom domain: knlc.vn.example\nSubject: Question\n\nChào anh/chị,\n\nPlease find attached our PO 0056/PO/26 for Trung tâm Xét nghiệm Kim Ngân:\n- 73 bộ Dengue IgG/IgM Rapid Test Kit\n- 52 bộ CRP kits\n\nPlease deliver by 31/08/2026.\n\nCảm ơn,\nBùi Văn Nam\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Trung tâm Xét nghiệm Kim Ngân",
+        "value": "Trung tâm Xét nghiệm Kim Ngân"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO 0056/PO/26",
+        "value": "0056/PO/26"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "31/08/2026",
+        "value": "2026-08-31"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "Dengue IgG/IgM Rapid Test Kit",
+        "qty": 73.0,
+        "source_quote": "73 bộ Dengue IgG/IgM Rapid Test Kit"
+      },
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "CRP kits",
+        "qty": 52.0,
+        "source_quote": "52 bộ CRP kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:37+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

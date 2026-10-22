@@ -1,0 +1,17 @@
+{
+  "cache_key": "b7b87709565d47c9d44599035978036cacb651928b239e7e666a2d6ddece7028",
+  "input": "<email>\nFrom domain: dsagh.id.example\nSubject: Re: Purchase order from Rumah Sakit Umum Daerah Dr. Saiful Anwar\n\nBump. Pls see below.\n\nYuni Kusuma\n\nOn 05 Aug 2026, Yuni Kusuma wrote:\n\n> Dengan hormat,\n> \n> We are pleased to place the following order (our ref 0064/PO/26) for Rumah Sakit Umum Daerah Dr. Saiful Anwar.\n> - 9 kotak the HbA1c kits\n> - 10 box CRP Quantitative Reagent\n> Kindly confirm the delivery date.\n> \n> Faktur mohon dikirim ke bagian keuangan kami. Jika ada kendala, mohon segera dikabari.\n> \n> Salam,\n> Yuni Kusuma\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "follow_up",
+    "confidence": 0.85,
+    "domain": null,
+    "fields": [],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:54+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

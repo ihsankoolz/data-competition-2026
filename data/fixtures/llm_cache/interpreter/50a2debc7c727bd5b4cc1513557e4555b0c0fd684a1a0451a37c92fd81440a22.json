@@ -1,0 +1,23 @@
+{
+  "cache_key": "50a2debc7c727bd5b4cc1513557e4555b0c0fd684a1a0451a37c92fd81440a22",
+  "input": "<email>\nFrom domain: acjb.my.example\nSubject: Purchase order from Aziz Clinic Johor Bahru\n\nHi team, salam,\n\nGentle reminder: we have not received a reply to the email below.\n\nMohon pihak tuan sahkan stok sebelum hujung minggu ini.\n\nTerima kasih,\nMei Fong Chong\n\nOn 19 Jul 2026, Mei Fong Chong wrote:\n\n> Tuan/Puan,\n> \n> We are pleased to place the following order (our ref PR20260049) for Aziz Clinic Johor Bahru.\n> - 2 kits Dengue IgG/IgM Rapid Test Kit\n> Kindly confirm the delivery date.\n> \n> Kerjasama pihak tuan amat kami hargai. Sila hubungi kami jika ada pertanyaan.\n> \n> Sekian, terima kasih,\n> Mei Fong Chong\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "follow_up",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Aziz Clinic Johor Bahru",
+        "value": "Aziz Clinic Johor Bahru"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:57:18+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

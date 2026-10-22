@@ -1,0 +1,35 @@
+{
+  "cache_key": "c63da55135fa114b18437f6860727648b680d49fe294f12251261c7df75176f3",
+  "input": "<email>\nFrom domain: dchnpc.vn.example\nSubject: Order enquiry\n\nKính gửi phòng kinh doanh,\n\nPlease deliver 5 hộp A-DEN-NS1, PO DCHNP/2026/051 attached.\n\nCảm ơn,\nTrần Văn Nam\nCông ty TNHH Phòng khám Nhi BS. Chị Hương Nguyễn\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Công ty TNHH Phòng khám Nhi BS. Chị Hương Nguyễn",
+        "value": "Công ty TNHH Phòng khám Nhi BS. Chị Hương Nguyễn"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO DCHNP/2026/051",
+        "value": "DCHNP/2026/051"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "A-DEN-NS1",
+        "qty": 5.0,
+        "source_quote": "5 hộp A-DEN-NS1"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:06+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

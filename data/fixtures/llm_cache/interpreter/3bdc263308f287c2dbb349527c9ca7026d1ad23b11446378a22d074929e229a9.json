@@ -1,0 +1,35 @@
+{
+  "cache_key": "3bdc263308f287c2dbb349527c9ca7026d1ad23b11446378a22d074929e229a9",
+  "input": "<email>\nFrom domain: acjb.my.example\nSubject: Supplies for Aziz Clinic Johor Bahru\n\nTuan/Puan,\n\nWe are pleased to place the following order (our ref PR20260049) for Aziz Clinic Johor Bahru.\n- 2 kits Dengue IgG/IgM Rapid Test Kit\nKindly confirm the delivery date.\n\nKerjasama pihak tuan amat kami hargai. Sila hubungi kami jika ada pertanyaan.\n\nSekian, terima kasih,\nMei Fong Chong\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "for Aziz Clinic Johor Bahru",
+        "value": "Aziz Clinic Johor Bahru"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "our ref PR20260049",
+        "value": "PR20260049"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "Dengue IgG/IgM Rapid Test Kit",
+        "qty": 2.0,
+        "source_quote": "2 kits Dengue IgG/IgM Rapid Test Kit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:53+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

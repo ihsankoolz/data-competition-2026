@@ -1,0 +1,30 @@
+{
+  "cache_key": "4466caad93f9981c3f5c8f9d7571d65432b11f379c7a4796e3ede9bd08764d7e",
+  "input": "<email>\nFrom domain: pmgh.id.example\nSubject: Question\n\nSelamat pagi,\n\nCan you share specs and a price for Automated Clinical Chemistry Analyser? RPM is comparing vendors.\n\nFaktur mohon dikirim ke bagian keuangan kami. Jika ada kendala, mohon segera dikabari.\n\nSalam,\nAgustina Pratama\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "RPM is comparing vendors",
+        "value": "RPM"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-CHE-AUT",
+        "product_text": "Automated Clinical Chemistry Analyser",
+        "qty": null,
+        "source_quote": "Automated Clinical Chemistry Analyser"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:19+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

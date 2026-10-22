@@ -1,0 +1,40 @@
+{
+  "cache_key": "e562ca59aec4565c2a07fc294af4cc08724297c1046b55835cebe9716c7a4614",
+  "input": "<email>\nFrom domain: nuh.sg.example\nSubject: Stock replenishment\n\nGood morning,\n\nPlease find attached our PO NUH/2026/017 for NUH:\n- Rapid Dengue NS1 Ag Test Kit x 14\n\nPlease deliver by 24 Jul 2026.\n\nBest regards,\nShirley Lim\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "our PO NUH/2026/017 for NUH:",
+        "value": "NUH"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO NUH/2026/017",
+        "value": "NUH/2026/017"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "Please deliver by 24 Jul 2026.",
+        "value": "2026-07-24"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "Rapid Dengue NS1 Ag Test Kit",
+        "qty": 14.0,
+        "source_quote": "Rapid Dengue NS1 Ag Test Kit x 14"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:56:31+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

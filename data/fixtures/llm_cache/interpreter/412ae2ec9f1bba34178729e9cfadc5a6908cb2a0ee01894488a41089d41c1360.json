@@ -1,0 +1,35 @@
+{
+  "cache_key": "412ae2ec9f1bba34178729e9cfadc5a6908cb2a0ee01894488a41089d41c1360",
+  "input": "<email>\nFrom domain: klh.my.example\nSubject: Dengue NS1 - plan for next month\n\nHi team,\n\nHKL plans to order 30 kits of Dengue NS1 next month, pls hold stock.\n\nTerima kasih,\nNoraini Ahmad\nUnit Perolehan, Hospital Kuala Lumpur\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.85,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Hospital Kuala Lumpur",
+        "value": "Hospital Kuala Lumpur"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "next month",
+        "value": "next month"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "Dengue NS1",
+        "qty": 30.0,
+        "source_quote": "30 kits of Dengue NS1"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:51+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

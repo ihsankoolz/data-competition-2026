@@ -1,0 +1,35 @@
+{
+  "cache_key": "1a78b5bb56162118627821b847e20758ba6509c44eb450bfc41d91a9398742da",
+  "input": "<email>\nFrom domain: hdlc.vn.example\nSubject: Rencana order / plan\n\nKính gửi Quý công ty,\n\nTrung tâm Xét nghiệm Hồng Đức plans to order 9 boxes A-CRP-QT next month, pls hold stock.\n\nTrân trọng,\nTrần Thị Hồng\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Trung tâm Xét nghiệm Hồng Đức",
+        "value": "Trung tâm Xét nghiệm Hồng Đức"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "next month",
+        "value": "next month"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "A-CRP-QT",
+        "qty": 9.0,
+        "source_quote": "9 boxes A-CRP-QT"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:44+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

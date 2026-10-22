@@ -1,0 +1,43 @@
+{
+  "cache_key": "96a7d28522c7e3ec8cdeec8a2447e586e3bf64ead6f61ab8ae56f7d9f478319e",
+  "input": "<email>\nFrom domain: spd.lives.example\nSubject: New item request - Malaria Pf/Pan Antigen Rapid Test Kit\n\nHi MDM team,\n\nPlease set up a new item: Malaria Pf/Pan Antigen Rapid Test Kit (IVD, box of 25). We will sell it in Singapore, Malaysia and Vietnam from January.\nList price around USD 85 per box.\n\nThanks,\nAmy\nProduct Manager, SPD Singapore\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "item",
+    "fields": [
+      {
+        "key": "item_name",
+        "source_quote": "Malaria Pf/Pan Antigen Rapid Test Kit",
+        "value": "Malaria Pf/Pan Antigen Rapid Test Kit"
+      },
+      {
+        "key": "is_ivd",
+        "source_quote": "IVD, box of 25",
+        "value": "true"
+      },
+      {
+        "key": "selling_countries",
+        "source_quote": "We will sell it in Singapore, Malaysia and Vietnam from January.",
+        "value": "SG,MY,VN"
+      },
+      {
+        "key": "sales_unit",
+        "source_quote": "box of 25",
+        "value": "box of 25"
+      },
+      {
+        "key": "unit_price_usd",
+        "source_quote": "List price around USD 85 per box.",
+        "value": "85"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:59:36+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

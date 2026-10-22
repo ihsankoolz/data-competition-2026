@@ -1,0 +1,35 @@
+{
+  "cache_key": "5fd94948605f85a282b4d8aba067b4dd2da1774947f86b3a02ea21aebbf1dd8e",
+  "input": "<email>\nFrom domain: spd.lives.example\nSubject: Request\n\nFYI, customer email below. Can you key this in?\n\nLe Minh Quan\n\n________________________________\nFrom: Hoang Ngoc Anh <lab@kngh.vn.example>\nSent: 22 Aug 2026 15:41\nSubject: PO 0084/PO/26 as discussed\n\nChao anh/chi,\n\nAs discussed with your sales rep, please process PO 0084/PO/26: 53 bo dengue NS1 strips. Invoice to Kim Ngan General Hospital.\n\nTran trong,\nHoang Ngoc Anh\n\n> On 23 Jul 2026, Le Minh Quan wrote:\n> Dear customer, attached is our updated price list. Let me know if you\n> need samples.\n\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Invoice to Kim Ngan General Hospital",
+        "value": "Kim Ngan General Hospital"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO 0084/PO/26",
+        "value": "0084/PO/26"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "dengue NS1 strips",
+        "qty": 53.0,
+        "source_quote": "53 bo dengue NS1 strips"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T08:58:28+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}
