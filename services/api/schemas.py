@@ -294,6 +294,14 @@ class ValidationReport(BaseModel):
     issues: list[FieldIssue] = []
 
 
+class ValidationBlocked(BaseModel):
+    """The 422 body of POST /requests/{req_id}/submit when validation fails. `detail` stays a
+    plain string so a client that only reads `detail` keeps working."""
+
+    detail: str
+    issues: list[FieldIssue]
+
+
 # ---------------------------------------------------------------- SAP read-back (M7, Priya)
 
 

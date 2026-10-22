@@ -11,17 +11,19 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from services.api import bankfields, clock
+from services.api import bankfields, clock, sap_readback
 from services.api.db import models as m
 from services.api.deps import Actor
 from services.api.formfields import missing_form_fields, title_of
 from services.api.schemas import (
     ApprovalTask,
     DedupDecisionOut,
+    FieldIssue,
     RequestDetail,
     RequestSummary,
     Stage,
 )
+from services.api.validation import validate_fields
 
 ROLE_LABEL = {
     "bu_head": "BU Head",
@@ -208,6 +210,13 @@ def stage_models(tasks: list[m.ApprovalTaskRow], names: dict[str, str]) -> list[
     return out
 
 
+def current_issues(req: m.Request, plain: dict[str, Any]) -> list[FieldIssue]:
+    """Validation problems shown while the requestor can still edit (empty afterwards)."""
+    if req.state not in (m.RequestState.DRAFT, m.RequestState.INFO_REQUESTED):
+        return []
+    return validate_fields(req.domain.value, req.country, plain, clock.now().date())
+
+
 def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetail:
     clock.now()  # (SLA states are stored; the sweep keeps them current)
     names = user_names(session)
@@ -225,4 +234,6 @@ def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetai
         linked_card_code=req.linked_card_code,
         stages=stage_models(tasks, names),
         allowed_actions=allowed_actions(actor, req, tasks, decision is not None),  # type: ignore[arg-type]
+        issues=current_issues(req, plain),
+        sap_publish=sap_readback.view(session, req, names, is_finance=actor.is_finance),
     )

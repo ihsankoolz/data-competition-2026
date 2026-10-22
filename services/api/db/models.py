@@ -368,6 +368,25 @@ class DedupDecisionRow(Base):
     covered_codes: Mapped[list[str]] = mapped_column(JSON, default=list)
 
 
+class SapPublishRecord(Base):
+    """What Priya sees after publishing: the SAP read-back, field by field (D-018 item 3 / M7).
+
+    `rows` is a list of {field, sent, read_back, match}. Bank values are already masked here, so
+    no bank number is stored in the clear; Finance sees them through the request itself.
+    """
+
+    __tablename__ = "sap_publish_results"
+
+    req_id: Mapped[str] = mapped_column(ForeignKey("requests.req_id"), primary_key=True)
+    resource: Mapped[str] = mapped_column(String(20))
+    sap_code: Mapped[str] = mapped_column(String(32))
+    published_at: Mapped[datetime] = mapped_column(SimTimestamp)
+    published_by: Mapped[str] = mapped_column(String(32))
+    active: Mapped[bool] = mapped_column(Boolean)
+    all_match: Mapped[bool] = mapped_column(Boolean)
+    rows: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+
+
 class AppState(Base):
     """Small key/value store: the simulated clock and the id counters."""
 

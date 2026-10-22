@@ -17,7 +17,7 @@ from pydantic import ValidationError
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from services.api import bankfields, clock, dedup_service
+from services.api import bankfields, clock, dedup_service, sap_readback
 from services.api.db import models as m
 from services.api.db.session import session_scope
 from services.api.deps import Actor
@@ -33,6 +33,7 @@ from services.api.sap_publisher import (
     SapProfitCenter,
     SapPublisher,
 )
+from services.api.validation import ValidationFailed, expired_sentence, registration_issues
 from services.api.views import tasks_for
 from services.api.workflow import engine
 
@@ -281,6 +282,14 @@ def publish(req_id: str, actor: Actor) -> None:
         if req is None:
             raise HTTPException(404, f"There is no request {req_id}.")
         engine.check_publish_allowed(req, tasks_for(session, req_id), actor)
+        if req.domain.value == "item":  # a licence can lapse between approval and publish
+            lapsed = [
+                i
+                for i in registration_issues(bankfields.unseal(req.payload), clock.now().date())
+                if i.kind == "expired"
+            ]
+            if lapsed:
+                raise ValidationFailed(expired_sentence(lapsed), lapsed, status_code=409)
     _claim(req_id, actor)
     sap_done = False
     try:
@@ -336,6 +345,7 @@ def publish(req_id: str, actor: Actor) -> None:
                     action="publish", key=code,
                 )  # fmt: skip
         req.published_by, req.published_key = actor.user_id, code
+        session.add(sap_readback.record_from_result(req, result, actor.user_id, clock.now()))
         engine.audit_state(
             session, req, actor.user_id, m.RequestState.ACTIVE,
             f"SAP read-back matched; {code} is now active",

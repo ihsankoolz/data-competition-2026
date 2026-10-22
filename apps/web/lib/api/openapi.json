@@ -811,7 +811,7 @@
           "requests"
         ],
         "summary": "Submit Request",
-        "description": "Re-runs the duplicate check. 409 if a Likely duplicate has no human decision; 422 if\nrequired fields are missing. Otherwise routes approvals (config/routing_rules.yaml).",
+        "description": "Validates the fields (422 {\"detail\", \"issues\"}), re-runs the duplicate check (409 if a\nLikely duplicate has no human decision), then routes approvals (config/routing_rules.yaml).",
         "operationId": "submitRequest",
         "parameters": [
           {
@@ -854,11 +854,11 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Validation failed",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ValidationBlocked"
                 }
               }
             }
@@ -4364,6 +4364,28 @@
           "tasks"
         ],
         "title": "Stage"
+      },
+      "ValidationBlocked": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/FieldIssue"
+            },
+            "type": "array",
+            "title": "Issues"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail",
+          "issues"
+        ],
+        "title": "ValidationBlocked",
+        "description": "The 422 body of POST /requests/{req_id}/submit when validation fails. `detail` stays a\nplain string so a client that only reads `detail` keeps working."
       },
       "ValidationError": {
         "properties": {

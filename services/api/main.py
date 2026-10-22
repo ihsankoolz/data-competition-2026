@@ -13,6 +13,7 @@ from services.api.clock import router as clock_router
 from services.api.personas import PERSONAS
 from services.api.routers import admin, analytics, approvals, dedup, emails, forms, requests
 from services.api.schemas import Health, Persona
+from services.api.validation import ValidationFailed
 
 DB_BUSY_MESSAGE = "The demo database is busy; try again in a moment."
 
@@ -56,6 +57,15 @@ async def _validation_error(_: Request, exc: RequestValidationError) -> JSONResp
     """FastAPI's default 422 echoes the submitted values (`input`). A form can carry bank
     details (domain rule 5), so only where and why is returned."""
     return JSONResponse(status_code=422, content={"detail": validation_sentence(exc)})
+
+
+@app.exception_handler(ValidationFailed)
+async def _blocked(_: Request, exc: ValidationFailed) -> JSONResponse:
+    """422 {"detail": "<one sentence>", "issues": [...]}: messages never echo field values."""
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail, "issues": [i.model_dump() for i in exc.issues]},
+    )
 
 
 @app.exception_handler(OperationalError)

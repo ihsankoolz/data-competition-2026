@@ -31,6 +31,7 @@ docs/                PRD, decisions, data spec, demo script, progress log
 - `make dev` — run api (8000), sap_mock (8001) and web (3000) together
 - `make reset-demo` — restore the database to the seeded demo state (same code path as the in-app "Reset demo" button, `POST /admin/reset-demo`; D-016)
 - `make test` — all Python and web tests
+- `make e2e` — Playwright suite; starts its own SAP mock, API and web on 8101/8100/3100 and stops them (`make e2e E2E_ARGS=dup-panel` for one spec)
 - `make eval` — dedup, classifier and forecast evaluations; writes `docs/results.md`
 
 ## Stack rules

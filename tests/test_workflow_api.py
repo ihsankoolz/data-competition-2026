@@ -268,7 +268,7 @@ def test_submit_lists_missing_fields_and_edits_are_audited(client):
     assert req["missing_fields"] == ["FederalTaxID", "Street", "EmailAddress"]
     r = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy"))
     assert r.status_code == 422
-    assert "Tax ID (FederalTaxID)" in r.json()["detail"]
+    assert "Tax ID (UEN)" in r.json()["detail"]
     r = client.patch(
         f"/requests/{req['req_id']}", headers=H("amy"), json={"fields": {"City": "Singapore"}}
     )
@@ -465,20 +465,23 @@ def test_ivd_item_gets_one_quality_task_per_selling_country(client):
         "U_IVD": "tYES",
         "selling_countries": ["SG", "MY", "VN"],
         "registrations": [
-            {"country": "SG", "reg_no": "DIV-001"},
-            {"country": "MY", "reg_no": "MDA-002"},
+            {"country": "SG", "reg_no": "DIV-001", "expiry_date": "2030-12-31"},
+            {"country": "MY", "reg_no": "MDA-002", "expiry_date": "2030-12-31"},
         ],
     }
     req = new_request(client, "amy", "item", "SPD", "SG", fields)
     assert req["missing_fields"] == ["registrations[VN]"]
     r = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy"))
-    assert r.status_code == 422 and "Registration number for VN" in r.json()["detail"]
+    assert r.status_code == 422 and "Registration number (Vietnam)" in r.json()["detail"]
     client.patch(
         f"/requests/{req['req_id']}",
         headers=H("amy"),
         json={
             "fields": {
-                "registrations": [*fields["registrations"], {"country": "VN", "reg_no": "VN-3"}]
+                "registrations": [
+                    *fields["registrations"],
+                    {"country": "VN", "reg_no": "VN-3", "expiry_date": "2030-12-31"},
+                ]
             }
         },
     )
@@ -497,8 +500,8 @@ def test_resubmit_after_a_question_re_applies_the_routing_rules(client):
         "U_IVD": "tYES",
         "selling_countries": ["SG", "MY"],
         "registrations": [
-            {"country": "SG", "reg_no": "S-1"},
-            {"country": "MY", "reg_no": "M-1"},
+            {"country": "SG", "reg_no": "S-1", "expiry_date": "2030-12-31"},
+            {"country": "MY", "reg_no": "M-1", "expiry_date": "2030-12-31"},
         ],
     }
     req = new_request(client, "amy", "item", "SPD", "SG", fields)
@@ -515,8 +518,8 @@ def test_resubmit_after_a_question_re_applies_the_routing_rules(client):
             "fields": {
                 "selling_countries": ["SG", "VN"],
                 "registrations": [
-                    {"country": "SG", "reg_no": "S-1"},
-                    {"country": "VN", "reg_no": "V-1"},
+                    {"country": "SG", "reg_no": "S-1", "expiry_date": "2030-12-31"},
+                    {"country": "VN", "reg_no": "V-1", "expiry_date": "2030-12-31"},
                 ],
             }
         },
@@ -794,7 +797,7 @@ def test_vendor_with_bank_details_and_ivd_item_publish_to_the_mock(client, sap_m
             "Country": "SG",
         }
     ]
-    vendor = {**CUSTOMER, "CardName": "Bank Vendor Pte Ltd", "FederalTaxID": "V2026-77"}
+    vendor = {**CUSTOMER, "CardName": "Bank Vendor Pte Ltd", "FederalTaxID": "202677777V"}
     req = new_request(client, "amy", "vendor", "SPD", "SG", {**vendor, "BPBankAccounts": bank})
     d = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).json()
     assert d["state"] == "IN_APPROVAL"
@@ -826,8 +829,8 @@ def test_vendor_with_bank_details_and_ivd_item_publish_to_the_mock(client, sap_m
         "U_IVD": "tYES",
         "selling_countries": ["SG", "MY"],
         "registrations": [
-            {"country": "SG", "reg_no": "DIV-001"},
-            {"country": "MY", "reg_no": "MDA-002"},
+            {"country": "SG", "reg_no": "DIV-001", "expiry_date": "2030-12-31"},
+            {"country": "MY", "reg_no": "MDA-002", "expiry_date": "2030-12-31"},
         ],
         "product_family": "A",
     }

@@ -53,6 +53,7 @@ def test_all_tables_are_created(engine):
         "approval_tasks",
         "notifications",
         "dedup_decisions",
+        "sap_publish_results",
         "app_state",
     }
 

@@ -157,7 +157,7 @@ def test_a_change_after_a_question_reopens_earlier_approvals(client):
             "Country": "SG",
         }
     ]
-    fields = {**CUSTOMER, "CardName": "Switch Vendor Pte Ltd", "FederalTaxID": "SW2026-1"}
+    fields = {**CUSTOMER, "CardName": "Switch Vendor Pte Ltd", "FederalTaxID": "202600001S"}
     req = new_request(client, "amy", "vendor", "SPD", "SG", {**fields, "BPBankAccounts": bank})
     rid = req["req_id"]
     d = client.post(f"/requests/{rid}/submit", headers=H("amy")).json()

@@ -70,6 +70,7 @@
           "country": { "type": "string", "enum": ["SG", "MY", "ID", "VN", "TH"], "title": "Country" },
           "reg_no": { "type": "string", "maxLength": 40, "title": "Registration number" },
           "risk_class": { "type": "string", "enum": ["A", "B", "C", "D"], "title": "Risk class" },
+          "issue_date": { "type": "string", "format": "date", "title": "Issue date" },
           "expiry_date": { "type": "string", "format": "date", "title": "Expiry date" }
         }
       }
