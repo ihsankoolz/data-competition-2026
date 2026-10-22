@@ -211,6 +211,12 @@ class RequestDetail(RequestSummary):
     allowed_actions: list[
         Literal["edit", "submit", "decide_duplicate", "approve", "reject", "ask_info", "publish"]
     ] = Field(default=[], description="For the acting user; the backend still enforces them")
+    issues: list["FieldIssue"] = Field(
+        default=[], description="Validation problems with the current fields (D-018 item 3)"
+    )
+    sap_publish: "SapPublishView | None" = Field(
+        default=None, description="Set once published: the SAP read-back check"
+    )
 
 
 class ApprovalDecisionIn(BaseModel):
@@ -261,3 +267,218 @@ class AuditEntry(BaseModel):
     entity_type: str
     entity_id: str
     summary: str = Field(description="Plain English, e.g. 'Wei Jie approved (Finance)'")
+
+
+# ============================================================================================
+# Session 4 contract (D-018). M8 regional view, M9 forecast backtest, M10 ops impact, field
+# validation, SAP read-back. Money is USD (D-003 fixed FX). Every metric carries a caption.
+# ============================================================================================
+
+# ---------------------------------------------------------------- field validation (D-018 item 3)
+
+
+class FieldIssue(BaseModel):
+    """One problem with one form field, in plain English. Never echoes bank values."""
+
+    field: str = Field(description="Form field (SAP name), or 'registrations.<CC>.<sub_field>'")
+    label: str = Field(description="Human label, e.g. 'Tax ID (MST)'")
+    message: str = Field(description="e.g. 'A Vietnamese MST has 10 digits, like 0301234567.'")
+    kind: Literal["missing", "format", "too_long", "not_allowed", "expired", "date_order"]
+
+
+class ValidationReport(BaseModel):
+    """Returned by POST /requests/{req_id}/validate. Submit's 422 body is
+    {"detail": "<one sentence>", "issues": [FieldIssue, ...]}."""
+
+    ok: bool
+    issues: list[FieldIssue] = []
+
+
+# ---------------------------------------------------------------- SAP read-back (M7, Priya)
+
+
+class ReadBackRow(BaseModel):
+    field: str = Field(description="SAP field name, e.g. 'CardName' or 'BPAddresses[0].City'")
+    sent: str | None = Field(description="Bank values masked")
+    read_back: str | None = Field(description="Bank values masked")
+    match: bool
+
+
+class SapPublishView(BaseModel):
+    """What Priya sees after publish: the record in the SAP mock and the field-by-field check.
+    Served as RequestDetail.sap_publish and GET /requests/{req_id}/sap-readback."""
+
+    resource: Literal["BusinessPartners", "Items", "ProfitCenters"]
+    sap_code: str = Field(description="CardCode / ItemCode / CenterCode")
+    published_at: datetime
+    published_by: str
+    active: bool = Field(description="False while Frozen=tYES (inactive until verified)")
+    all_match: bool
+    rows: list[ReadBackRow]
+
+
+# ---------------------------------------------------------------- M8 regional view (D-009)
+
+ProductFamily = Literal["A", "B", "C"]
+MergeView = Literal["before", "after"]
+
+
+class Caption(BaseModel):
+    """A metric's plain-English definition, shown under it in the UI."""
+
+    title: str
+    caption: str
+
+
+class HeatCell(BaseModel):
+    country: CountryCode
+    product: ProductFamily
+    value_usd: float = Field(description="Confirmed-PO value, last 12 full months")
+    growth_pct: float | None = Field(description="T3 vs P3, % change; None if P3 = 0")
+    customers: int = Field(description="Customer count (records before merge, golden after)")
+
+
+class BridgeStep(BaseModel):
+    step: Literal["start", "new", "expansion", "contraction", "lost", "end"]
+    value_usd: float = Field(description="start/end = P3/T3 revenue; others signed deltas")
+    customers: int
+
+
+class LostCustomer(BaseModel):
+    card_code: str = Field(description="Raw record before merge, golden id after")
+    name: str
+    country: CountryCode
+    last_order: str = Field(description="YYYY-MM-DD")
+    is_duplicate_artefact: bool = Field(
+        description="Before merge only: this 'lost' customer is really ordering under another "
+        "record of the same customer"
+    )
+
+
+class RecommendedAction(BaseModel):
+    title: str
+    detail: str = Field(description="One or two plain sentences with the number behind it")
+    evidence: str = Field(description="Which panel/metric this comes from")
+
+
+class PanelCount(BaseModel):
+    kind: Literal["confirmed_po", "enquiry", "purchase_request", "mdm_request"]
+    label: str
+    count: int
+    value_usd: float | None = Field(description="None for MDM requests (never demand, rule 9)")
+    caption: str
+
+
+class RegionalView(BaseModel):
+    view: MergeView
+    period: str = Field(description="e.g. 'Oct 2025 - Sep 2026 (last 12 full months)'")
+    country: CountryCode | None = Field(default=None, description="Filter; None = all five")
+    heatmap: list[HeatCell]
+    nrr_pct: float = Field(description="T3 revenue from customers active in P3 / P3 revenue")
+    bridge: list[BridgeStep]
+    cross_sell_pct: float = Field(description="% of customers active in 12 months buying >= 2")
+    customer_count: int
+    lost_customers: list[LostCustomer]
+    panels: list[PanelCount] = Field(description="POs, enquiries, PRs, MDM requests: separate")
+    actions: list[RecommendedAction] = Field(description="3-5, generated from the data")
+    captions: dict[str, Caption] = Field(description="Metric key -> definition")
+
+
+class MergeImpactCountry(BaseModel):
+    country: CountryCode
+    lost_before: int
+    lost_after: int
+    lost_that_were_duplicates: int
+
+
+class MergeImpact(BaseModel):
+    """Before vs after merge, side by side (the pitch numbers)."""
+
+    customers_before: int
+    customers_after: int
+    lost_before: int
+    lost_after: int
+    lost_that_were_duplicates: int
+    by_country: list[MergeImpactCountry]
+    nrr_before_pct: float
+    nrr_after_pct: float
+    caption: str
+
+
+# ---------------------------------------------------------------- M9 forecast backtest (D-008)
+
+Scenario = Literal["seasonal_trend", "flat_noisy", "intermittent"]
+
+
+class ForecastScore(BaseModel):
+    method: Literal["excel_6m", "excel_12m", "combination", "tsb"]
+    label: str = Field(description="e.g. 'Excel average (last 6 months)'")
+    wape_pct: float = Field(description="Error as % of volume; lower is better")
+    bias_pct: float = Field(description="+ = over-forecast, - = under-forecast")
+
+
+class ForecastSeriesResult(BaseModel):
+    level: Literal["country_product", "product", "customer_product"]
+    country: CountryCode | None = None
+    product: ProductFamily
+    scores: list[ForecastScore]
+    winner: str = Field(description="Method with the lowest WAPE")
+
+
+class ForecastPoint(BaseModel):
+    month: str = Field(description="YYYY-MM-01")
+    actual: float | None
+    excel_6m: float | None
+    combination: float | None
+
+
+class ForecastBacktest(BaseModel):
+    scenario: Scenario
+    data: Literal["clean", "dirty"]
+    setup: str = Field(description="Rolling origin, h=3, n_windows=10, step 1 (plain English)")
+    overall: list[ForecastScore]
+    series: list[ForecastSeriesResult]
+    chart: list[ForecastPoint] = Field(
+        description="One example series for the panel (default VN x A), actuals vs both methods"
+    )
+    chart_series: str = Field(description="e.g. 'Vietnam, Product A (units)'")
+    honest_note: str = Field(description="e.g. 'In flat_noisy the Excel average wins.'")
+
+
+class ForecastSummary(BaseModel):
+    """All scenarios x clean/dirty, for the scenario switcher and results table."""
+
+    runs: list[ForecastBacktest]
+    captions: dict[str, Caption]
+
+
+# ---------------------------------------------------------------- M10 ops impact (D-018 item 4)
+
+
+class CycleTimeStat(BaseModel):
+    process: Literal["old_email_sequential", "new_parallel"]
+    label: str
+    median_bd: float = Field(description="Business days, submitted -> live in SAP")
+    p90_bd: float
+
+
+class Assumption(BaseModel):
+    name: str
+    value: str
+    source: Literal["brief", "generated_history", "our_design", "assumption"]
+
+
+class OpsImpact(BaseModel):
+    cycle_time: list[CycleTimeStat]
+    amy_before_bd: float = Field(description="The brief's scenario: 18 days")
+    amy_after_bd: float
+    amy_explanation: str
+    first_time_right_before_pct: float = Field(description="Not bounced for missing fields")
+    first_time_right_after_pct: float
+    duplicates_prevented: int = Field(description="Requests linked to an existing record")
+    assumptions: list[Assumption]
+    caption: str = Field(description="'Modelled, not measured' framing in plain English")
+
+
+# Resolves the session 4 forward references on RequestDetail (FieldIssue, SapPublishView).
+RequestDetail.model_rebuild()

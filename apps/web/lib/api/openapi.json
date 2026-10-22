@@ -991,6 +991,128 @@
         }
       }
     },
+    "/requests/{req_id}/validate": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Validate Request",
+        "description": "Checks the current fields against the form schema, country tax-ID formats, required\nfields per domain x country and registration expiry (D-018 item 3). Submit runs the same\nchecks and answers 422 {\"detail\", \"issues\"} when any fail.",
+        "operationId": "validateRequest",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{req_id}/sap-readback": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Get Sap Readback",
+        "description": "Priya's publish screen: the record in the SAP mock and the field-by-field read-back.",
+        "operationId": "getSapReadback",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SapPublishView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/approvals/inbox": {
       "get": {
         "tags": [
@@ -1189,6 +1311,199 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ResetResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analytics/regional": {
+      "get": {
+        "tags": [
+          "analytics"
+        ],
+        "summary": "Regional View",
+        "operationId": "getRegionalView",
+        "parameters": [
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "before",
+                "after"
+              ],
+              "type": "string",
+              "description": "before = raw SAP records, after = golden IDs",
+              "default": "after",
+              "title": "View"
+            },
+            "description": "before = raw SAP records, after = golden IDs"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "SG",
+                    "MY",
+                    "ID",
+                    "VN",
+                    "TH"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Country"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionalView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analytics/merge-impact": {
+      "get": {
+        "tags": [
+          "analytics"
+        ],
+        "summary": "Merge Impact",
+        "operationId": "getMergeImpact",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MergeImpact"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analytics/forecast": {
+      "get": {
+        "tags": [
+          "analytics"
+        ],
+        "summary": "Forecast Summary",
+        "operationId": "getForecast",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analytics/forecast/{scenario}": {
+      "get": {
+        "tags": [
+          "analytics"
+        ],
+        "summary": "Forecast Run",
+        "operationId": "getForecastRun",
+        "parameters": [
+          {
+            "name": "scenario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "seasonal_trend",
+                "flat_noisy",
+                "intermittent"
+              ],
+              "type": "string",
+              "title": "Scenario"
+            }
+          },
+          {
+            "name": "data",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(clean|dirty)$",
+              "default": "clean",
+              "title": "Data"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastBacktest"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analytics/ops-impact": {
+      "get": {
+        "tags": [
+          "analytics"
+        ],
+        "summary": "Ops Impact",
+        "operationId": "getOpsImpact",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsImpact"
                 }
               }
             }
@@ -1470,6 +1785,35 @@
         ],
         "title": "ApprovalTask"
       },
+      "Assumption": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "brief",
+              "generated_history",
+              "our_design",
+              "assumption"
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "source"
+        ],
+        "title": "Assumption"
+      },
       "AuditEntry": {
         "properties": {
           "id": {
@@ -1515,6 +1859,38 @@
         ],
         "title": "AuditEntry",
         "description": "One audit row for the status-page timeline (bank values are already masked)."
+      },
+      "BridgeStep": {
+        "properties": {
+          "step": {
+            "type": "string",
+            "enum": [
+              "start",
+              "new",
+              "expansion",
+              "contraction",
+              "lost",
+              "end"
+            ],
+            "title": "Step"
+          },
+          "value_usd": {
+            "type": "number",
+            "title": "Value Usd",
+            "description": "start/end = P3/T3 revenue; others signed deltas"
+          },
+          "customers": {
+            "type": "integer",
+            "title": "Customers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step",
+          "value_usd",
+          "customers"
+        ],
+        "title": "BridgeStep"
       },
       "Candidate": {
         "properties": {
@@ -1629,6 +2005,25 @@
         ],
         "title": "Candidate"
       },
+      "Caption": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "caption": {
+            "type": "string",
+            "title": "Caption"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "caption"
+        ],
+        "title": "Caption",
+        "description": "A metric's plain-English definition, shown under it in the UI."
+      },
       "ClockAdvance": {
         "properties": {
           "hours": {
@@ -1675,6 +2070,39 @@
         ],
         "title": "ClockState",
         "description": "Simulated clock. All SLA logic uses `now`, never the wall clock."
+      },
+      "CycleTimeStat": {
+        "properties": {
+          "process": {
+            "type": "string",
+            "enum": [
+              "old_email_sequential",
+              "new_parallel"
+            ],
+            "title": "Process"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "median_bd": {
+            "type": "number",
+            "title": "Median Bd",
+            "description": "Business days, submitted -> live in SAP"
+          },
+          "p90_bd": {
+            "type": "number",
+            "title": "P90 Bd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "process",
+          "label",
+          "median_bd",
+          "p90_bd"
+        ],
+        "title": "CycleTimeStat"
       },
       "DedupCheckRequest": {
         "properties": {
@@ -2025,6 +2453,288 @@
         ],
         "title": "EmailSummary"
       },
+      "FieldIssue": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field",
+            "description": "Form field (SAP name), or 'registrations.<CC>.<sub_field>'"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "description": "Human label, e.g. 'Tax ID (MST)'"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "e.g. 'A Vietnamese MST has 10 digits, like 0301234567.'"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "missing",
+              "format",
+              "too_long",
+              "not_allowed",
+              "expired",
+              "date_order"
+            ],
+            "title": "Kind"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "label",
+          "message",
+          "kind"
+        ],
+        "title": "FieldIssue",
+        "description": "One problem with one form field, in plain English. Never echoes bank values."
+      },
+      "ForecastBacktest": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "enum": [
+              "seasonal_trend",
+              "flat_noisy",
+              "intermittent"
+            ],
+            "title": "Scenario"
+          },
+          "data": {
+            "type": "string",
+            "enum": [
+              "clean",
+              "dirty"
+            ],
+            "title": "Data"
+          },
+          "setup": {
+            "type": "string",
+            "title": "Setup",
+            "description": "Rolling origin, h=3, n_windows=10, step 1 (plain English)"
+          },
+          "overall": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastScore"
+            },
+            "type": "array",
+            "title": "Overall"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastSeriesResult"
+            },
+            "type": "array",
+            "title": "Series"
+          },
+          "chart": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastPoint"
+            },
+            "type": "array",
+            "title": "Chart",
+            "description": "One example series for the panel (default VN x A), actuals vs both methods"
+          },
+          "chart_series": {
+            "type": "string",
+            "title": "Chart Series",
+            "description": "e.g. 'Vietnam, Product A (units)'"
+          },
+          "honest_note": {
+            "type": "string",
+            "title": "Honest Note",
+            "description": "e.g. 'In flat_noisy the Excel average wins.'"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scenario",
+          "data",
+          "setup",
+          "overall",
+          "series",
+          "chart",
+          "chart_series",
+          "honest_note"
+        ],
+        "title": "ForecastBacktest"
+      },
+      "ForecastPoint": {
+        "properties": {
+          "month": {
+            "type": "string",
+            "title": "Month",
+            "description": "YYYY-MM-01"
+          },
+          "actual": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual"
+          },
+          "excel_6m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excel 6M"
+          },
+          "combination": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Combination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month",
+          "actual",
+          "excel_6m",
+          "combination"
+        ],
+        "title": "ForecastPoint"
+      },
+      "ForecastScore": {
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "excel_6m",
+              "excel_12m",
+              "combination",
+              "tsb"
+            ],
+            "title": "Method"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "description": "e.g. 'Excel average (last 6 months)'"
+          },
+          "wape_pct": {
+            "type": "number",
+            "title": "Wape Pct",
+            "description": "Error as % of volume; lower is better"
+          },
+          "bias_pct": {
+            "type": "number",
+            "title": "Bias Pct",
+            "description": "+ = over-forecast, - = under-forecast"
+          }
+        },
+        "type": "object",
+        "required": [
+          "method",
+          "label",
+          "wape_pct",
+          "bias_pct"
+        ],
+        "title": "ForecastScore"
+      },
+      "ForecastSeriesResult": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "country_product",
+              "product",
+              "customer_product"
+            ],
+            "title": "Level"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "SG",
+                  "MY",
+                  "ID",
+                  "VN",
+                  "TH"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "product": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C"
+            ],
+            "title": "Product"
+          },
+          "scores": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastScore"
+            },
+            "type": "array",
+            "title": "Scores"
+          },
+          "winner": {
+            "type": "string",
+            "title": "Winner",
+            "description": "Method with the lowest WAPE"
+          }
+        },
+        "type": "object",
+        "required": [
+          "level",
+          "product",
+          "scores",
+          "winner"
+        ],
+        "title": "ForecastSeriesResult"
+      },
+      "ForecastSummary": {
+        "properties": {
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastBacktest"
+            },
+            "type": "array",
+            "title": "Runs"
+          },
+          "captions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Caption"
+            },
+            "type": "object",
+            "title": "Captions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runs",
+          "captions"
+        ],
+        "title": "ForecastSummary",
+        "description": "All scenarios x clean/dirty, for the scenario switcher and results table."
+      },
       "FormSpec": {
         "properties": {
           "domain": {
@@ -2133,6 +2843,61 @@
           "service"
         ],
         "title": "Health"
+      },
+      "HeatCell": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "product": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C"
+            ],
+            "title": "Product"
+          },
+          "value_usd": {
+            "type": "number",
+            "title": "Value Usd",
+            "description": "Confirmed-PO value, last 12 full months"
+          },
+          "growth_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Pct",
+            "description": "T3 vs P3, % change; None if P3 = 0"
+          },
+          "customers": {
+            "type": "integer",
+            "title": "Customers",
+            "description": "Customer count (records before merge, golden after)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "product",
+          "value_usd",
+          "growth_pct",
+          "customers"
+        ],
+        "title": "HeatCell"
       },
       "Interpretation": {
         "properties": {
@@ -2360,6 +3125,141 @@
         ],
         "title": "JudgeOpinion"
       },
+      "LostCustomer": {
+        "properties": {
+          "card_code": {
+            "type": "string",
+            "title": "Card Code",
+            "description": "Raw record before merge, golden id after"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "last_order": {
+            "type": "string",
+            "title": "Last Order",
+            "description": "YYYY-MM-DD"
+          },
+          "is_duplicate_artefact": {
+            "type": "boolean",
+            "title": "Is Duplicate Artefact",
+            "description": "Before merge only: this 'lost' customer is really ordering under another record of the same customer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_code",
+          "name",
+          "country",
+          "last_order",
+          "is_duplicate_artefact"
+        ],
+        "title": "LostCustomer"
+      },
+      "MergeImpact": {
+        "properties": {
+          "customers_before": {
+            "type": "integer",
+            "title": "Customers Before"
+          },
+          "customers_after": {
+            "type": "integer",
+            "title": "Customers After"
+          },
+          "lost_before": {
+            "type": "integer",
+            "title": "Lost Before"
+          },
+          "lost_after": {
+            "type": "integer",
+            "title": "Lost After"
+          },
+          "lost_that_were_duplicates": {
+            "type": "integer",
+            "title": "Lost That Were Duplicates"
+          },
+          "by_country": {
+            "items": {
+              "$ref": "#/components/schemas/MergeImpactCountry"
+            },
+            "type": "array",
+            "title": "By Country"
+          },
+          "nrr_before_pct": {
+            "type": "number",
+            "title": "Nrr Before Pct"
+          },
+          "nrr_after_pct": {
+            "type": "number",
+            "title": "Nrr After Pct"
+          },
+          "caption": {
+            "type": "string",
+            "title": "Caption"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customers_before",
+          "customers_after",
+          "lost_before",
+          "lost_after",
+          "lost_that_were_duplicates",
+          "by_country",
+          "nrr_before_pct",
+          "nrr_after_pct",
+          "caption"
+        ],
+        "title": "MergeImpact",
+        "description": "Before vs after merge, side by side (the pitch numbers)."
+      },
+      "MergeImpactCountry": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "lost_before": {
+            "type": "integer",
+            "title": "Lost Before"
+          },
+          "lost_after": {
+            "type": "integer",
+            "title": "Lost After"
+          },
+          "lost_that_were_duplicates": {
+            "type": "integer",
+            "title": "Lost That Were Duplicates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "lost_before",
+          "lost_after",
+          "lost_that_were_duplicates"
+        ],
+        "title": "MergeImpactCountry"
+      },
       "Notification": {
         "properties": {
           "notification_id": {
@@ -2421,6 +3321,69 @@
         "title": "Notification",
         "description": "In-app stand-in for Teams/Outlook messages. Created on the simulated clock."
       },
+      "OpsImpact": {
+        "properties": {
+          "cycle_time": {
+            "items": {
+              "$ref": "#/components/schemas/CycleTimeStat"
+            },
+            "type": "array",
+            "title": "Cycle Time"
+          },
+          "amy_before_bd": {
+            "type": "number",
+            "title": "Amy Before Bd",
+            "description": "The brief's scenario: 18 days"
+          },
+          "amy_after_bd": {
+            "type": "number",
+            "title": "Amy After Bd"
+          },
+          "amy_explanation": {
+            "type": "string",
+            "title": "Amy Explanation"
+          },
+          "first_time_right_before_pct": {
+            "type": "number",
+            "title": "First Time Right Before Pct",
+            "description": "Not bounced for missing fields"
+          },
+          "first_time_right_after_pct": {
+            "type": "number",
+            "title": "First Time Right After Pct"
+          },
+          "duplicates_prevented": {
+            "type": "integer",
+            "title": "Duplicates Prevented",
+            "description": "Requests linked to an existing record"
+          },
+          "assumptions": {
+            "items": {
+              "$ref": "#/components/schemas/Assumption"
+            },
+            "type": "array",
+            "title": "Assumptions"
+          },
+          "caption": {
+            "type": "string",
+            "title": "Caption",
+            "description": "'Modelled, not measured' framing in plain English"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cycle_time",
+          "amy_before_bd",
+          "amy_after_bd",
+          "amy_explanation",
+          "first_time_right_before_pct",
+          "first_time_right_after_pct",
+          "duplicates_prevented",
+          "assumptions",
+          "caption"
+        ],
+        "title": "OpsImpact"
+      },
       "OrderLine": {
         "properties": {
           "item_code": {
@@ -2468,6 +3431,53 @@
           "source_quote"
         ],
         "title": "OrderLine"
+      },
+      "PanelCount": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "confirmed_po",
+              "enquiry",
+              "purchase_request",
+              "mdm_request"
+            ],
+            "title": "Kind"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "value_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value Usd",
+            "description": "None for MDM requests (never demand, rule 9)"
+          },
+          "caption": {
+            "type": "string",
+            "title": "Caption"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "label",
+          "count",
+          "value_usd",
+          "caption"
+        ],
+        "title": "PanelCount"
       },
       "Persona": {
         "properties": {
@@ -2562,6 +3572,51 @@
         "title": "QuotedValue",
         "description": "One extracted field. `key` is an extract key from config/required_fields.yaml\n(`name`, `tax_id`, `registration_number_SG`, ...) or an order key (`customer_name`,\n`po_number`, `requested_date`)."
       },
+      "ReadBackRow": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field",
+            "description": "SAP field name, e.g. 'CardName' or 'BPAddresses[0].City'"
+          },
+          "sent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent",
+            "description": "Bank values masked"
+          },
+          "read_back": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Read Back",
+            "description": "Bank values masked"
+          },
+          "match": {
+            "type": "boolean",
+            "title": "Match"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "sent",
+          "read_back",
+          "match"
+        ],
+        "title": "ReadBackRow"
+      },
       "Reason": {
         "properties": {
           "layer": {
@@ -2595,6 +3650,141 @@
           "text"
         ],
         "title": "Reason"
+      },
+      "RecommendedAction": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "description": "One or two plain sentences with the number behind it"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "description": "Which panel/metric this comes from"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "detail",
+          "evidence"
+        ],
+        "title": "RecommendedAction"
+      },
+      "RegionalView": {
+        "properties": {
+          "view": {
+            "type": "string",
+            "enum": [
+              "before",
+              "after"
+            ],
+            "title": "View"
+          },
+          "period": {
+            "type": "string",
+            "title": "Period",
+            "description": "e.g. 'Oct 2025 - Sep 2026 (last 12 full months)'"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "SG",
+                  "MY",
+                  "ID",
+                  "VN",
+                  "TH"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country",
+            "description": "Filter; None = all five"
+          },
+          "heatmap": {
+            "items": {
+              "$ref": "#/components/schemas/HeatCell"
+            },
+            "type": "array",
+            "title": "Heatmap"
+          },
+          "nrr_pct": {
+            "type": "number",
+            "title": "Nrr Pct",
+            "description": "T3 revenue from customers active in P3 / P3 revenue"
+          },
+          "bridge": {
+            "items": {
+              "$ref": "#/components/schemas/BridgeStep"
+            },
+            "type": "array",
+            "title": "Bridge"
+          },
+          "cross_sell_pct": {
+            "type": "number",
+            "title": "Cross Sell Pct",
+            "description": "% of customers active in 12 months buying >= 2"
+          },
+          "customer_count": {
+            "type": "integer",
+            "title": "Customer Count"
+          },
+          "lost_customers": {
+            "items": {
+              "$ref": "#/components/schemas/LostCustomer"
+            },
+            "type": "array",
+            "title": "Lost Customers"
+          },
+          "panels": {
+            "items": {
+              "$ref": "#/components/schemas/PanelCount"
+            },
+            "type": "array",
+            "title": "Panels",
+            "description": "POs, enquiries, PRs, MDM requests: separate"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/RecommendedAction"
+            },
+            "type": "array",
+            "title": "Actions",
+            "description": "3-5, generated from the data"
+          },
+          "captions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Caption"
+            },
+            "type": "object",
+            "title": "Captions",
+            "description": "Metric key -> definition"
+          }
+        },
+        "type": "object",
+        "required": [
+          "view",
+          "period",
+          "heatmap",
+          "nrr_pct",
+          "bridge",
+          "cross_sell_pct",
+          "customer_count",
+          "lost_customers",
+          "panels",
+          "actions",
+          "captions"
+        ],
+        "title": "RegionalView"
       },
       "RelatedRecord": {
         "properties": {
@@ -2878,6 +4068,26 @@
             "title": "Allowed Actions",
             "description": "For the acting user; the backend still enforces them",
             "default": []
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/FieldIssue"
+            },
+            "type": "array",
+            "title": "Issues",
+            "description": "Validation problems with the current fields (D-018 item 3)",
+            "default": []
+          },
+          "sap_publish": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SapPublishView"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set once published: the SAP read-back check"
           }
         },
         "type": "object",
@@ -3063,6 +4273,61 @@
         ],
         "title": "ResetResult"
       },
+      "SapPublishView": {
+        "properties": {
+          "resource": {
+            "type": "string",
+            "enum": [
+              "BusinessPartners",
+              "Items",
+              "ProfitCenters"
+            ],
+            "title": "Resource"
+          },
+          "sap_code": {
+            "type": "string",
+            "title": "Sap Code",
+            "description": "CardCode / ItemCode / CenterCode"
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Published At"
+          },
+          "published_by": {
+            "type": "string",
+            "title": "Published By"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "description": "False while Frozen=tYES (inactive until verified)"
+          },
+          "all_match": {
+            "type": "boolean",
+            "title": "All Match"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ReadBackRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "resource",
+          "sap_code",
+          "published_at",
+          "published_by",
+          "active",
+          "all_match",
+          "rows"
+        ],
+        "title": "SapPublishView",
+        "description": "What Priya sees after publish: the record in the SAP mock and the field-by-field check.\nServed as RequestDetail.sap_publish and GET /requests/{req_id}/sap-readback."
+      },
       "Stage": {
         "properties": {
           "number": {
@@ -3139,6 +4404,28 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "ValidationReport": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/FieldIssue"
+            },
+            "type": "array",
+            "title": "Issues",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "ValidationReport",
+        "description": "Returned by POST /requests/{req_id}/validate. Submit's 422 body is\n{\"detail\": \"<one sentence>\", \"issues\": [FieldIssue, ...]}."
       }
     }
   }

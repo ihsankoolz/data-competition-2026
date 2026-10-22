@@ -29,6 +29,8 @@ from services.api.schemas import (
     RequestStateName,
     RequestSummary,
     RequestUpdate,
+    SapPublishView,
+    ValidationReport,
 )
 from services.api.views import (
     detail_model,
@@ -469,3 +471,23 @@ def get_request_audit(req_id: str, actor: CurrentUser) -> list[AuditEntry]:
 
 
 __all__ = ["router", "tasks_for"]
+
+
+@router.post(
+    "/requests/{req_id}/validate", response_model=ValidationReport, operation_id="validateRequest"
+)
+def validate_request(req_id: str, actor: CurrentUser) -> ValidationReport:
+    """Checks the current fields against the form schema, country tax-ID formats, required
+    fields per domain x country and registration expiry (D-018 item 3). Submit runs the same
+    checks and answers 422 {"detail", "issues"} when any fail."""
+    raise HTTPException(501, "Field validation is being built.")
+
+
+@router.get(
+    "/requests/{req_id}/sap-readback",
+    response_model=SapPublishView,
+    operation_id="getSapReadback",
+)
+def get_sap_readback(req_id: str, actor: CurrentUser) -> SapPublishView:
+    """Priya's publish screen: the record in the SAP mock and the field-by-field read-back."""
+    raise HTTPException(501, "The read-back view is being built.")

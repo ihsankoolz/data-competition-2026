@@ -11,7 +11,7 @@ from sqlalchemy.exc import OperationalError
 from services.api import clock
 from services.api.clock import router as clock_router
 from services.api.personas import PERSONAS
-from services.api.routers import admin, approvals, dedup, emails, forms, requests
+from services.api.routers import admin, analytics, approvals, dedup, emails, forms, requests
 from services.api.schemas import Health, Persona
 
 DB_BUSY_MESSAGE = "The demo database is busy; try again in a moment."
@@ -66,7 +66,7 @@ async def _database_busy(_: Request, exc: OperationalError) -> JSONResponse:
 
 
 app.include_router(clock_router)
-for _module in (forms, emails, dedup, requests, approvals, admin):
+for _module in (forms, emails, dedup, requests, approvals, admin, analytics):
     app.include_router(_module.router)
 
 

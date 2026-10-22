@@ -288,6 +288,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/requests/{req_id}/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Validate Request
+         * @description Checks the current fields against the form schema, country tax-ID formats, required
+         *     fields per domain x country and registration expiry (D-018 item 3). Submit runs the same
+         *     checks and answers 422 {"detail", "issues"} when any fail.
+         */
+        post: operations["validateRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/{req_id}/sap-readback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Sap Readback
+         * @description Priya's publish screen: the record in the SAP mock and the field-by-field read-back.
+         */
+        get: operations["getSapReadback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/approvals/inbox": {
         parameters: {
             query?: never;
@@ -363,6 +405,91 @@ export interface paths {
          *     simulated clock, audit chain and the SAP mock. `make reset-demo` uses the same code path.
          */
         post: operations["resetDemo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/analytics/regional": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Regional View */
+        get: operations["getRegionalView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/analytics/merge-impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Merge Impact */
+        get: operations["getMergeImpact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/analytics/forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Forecast Summary */
+        get: operations["getForecast"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/analytics/forecast/{scenario}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Forecast Run */
+        get: operations["getForecastRun"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/analytics/ops-impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ops Impact */
+        get: operations["getOpsImpact"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -482,6 +609,18 @@ export interface components {
              */
             sla_state?: "on_track" | "reminded" | "overdue" | "done";
         };
+        /** Assumption */
+        Assumption: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "brief" | "generated_history" | "our_design" | "assumption";
+        };
         /**
          * AuditEntry
          * @description One audit row for the status-page timeline (bank values are already masked).
@@ -507,6 +646,21 @@ export interface components {
              * @description Plain English, e.g. 'Wei Jie approved (Finance)'
              */
             summary: string;
+        };
+        /** BridgeStep */
+        BridgeStep: {
+            /**
+             * Step
+             * @enum {string}
+             */
+            step: "start" | "new" | "expansion" | "contraction" | "lost" | "end";
+            /**
+             * Value Usd
+             * @description start/end = P3/T3 revenue; others signed deltas
+             */
+            value_usd: number;
+            /** Customers */
+            customers: number;
         };
         /** Candidate */
         Candidate: {
@@ -549,6 +703,16 @@ export interface components {
              */
             reasons?: components["schemas"]["Reason"][];
         };
+        /**
+         * Caption
+         * @description A metric's plain-English definition, shown under it in the UI.
+         */
+        Caption: {
+            /** Title */
+            title: string;
+            /** Caption */
+            caption: string;
+        };
         /** ClockAdvance */
         ClockAdvance: {
             /**
@@ -584,6 +748,23 @@ export interface components {
              * @description Simulated hours since the last reset
              */
             elapsed_hours: number;
+        };
+        /** CycleTimeStat */
+        CycleTimeStat: {
+            /**
+             * Process
+             * @enum {string}
+             */
+            process: "old_email_sequential" | "new_parallel";
+            /** Label */
+            label: string;
+            /**
+             * Median Bd
+             * @description Business days, submitted -> live in SAP
+             */
+            median_bd: number;
+            /** P90 Bd */
+            p90_bd: number;
         };
         /**
          * DedupCheckRequest
@@ -767,6 +948,140 @@ export interface components {
             has_attachments?: boolean;
         };
         /**
+         * FieldIssue
+         * @description One problem with one form field, in plain English. Never echoes bank values.
+         */
+        FieldIssue: {
+            /**
+             * Field
+             * @description Form field (SAP name), or 'registrations.<CC>.<sub_field>'
+             */
+            field: string;
+            /**
+             * Label
+             * @description Human label, e.g. 'Tax ID (MST)'
+             */
+            label: string;
+            /**
+             * Message
+             * @description e.g. 'A Vietnamese MST has 10 digits, like 0301234567.'
+             */
+            message: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "missing" | "format" | "too_long" | "not_allowed" | "expired" | "date_order";
+        };
+        /** ForecastBacktest */
+        ForecastBacktest: {
+            /**
+             * Scenario
+             * @enum {string}
+             */
+            scenario: "seasonal_trend" | "flat_noisy" | "intermittent";
+            /**
+             * Data
+             * @enum {string}
+             */
+            data: "clean" | "dirty";
+            /**
+             * Setup
+             * @description Rolling origin, h=3, n_windows=10, step 1 (plain English)
+             */
+            setup: string;
+            /** Overall */
+            overall: components["schemas"]["ForecastScore"][];
+            /** Series */
+            series: components["schemas"]["ForecastSeriesResult"][];
+            /**
+             * Chart
+             * @description One example series for the panel (default VN x A), actuals vs both methods
+             */
+            chart: components["schemas"]["ForecastPoint"][];
+            /**
+             * Chart Series
+             * @description e.g. 'Vietnam, Product A (units)'
+             */
+            chart_series: string;
+            /**
+             * Honest Note
+             * @description e.g. 'In flat_noisy the Excel average wins.'
+             */
+            honest_note: string;
+        };
+        /** ForecastPoint */
+        ForecastPoint: {
+            /**
+             * Month
+             * @description YYYY-MM-01
+             */
+            month: string;
+            /** Actual */
+            actual: number | null;
+            /** Excel 6M */
+            excel_6m: number | null;
+            /** Combination */
+            combination: number | null;
+        };
+        /** ForecastScore */
+        ForecastScore: {
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "excel_6m" | "excel_12m" | "combination" | "tsb";
+            /**
+             * Label
+             * @description e.g. 'Excel average (last 6 months)'
+             */
+            label: string;
+            /**
+             * Wape Pct
+             * @description Error as % of volume; lower is better
+             */
+            wape_pct: number;
+            /**
+             * Bias Pct
+             * @description + = over-forecast, - = under-forecast
+             */
+            bias_pct: number;
+        };
+        /** ForecastSeriesResult */
+        ForecastSeriesResult: {
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "country_product" | "product" | "customer_product";
+            /** Country */
+            country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+            /**
+             * Product
+             * @enum {string}
+             */
+            product: "A" | "B" | "C";
+            /** Scores */
+            scores: components["schemas"]["ForecastScore"][];
+            /**
+             * Winner
+             * @description Method with the lowest WAPE
+             */
+            winner: string;
+        };
+        /**
+         * ForecastSummary
+         * @description All scenarios x clean/dirty, for the scenario switcher and results table.
+         */
+        ForecastSummary: {
+            /** Runs */
+            runs: components["schemas"]["ForecastBacktest"][];
+            /** Captions */
+            captions: {
+                [key: string]: components["schemas"]["Caption"];
+            };
+        };
+        /**
          * FormSpec
          * @description Everything the web app needs to render a request form for one domain x country.
          */
@@ -813,6 +1128,34 @@ export interface components {
             status: string;
             /** Service */
             service: string;
+        };
+        /** HeatCell */
+        HeatCell: {
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Product
+             * @enum {string}
+             */
+            product: "A" | "B" | "C";
+            /**
+             * Value Usd
+             * @description Confirmed-PO value, last 12 full months
+             */
+            value_usd: number;
+            /**
+             * Growth Pct
+             * @description T3 vs P3, % change; None if P3 = 0
+             */
+            growth_pct: number | null;
+            /**
+             * Customers
+             * @description Customer count (records before merge, golden after)
+             */
+            customers: number;
         };
         /** Interpretation */
         Interpretation: {
@@ -914,6 +1257,69 @@ export interface components {
             /** Message */
             message?: string | null;
         };
+        /** LostCustomer */
+        LostCustomer: {
+            /**
+             * Card Code
+             * @description Raw record before merge, golden id after
+             */
+            card_code: string;
+            /** Name */
+            name: string;
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Last Order
+             * @description YYYY-MM-DD
+             */
+            last_order: string;
+            /**
+             * Is Duplicate Artefact
+             * @description Before merge only: this 'lost' customer is really ordering under another record of the same customer
+             */
+            is_duplicate_artefact: boolean;
+        };
+        /**
+         * MergeImpact
+         * @description Before vs after merge, side by side (the pitch numbers).
+         */
+        MergeImpact: {
+            /** Customers Before */
+            customers_before: number;
+            /** Customers After */
+            customers_after: number;
+            /** Lost Before */
+            lost_before: number;
+            /** Lost After */
+            lost_after: number;
+            /** Lost That Were Duplicates */
+            lost_that_were_duplicates: number;
+            /** By Country */
+            by_country: components["schemas"]["MergeImpactCountry"][];
+            /** Nrr Before Pct */
+            nrr_before_pct: number;
+            /** Nrr After Pct */
+            nrr_after_pct: number;
+            /** Caption */
+            caption: string;
+        };
+        /** MergeImpactCountry */
+        MergeImpactCountry: {
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /** Lost Before */
+            lost_before: number;
+            /** Lost After */
+            lost_after: number;
+            /** Lost That Were Duplicates */
+            lost_that_were_duplicates: number;
+        };
         /**
          * Notification
          * @description In-app stand-in for Teams/Outlook messages. Created on the simulated clock.
@@ -943,6 +1349,39 @@ export interface components {
              */
             created_at: string;
         };
+        /** OpsImpact */
+        OpsImpact: {
+            /** Cycle Time */
+            cycle_time: components["schemas"]["CycleTimeStat"][];
+            /**
+             * Amy Before Bd
+             * @description The brief's scenario: 18 days
+             */
+            amy_before_bd: number;
+            /** Amy After Bd */
+            amy_after_bd: number;
+            /** Amy Explanation */
+            amy_explanation: string;
+            /**
+             * First Time Right Before Pct
+             * @description Not bounced for missing fields
+             */
+            first_time_right_before_pct: number;
+            /** First Time Right After Pct */
+            first_time_right_after_pct: number;
+            /**
+             * Duplicates Prevented
+             * @description Requests linked to an existing record
+             */
+            duplicates_prevented: number;
+            /** Assumptions */
+            assumptions: components["schemas"]["Assumption"][];
+            /**
+             * Caption
+             * @description 'Modelled, not measured' framing in plain English
+             */
+            caption: string;
+        };
         /** OrderLine */
         OrderLine: {
             /**
@@ -959,6 +1398,25 @@ export interface components {
             qty?: number | null;
             /** Source Quote */
             source_quote: string;
+        };
+        /** PanelCount */
+        PanelCount: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "confirmed_po" | "enquiry" | "purchase_request" | "mdm_request";
+            /** Label */
+            label: string;
+            /** Count */
+            count: number;
+            /**
+             * Value Usd
+             * @description None for MDM requests (never demand, rule 9)
+             */
+            value_usd: number | null;
+            /** Caption */
+            caption: string;
         };
         /**
          * Persona
@@ -1001,6 +1459,26 @@ export interface components {
              */
             source_quote: string;
         };
+        /** ReadBackRow */
+        ReadBackRow: {
+            /**
+             * Field
+             * @description SAP field name, e.g. 'CardName' or 'BPAddresses[0].City'
+             */
+            field: string;
+            /**
+             * Sent
+             * @description Bank values masked
+             */
+            sent: string | null;
+            /**
+             * Read Back
+             * @description Bank values masked
+             */
+            read_back: string | null;
+            /** Match */
+            match: boolean;
+        };
         /** Reason */
         Reason: {
             /**
@@ -1019,6 +1497,74 @@ export interface components {
              * @default 0
              */
             weight?: number;
+        };
+        /** RecommendedAction */
+        RecommendedAction: {
+            /** Title */
+            title: string;
+            /**
+             * Detail
+             * @description One or two plain sentences with the number behind it
+             */
+            detail: string;
+            /**
+             * Evidence
+             * @description Which panel/metric this comes from
+             */
+            evidence: string;
+        };
+        /** RegionalView */
+        RegionalView: {
+            /**
+             * View
+             * @enum {string}
+             */
+            view: "before" | "after";
+            /**
+             * Period
+             * @description e.g. 'Oct 2025 - Sep 2026 (last 12 full months)'
+             */
+            period: string;
+            /**
+             * Country
+             * @description Filter; None = all five
+             */
+            country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+            /** Heatmap */
+            heatmap: components["schemas"]["HeatCell"][];
+            /**
+             * Nrr Pct
+             * @description T3 revenue from customers active in P3 / P3 revenue
+             */
+            nrr_pct: number;
+            /** Bridge */
+            bridge: components["schemas"]["BridgeStep"][];
+            /**
+             * Cross Sell Pct
+             * @description % of customers active in 12 months buying >= 2
+             */
+            cross_sell_pct: number;
+            /** Customer Count */
+            customer_count: number;
+            /** Lost Customers */
+            lost_customers: components["schemas"]["LostCustomer"][];
+            /**
+             * Panels
+             * @description POs, enquiries, PRs, MDM requests: separate
+             */
+            panels: components["schemas"]["PanelCount"][];
+            /**
+             * Actions
+             * @description 3-5, generated from the data
+             */
+            actions: components["schemas"]["RecommendedAction"][];
+            /**
+             * Captions
+             * @description Metric key -> definition
+             */
+            captions: {
+                [key: string]: components["schemas"]["Caption"];
+            };
         };
         /**
          * RelatedRecord
@@ -1159,6 +1705,14 @@ export interface components {
              * @default []
              */
             allowed_actions?: ("edit" | "submit" | "decide_duplicate" | "approve" | "reject" | "ask_info" | "publish")[];
+            /**
+             * Issues
+             * @description Validation problems with the current fields (D-018 item 3)
+             * @default []
+             */
+            issues?: components["schemas"]["FieldIssue"][];
+            /** @description Set once published: the SAP read-back check */
+            sap_publish?: components["schemas"]["SapPublishView"] | null;
         };
         /** RequestSummary */
         RequestSummary: {
@@ -1245,6 +1799,39 @@ export interface components {
              */
             sap_mock_reset: boolean;
         };
+        /**
+         * SapPublishView
+         * @description What Priya sees after publish: the record in the SAP mock and the field-by-field check.
+         *     Served as RequestDetail.sap_publish and GET /requests/{req_id}/sap-readback.
+         */
+        SapPublishView: {
+            /**
+             * Resource
+             * @enum {string}
+             */
+            resource: "BusinessPartners" | "Items" | "ProfitCenters";
+            /**
+             * Sap Code
+             * @description CardCode / ItemCode / CenterCode
+             */
+            sap_code: string;
+            /**
+             * Published At
+             * Format: date-time
+             */
+            published_at: string;
+            /** Published By */
+            published_by: string;
+            /**
+             * Active
+             * @description False while Frozen=tYES (inactive until verified)
+             */
+            active: boolean;
+            /** All Match */
+            all_match: boolean;
+            /** Rows */
+            rows: components["schemas"]["ReadBackRow"][];
+        };
         /** Stage */
         Stage: {
             /** Number */
@@ -1271,6 +1858,20 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /**
+         * ValidationReport
+         * @description Returned by POST /requests/{req_id}/validate. Submit's 422 body is
+         *     {"detail": "<one sentence>", "issues": [FieldIssue, ...]}.
+         */
+        ValidationReport: {
+            /** Ok */
+            ok: boolean;
+            /**
+             * Issues
+             * @default []
+             */
+            issues?: components["schemas"]["FieldIssue"][];
         };
     };
     responses: never;
@@ -1840,6 +2441,74 @@ export interface operations {
             };
         };
     };
+    validateRequest: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationReport"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getSapReadback: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SapPublishView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     approvalInbox: {
         parameters: {
             query?: never;
@@ -1958,6 +2627,132 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ResetResult"];
+                };
+            };
+        };
+    };
+    getRegionalView: {
+        parameters: {
+            query?: {
+                /** @description before = raw SAP records, after = golden IDs */
+                view?: "before" | "after";
+                country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegionalView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getMergeImpact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MergeImpact"];
+                };
+            };
+        };
+    };
+    getForecast: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastSummary"];
+                };
+            };
+        };
+    };
+    getForecastRun: {
+        parameters: {
+            query?: {
+                data?: string;
+            };
+            header?: never;
+            path: {
+                scenario: "seasonal_trend" | "flat_noisy" | "intermittent";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastBacktest"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getOpsImpact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsImpact"];
                 };
             };
         };
