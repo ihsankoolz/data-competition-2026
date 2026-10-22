@@ -1,0 +1,132 @@
+/**
+ * The small slice of JSON Schema that `config/forms/*.schema.json` uses, and
+ * helpers to read it. The API returns the schema as an untyped object
+ * (`FormSpec.json_schema`), so this module is the one place that narrows it.
+ */
+import type { Schema } from "@/lib/api/client";
+
+export type FormSpec = Schema<"FormSpec">;
+export type Domain = FormSpec["domain"];
+export type Country = NonNullable<FormSpec["country"]>;
+export type Entity = Schema<"RequestCreate">["entity"];
+
+export const COUNTRIES: Country[] = ["SG", "MY", "ID", "VN", "TH"];
+export const ENTITIES: Entity[] = ["SPD", "QTS", "QTG"];
+
+export const ENTITY_NAMES: Record<Entity, string> = {
+  SPD: "SPD (reagents and kits)",
+  QTS: "QTS (equipment)",
+  QTG: "QTG (service)",
+};
+
+export const FORM_DOMAINS: { value: Exclude<Domain, "cost_center">; label: string }[] = [
+  { value: "customer", label: "Customer" },
+  { value: "vendor", label: "Vendor" },
+  { value: "item", label: "Item" },
+];
+
+export type FieldSchema = {
+  type?: "string" | "integer" | "number" | "boolean" | "array" | "object";
+  title?: string;
+  description?: string;
+  format?: string;
+  enum?: (string | number)[];
+  oneOf?: { const: string | number; title: string }[];
+  maxLength?: number;
+  minimum?: number;
+  minItems?: number;
+  maxItems?: number;
+  items?: FieldSchema;
+  properties?: Record<string, FieldSchema>;
+  required?: string[];
+  "x-sensitive"?: boolean;
+  "x-sap-path"?: string;
+};
+
+export type FormSchema = {
+  title?: string;
+  description?: string;
+  "x-order": string[];
+  "x-card-type"?: string;
+  properties: Record<string, FieldSchema>;
+};
+
+export type FieldValues = Record<string, unknown>;
+
+export function asFormSchema(spec: FormSpec): FormSchema {
+  const raw = spec.json_schema as Partial<FormSchema>;
+  return {
+    ...raw,
+    "x-order": raw["x-order"] ?? Object.keys(raw.properties ?? {}),
+    properties: raw.properties ?? {},
+  };
+}
+
+export type Option = { value: string | number; label: string };
+
+/** Choices for a select: `oneOf` const/title pairs, or a plain `enum`. */
+export function optionsOf(field: FieldSchema, labelFor?: (v: string) => string): Option[] | null {
+  if (field.oneOf) return field.oneOf.map((o) => ({ value: o.const, label: o.title }));
+  if (field.enum) {
+    return field.enum.map((v) => ({
+      value: v,
+      label: labelFor && typeof v === "string" ? labelFor(v) : String(v),
+    }));
+  }
+  return null;
+}
+
+/** True when a value counts as filled in for a required-field check. */
+export function isFilled(value: unknown): boolean {
+  if (value === undefined || value === null) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  if (Array.isArray(value)) return value.length > 0;
+  return true;
+}
+
+export type Registration = {
+  country: Country;
+  reg_no?: string;
+  risk_class?: string;
+  expiry_date?: string;
+};
+
+/**
+ * Item: the selling countries that need a registration number. That is every
+ * regulated selling country when the item is an in-vitro diagnostic.
+ */
+export function registrationCountries(values: FieldValues, spec: FormSpec): Country[] {
+  if (values.U_IVD !== "tYES") return [];
+  const selling = Array.isArray(values.selling_countries)
+    ? (values.selling_countries as Country[])
+    : [];
+  const regulated = new Set(spec.regulated_countries ?? []);
+  return COUNTRIES.filter((c) => selling.includes(c) && regulated.has(c));
+}
+
+/** Keeps one registration row per required country, preserving what was typed. */
+export function syncRegistrations(values: FieldValues, spec: FormSpec): Registration[] {
+  const current = Array.isArray(values.registrations)
+    ? (values.registrations as Registration[])
+    : [];
+  return registrationCountries(values, spec).map(
+    (country) => current.find((r) => r.country === country) ?? { country },
+  );
+}
+
+/** Field keys still empty that the form must have, including per-country registration numbers. */
+export function missingRequired(values: FieldValues, spec: FormSpec): string[] {
+  const missing = spec.required.filter((k) => !isFilled(values[k]));
+  const perCountry = spec.required_per_selling_country ?? [];
+  if (spec.domain === "item" && perCountry.length > 0) {
+    const regs = syncRegistrations(values, spec);
+    for (const reg of regs) {
+      for (const sub of perCountry) {
+        if (!isFilled((reg as Record<string, unknown>)[sub])) {
+          missing.push(`registrations.${reg.country}.${sub}`);
+        }
+      }
+    }
+  }
+  return missing;
+}

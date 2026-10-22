@@ -5,6 +5,7 @@ import { AppHeader } from "@/components/shell/app-header";
 import { ClockProvider } from "@/components/shell/clock-provider";
 import { PersonaProvider } from "@/components/shell/persona-provider";
 import { SideNav } from "@/components/shell/side-nav";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </div>
             </ClockProvider>
           </PersonaProvider>
+          <Toaster position="bottom-right" />
         </TooltipProvider>
       </body>
     </html>

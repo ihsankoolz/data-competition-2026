@@ -1,13 +1,10 @@
 "use client";
 
-import { DatabaseBackup } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { ApiOfflineNotice } from "./api-offline-notice";
 import { PersonaSwitcher } from "./persona-switcher";
+import { ResetDemoButton } from "./reset-demo-button";
 import { SimClock } from "./sim-clock";
 
 function Wordmark() {
@@ -24,27 +21,6 @@ function Wordmark() {
         <span className="text-xs text-muted-foreground">Messy in, clean out</span>
       </div>
     </div>
-  );
-}
-
-function ResetDemoButton() {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        {/* Disabled buttons swallow hover, so the tooltip hangs off a wrapper. */}
-        <span
-          tabIndex={0}
-          data-testid="reset-demo"
-          className="inline-flex rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <Button variant="outline" size="sm" disabled>
-            <DatabaseBackup data-icon="inline-start" />
-            Reset demo
-          </Button>
-        </span>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">Available once the demo data is loaded</TooltipContent>
-    </Tooltip>
   );
 }
 
