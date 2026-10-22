@@ -332,9 +332,9 @@ Forecast error at region level, clean vs dirty data, WAPE (bias):
 | Sparse ordering | B (equipment) | 59.8% (-6.6%) | 168.4% (+161.1%) | 67.9% (-9.1%) | 156.2% (+149.9%) |
 | Sparse ordering | C (services) | 39.8% (-7.8%) | 41.4% (+4.2%) | 29.6% (-16.9%) | 29.0% (-6.0%) |
 
-The pooled 15-series error in the headline table barely moves between clean and dirty (it is dominated by test-kit units, where leakage is under 11%), so it is the wrong place to look for the damage.
+The pooled 15-series error in the headline table barely moves between clean and dirty (it is dominated by test-kit units, where leakage is at most 10.6%), so it is the wrong place to look for the damage.
 
-> **For judges:** cleaning the customer list does not change the country forecast, because the totals are the same. Keeping enquiries out of the order numbers matters most for equipment: the spreadsheet view counts +255% more Product B units than customers really ordered (test kits +8.5%), and the Excel plan's error on regional Product B goes from 28.4% on clean data to 271% on the spreadsheet view in the demo scenario (54% to 358% in the flat, noisy market).
+> **For judges:** cleaning the customer list does not change the country forecast, because the totals are the same. Keeping enquiries out of the order numbers matters most for equipment: the spreadsheet view counts 255% more Product B units than customers really ordered (test kits +8.5%), and the Excel plan's error on regional Product B goes from 28.4% on clean data to 271% on the spreadsheet view in the demo scenario (54% to 358% in the flat, noisy market).
 
 ### Detail: demo scenario, clean data, every country x product
 
