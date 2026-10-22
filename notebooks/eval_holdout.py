@@ -13,7 +13,7 @@
 # - Scoring is the same as `notebooks/eval_interpreter.py` (same value normalisation and quote
 #   check). One rule decided up front: order lines are scored only where the interpreter's
 #   contract carries lines (orders, planned orders, enquiries); lines a label lists on a
-#   follow-up are counted separately and not scored, exactly as on the tuned set.
+#   follow-up are excluded from the order-lines row (shown as not returned by design).
 # - Writes only between `<!-- holdout:start -->` and `<!-- holdout:end -->` in docs/results.md.
 
 # %%
@@ -195,8 +195,7 @@ def section(t: dict, h: dict) -> str:
         "email; missing fields were then computed from its listed fields with the same "
         "required-fields config the app uses. The emails and answers were committed "
         f"(`{PRE_RUN_COMMIT}`) before the interpreter read them, and a test pins the prompt "
-        "so it cannot be tuned afterwards (`tests/test_prompt_frozen.py`). Scoring rules are "
-        "the same as for the tuned set above."
+        "so it cannot be tuned afterwards (`tests/test_prompt_frozen.py`)."
     )
     a("")
     a("| Measure | Tuned set (88 template emails) | Unseen emails "
@@ -208,11 +207,19 @@ def section(t: dict, h: dict) -> str:
     a(f"| Accuracy, keyword rules | {frac(*acc(t['kw_pairs']))} | {frac(*acc(h['kw_pairs']))} |")
     a(f"| Fields copied out correctly (value and quote) | {frac(*t['fields'])} | "
       f"{frac(*h['fields'])} |")  # fmt: skip
+    h_ok, h_tot, h_fu = h["lines"]
+    h_lines = f"{h_ok} of {h_tot + h_fu}"
+    if h_fu:
+        h_lines += (
+            f" ({h_fu} follow-up lines not returned by design: the interpreter only returns "
+            "lines for orders, planned orders and enquiries)"
+        )
     a(f"| Order lines correct (catalogue code and quantity) | {frac(*t['lines'][:2])} | "
-      f"{frac(*h['lines'][:2])} |")  # fmt: skip
+      f"{h_lines} |")  # fmt: skip
     a(f"| Master-data requests routed to the right form | {frac(t['dom'][0], t['dom'][2])} | "
       f"{frac(h['dom'][0], h['dom'][2])} |")  # fmt: skip
-    a(f"| Master-data requests whose list of missing fields is exactly right | "
+    a(f"| Master-data requests whose list of missing fields is exactly right (same rule "
+      "on both sides, so this tests extraction, not the rule) | "
       f"{frac(*t['missing'])} | {frac(*h['missing'])} |")  # fmt: skip
     a(f"| AI answer missing, keyword fallback used | {t['fallback']} | {h['fallback']} |")
     a("")
@@ -243,25 +250,31 @@ def section(t: dict, h: dict) -> str:
           "are wrong when the AI leaves them out or picks another date phrase.")  # fmt: skip
         a("")
     if h["lines"][2]:
-        a(f"{h['lines'][2]} order lines that the answer key lists on follow-up emails are not "
-          "scored: the interpreter returns lines only for orders, planned orders and "
-          "enquiries (decided before the run).")  # fmt: skip
+        a(f"Follow-up lines are excluded from the order-lines row: the answer key lists "
+          f"{h['lines'][2]} lines on follow-up emails, and the interpreter never returns lines "
+          "for a follow-up, so they count as not returned.")  # fmt: skip
         a("")
     a("**Caveats, said plainly.**")
     a("")
     a(f"- **Small sample.** {h['n']} emails, about 5 per kind: one email moves accuracy by "
       f"{100 / h['n']:.1f} points, and a per-class F1 rests on 4 or 5 emails.")  # fmt: skip
     a("- **The answer key is the writing model's intent**, not an independent human label. "
-      "It is being spot-checked by a person; where the writer's label is debatable we list "
-      "it and do not change it after seeing the interpreter's answers.")  # fmt: skip
+      "It is being spot-checked by a person, and no label was changed after the "
+      "interpreter's answers were seen. Labels we consider debatable: the `requested_date` "
+      "of HO-08 ('năm 2027' is a tender year), HO-10 ('Q1', while the PO comes in January) "
+      "and HO-14 ('mid-July' on an enquiry); the class of HO-09 (planned order with an "
+      "internal requisition, but it also asks for stock and a price) and HO-15 (enquiry that "
+      "also says it needs about 30 boxes).")  # fmt: skip
     a("- **Different writer, still synthetic.** A different model wrote these from a brief, "
       "so they test phrasing and layouts our templates never produced. They are still "
       "AI-written emails, cleaner than a real inbox (no attachments to read, no typos from "
       "a phone keyboard at 2 am, no image-only POs).")  # fmt: skip
     a(
-        "- **Order lines are the easy part here.** The brief gave the writer our catalogue, so "
-        "most emails name products close to their catalogue names; real customers use their "
-        "own product words, so the perfect order-line score will not carry over as is."
+        "- **The writer knew our schema.** The brief gave it our catalogue (codes and names) "
+        "and our field keys and required-field rules, so the emails are written to fit our "
+        "forms: most name products close to their catalogue names, and every requested field "
+        "has a clear home. Real customers use their own product words and leave out things "
+        "nobody told them about, so the order-line and field scores will not carry over as is."
     )
     a("- Customer names are scored strictly as written, as on the tuned set.")
     a("")

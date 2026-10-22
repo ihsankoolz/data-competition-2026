@@ -118,6 +118,16 @@ def replay_all(data_dir: Path) -> list[Replayed]:
     return [replay_request(r) for r in load_history(data_dir)]
 
 
+def parallel_only_median(reqs: list[Replayed], wait_cap: float = float("inf")) -> float:
+    """Median cycle if the ONLY change were parallel approval: recorded waits (bounce loops
+    included, no checks at entry), slowest approver, recorded keying. `wait_cap` caps each
+    approver wait (inf = no escalation)."""
+    return statistics.median(
+        max((min(w, wait_cap) for w in r.step_waits.values()), default=0.0) + r.keying_bd
+        for r in reqs
+    )
+
+
 def amy_case(reqs: list[Replayed]) -> tuple[float, str, dict[str, float]]:
     """Amy's IVD item, built from D-007: medians of the recorded waits per role (IVD items that
     did not bounce), capped by the SLA, max over the parallel approvers, plus publish."""
@@ -134,6 +144,8 @@ def amy_case(reqs: list[Replayed]) -> tuple[float, str, dict[str, float]]:
     stage = max(capped.values())
     publish = min(keying, PUBLISH_CAP_BD)
     after = ENTRY_FIX_BD + stage + publish
+    uncapped_stage = max(approvers.values())
+    uncapped = ENTRY_FIX_BD + uncapped_stage + keying
     old_sum = sum(med.values()) + keying
     clean_med = statistics.median(r.old_bd for r in clean)
     bounced_med = statistics.median(
@@ -155,7 +167,11 @@ def amy_case(reqs: list[Replayed]) -> tuple[float, str, dict[str, float]]:
         f"five answers: at most {WAIT_CAP_BD:.1f} days, because a reminder goes out at "
         f"{REMINDER_BD:.0f} day and the backup approver takes over at {ESCALATE_BD:.0f} "
         f"({stage:.1f} days). Publishing to SAP from the queue takes up to "
-        f"{PUBLISH_CAP_BD:.1f} day. Total about {after:.1f} business days."
+        f"{PUBLISH_CAP_BD:.1f} day. Total about {after:.1f} business days, which is the sum "
+        f"of three values we set or assume ({ENTRY_FIX_BD:.1f} + {stage:.1f} + "
+        f"{publish:.1f}), not a measured time. With her recorded median waits and parallel "
+        f"approval but no cap: {ENTRY_FIX_BD:.1f} + {uncapped_stage:.1f} (slowest approver) + "
+        f"{keying:.1f} (keying) = {uncapped:.1f} business days."
     )
     return after, text, approvers
 
@@ -180,6 +196,8 @@ def ops_details(data_dir: Path) -> dict[str, Any]:
         ftr_after=100 * sum(r.bounces_after == 0 for r in reqs) / len(reqs),
         still_bounce=sum(r.bounces_after > 0 for r in reqs),
         slower=sum(r.new_bd > r.old_bd + 1e-9 for r in reqs),
+        parallel_only_median=parallel_only_median(reqs),
+        parallel_cap4_median=parallel_only_median(reqs, wait_cap=4.0),
         by_domain=by_domain,
         amy_after=amy_after,
         amy_text=amy_text,

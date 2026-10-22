@@ -763,6 +763,16 @@ def ai_section(abl: list[dict]) -> str:
         "warnings cleared' is out of all wrong warnings the rules raised at Possible."
     )
     a("")
+    for r in rows:
+        if r["seed"] != 42 and r["setting"] == "a":
+            a(
+                f"With tax IDs on the held-out seed {r['seed']}, applying the judge would rescue "
+                f"{len(r['rescued'])} duplicates and clear {r['lost_warnings']} true "
+                f"warning{'' if r['lost_warnings'] == 1 else 's'}: when the tax ID is there, the "
+                "rules already block nearly every duplicate, so the AI has little to add and "
+                "can only cost. This is why the form shows its answer as an opinion only."
+            )
+            a("")
     pool = [
         (r["seed"], e)
         for r in rows
@@ -777,7 +787,9 @@ def ai_section(abl: list[dict]) -> str:
         reason = " ".join(ex["reasons"]) or "(no reason recorded)"
         a(
             f"**One rescued pair** (seed {seed}, tax IDs hidden, type "
-            f"`{kind.get(ex['pair'], '?')}`): the request **{ex['query']}** against the existing "
+            f"`{kind.get(ex['pair'], '?')}`"
+            + (", example chosen from the held-out seed's rescues" if seed != 42 else "")
+            + f"): the request **{ex['query']}** against the existing "
             f"record **{ex['cand']}**. Rule score {ex['score']:.3f}, below the 0.92 block "
             "line, so the rules only warned. "
             f'The judge picked this record and said: "{reason}"'
