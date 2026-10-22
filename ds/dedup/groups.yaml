@@ -1,0 +1,34 @@
+# Hospital and lab groups that operate in more than one country (domain rule 3).
+# This is business knowledge the MDM team maintains (who owns which brand), NOT a
+# ground-truth label: it names brands, never individual CardCodes. A record whose
+# normalised name contains a group's brand phrase, in one of the group's countries,
+# is treated as a member. A record can also carry `group_id` directly (BPRecord.group_id),
+# which wins over this list.
+#
+# Members in different countries are separate legal entities and are never flagged as
+# duplicates. The duplicate check lists them under "related records" instead.
+groups:
+  - group_id: GRP01
+    group_name: Sentosa Healthcare Group
+    countries: [SG, MY, ID]
+    brands: [sentosa]
+  - group_id: GRP02
+    group_name: Merlion Diagnostics Group
+    countries: [SG, VN, TH]
+    brands: [merlion, meolaioon]
+  - group_id: GRP03
+    group_name: Andaman Medical Group
+    countries: [MY, TH]
+    brands: [andaman]
+  - group_id: GRP04
+    group_name: Mekong Health Partners
+    countries: [VN, TH]
+    brands: [mekong]
+  - group_id: GRP05
+    group_name: Garuda Lab Network
+    countries: [SG, MY, ID]
+    brands: [garuda]
+  - group_id: GRP06
+    group_name: Straits Clinical Group
+    countries: [SG, MY]
+    brands: [straits clinic]

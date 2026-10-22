@@ -1,0 +1,33 @@
+# Duplicate-check thresholds and weights (D-005). Loaded by ds.dedup.DedupConfig.load().
+# Tuned on the development seed (42) only; reported on a held-out seed (7). See docs/results.md.
+
+thresholds:
+  likely: 0.92      # >= likely, or same tax ID: "Likely duplicate" (block submit until a human links or overrides)
+  possible: 0.70    # >= possible: "Possible duplicate" (warn; LLM judge may give a second opinion)
+  related: 0.70     # name score at which a cross-country / customer-vs-vendor record is shown as "related"
+
+max_candidates: 5   # candidates returned to the UI (the LLM judge sees the same top 5)
+
+name:
+  w_soft_idf: 0.70        # IDF-weighted soft token match (rare words count more)
+  w_token_set: 0.15       # rapidfuzz token_set_ratio on the normalised names
+  w_jaro: 0.15            # Jaro-Winkler on the normalised names (spaces removed)
+  token_jw_min: 0.88      # two words count as the same word above this Jaro-Winkler similarity
+  qualifier_weight: 0.35  # words after " - " or inside trailing brackets ("- Lab Dept", "(Ipoh)")
+  city_token_weight: 0.5  # words that are just the record's city
+  acronym_score: 0.93     # one name is the initials / known alias of the other
+  number_mismatch_penalty: 0.25  # "Phyathai 1" vs "Phyathai 2"
+
+evidence:
+  tax_exact_floor: 0.97   # same valid tax ID, same country, same CardType
+  tax_conflict_penalty: 0.30  # both have a valid tax ID and they differ: different legal entity
+  phone_bonus: 0.06
+  email_bonus: 0.05
+  city_bonus: 0.02
+  city_conflict_penalty: 0.10
+
+judge:
+  enabled: true
+  low: 0.70
+  high: 0.92
+  prompt_version: dedup_judge_v1
