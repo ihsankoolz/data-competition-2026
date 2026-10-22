@@ -45,6 +45,11 @@ async function stubQuestion(page: Page, id: string, taskId: string) {
   });
 }
 
+// The status page reloads after a resubmit; let any stubbed fetch still in flight end quietly.
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: "ignoreErrors" });
+});
+
 test("the requestor sees the question, edits a field and resubmits", async ({ page }) => {
   const { id, taskId } = await askedForInfo(page, "Quillon Resubmit Medical Pte Ltd");
   await stubQuestion(page, id, taskId);
@@ -61,6 +66,13 @@ test("the requestor sees the question, edits a field and resubmits", async ({ pa
     submitted = true;
     await route.fulfill({ json: { req_id: id, state: "IN_APPROVAL" } });
   });
+  // Earlier specs create look-alike "Quillon ..." customers; a likely match would (rightly)
+  // pause Resubmit, so the duplicate check answers "no match" here.
+  await page.route("**/api/dedup/check", (route) =>
+    route.fulfill({
+      json: { verdict: "none", message: "No similar records found.", block_submit: false },
+    }),
+  );
 
   await openAs(page, "amy", `/requests/${id}`);
   const form = page.getByTestId("resubmit-form");
