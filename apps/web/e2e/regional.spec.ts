@@ -88,30 +88,50 @@ test("forecast: bias by country renders when the backtest provides it", async ({
       wape_pct: 10,
       bias_pct: bias,
     });
+    // Shaped like the backtest's payload: 5 country rows (product null) first, then A/B/C each.
+    const growth: Record<string, number> = { SG: 2.1, MY: 18.4, ID: 9.7, VN: 45.0, TH: -3.2 };
+    const countryRows = Object.entries(growth).map(([country, g]) => ({
+      country,
+      product: null,
+      growth_pct: g,
+      scores:
+        country === "VN"
+          ? [score("excel_6m", -13.0), score("combination", -17.0)]
+          : [score("excel_6m", -1.0), score("combination", 0.5)],
+    }));
+    const productRows = Object.keys(growth).flatMap((country) =>
+      ["A", "B", "C"].map((product) => ({
+        country,
+        product,
+        growth_pct: 5.0,
+        scores: [score("excel_6m", -2.0), score("combination", -1.0)],
+      })),
+    );
     for (const run of body.runs) {
-      run.bias_by_country = [
-        {
-          country: "VN",
-          product: null,
-          growth_pct: 31.5,
-          scores: [score("excel_6m", -12.3), score("combination", -4.1)],
-        },
-        {
-          country: "SG",
-          product: null,
-          growth_pct: 2.0,
-          scores: [score("excel_6m", -1.0), score("combination", 0.5)],
-        },
-      ];
-      run.bias_note = "Stub: the Excel average runs low where the market grows fastest.";
+      run.bias_by_country = [...countryRows, ...productRows];
+      run.bias_note =
+        "Stub: in Vietnam, the fastest-growing market, the Excel average planned 13% too low. " +
+        "Our method planned 17% too low there, so neither fixes it. " +
+        "(Caveat: one synthetic seed; growth measured in units.)";
     }
     await route.fulfill({ response: res, json: body });
   });
   await openAs(page, "daniel", "/regional");
-  const table = page.getByTestId("bias-table");
-  await expect(table).toContainText("Stub: the Excel average runs low");
-  await expect(table).toContainText("Vietnam");
-  await expect(table).toContainText("-12.3%");
+  const block = page.getByTestId("bias-block");
+  const note = block.getByTestId("bias-note");
+  // Long caption starts collapsed at its first sentence.
+  await expect(note).toContainText("planned 13% too low.");
+  await expect(note).not.toContainText("neither fixes it");
+  await note.getByTestId("bias-note-more").click();
+  await expect(note).toContainText("neither fixes it");
+
+  // Countries only by default; each product on request.
+  await expect(block.getByTestId("bias-row")).toHaveCount(5);
+  await expect(block.getByTestId("bias-table")).toContainText("Vietnam");
+  await expect(block.getByTestId("bias-table")).toContainText("+45.0%");
+  await expect(block.getByTestId("bias-table")).toContainText("-17.0%");
+  await block.getByTestId("bias-by-product").click();
+  await expect(block.getByTestId("bias-row")).toHaveCount(20);
 });
 
 test("ops impact card shows modelled cycle time and its assumptions", async ({ page }) => {

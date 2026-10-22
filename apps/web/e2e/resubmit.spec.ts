@@ -33,10 +33,14 @@ async function stubQuestion(page: Page, id: string, taskId: string) {
       task_id: taskId,
       asked_by_user_id: "meiling",
       asked_by_name: "Mei Ling",
-      role: "finance",
+      role: "business_support",
       question: QUESTION,
       asked_at: "2026-10-05T02:00:00Z",
     };
+    // The backend allows the duplicate decision while INFO_REQUESTED (customer / vendor).
+    const actions = (body.allowed_actions as string[] | undefined) ?? [];
+    if (!actions.includes("decide_duplicate"))
+      body.allowed_actions = [...actions, "decide_duplicate"];
     await route.fulfill({ response: res, json: body });
   });
 }
@@ -50,17 +54,22 @@ test("the requestor sees the question, edits a field and resubmits", async ({ pa
   await page.route(`**/api/requests/${id}`, async (route) => {
     if (route.request().method() !== "PATCH") return route.fallback();
     patched = route.request().postDataJSON();
-    await route.fulfill({ json: { ...(await (await route.fetch()).json()) } });
+    await route.fulfill({ json: { req_id: id, state: "INFO_REQUESTED", issues: [] } });
   });
+  // Stubbed: the backend's resubmit rules are being built in parallel (D-020 #3).
   await page.route(`**/api/requests/${id}/submit`, async (route) => {
     submitted = true;
-    await route.fulfill({ response: await route.fetch() });
+    await route.fulfill({ json: { req_id: id, state: "IN_APPROVAL" } });
   });
 
   await openAs(page, "amy", `/requests/${id}`);
   const form = page.getByTestId("resubmit-form");
   await expect(form.getByTestId("info-question")).toHaveText(QUESTION);
   await expect(form).toContainText("Mei Ling");
+  await expect(form.getByTestId("resubmit-dup-panel")).toBeVisible();
+  await expect(form.getByTestId("finance-note")).toHaveText(
+    "Changing bank details or credit terms sends the request back to Finance.",
+  );
 
   await form.getByLabel("City").fill("Singapore 159836");
   await form.getByTestId("resubmit").click();

@@ -102,7 +102,6 @@ export function ForecastPanel({ summary }: { summary: Summary }) {
   const ours = score(run?.overall, "combination");
 
   const bias = run?.bias_by_country ?? [];
-  const biasRows = bias.some((b) => !b.product) ? bias.filter((b) => !b.product) : bias;
 
   return (
     <section
@@ -332,56 +331,114 @@ export function ForecastPanel({ summary }: { summary: Summary }) {
         </p>
       )}
 
-      {biasRows.length > 0 && (
-        <table className="w-full max-w-3xl text-sm" data-testid="bias-table">
-          <caption className="pb-2 text-left">
-            <span className="block font-medium">
-              Does the Excel average fall behind growing markets?
-            </span>
-            {run?.bias_note && <span className="block text-muted-foreground">{run.bias_note}</span>}
-          </caption>
-          <thead>
-            <tr className="text-xs text-muted-foreground">
-              <th scope="col" className="pb-1 text-left font-normal">
-                Country
-              </th>
-              {biasRows.some((b) => b.product) && (
-                <th scope="col" className="pb-1 text-left font-normal">
-                  Product
-                </th>
-              )}
-              <th scope="col" className="pb-1 text-right font-normal">
-                Market growth (units, year on year)
-              </th>
-              <th scope="col" className="pb-1 text-right font-normal">
-                Excel 6-month ran high (+) or low (-)
-              </th>
-              <th scope="col" className="pb-1 text-right font-normal">
-                Ours ran high (+) or low (-)
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {biasRows.map((b) => (
-              <tr key={`${b.country}-${b.product ?? "all"}`} className="border-t">
-                <th scope="row" className="py-1.5 text-left font-normal">
-                  {countryName(b.country)}
-                </th>
-                {biasRows.some((x) => x.product) && (
-                  <td className="py-1.5">{b.product ? PRODUCT_LABELS[b.product] : "All"}</td>
-                )}
-                <td className="py-1.5 text-right tabular-nums">{signedPct(b.growth_pct)}</td>
-                <td className="py-1.5 text-right tabular-nums">
-                  {biasText(score(b.scores, "excel_6m"))}
-                </td>
-                <td className="py-1.5 text-right tabular-nums">
-                  {biasText(score(b.scores, "combination"))}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      {bias.length > 0 && <BiasTable rows={bias} note={run?.bias_note ?? null} />}
     </section>
+  );
+}
+
+type CountryBias = Schema<"CountryBias">;
+
+/** "First sentence." and the rest, so a long caption can start collapsed. */
+function splitNote(note: string): [string, string] {
+  const m = /^(.+?[.!?])\s+([\s\S]+)$/.exec(note.trim());
+  return m ? [m[1]!, m[2]!] : [note, ""];
+}
+
+/**
+ * D-020 #1: does each method plan too high or too low per country, next to how fast that
+ * market grew? Reported as found; neither method is styled as the winner here.
+ */
+function BiasTable({ rows, note }: { rows: CountryBias[]; note: string | null }) {
+  const [byProduct, setByProduct] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const countryRows = rows.filter((r) => !r.product);
+  const showAll = byProduct || countryRows.length === 0;
+  const shown = showAll ? rows : countryRows;
+  const hasProducts = rows.some((r) => r.product);
+  const [first, rest] = note ? splitNote(note) : ["", ""];
+
+  return (
+    <div className="flex max-w-3xl flex-col gap-3" data-testid="bias-block">
+      <div className="flex flex-col gap-1">
+        <p className="text-sm font-medium">Does the Excel average fall behind growing markets?</p>
+        {note && (
+          <p className="text-sm text-muted-foreground" data-testid="bias-note">
+            {first}
+            {rest && noteOpen && <> {rest}</>}
+            {rest && (
+              <button
+                type="button"
+                onClick={() => setNoteOpen((o) => !o)}
+                aria-expanded={noteOpen}
+                className="ml-1.5 font-medium text-foreground underline-offset-4 hover:underline"
+                data-testid="bias-note-more"
+              >
+                {noteOpen ? "Less" : "More"}
+              </button>
+            )}
+          </p>
+        )}
+      </div>
+      <table className="w-full text-sm" data-testid="bias-table">
+        <caption className="sr-only">
+          Forecast bias by country: how far each method planned above or below what customers
+          ordered, next to market growth
+        </caption>
+        <thead>
+          <tr className="text-xs text-muted-foreground">
+            <th scope="col" className="pb-1 text-left font-normal">
+              Country
+            </th>
+            {showAll && hasProducts && (
+              <th scope="col" className="pb-1 text-left font-normal">
+                Product
+              </th>
+            )}
+            <th scope="col" className="pb-1 text-right font-normal">
+              Market growth (units, last 12 months vs the 12 before)
+            </th>
+            <th scope="col" className="pb-1 text-right font-normal">
+              Excel 6-month planned too high (+) or low (-)
+            </th>
+            <th scope="col" className="pb-1 text-right font-normal">
+              Ours planned too high (+) or low (-)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {shown.map((b) => (
+            <tr
+              key={`${b.country}-${b.product ?? "all"}`}
+              className="border-t"
+              data-testid="bias-row"
+            >
+              <th scope="row" className="py-1.5 text-left font-normal">
+                {countryName(b.country)}
+              </th>
+              {showAll && hasProducts && (
+                <td className="py-1.5">{b.product ? PRODUCT_LABELS[b.product] : "All products"}</td>
+              )}
+              <td className="py-1.5 text-right tabular-nums">{signedPct(b.growth_pct)}</td>
+              <td className="py-1.5 text-right tabular-nums">
+                {biasText(score(b.scores, "excel_6m"))}
+              </td>
+              <td className="py-1.5 text-right tabular-nums">
+                {biasText(score(b.scores, "combination"))}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {hasProducts && countryRows.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setByProduct((v) => !v)}
+          className="self-start text-sm font-medium underline-offset-4 hover:underline"
+          data-testid="bias-by-product"
+        >
+          {byProduct ? "Show countries only" : "Show each product too"}
+        </button>
+      )}
+    </div>
   );
 }

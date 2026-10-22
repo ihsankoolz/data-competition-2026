@@ -11,6 +11,8 @@ import { Loader2, MessageCircleQuestion, SendHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { type DedupDecision, DuplicatePanel } from "@/components/dedup/duplicate-panel";
+import { useDedupCheck } from "@/components/dedup/use-dedup-check";
 import { FieldShell, isGroupField, SchemaInput } from "@/components/request-form/fields";
 import { RegistrationsInput } from "@/components/request-form/registrations";
 import { Button } from "@/components/ui/button";
@@ -43,6 +45,13 @@ function editableValues(fields: RequestDetail["fields"]): FieldValues {
   const out: FieldValues = {};
   for (const [k, v] of Object.entries(fields)) if (!looksMasked(v)) out[k] = v;
   return out;
+}
+
+function fromServer(d: RequestDetail["dedup_decision"]): DedupDecision | null {
+  if (!d) return null;
+  return d.action === "link_to_existing"
+    ? { action: "link_to_existing", card_code: d.card_code ?? "" }
+    : { action: "not_duplicate", reason: d.reason ?? "" };
 }
 
 function same(a: unknown, b: unknown): boolean {
@@ -138,6 +147,64 @@ export function ResubmitForm({
   const placed = new Set(keys);
   const otherIssues = issues.filter((i) => !placed.has(issueKey(i)));
 
+  // The duplicate check stays live while the requestor edits a customer or vendor.
+  const isBusinessPartner = detail.domain === "customer" || vendor;
+  const canDecideDuplicate =
+    isBusinessPartner && (detail.allowed_actions ?? []).includes("decide_duplicate");
+  const [decision, setDecision] = useState<DedupDecision | null>(() =>
+    fromServer(detail.dedup_decision),
+  );
+  const [deciding, setDeciding] = useState(false);
+  const [decisionError, setDecisionError] = useState<string | null>(null);
+  const typed: FieldValues = {
+    ...values,
+    Country: vendor && values.Country ? values.Country : detail.country,
+  };
+  const dedup = useDedupCheck({
+    enabled: canDecideDuplicate && decision?.action !== "link_to_existing",
+    domain: vendor ? "vendor" : "customer",
+    entity: detail.entity,
+    fields: typed,
+    requestId: detail.req_id,
+  });
+  const dedupResult =
+    dedup.status === "done" ? dedup.result : dedup.status === "checking" ? dedup.previous : null;
+  const blocked = canDecideDuplicate && !!dedupResult?.block_submit && !decision;
+
+  async function decide(body: Schema<"DedupDecisionIn">): Promise<boolean> {
+    setDeciding(true);
+    setDecisionError(null);
+    try {
+      await api.POST("/requests/{req_id}/dedup-decision", {
+        path: { req_id: detail.req_id },
+        body,
+      });
+      const name = (dedupResult?.candidates ?? []).find(
+        (c) => c.CardCode === body.card_code,
+      )?.CardName;
+      if (body.action === "link_to_existing") {
+        setDecision({
+          action: "link_to_existing",
+          card_code: body.card_code ?? "",
+          card_name: name,
+        });
+        toast.success(`Linked to ${name ? `${name} (${body.card_code})` : body.card_code}`, {
+          description: "No new record; the open approvals are closed.",
+        });
+        announceWorkflowChange();
+        onResubmitted();
+      } else {
+        setDecision({ action: "not_duplicate", reason: body.reason ?? "" });
+      }
+      return true;
+    } catch (e) {
+      setDecisionError(isApiError(e) ? e.message : "Your decision was not saved. Try again.");
+      return false;
+    } finally {
+      setDeciding(false);
+    }
+  }
+
   return (
     <section
       className="flex flex-col gap-5 rounded-xl border border-warning/50 bg-warning/5 p-5"
@@ -174,57 +241,82 @@ export function ResubmitForm({
         </div>
       </div>
 
-      {specError ? (
-        <p className="text-sm text-muted-foreground">{specError}</p>
-      ) : detail.domain === "cost_center" ? null : !schema || !spec ? (
-        <Skeleton className="h-48 w-full" />
-      ) : (
-        <fieldset className="grid grid-cols-2 gap-x-6 gap-y-5" disabled={sending}>
-          <legend className="sr-only">Your request</legend>
-          {keys.map((key) => {
-            const field = schema.properties[key]!;
-            const wide = field.type === "array" || (field.maxLength ?? 0) >= 200;
-            return (
-              <div key={key} className={cn(wide && "col-span-2")}>
-                <FieldShell
-                  id={key}
-                  label={field.title ?? key}
-                  help={field.description}
-                  required={spec.required.includes(key)}
-                  issues={issuesFor(key)}
-                  sensitive={field["x-sensitive"]}
-                  asGroup={isGroupField(field)}
-                >
-                  {key === "registrations" ? (
-                    <RegistrationsInput
-                      field={field}
-                      values={values}
-                      spec={spec}
-                      showMissing={false}
-                      expired={{}}
-                      onChange={(rows) => setField("registrations", rows)}
-                    />
-                  ) : (
-                    <SchemaInput
+      <div
+        className={cn(
+          "grid items-start gap-8",
+          canDecideDuplicate && "grid-cols-[minmax(0,1fr)_minmax(0,28rem)]",
+        )}
+      >
+        <div>
+          {specError ? (
+            <p className="text-sm text-muted-foreground">{specError}</p>
+          ) : detail.domain === "cost_center" ? null : !schema || !spec ? (
+            <Skeleton className="h-48 w-full" />
+          ) : (
+            <fieldset className="grid grid-cols-2 gap-x-6 gap-y-5" disabled={sending}>
+              <legend className="sr-only">Your request</legend>
+              {keys.map((key) => {
+                const field = schema.properties[key]!;
+                const wide = field.type === "array" || (field.maxLength ?? 0) >= 200;
+                return (
+                  <div key={key} className={cn(wide && "col-span-2")}>
+                    <FieldShell
                       id={key}
-                      field={field}
-                      value={values[key]}
-                      invalid={issuesFor(key).length > 0}
-                      onChange={(v) => setField(key, v)}
-                    />
-                  )}
-                </FieldShell>
-              </div>
-            );
-          })}
-        </fieldset>
-      )}
+                      label={field.title ?? key}
+                      help={field.description}
+                      required={spec.required.includes(key)}
+                      issues={issuesFor(key)}
+                      sensitive={field["x-sensitive"]}
+                      asGroup={isGroupField(field)}
+                    >
+                      {key === "registrations" ? (
+                        <RegistrationsInput
+                          field={field}
+                          values={values}
+                          spec={spec}
+                          showMissing={false}
+                          expired={{}}
+                          onChange={(rows) => setField("registrations", rows)}
+                        />
+                      ) : (
+                        <SchemaInput
+                          id={key}
+                          field={field}
+                          value={values[key]}
+                          invalid={issuesFor(key).length > 0}
+                          onChange={(v) => setField(key, v)}
+                        />
+                      )}
+                    </FieldShell>
+                  </div>
+                );
+              })}
+            </fieldset>
+          )}
+        </div>
+        {canDecideDuplicate && (
+          <aside data-testid="resubmit-dup-panel">
+            <DuplicatePanel
+              state={dedup}
+              domain={vendor ? "vendor" : "customer"}
+              typed={typed}
+              entity={detail.entity}
+              country={detail.country}
+              decision={decision}
+              busy={deciding}
+              error={decisionError}
+              onLink={(card_code) => void decide({ action: "link_to_existing", card_code })}
+              onNotDuplicate={(reason) => decide({ action: "not_duplicate", reason })}
+            />
+          </aside>
+        )}
+      </div>
 
       <div className="flex flex-col gap-2 border-t border-warning/30 pt-4">
         <div className="flex items-center gap-4">
           <Button
             onClick={() => void resubmit()}
-            disabled={sending || (!spec && detail.domain !== "cost_center")}
+            disabled={sending || blocked || (!spec && detail.domain !== "cost_center")}
             data-testid="resubmit"
           >
             {sending ? (
@@ -235,10 +327,14 @@ export function ResubmitForm({
             Resubmit
           </Button>
           <p className="text-sm text-muted-foreground">
-            Saves your changes and sends the request back to{" "}
-            {ask ? ask.asked_by_name : "the approvers"}.
+            {blocked
+              ? "Paused: decide on the likely duplicate first."
+              : `Saves your changes and sends the request back to ${ask ? ask.asked_by_name : "the approvers"}.`}
           </p>
         </div>
+        <p className="text-xs text-muted-foreground" data-testid="finance-note">
+          Changing bank details or credit terms sends the request back to Finance.
+        </p>
         {error && (
           <p className="text-sm text-destructive" role="alert" data-testid="resubmit-error">
             {error}
