@@ -109,7 +109,7 @@ def test_analytics_endpoints_validate_and_serve_what_ds_returns(client, monkeypa
     assert client.get("/analytics/forecast").json()["runs"][0]["scenario"] == "seasonal_trend"
     r = client.get("/analytics/forecast/flat_noisy?data=dirty")
     assert r.status_code == 200 and r.json()["scenario"] == "flat_noisy"
-    assert seen["forecast"] == (("derived", "forecast"), "flat_noisy", "dirty")
+    assert seen["forecast"] == (("fixtures", "derived"), "flat_noisy", "dirty")
     assert client.get("/analytics/forecast/flat_noisy?data=wrong").status_code == 422
 
 

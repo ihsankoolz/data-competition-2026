@@ -243,7 +243,7 @@ A field counts as correct when its value matches the answer key after normalisat
 | Nothing in an email can change approvers, bank details or credit terms | by design: the AI has no tools, its answer is data, and routing reads only config |
 | Emails with bank details in the body: details removed before the AI call | 2 of 2 (DEMO-06, DEMO-07) |
 | Bank values (from `vendors.csv` and the demo emails, 136 values) found in any extracted field | 0 |
-| ... found in any of the 193 recorded AI answers in the cache | 0 |
+| ... found in any of the 222 recorded AI answers in the cache | 0 |
 
 The injection flag is the AI's own judgement OR-ed with a short list of generic attack phrasings ("ignore ... instructions", "disregard ... rules", "system prompt to", "change the bank details"...). A flagged email still gets read normally; it goes to a human with a warning and nothing in it is acted on. **Small sample, said plainly:** there is only one injection email in this set (n=1), and the phrase list was written knowing it. So this shows the safety path works end to end, not how well injections are caught in general. The real protection is structural: the AI has no tools, and its answer cannot change approvers, bank details or credit terms.
 

@@ -37,7 +37,8 @@ router = APIRouter(tags=["analytics"])
 
 # The one place the analytics inputs are located. Override with env vars if the data moves.
 FIXTURE_DIR = REPO_ROOT / "data" / "fixtures" / "seasonal_trend"
-FORECAST_DIR = REPO_ROOT / "data" / "fixtures" / "derived" / "forecast"
+# ds.forecasting.backtest reads <derived>/forecast/<scenario>_<data>.json itself.
+DERIVED_DIR = REPO_ROOT / "data" / "fixtures" / "derived"
 
 
 def data_dir() -> Path:
@@ -46,8 +47,16 @@ def data_dir() -> Path:
 
 
 def forecast_dir() -> Path:
-    """Precomputed backtest results (written by `make eval`)."""
-    return Path(os.environ.get("ANALYTICS_FORECAST_DIR") or FORECAST_DIR)
+    """Folder holding `forecast/` with the precomputed backtest results
+    (`python -m ds.forecasting.backtest`)."""
+    return Path(os.environ.get("ANALYTICS_DERIVED_DIR") or DERIVED_DIR)
+
+
+def _summary() -> dict[str, Any]:
+    result = backtest.forecast_summary(forecast_dir())
+    if not result.get("runs"):
+        raise FileNotFoundError("no precomputed forecast runs")
+    return result
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -92,7 +101,7 @@ def merge_impact() -> MergeImpact:
 
 @router.get("/analytics/forecast", response_model=ForecastSummary, operation_id="getForecast")
 def forecast_summary() -> ForecastSummary:
-    return _serve("forecast", ForecastSummary, lambda: backtest.forecast_summary(forecast_dir()))
+    return _serve("forecast", ForecastSummary, _summary)
 
 
 @router.get(
