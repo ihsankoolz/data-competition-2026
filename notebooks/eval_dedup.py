@@ -229,12 +229,176 @@ def evaluate(seed: int, verbose: bool = False) -> dict:
     return out
 
 
+# %% [markdown]
+# ## Ablation: what tax IDs and the AI judge each add
+# (a) as above, with tax IDs; (b) tax IDs hidden on both the query and the master (name, city,
+# phone, email only); (c) as (b), plus the AI judge on grey-zone queries: if the judge picks a
+# candidate the pair is flagged (counted as Likely), if it answers "none" the grey-zone
+# candidates of that query are not flagged. Judge answers come from the replay cache.
+
+# %%
+NAME_HEAVY = ["abbreviation", "diacritics", "local_language", "typo", "suffix_punctuation"]
+
+
+def ablation(seed: int) -> dict:
+    folder = ensure_data(seed)
+    master0 = load_master(folder)
+    gt = folder / "ground_truth"
+    gmap = {r["CardCode"]: r for r in read_csv(gt / "bp_golden_map.csv")}
+    by_golden: dict[str, list[str]] = defaultdict(list)
+    for r in master0:
+        if r.CardType == "cCustomer":
+            by_golden[gmap[r.CardCode]["golden_id"]].append(r.CardCode)
+    truth = {
+        pair(a, b) for codes in by_golden.values() for a, b in itertools.combinations(codes, 2)
+    }
+    types: dict[str, set] = defaultdict(set)
+    for d in read_csv(gt / "dup_pairs.csv"):
+        types[d["dup_type"]].add(pair(d["card_code_a"], d["card_code_b"]))
+    out: dict = {"seed": seed}
+    for setting, hide, use_judge in (("a", False, True), ("b", True, False), ("c", True, True)):
+        master = [r.model_copy(update={"FederalTaxID": None}) for r in master0] if hide else master0
+        index = MasterIndex(master)
+        likely, possible = set(), set()
+        judged = judge_ok = judge_offline = 0
+        for r in master:
+            q = BPQuery.model_validate(r.model_dump())
+            res = check(q, index, use_judge=use_judge, with_related=False)
+            lk = {pair(r.CardCode, c.CardCode) for c in res.candidates if c.verdict == "likely"}
+            ps = {pair(r.CardCode, c.CardCode) for c in res.candidates}
+            if res.grey_zone and use_judge:
+                judged += 1
+                op = res.judge
+                true_codes = {
+                    c.CardCode for c in res.candidates if pair(r.CardCode, c.CardCode) in truth
+                }
+                if op.status != "ok":
+                    judge_offline += 1
+                else:
+                    sel = op.selected_card_code
+                    judge_ok += (sel in true_codes) if sel else not true_codes
+                    if setting == "c":
+                        grey = {
+                            pair(r.CardCode, c.CardCode)
+                            for c in res.candidates
+                            if c.verdict != "likely" and c.CardCode != sel
+                        }
+                        ps -= grey
+                        if sel:
+                            lk.add(pair(r.CardCode, sel))
+            likely |= lk
+            possible |= ps
+        out[setting] = {
+            "likely": prf(likely, truth),
+            "possible": prf(possible, truth),
+            "judge": (judged, judge_ok, judge_offline),
+            "types": {
+                t: (len(types[t]), len(types[t] & possible), len(types[t] & likely))
+                for t in NAME_HEAVY
+                if t in types
+            },
+        }
+    return out
+
+
+def ablation_section(abl: list[dict]) -> str:
+    L: list[str] = []
+    a = L.append
+    labels = {
+        "a": "(a) with tax ID (as above)",
+        "b": "(b) name only (tax IDs hidden)",
+        "c": "(c) name only + AI judge on the grey zone",
+    }
+    a("### Ablation: what the tax ID and the AI judge each add")
+    a("")
+    a(
+        "Same queries as above, three ways. (b) hides every tax ID, on the new request and on "
+        "the existing records, so only name, city, phone and email domain are left: this is "
+        "the common case of an email request with no tax ID typed in. (c) adds the AI judge "
+        "(the stronger model, replayed from the recorded cache) on every query whose best "
+        "candidate falls in the grey zone (0.70 to 0.92): if it picks a candidate the pair is "
+        "flagged as Likely, if it answers none the grey-zone candidates are not flagged. "
+        "Thresholds and weights are unchanged. Vendor records are queries too, as above."
+    )
+    a("")
+    a("| Setting | Seed | Likely: P / R / F1 | Possible: P / R / F1 | Grey-zone queries judged |")
+    a("|---|---|---|---|---|")
+    for s in abl:
+        for k in ("a", "b", "c"):
+            x = s[k]
+            lp, lr, lf = x["likely"][:3]
+            pp, pr, pf = x["possible"][:3]
+            j = x["judge"]
+            jtxt = "-" if k == "b" else f"{j[0]}" + (f" ({j[2]} not recorded)" if j[2] else "")
+            if k == "a":
+                jtxt += " (opinion only, flags unchanged)"
+            a(
+                f"| {labels[k]} | {s['seed']} | {pct(lp)} / {pct(lr)} / {pct(lf)} "
+                f"| {pct(pp)} / {pct(pr)} / {pct(pf)} | {jtxt} |"
+            )
+    a("")
+    a("*P* = precision, *R* = recall, *F1* balances the two (definitions above).")
+    a("")
+    a(
+        "Recall on the name-heavy duplicate types, as *blocked (Likely) / warned or blocked "
+        "(Possible or Likely)*:"
+    )
+    a("")
+    a("| Duplicate type | Seed | Pairs | (a) with tax ID | (b) name only | (c) name only + AI |")
+    a("|---|---|---|---|---|---|")
+    for s in abl:
+        for t in NAME_HEAVY:
+            if t not in s["a"]["types"]:
+                continue
+            n = s["a"]["types"][t][0]
+            cells = []
+            for k in ("a", "b", "c"):
+                _, poss, lik = s[k]["types"][t]
+                cells.append(f"{lik} / {poss}")
+            a(f"| {t} | {s['seed']} | {n} | " + " | ".join(cells) + " |")
+    a("")
+    a(
+        "The judge can only choose among candidates the rules already shortlisted, so it never "
+        "raises recall at Possible. What it does is turn grey-zone warnings it is sure of into "
+        "blocks (recall at Likely goes up) and clear some wrong warnings (precision at "
+        "Possible goes up)."
+    )
+    a("")
+    test = abl[-1]
+    b, c = test["b"], test["c"]
+    beats = (
+        c["possible"][2] >= b["possible"][2]
+        and c["likely"][2] >= b["likely"][2]
+        and (c["possible"][2] > b["possible"][2] or c["likely"][2] > b["likely"][2])
+    )
+    if beats:
+        a("> **For judges:** Tax IDs catch the easy ones; the AI catches differently-typed names.")
+    else:
+        a(
+            "> **For judges:** on the held-out seed the AI judge does not improve on name-only "
+            f"matching overall (F1 at Likely {pct(b['likely'][2])} without it, "
+            f"{pct(c['likely'][2])} with it; at Possible {pct(b['possible'][2])} vs "
+            f"{pct(c['possible'][2])}). The tax ID is what carries the check."
+        )
+    a("")
+    a(
+        f"Held-out seed {test['seed']}, name only: F1 at Likely {pct(b['likely'][2])} without the "
+        f"judge, {pct(c['likely'][2])} with it; at Possible {pct(b['possible'][2])} vs "
+        f"{pct(c['possible'][2])}. Precision at Possible {pct(b['possible'][0])} vs "
+        f"{pct(c['possible'][0])}, recall at Possible {pct(b['possible'][1])} vs "
+        f"{pct(c['possible'][1])}."
+    )
+    a("")
+    return "\n".join(L)
+
+
 # %%
 def pct(x: float) -> str:
     return f"{100 * x:.1f}%"
 
 
-def section(dev: dict, test: dict) -> str:
+def section(dev: dict, test: dict, abl: list[dict] | None = None) -> str:
+    abl = abl or []
     seeds = (dev, test)
     L: list[str] = []
     a = L.append
@@ -395,15 +559,29 @@ def section(dev: dict, test: dict) -> str:
         "| ... of which the best candidate really is a duplicate (rules alone) "
         f"| {g0[1]} | {g1[1]} |"
     )
-    a(
-        "| AI judge accuracy in the grey zone | not recorded yet (replay cache empty) "
-        "| not recorded yet |"
-    )
+    if abl:
+        for label, key in (
+            (
+                "AI judge picks the right answer in the grey zone (the true duplicate, or none "
+                "when there is none; vendors included as queries)",
+                "a",
+            ),
+            ("Same, with tax IDs hidden (ablation c below)", "c"),
+        ):
+            cells = []
+            for x in abl:
+                n, ok, off = x[key]["judge"]
+                cells.append(f"{ok} of {n - off}" + (f" ({off} not recorded)" if off else ""))
+            a(f"| {label} | " + " | ".join(cells) + " |")
+    else:
+        a("| AI judge accuracy in the grey zone | not computed | not computed |")
     a("")
     a(
         "The grey zone is where the AI judge would give a second opinion by picking one of the top "
-        "5 candidates or none (Wang et al., COLING 2025). With an empty replay cache it reports "
-        '"AI offline" and the candidate stays a Possible duplicate.'
+        "5 candidates or none (Wang et al., COLING 2025). Its answers are recorded once "
+        "(`make record`) and replayed here. In the app the judge only adds an opinion with "
+        "reasons; the verdict and any merge stay with a human (rule 6). Without a recorded "
+        'answer it reports "AI offline" and the candidate stays a Possible duplicate.'
     )
     a("")
     a(
@@ -418,6 +596,8 @@ def section(dev: dict, test: dict) -> str:
         "small share of requests would ever need the AI."
     )
     a("")
+    if abl:
+        a(ablation_section(abl))
     if test.get("wrong_block_examples"):
         a("### Wrong blocks (held-out seed, flagged Likely but not the same customer)")
         a("")
@@ -499,5 +679,13 @@ if __name__ == "__main__":
         summary(test)
         if args.timing:
             timing(test)
-        write_results(section(dev, test))
+        abl = [ablation(args.seeds[0]), ablation(args.seeds[1])]
+        for x in abl:
+            for k in "abc":
+                y = x[k]
+                print(
+                    f"ablation seed {x['seed']} ({k}): likely {y['likely'][:3]}, "
+                    f"possible {y['possible'][:3]}, judge {y['judge']}"
+                )
+        write_results(section(dev, test, abl))
         print(f"wrote {RESULTS.relative_to(ROOT)}")
