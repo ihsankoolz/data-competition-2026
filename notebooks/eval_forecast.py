@@ -130,7 +130,10 @@ def bias_section(runs: dict) -> list[str]:
         "reproduce every stored per-series score exactly. *Growth* = confirmed-PO units, last 12 "
         "full months (Oct 2025 - Sep 2026) vs the 12 before (% change), measured on real orders "
         "for both the clean and the dirty run. *Fast-growing* = a country growing faster than the "
-        "region as a whole (fixed before looking at bias). Bias and WAPE are pooled as in the "
+        "region as a whole (fixed before looking at bias) **and** by at least "
+        f"{fb.MIN_FAST_GROWTH:.0f}% (a floor added after the first look, because in the flat "
+        "scenario 'faster than the region' meant +4%); the same definition is used in the app's "
+        "note and in every table here. Bias and WAPE are pooled as in the "
         "headline: a country's row adds up its 3 products, so it is mostly test kits. Cells: "
         "WAPE (bias); bias + = plan ran high, - = plan ran low."
     )
@@ -158,7 +161,7 @@ def bias_section(runs: dict) -> list[str]:
     L.append(
         "Region-wide growth, last 12 months: "
         + "; ".join(f"{SC_LABEL[s]} {region[s]:+.1f}%" for s in bt.SCENARIOS)
-        + ". *(fast)* = above that."
+        + f". *(fast)* = grew faster than that and by {fb.MIN_FAST_GROWTH:.0f}% or more."
     )
     L.append("")
 
@@ -217,10 +220,12 @@ def bias_section(runs: dict) -> list[str]:
     by_c = {r["country"]: _cb(r) for r in st_rows if r["product"] is None}
     parts = []
     trend_lag_less = True
+    snaive_lowest = True
     for c in fast_st:
         comp = fb.component_bias(cv_st, c)
         ex_c = by_c[c]["excel_6m"]["bias_pct"]
         trend_lag_less &= comp["ets"] > ex_c and comp["theta"] > ex_c
+        snaive_lowest &= min(comp, key=comp.__getitem__) == "snaive"
         parts.append(
             f"{bt.COUNTRY_NAMES[c]}: seasonal naive {comp['snaive']:+.1f}%, AutoETS "
             f"{comp['ets']:+.1f}%, AutoTheta {comp['theta']:+.1f}% (Excel 6-month "
@@ -230,8 +235,15 @@ def bias_section(runs: dict) -> list[str]:
         "**Why ours under-plans growth too.** Bias of the three parts of our combination in the "
         "fast-growing market(s) of the demo scenario, clean data: "
         + "; ".join(parts)
-        + ". Seasonal naive copies the same month last year, so in a market growing fast it "
-        "is low by about a year's growth; it is one third of our average. "
+        + ". "
+        + (
+            "Our extra under-planning seems to come mainly from one of its three parts, "
+            "seasonal naive, which repeats last year's month: in a fast-growing market that is "
+            "low by about a year's growth, and it is one third of our average. "
+            if snaive_lowest
+            else "Seasonal naive is not the lowest part in every fast market, so the extra "
+            "under-planning is not down to one part. "
+        )
         + (
             "The two trend-following parts lag less than the Excel average there. "
             if trend_lag_less
@@ -250,10 +262,7 @@ def bias_section(runs: dict) -> list[str]:
     r_prior_c = rho[("seasonal_trend", "clean", "year before", "countries")]["excel_6m"][0]
     gr_by_s = {s: fb.growth(bt.scenario_dir(s)) for s in bt.SCENARIOS}
     fast_by_s = {s: fb.fast_growing(gr_by_s[s]) for s in bt.SCENARIOS}
-    big_by_s = {
-        s: [c for c in fast_by_s[s] if (gr_by_s[s][(c, None)] or 0.0) >= fb.MIN_FAST_GROWTH]
-        for s in bt.SCENARIOS
-    }
+    big_by_s = fast_by_s  # one definition: faster than the region and >= MIN_FAST_GROWTH
     # does ours under-plan more than Excel 6-month in the fast markets (clean, all scenarios)?
     fast_cells = [
         _cb(r)
@@ -287,27 +296,28 @@ def bias_section(runs: dict) -> list[str]:
         f"lags more ({by_c[vn]['excel_12m']['bias_pct']:+.1f}%), as an older window should. "
         f"Indonesia: {'yes' if id_yes else 'not in the demo scenario'}. Its orders grew "
         f"{gr_st[(idn, None)]:+.1f}% in the last 12 months and the Excel plan's bias there was "
-        f"{ex_st[idn]:+.1f}%.{id_elsewhere} Markets growing faster than the region and by "
-        f"{fb.MIN_FAST_GROWTH:.0f}% or more, per scenario: "
+        f"{ex_st[idn]:+.1f}%.{id_elsewhere} Fast-growing markets per scenario: "
         + "; ".join(
             f"{SC_LABEL[s]}: " + (", ".join(bt.COUNTRY_NAMES[c] for c in big_by_s[s]) or "none")
             for s in bt.SCENARIOS
         )
         + f". Ours under-plans more than the Excel 6-month average in {n_ours_lower} of the "
-        f"{len(fast_cells)} faster-than-region country rows (clean data, all scenarios): it "
+        f"{len(fast_cells)} fast-growing country rows (clean data, all scenarios): it "
         f"shares the bias. Across the 15 country x product series of the demo the same-year "
         f"correlation is {r_same:+.2f}, but with growth from the year before it is "
-        f"{r_prior:+.2f}: much of the series-level pattern is noise in the small Product B and "
-        f"C series. At country level, where growth carries over from one year to the next, it "
-        f"is {r_prior_c:+.2f}, on 5 points."
+        f"{r_prior:+.2f}. Our reading (an interpretation, not tested): much of the series-level "
+        f"pattern is likely noise in the small Product B and C series. At country level, "
+        f"where growth carries over from one year to the next, it is {r_prior_c:+.2f}, on 5 "
+        f"points."
     )
     L.append("")
     L.append(
-        "**Caveat.** The data is synthetic and the generator gives Vietnam the highest trend "
-        "(data-spec: VN +18% a year, ID +12%), so this shows the mechanism, not a fact about "
-        "Lives Group's markets. Any average of past months plans low in a market that keeps "
-        "growing; the fix is to put the expected growth (or the enquiry pipeline) into the plan "
-        "on purpose, not a longer average."
+        "**Caveat.** The data is synthetic and the generator is built so that Vietnam grows "
+        "fastest (data-spec trend parameters: VN +18% a year, ID +12%; measured growth is higher "
+        "because new customers and cross-sell add volume on top), so this shows the mechanism, "
+        "not a fact about Lives Group's markets. Any average of past months plans low in a "
+        "market that keeps growing; the fix is to put the expected growth (or the enquiry "
+        "pipeline) into the plan on purpose, not a longer average."
     )
     L.append("")
     L.append(

@@ -431,7 +431,7 @@ The pooled 15-series error in the headline table barely moves between clean and 
 
 ### Does the Excel average under-forecast growing markets? (D-020)
 
-**Question.** Does the Excel 6-month average systematically plan too low in the fast-growing markets? (Hypothesis named before the analysis: Vietnam and Indonesia.) **How.** A new cut of the same rolling-origin forecasts as above, not a new backtest: no data, setting or model changed. The country x product forecasts are refitted with the same code (`ds/forecasting/bias.py`), stored as a raw frame (`data/fixtures/derived/forecast/<scenario>_<data>_country_cv.csv`), and checked to reproduce every stored per-series score exactly. *Growth* = confirmed-PO units, last 12 full months (Oct 2025 - Sep 2026) vs the 12 before (% change), measured on real orders for both the clean and the dirty run. *Fast-growing* = a country growing faster than the region as a whole (fixed before looking at bias). Bias and WAPE are pooled as in the headline: a country's row adds up its 3 products, so it is mostly test kits. Cells: WAPE (bias); bias + = plan ran high, - = plan ran low.
+**Question.** Does the Excel 6-month average systematically plan too low in the fast-growing markets? (Hypothesis named before the analysis: Vietnam and Indonesia.) **How.** A new cut of the same rolling-origin forecasts as above, not a new backtest: no data, setting or model changed. The country x product forecasts are refitted with the same code (`ds/forecasting/bias.py`), stored as a raw frame (`data/fixtures/derived/forecast/<scenario>_<data>_country_cv.csv`), and checked to reproduce every stored per-series score exactly. *Growth* = confirmed-PO units, last 12 full months (Oct 2025 - Sep 2026) vs the 12 before (% change), measured on real orders for both the clean and the dirty run. *Fast-growing* = a country growing faster than the region as a whole (fixed before looking at bias) **and** by at least 10% (a floor added after the first look, because in the flat scenario 'faster than the region' meant +4%); the same definition is used in the app's note and in every table here. Bias and WAPE are pooled as in the headline: a country's row adds up its 3 products, so it is mostly test kits. Cells: WAPE (bias); bias + = plan ran high, - = plan ran low.
 
 | Scenario | Data | Country | Orders growth, last 12 months | Excel 6-month | Excel 12-month | Ours |
 |---|---|---|---|---|---|---|
@@ -440,11 +440,11 @@ The pooled 15-series error in the headline table barely moves between clean and 
 | Seasonal + growth (demo) | clean | Indonesia | +3.8% | 11.3% (-2.1%) | 9.4% (-3.5%) | 11.7% (-5.0%) |
 | Seasonal + growth (demo) | clean | Vietnam (fast) | +45.4% | 17.2% (-13.2%) | 22.2% (-21.7%) | 19.5% (-17.1%) |
 | Seasonal + growth (demo) | clean | Thailand | +3.8% | 12.5% (-2.1%) | 12.6% (-3.4%) | 10.9% (-4.5%) |
-| Flat and noisy | clean | Singapore (fast) | +4.3% | 22.6% (+1.3%) | 20.9% (-1.6%) | 24.9% (-3.3%) |
+| Flat and noisy | clean | Singapore | +4.3% | 22.6% (+1.3%) | 20.9% (-1.6%) | 24.9% (-3.3%) |
 | Flat and noisy | clean | Malaysia | -2.8% | 22.0% (+6.4%) | 18.1% (+6.1%) | 15.8% (+4.7%) |
 | Flat and noisy | clean | Indonesia | -10.3% | 22.6% (+0.5%) | 22.5% (+5.5%) | 18.2% (+7.3%) |
-| Flat and noisy | clean | Vietnam (fast) | +5.2% | 21.5% (-4.9%) | 20.7% (-5.0%) | 20.1% (-6.6%) |
-| Flat and noisy | clean | Thailand (fast) | +4.0% | 17.8% (+1.7%) | 13.8% (+0.1%) | 15.7% (-0.1%) |
+| Flat and noisy | clean | Vietnam | +5.2% | 21.5% (-4.9%) | 20.7% (-5.0%) | 20.1% (-6.6%) |
+| Flat and noisy | clean | Thailand | +4.0% | 17.8% (+1.7%) | 13.8% (+0.1%) | 15.7% (-0.1%) |
 | Sparse ordering | clean | Singapore | +6.0% | 48.9% (+14.1%) | 43.2% (+9.4%) | 50.1% (+6.9%) |
 | Sparse ordering | clean | Malaysia | -3.3% | 28.9% (+4.6%) | 27.1% (+3.6%) | 36.7% (+3.2%) |
 | Sparse ordering | clean | Indonesia (fast) | +51.5% | 33.3% (-15.7%) | 34.1% (-22.4%) | 35.2% (-22.8%) |
@@ -456,7 +456,7 @@ The pooled 15-series error in the headline table barely moves between clean and 
 | Seasonal + growth (demo) | dirty | Vietnam (fast) | +45.4% | 14.4% (-6.2%) | 17.2% (-15.1%) | 15.9% (-11.3%) |
 | Seasonal + growth (demo) | dirty | Thailand | +3.8% | 13.6% (+8.2%) | 14.1% (+7.0%) | 13.4% (+7.3%) |
 
-Region-wide growth, last 12 months: Seasonal + growth (demo) +13.4%; Flat and noisy -0.4%; Sparse ordering +26.5%. *(fast)* = above that.
+Region-wide growth, last 12 months: Seasonal + growth (demo) +13.4%; Flat and noisy -0.4%; Sparse ordering +26.5%. *(fast)* = grew faster than that and by 10% or more.
 
 Demo scenario, clean data, every country x product:
 
@@ -499,11 +499,11 @@ Demo scenario, clean data, every country x product:
 | Seasonal + growth (demo) | dirty | year before | 15 country x product | -0.32 | -0.24 | -0.23 |
 | Seasonal + growth (demo) | dirty | year before | 5 countries | -0.90 | -0.70 | -0.90 |
 
-**Why ours under-plans growth too.** Bias of the three parts of our combination in the fast-growing market(s) of the demo scenario, clean data: Vietnam: seasonal naive -32.5%, AutoETS -8.4%, AutoTheta -10.3% (Excel 6-month -13.2%, ours -17.1%). Seasonal naive copies the same month last year, so in a market growing fast it is low by about a year's growth; it is one third of our average. The two trend-following parts lag less than the Excel average there. (Diagnosis only: the combination is not changed, D-008 / D-020.)
+**Why ours under-plans growth too.** Bias of the three parts of our combination in the fast-growing market(s) of the demo scenario, clean data: Vietnam: seasonal naive -32.5%, AutoETS -8.4%, AutoTheta -10.3% (Excel 6-month -13.2%, ours -17.1%). Our extra under-planning seems to come mainly from one of its three parts, seasonal naive, which repeats last year's month: in a fast-growing market that is low by about a year's growth, and it is one third of our average. The two trend-following parts lag less than the Excel average there. (Diagnosis only: the combination is not changed, D-008 / D-020.)
 
-**What it shows.** Vietnam: yes. In the demo scenario Vietnam's orders grew +45.4% (region +13.4%) and the Excel 6-month average's bias over the test year was -13.2%, against -2.1% to +6.2% in the other markets; the 12-month average lags more (-21.7%), as an older window should. Indonesia: not in the demo scenario. Its orders grew +3.8% in the last 12 months and the Excel plan's bias there was -2.1%. In the sparse ordering scenario Indonesia does grow fast (+51.5%), and there the Excel plan's bias was -15.7%. Markets growing faster than the region and by 10% or more, per scenario: Seasonal + growth (demo): Vietnam; Flat and noisy: none; Sparse ordering: Indonesia, Vietnam. Ours under-plans more than the Excel 6-month average in 6 of the 6 faster-than-region country rows (clean data, all scenarios): it shares the bias. Across the 15 country x product series of the demo the same-year correlation is -0.78, but with growth from the year before it is -0.46: much of the series-level pattern is noise in the small Product B and C series. At country level, where growth carries over from one year to the next, it is -0.97, on 5 points.
+**What it shows.** Vietnam: yes. In the demo scenario Vietnam's orders grew +45.4% (region +13.4%) and the Excel 6-month average's bias over the test year was -13.2%, against -2.1% to +6.2% in the other markets; the 12-month average lags more (-21.7%), as an older window should. Indonesia: not in the demo scenario. Its orders grew +3.8% in the last 12 months and the Excel plan's bias there was -2.1%. In the sparse ordering scenario Indonesia does grow fast (+51.5%), and there the Excel plan's bias was -15.7%. Fast-growing markets per scenario: Seasonal + growth (demo): Vietnam; Flat and noisy: none; Sparse ordering: Indonesia, Vietnam. Ours under-plans more than the Excel 6-month average in 3 of the 3 fast-growing country rows (clean data, all scenarios): it shares the bias. Across the 15 country x product series of the demo the same-year correlation is -0.78, but with growth from the year before it is -0.46. Our reading (an interpretation, not tested): much of the series-level pattern is likely noise in the small Product B and C series. At country level, where growth carries over from one year to the next, it is -0.97, on 5 points.
 
-**Caveat.** The data is synthetic and the generator gives Vietnam the highest trend (data-spec: VN +18% a year, ID +12%), so this shows the mechanism, not a fact about Lives Group's markets. Any average of past months plans low in a market that keeps growing; the fix is to put the expected growth (or the enquiry pipeline) into the plan on purpose, not a longer average.
+**Caveat.** The data is synthetic and the generator is built so that Vietnam grows fastest (data-spec trend parameters: VN +18% a year, ID +12%; measured growth is higher because new customers and cross-sell add volume on top), so this shows the mechanism, not a fact about Lives Group's markets. Any average of past months plans low in a market that keeps growing; the fix is to put the expected growth (or the enquiry pipeline) into the plan on purpose, not a longer average.
 
 > **For judges:** yes for Vietnam, no for Indonesia in our demo data. Vietnam's orders grew 45% last year and the 6-month Excel average planned 13% too low there; in the other markets its bias was between -2% and +6%. Indonesia's orders grew 4% and its plan was 2% too low. Our statistical method does not fix this: it planned 17% too low in Vietnam. Growth has to be put into the plan on purpose.
 

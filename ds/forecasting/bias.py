@@ -15,7 +15,8 @@ Analysis design, written down before any bias number was looked at:
 - Growth = confirmed-PO units (orders.csv, never the spreadsheet view), last 12 full months vs
   the 12 before, % change; per country (all products) and per country x product. The same growth
   is used for the clean and the dirty run, because it describes the real market.
-- "Fast-growing" = a country whose growth is above the growth of the region as a whole.
+- "Fast-growing" = a country whose growth is above the growth of the region as a whole
+  (plus a 10% floor, added after the first look: see below).
 - Scores are pooled exactly like the headline table: WAPE = sum |forecast - actual| / sum actual,
   bias = sum (forecast - actual) / sum actual, over every origin and month ahead; a country's
   "all products" row pools its 3 product series (so it is dominated by Product A units).
@@ -27,7 +28,8 @@ Added after the first look (reported as such in docs/results.md):
   chance in that year makes every forecast look high: part of any negative correlation is
   mechanical. Robustness check: the same correlation with growth measured the year *before* the
   test year (`growth(..., offset=12)`), which a planner would have known at the time.
-- The note says a scenario cannot test the question when no country grew 10% or more.
+- Fast-growing also needs growth of at least 10% (MIN_FAST_GROWTH): in the flat scenario
+  'faster than a -0.4% region' meant +4%. One definition for the note and every table.
 - The frame also keeps the three parts of our combination, to explain its bias (diagnosis only).
 """
 
@@ -174,8 +176,14 @@ def correlations(
 
 
 def fast_growing(gr: Growth) -> list[str]:
-    region = gr[(None, None)]
-    return [c for c in COUNTRIES if gr[(c, None)] is not None and gr[(c, None)] > region]
+    """Countries growing faster than the region AND by at least MIN_FAST_GROWTH %. The one
+    definition used by the payload note and every table in docs/results.md."""
+    region = gr[(None, None)] or 0.0
+    return [
+        c
+        for c in COUNTRIES
+        if gr[(c, None)] is not None and gr[(c, None)] > region and gr[(c, None)] >= MIN_FAST_GROWTH
+    ]
 
 
 def plan_words(b: float) -> str:
@@ -186,10 +194,16 @@ def plan_words(b: float) -> str:
 
 
 def _range_words(values: list[float]) -> str:
+    """'2% too low to 6% too high', or '5% to 16% too high' when both point the same way."""
     lo, hi = min(values), max(values)
-    if plan_words(lo) == plan_words(hi):
-        return plan_words(lo)
-    return f"anywhere from {plan_words(lo)} to {plan_words(hi)}"
+    wl, wh = plan_words(lo), plan_words(hi)
+    if wl == wh:
+        return wl
+    if lo <= -1.0 and hi <= -1.0:
+        return f"{abs(hi):.0f}% to {abs(lo):.0f}% too low"
+    if lo >= 1.0 and hi >= 1.0:
+        return f"{lo:.0f}% to {hi:.0f}% too high"
+    return f"{wl} to {wh}"
 
 
 def _list_words(values: list[float]) -> str:
@@ -203,54 +217,57 @@ def _list_words(values: list[float]) -> str:
 
 
 def component_bias(cv: pd.DataFrame, country: str) -> dict[str, float]:
-    """Bias (%) of each part of our combination in one country, all products pooled."""
+    """Bias (%) of each part of our combination in one country, all products pooled
+    (diagnosis for docs/results.md only)."""
     g = cv[cv["country"] == country]
     total = float(g["y"].sum())
     return {m: 100.0 * float((g[m] - g["y"]).sum()) / total for m in COMPONENTS}
 
 
-def bias_note(rows: list[dict[str, Any]], gr: Growth, cv: pd.DataFrame) -> str:
-    """Two plain-English sentences reporting whatever the numbers show."""
+CAVEAT = "synthetic data, a pattern not proof"
+LEAK = " (leaked enquiries counted as orders push all of these up)"
+
+
+def bias_note(rows: list[dict[str, Any]], gr: Growth, data: str = "clean") -> str:
+    """Short plain-English note; the first sentence carries the finding on its own."""
     by_c = {r["country"]: r for r in rows if r["product"] is None}
-    region = gr[(None, None)] or 0.0
     names = bt.COUNTRY_NAMES
-    fast = [c for c in fast_growing(gr) if (gr[(c, None)] or 0.0) >= MIN_FAST_GROWTH]
+    fast = fast_growing(gr)
     others = [c for c in COUNTRIES if c not in fast]
     ex = {c: bias_of(by_c[c], "excel_6m") for c in COUNTRIES}
     ours = {c: bias_of(by_c[c], "combination") for c in COUNTRIES}
+    leak = LEAK if data == "dirty" else ""
     if not fast:
         grs = [gr[(c, None)] or 0.0 for c in COUNTRIES]
         return (
-            f"No market grew {MIN_FAST_GROWTH:.0f}% or more last year (orders changed by "
-            f"{min(grs):+.0f}% to {max(grs):+.0f}%), so this scenario cannot show whether the "
-            f"Excel average lags growth. Country by country, its plan was "
-            f"{_range_words(list(ex.values()))}; ours was {_range_words(list(ours.values()))}."
+            f"No market's orders grew {MIN_FAST_GROWTH:.0f}% or more last year "
+            f"({min(grs):+.0f}% to {max(grs):+.0f}%), so this market cannot show whether the "
+            f"Excel average lags growth. Its country plans ran {_range_words(list(ex.values()))}"
+            f"{leak}; ours {_range_words(list(ours.values()))}."
         )
     who = " and ".join(names[c] for c in fast)
     grew = " and ".join(f"{gr[(c, None)]:.0f}%" for c in fast)
+    # a growing market that is not "fast" (below the region) is named, never hidden in a range
+    growing = [c for c in others if (gr[(c, None)] or 0.0) >= MIN_FAST_GROWTH]
+    named = "".join(
+        f", {names[c]} (orders {gr[(c, None)]:+.0f}%) {plan_words(ex[c])}" for c in growing
+    )
+    rest = [c for c in others if c not in growing]
+    elsewhere = f"; elsewhere {_range_words([ex[c] for c in rest])}" if rest else ""
     s1 = (
-        f"In {who}, whose orders grew {grew} last year (region {region:+.0f}%), the Excel "
-        f"6-month average planned {_list_words([ex[c] for c in fast])}; in the other markets it "
-        f"was {_range_words([ex[c] for c in others])}."
+        f"In {who}, whose orders grew {grew} last year, the Excel 6-month average planned "
+        f"{_list_words([ex[c] for c in fast])}{named}{elsewhere}{leak}."
     )
     worse = [c for c in fast if ours[c] < ex[c] - 1.0]
     better = [c for c in fast if ours[c] > ex[c] + 1.0]
     ours_txt = _list_words([ours[c] for c in fast])
-    comp = {c: component_bias(cv, c) for c in fast}
-    snaive_lowest = all(min(comp[c], key=comp[c].__getitem__) == "snaive" for c in fast)
-    trend_parts_lag_less = all(comp[c]["ets"] > ex[c] and comp[c]["theta"] > ex[c] for c in fast)
     if worse and not better:
-        why = ""
-        if snaive_lowest:
-            why = ", because one of its three parts repeats last year's month"
-            if trend_parts_lag_less:
-                why += ", while its two trend-following parts lag less than the Excel average"
-        s2 = f"Ours under-plans growth even more ({ours_txt}){why}."
+        s2 = f"Ours planned even lower ({ours_txt})"
     elif better and not worse:
-        s2 = f"Ours lags growth less ({ours_txt})."
+        s2 = f"Ours lagged less ({ours_txt})"
     else:
-        s2 = f"Ours planned {ours_txt}."
-    return f"{s1} {s2[:-1]} (synthetic data, 5 markets: a pattern, not proof)."
+        s2 = f"Ours planned {ours_txt}"
+    return f"{s1} {s2}; {CAVEAT}."
 
 
 # -------------------------------------------------------------------------------- run
@@ -265,7 +282,7 @@ def update_run(derived_dir: Path, scenario: str, data: str, refit: bool) -> dict
     gr = growth(data_dir)
     rows = bias_rows(cv, gr)
     run["bias_by_country"] = rows
-    run["bias_note"] = bias_note(rows, gr, cv)
+    run["bias_note"] = bias_note(rows, gr, data)
     bt.write_backtest(run, derived_dir)
     return run
 

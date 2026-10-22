@@ -29,7 +29,7 @@ def test_payload_has_bias_by_country(scenario, data):
         assert {s.method for s in r.scores} == {"excel_6m", "excel_12m", "combination"}
     assert run.bias_note and scenario not in run.bias_note
     if "whose orders grew" in run.bias_note:  # a finding is claimed: the caveat travels with it
-        assert "synthetic data, 5 markets" in run.bias_note
+        assert fb.CAVEAT in run.bias_note
     else:
         assert "cannot show" in run.bias_note
 
@@ -52,7 +52,7 @@ def test_bias_rows_are_deterministic(scenario, data):
     gr = fb.growth(bt.scenario_dir(scenario))
     rows = fb.bias_rows(cv, gr)
     assert rows == run["bias_by_country"]
-    assert fb.bias_note(rows, gr, cv) == run["bias_note"]
+    assert fb.bias_note(rows, gr, data) == run["bias_note"]
 
 
 def test_vietnam_bias_recomputed_by_hand():
@@ -101,3 +101,31 @@ def test_fast_growing_is_measured_not_assumed():
     gr = {(None, None): 10.0, **{(c, None): 0.0 for c in fb.COUNTRIES}}
     gr[("SG", None)] = 30.0
     assert fb.fast_growing(gr) == ["SG"]
+    # one definition: faster than the region AND at least 10%
+    flat = {(None, None): -0.4, **{(c, None): 4.0 for c in fb.COUNTRIES}}
+    assert fb.fast_growing(flat) == []
+
+
+def test_demo_note_is_short_and_leads_with_the_finding():
+    note = bt.load_backtest(DERIVED, "seasonal_trend", "clean")["bias_note"]
+    assert len(note) <= 230
+    first = note.split(". ")[0]
+    assert "Vietnam" in first and "Excel 6-month average planned" in first and "too low" in first
+    assert "because" not in note  # no causal claim in the app; the diagnosis is in results.md
+
+
+def test_dirty_notes_flag_leakage():
+    for s in bt.SCENARIOS:
+        assert "leaked enquiries" in bt.load_backtest(DERIVED, s, "dirty")["bias_note"]
+
+
+def test_growing_market_is_named_not_hidden():
+    """Sparse ordering: Thailand grew 10%+ but slower than the region; the note names it."""
+    note = bt.load_backtest(DERIVED, "intermittent", "clean")["bias_note"]
+    gr_th = next(
+        r["growth_pct"]
+        for r in bt.load_backtest(DERIVED, "intermittent", "clean")["bias_by_country"]
+        if r["country"] == "TH" and r["product"] is None
+    )
+    if gr_th >= fb.MIN_FAST_GROWTH:
+        assert "Thailand" in note

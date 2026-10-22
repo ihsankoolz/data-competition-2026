@@ -1310,5 +1310,5 @@
    ]
   }
  ],
- "bias_note": "No market grew 10% or more last year (orders changed by -10% to +5%), so this scenario cannot show whether the Excel average lags growth. Country by country, its plan was anywhere from 5% too low to 6% too high; ours was anywhere from 7% too low to 7% too high."
+ "bias_note": "No market's orders grew 10% or more last year (-10% to +5%), so this market cannot show whether the Excel average lags growth. Its country plans ran 5% too low to 6% too high; ours 7% too low to 7% too high."
 }
