@@ -169,3 +169,25 @@ data/generated/<scenario>/
 - At least 3 Vietnam Product A migration cases.
 - Old-process cycle time median within 13–17 business days.
 - No bank field appears in `emails.jsonl` bodies except DEMO-07 and the injection email.
+
+---
+
+## 12. Implementation notes (generator v1, 22 Oct; §1–5 only)
+
+Concrete choices made while building `ds/generator/`. They add detail; they do not change the rules above.
+
+- **Code layout:** `params.yaml` (all numbers; `common` + per-scenario overrides, resolved copy written to the output), `curated.py` (real public hospitals, the 6 invented groups, 15 similar-site pairs, demo anchors), `names.py` (templated SG/MY names, Faker `id_ID`/`vi_VN` only for doctor names in clinic names), `variants.py` (one transform per `dup_type`), `master.py`, `catalog.py`, `core.py`.
+- **Determinism:** one `numpy` RNG per named stream (`default_rng([seed, crc32(name)])`), so adding a stream never shifts existing output. CSVs are UTF-8 without BOM, `\n` endings, fixed column order. The test regenerates through the CLI in a fresh process with a different `PYTHONHASHSEED` and byte-compares every file.
+- **Legitimate entity records vs true duplicates:** §4 says each golden customer gets one record per entity it buys from (A→SPD, B→QTS, C→QTG), plus injected duplicates. The per-entity records are `record_role=entity_record` in `ground_truth/bp_golden_map.csv` and are **not** in `dup_pairs.csv`, so the §4.1 shares apply to the injected duplicates only. They still share a `golden_id`, so any dedup evaluation that scores all record pairs should treat them as true matches (use `bp_golden_map.csv`) and report them as their own row.
+- **`bp_golden_map.csv`:** `CardCode, golden_id, record_role (primary | entity_record | duplicate | migration_new), dup_of, family`. `golden_id` is never in `bp_records.csv`.
+- **`dup_pairs.csv`:** `golden_id, card_code_a (source), card_code_b (duplicate), dup_type, tax_id_state (same | blank | malformed), is_migration, entity_a, entity_b`. Migration new records are true duplicates and appear here with `is_migration=true`. Non-`missing_tax_id` duplicates carry the tax ID 55% of the time, so the tax-ID layer cannot find everything on its own.
+- **`hard_negatives.csv`:** one row per *record* pair: every customer record of the golden × its vendor twin (`customer_vendor_pair`), and every record × record across group members in different countries or across similar-site pairs. Golden-level counts (seed 42): 10 C/V, 12 cross-country group pairs (6 groups), 15 similar-site pairs; 88 record-level rows.
+- **`groups.csv`** (extra): `group_id, group_name, countries, golden_ids`.
+- **`migrations.csv`** adds `country, entity, product_family` (which entity's orders move to the new record). **`churn.csv`**: `golden_id, country, decline_start_month, churn_month, decline_months`.
+- **`customers_golden.csv`:** `aliases` is a JSON list; `true_products` is a JSON object `{family: adoption month}`; months are `YYYY-MM-01`. Pre-window customers have a real start month between 2015 and Sep 2023.
+- **CardName realism (D-014 note):** each record's CardName is drawn from the golden's forms (legal, legal romanised, local script/diacritics, romanised, English) with per-country weights in `params.yaml`. `CardForeignName` holds the English name for some native-script CardNames.
+- **Codes:** `CardCode` = `C00001…` and vendors `V00001…`, assigned in `CreateDate` order. `CreatedBy` = `<entity>.<country><nn>` (e.g. `qtg.vn02`), to be mapped to `users.csv` later.
+- **Demo anchors:** the SPD Chợ Rẫy record is the only record with MST `0301234567` or a name that reads "cho ray" after diacritic stripping. There is no QTG twin. NUH has `NUH` (abbreviation) and an upper-case suffix variant; RSCM has "Rumah Sakit Cipto Mangunkusumo" and "RSCM" (both `local_language`, as in the §4.1 table); Siriraj has Thai script vs "Siriraj Hospital". HKL and BioMed have no duplicates.
+- **Contacts:** email domains use the reserved `.example` TLD (e.g. `nuh.sg.example`), so no generated address can belong to a real hospital.
+- **Vendors:** 10 customer twins plus 50 manufacturers, logistics and service firms. One bank account per vendor, flattened as `BankCode, AccountNo, AccountName, BICSwiftCode, IBAN, BankCountry` (from `BPBankAccounts[0]`). BICs are 8 or 11 characters. IBANs exist only for DE/CH vendors and pass the mod-97 check. `CreditLimit` is 0.
+- **Registrations:** rows only for the 7 IVD items × 5 countries (services and non-IVD equipment need none). Exactly one is `expired` (`A-CRP-QT`, MY), and 4 are `pending` with no number. MY and TH numbers are `assumed_format=true`.

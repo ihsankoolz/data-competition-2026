@@ -1,0 +1,94 @@
+# Synthetic data generator parameters (docs/data-spec.md is the published DGP).
+# Every number here is a labelled assumption. `common` applies to every scenario;
+# `scenarios.<name>` deep-merges on top. The resolved params are copied into the output folder.
+
+common:
+  time:
+    start_month: "2023-10-01"   # month index 0
+    n_months: 36                # Oct 2023 - Sep 2026
+  countries:
+    SG: {n_golden: 60, currency: SGD}
+    MY: {n_golden: 70, currency: MYR}
+    ID: {n_golden: 80, currency: IDR}
+    VN: {n_golden: 75, currency: VND}
+    TH: {n_golden: 65, currency: THB}
+  fx_usd: {SGD: 0.74, MYR: 0.22, IDR: 0.000064, VND: 0.000040, THB: 0.028}
+  segment_mix:
+    public_hospital: 0.25
+    private_hospital: 0.25
+    laboratory: 0.25
+    clinic: 0.20
+    distributor: 0.05
+  entities: {A: SPD, B: QTS, C: QTG}   # product family -> selling entity
+
+  lifecycle:
+    legacy_start_year_range: [2015, 2023]   # customers active before the window
+    new_starter_share: 0.12
+    new_starter_month_range: [12, 32]       # month index (inclusive); 12 = Oct 2024
+    churner_share: 0.10
+    churn_month_range: [12, 35]             # month index the customer reaches zero
+    decline_months_range: [3, 6]
+
+  adoption:
+    # first product family the customer buys, by segment
+    primary_family:
+      public_hospital: {A: 0.75, B: 0.12, C: 0.13}
+      private_hospital: {A: 0.65, B: 0.17, C: 0.18}
+      laboratory: {A: 0.75, B: 0.08, C: 0.17}
+      clinic: {A: 0.88, B: 0.07, C: 0.05}
+      distributor: {A: 0.65, B: 0.25, C: 0.10}
+    # probability of ever adopting each other family (cross-sell); labs adopt C after A more often
+    cross_sell_prob:
+      public_hospital: {A: 0.40, B: 0.20, C: 0.22}
+      private_hospital: {A: 0.40, B: 0.20, C: 0.20}
+      laboratory: {A: 0.40, B: 0.12, C: 0.38}
+      clinic: {A: 0.30, B: 0.03, C: 0.05}
+      distributor: {A: 0.40, B: 0.20, C: 0.08}
+    last_adoption_month: 33                 # cross-sell adoptions happen no later than this index
+
+  name_forms:
+    # what the creating entity typed into CardName (weights over the golden name forms)
+    SG: {legal: 0.5, local: 0.5}
+    MY: {legal: 0.45, local: 0.4, english: 0.15}
+    ID: {legal: 0.3, local: 0.5, english: 0.2}
+    VN: {local: 0.35, rom: 0.25, legal: 0.15, legal_rom: 0.10, english: 0.15}
+    TH: {english: 0.4, legal_rom: 0.2, local: 0.25, legal: 0.15}
+
+  base_record:
+    taxid_blank_prob: 0.04
+    npwp_dotted_prob: 0.7
+    city_variant_prob: 0.25
+    phone_blank_prob: 0.08
+    email_blank_prob: 0.10
+    foreign_name_prob: 0.35        # CardForeignName (English) filled when CardName is native script
+    group_code_mismatch_prob: 0.15  # duplicate records often land in the wrong BP group
+
+  duplicates:
+    golden_with_dup_share: 0.20    # includes migration customers and demo anchors
+    second_dup_prob: 0.20
+    dup_taxid_same_prob: 0.55      # non-missing_tax_id duplicates still carry the tax ID
+    missing_tax_malformed_prob: 0.4
+    same_entity_prob: 0.4          # duplicate created by the same entity (not cross_entity_recreate)
+    type_shares:
+      cross_entity_recreate: 0.35
+      abbreviation: 0.12
+      suffix_punctuation: 0.10
+      diacritics: 0.10
+      local_language: 0.13
+      typo: 0.10
+      missing_tax_id: 0.10
+
+  migrations:
+    share: 0.06
+    min_vn_product_a: 4            # spec asks for >= 3
+    switch_month_range: [12, 31]
+
+  hard_negatives:
+    customer_vendor_pairs: 10
+
+  vendors:
+    n_total: 60
+    kinds: {manufacturer: 0.6, logistics: 0.25, services: 0.15}
+
+scenarios:
+  seasonal_trend: {}               # demand DGP params (data-spec §6) are added with orders
