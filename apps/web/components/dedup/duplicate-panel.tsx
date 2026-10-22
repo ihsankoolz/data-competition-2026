@@ -40,7 +40,8 @@ import type { DedupResult, DedupState } from "./use-dedup-check";
 type Candidate = Schema<"Candidate">;
 
 export type DedupDecision =
-  { action: "link_to_existing"; card_code: string } | { action: "not_duplicate"; reason: string };
+  | { action: "link_to_existing"; card_code: string; card_name?: string }
+  | { action: "not_duplicate"; reason: string };
 
 export const MIN_REASON_LENGTH = 10;
 
@@ -224,7 +225,9 @@ function VerdictBanner({ result }: { result: DedupResult }) {
         <p className="text-muted-foreground">{result.message}</p>
         <p className="text-muted-foreground">
           {likely
-            ? "Link your request to the existing record, or explain why this is a different customer. You decide; the system never merges records on its own."
+            ? /link (your request )?to the existing/i.test(result.message)
+              ? "You decide; the system never merges records on its own."
+              : "Link your request to the existing record, or explain why this is a different customer. You decide; the system never merges records on its own."
             : "You can still submit. Compare the records below and decide."}
         </p>
       </div>
@@ -404,7 +407,7 @@ export function DuplicatePanel(props: DuplicatePanelProps) {
         )}
       </header>
       {decision?.action === "link_to_existing" ? (
-        <LinkedState cardCode={decision.card_code} />
+        <LinkedState cardCode={decision.card_code} cardName={decision.card_name} />
       ) : (
         <PanelBody {...props} />
       )}
@@ -412,7 +415,7 @@ export function DuplicatePanel(props: DuplicatePanelProps) {
   );
 }
 
-function LinkedState({ cardCode }: { cardCode: string }) {
+function LinkedState({ cardCode, cardName }: { cardCode: string; cardName?: string }) {
   return (
     <div
       className="flex items-start gap-3 rounded-lg border border-success/40 bg-success/10 p-4"
@@ -421,7 +424,9 @@ function LinkedState({ cardCode }: { cardCode: string }) {
     >
       <Link2 className="mt-0.5 size-5 shrink-0 text-success-foreground" />
       <div className="flex flex-col gap-1">
-        <p className="font-medium">Linked to {cardCode}.</p>
+        <p className="font-medium">
+          Linked to {cardName ? `${cardName} (${cardCode})` : cardCode}.
+        </p>
         <p className="text-sm text-muted-foreground">
           No approval needed; the duplicate never reached an approver.
         </p>

@@ -11,6 +11,7 @@ import {
   Loader2,
   MessageCircleQuestion,
   SendHorizontal,
+  UserRound,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ import { use, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useClock } from "@/components/shell/clock-provider";
+import { usePersona } from "@/components/shell/persona-provider";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SlaBadge, StateBadge } from "@/components/workflow/badges";
@@ -26,7 +28,8 @@ import { RequestFields } from "@/components/workflow/request-fields";
 import { ReadbackUnavailable, SapReadback } from "@/components/workflow/sap-readback";
 import { useActingUserId } from "@/lib/acting-user";
 import { api, isApiError, type Schema } from "@/lib/api/client";
-import { formatSgt } from "@/lib/format";
+import { countryName, formatSgt } from "@/lib/format";
+import { linkedLabel } from "@/lib/linked-names";
 import { cn } from "@/lib/utils";
 import { type ApprovalTask, requestContext, roleLabel, TASK_TEXT } from "@/lib/workflow";
 
@@ -183,18 +186,13 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
         <div className="flex items-start gap-3 rounded-xl border border-success/40 bg-success/8 p-4">
           <Link2 className="mt-0.5 size-5 shrink-0 text-success-foreground" />
           <p>
-            Linked to {detail.linked_card_code}. No approval needed; the duplicate never reached an
-            approver.
+            Linked to {linkedLabel(detail.req_id, detail.linked_card_code)}. No approval needed; the
+            duplicate never reached an approver.
           </p>
         </div>
       )}
 
-      {pendingWith.length > 0 && (
-        <p className="text-lg" data-testid="pending-with">
-          <span className="text-muted-foreground">Waiting on </span>
-          <span className="font-medium">{listNames(pendingWith)}</span>
-        </p>
-      )}
+      {pendingWith.length > 0 && <PendingWith names={pendingWith} stages={stages} />}
 
       <YourTurn
         detail={detail}
@@ -204,7 +202,7 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
         onChanged={reload}
       />
 
-      {stages.length > 0 && <StageFlow stages={stages} />}
+      {stages.length > 0 && <StageFlow stages={stages} qrReason={qrReason(detail)} />}
 
       {detail.sap_publish ? (
         <section className="flex flex-col gap-3">
@@ -233,6 +231,74 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
           <AuditTimeline entries={audit} error={auditError} />
         </section>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The person who can decide a task right now, if we know their name: the
+ * assignee, or a backup approver who is one of the personas.
+ */
+function useDecider(t: ApprovalTask): { userId: string; name: string } | null {
+  const { personas } = usePersona();
+  if (!t.escalated_to_user_id) return { userId: t.assignee_user_id, name: t.assignee_name };
+  const backup = personas?.find((p) => p.user_id === t.escalated_to_user_id);
+  return backup ? { userId: backup.user_id, name: backup.name } : null;
+}
+
+/** "Act as <name>": switches the acting user to the approver of this task. */
+function ActAsButton({ task, className }: { task: ApprovalTask; className?: string }) {
+  const actingUser = useActingUserId();
+  const { personas, setPersona, actAsOther } = usePersona();
+  const decider = useDecider(task);
+  if (!decider || decider.userId === actingUser) return null;
+
+  const actAs = () => {
+    if (personas?.some((p) => p.user_id === decider.userId)) setPersona(decider.userId);
+    else {
+      actAsOther({
+        user_id: decider.userId,
+        name: decider.name,
+        title: roleLabel(task),
+        country: task.country ?? null,
+      });
+    }
+    toast.success(`Now acting as ${decider.name}`);
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="xs"
+      className={className}
+      onClick={actAs}
+      data-testid="act-as"
+      data-user={decider.userId}
+    >
+      <UserRound data-icon="inline-start" />
+      Act as {decider.name}
+    </Button>
+  );
+}
+
+function PendingWith({ names, stages }: { names: string[]; stages: Stage[] }) {
+  const pending = stages.flatMap((s) => s.tasks).filter((t) => t.status === "pending");
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-lg" data-testid="pending-with">
+        <span className="text-muted-foreground">Waiting on </span>
+        <span className="font-medium">{listNames(names)}</span>
+      </p>
+      {pending.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-muted-foreground">
+            This demo has no login. To decide as one of them:
+          </span>
+          {pending.map((t) => (
+            <ActAsButton key={t.task_id} task={t} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -330,7 +396,17 @@ function YourTurn({
   );
 }
 
-function StageFlow({ stages }: { stages: Stage[] }) {
+/** "Needed because this is a diagnostic product sold in Singapore, Malaysia and Vietnam." */
+function qrReason(detail: RequestDetail): string | null {
+  if (detail.domain !== "item" || detail.fields.U_IVD !== "tYES") return null;
+  const selling = Array.isArray(detail.fields.selling_countries)
+    ? (detail.fields.selling_countries as string[])
+    : [];
+  if (selling.length === 0) return null;
+  return `Needed because this is a diagnostic product sold in ${listNames(selling.map(countryName))}.`;
+}
+
+function StageFlow({ stages, qrReason }: { stages: Stage[]; qrReason: string | null }) {
   return (
     <ol className="flex items-stretch gap-3" aria-label="Approval stages">
       {stages.map((s, i) => (
@@ -364,7 +440,11 @@ function StageFlow({ stages }: { stages: Stage[] }) {
               )}
             >
               {s.tasks.map((t) => (
-                <TaskCard key={t.task_id} task={t} />
+                <TaskCard
+                  key={t.task_id}
+                  task={t}
+                  note={t.role === "quality_regulatory" ? qrReason : null}
+                />
               ))}
             </ul>
           </div>
@@ -374,7 +454,7 @@ function StageFlow({ stages }: { stages: Stage[] }) {
   );
 }
 
-function TaskCard({ task: t }: { task: ApprovalTask }) {
+function TaskCard({ task: t, note }: { task: ApprovalTask; note: string | null }) {
   const open = t.status === "pending" || t.status === "info_requested";
   return (
     <li
@@ -392,6 +472,11 @@ function TaskCard({ task: t }: { task: ApprovalTask }) {
         <span className="font-medium">{t.assignee_name}</span>
       </div>
       <span className="text-xs text-muted-foreground">{roleLabel(t)}</span>
+      {note && (
+        <span className="text-xs text-muted-foreground" data-testid="qr-reason">
+          {note}
+        </span>
+      )}
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-xs">{TASK_TEXT[t.status]}</span>
         {open && t.sla_state && t.sla_state !== "done" && <SlaBadge state={t.sla_state} />}
@@ -413,6 +498,7 @@ function TaskCard({ task: t }: { task: ApprovalTask }) {
         </span>
       )}
       {t.comment && <q className="mt-1 border-l-2 pl-2 text-xs text-foreground">{t.comment}</q>}
+      {t.status === "pending" && <ActAsButton task={t} className="mt-1 self-start" />}
     </li>
   );
 }

@@ -16,9 +16,9 @@ Sections are added as the demo is rehearsed. The main storyline lives in `docs/P
 2. Enter item name `CRP Quantitative Reagent - 200 test pack`, item group `Reagents and test kits`, IVD = **Yes**, product family A, selling countries **Singapore** and **Malaysia**.
 3. Registration for **Singapore**: number `DE2538958`, expiry `2029-11-23`.
 4. Registration for **Malaysia**: number `GB04450349-35150`, issue date `2021-08-16`, expiry `2026-08-15`. These are the real values of the lapsed Malaysia registration of the existing item A-CRP-QT in `item_registrations.csv` (status `expired`).
-5. The form shows next to the Malaysia expiry date, before submitting: *"The Malaysia registration expired on 15 Aug 2026. Renew it or remove Malaysia from the selling countries."*
+5. As soon as the date is typed, the form shows under the Malaysia row, before submitting: *"The Malaysia registration expired on 15 Aug 2026. Renew it or remove Malaysia from the selling countries."* The check uses the simulated clock's today, not the laptop's date. The hint next to **Submit** says *"A registration has expired: renew or remove it first."* Expiry date is marked **Required** on every registration row, and an empty one counts in the "required fields still empty" hint.
 6. Press **Submit**. It is refused with the same sentence; no approval task is created and the request stays a draft. (API: `422 {"detail": "...", "issues": [{"field": "registrations.MY.expiry_date", "kind": "expired", ...}]}`.)
-7. Remove Malaysia from the selling countries (or type a renewed expiry such as `2029-08-15`). The message disappears and **Submit** now routes the request to Business Support, the BU head and the Singapore Quality / Regulatory reviewer.
+7. Remove Malaysia from the selling countries (or type a renewed expiry such as `2029-08-15`). The message disappears, the hint reads *"Everything required is filled in."*, and **Submit** now routes the request to Business Support, the BU head and the Singapore Quality / Regulatory reviewer.
 
 **Say:** "Dates are checked against the simulated clock, the same one that drives the approval reminders, so this works the same on demo day as it will in production."
 

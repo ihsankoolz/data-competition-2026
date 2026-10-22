@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type Schema } from "@/lib/api/client";
-import { countryName } from "@/lib/format";
+import { countryName, formatDay } from "@/lib/format";
 import { asFormSchema, type FormSchema, looksMasked } from "@/lib/forms/schema";
 import { cn } from "@/lib/utils";
 
@@ -23,8 +23,12 @@ function show(key: string, value: unknown, schema: FormSchema | null): string {
       return (value as string[]).map((v) => (v.length === 2 ? countryName(v) : v)).join(", ");
     }
     if (key === "registrations") {
-      return (value as { country?: string; reg_no?: string }[])
-        .map((r) => `${countryName(r.country ?? "")}: ${r.reg_no || "not given"}`)
+      return (value as { country?: string; reg_no?: string; expiry_date?: string }[])
+        .map(
+          (r) =>
+            `${countryName(r.country ?? "")}: ${r.reg_no || "not given"}` +
+            (r.expiry_date ? `, expires ${formatDay(r.expiry_date)}` : ", no expiry date"),
+        )
         .join("; ");
     }
     return value
@@ -52,6 +56,49 @@ function plain(value: unknown): string {
       .join(", ");
   }
   return String(value);
+}
+
+const BANK_PARTS: [string, string][] = [
+  ["BankCode", "Bank"],
+  ["AccountNo", "Account number"],
+  ["AccountName", "Account name"],
+  ["BICSwiftCode", "SWIFT code"],
+  ["IBAN", "IBAN"],
+  ["Country", "Country"],
+];
+
+type BankAccount = Record<string, unknown>;
+
+function bankAccounts(value: unknown): BankAccount[] | null {
+  if (!Array.isArray(value) || value.length === 0) return null;
+  const ok = value.every(
+    (v) => v && typeof v === "object" && ("BankCode" in v || "AccountNo" in v || "IBAN" in v),
+  );
+  return ok ? (value as BankAccount[]) : null;
+}
+
+/** One labelled line per part of each bank account; masked values stay masked. */
+function BankLines({ accounts }: { accounts: BankAccount[] }) {
+  return (
+    <div className="flex flex-col gap-2" data-testid="bank-lines">
+      {accounts.map((a, i) => (
+        <dl key={i} className="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-0.5">
+          {BANK_PARTS.filter(([k]) => a[k] !== undefined && a[k] !== null && a[k] !== "").map(
+            ([k, label]) => {
+              const v = a[k];
+              const text = k === "Country" && typeof v === "string" ? countryName(v) : plain(v);
+              return (
+                <div key={k} className="contents">
+                  <dt className="text-muted-foreground">{label}</dt>
+                  <dd className={cn(looksMasked(v) && "tabular-nums")}>{text}</dd>
+                </div>
+              );
+            },
+          )}
+        </dl>
+      ))}
+    </div>
+  );
 }
 
 /**
@@ -112,12 +159,17 @@ export function RequestFields({ detail }: { detail: RequestDetail }) {
       {keys.map((k) => {
         const value = detail.fields[k];
         const masked = looksMasked(value);
+        const accounts = bankAccounts(value);
         const sensitive = masked || schema?.properties[k]?.["x-sensitive"];
         return (
           <div key={k} className="contents" data-testid={`value-${k}`}>
             <dt className="text-muted-foreground">{schema?.properties[k]?.title ?? k}</dt>
             <dd className={cn("min-w-0 break-words", masked && "tabular-nums")}>
-              {show(k, value, schema)}
+              {accounts ? (
+                <BankLines accounts={accounts} />
+              ) : (
+                show(k, value, schema)
+              )}
               {sensitive && (
                 <span className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
                   <Lock className="size-3" />

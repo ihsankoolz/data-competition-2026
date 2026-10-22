@@ -38,7 +38,7 @@ test("DEMO-01: typed request is caught as a likely duplicate and linked", async 
   const { panel, candidate } = await expectLikelyChoRay(page);
   await candidate.getByTestId("link-C00084").click();
 
-  await expect(panel.getByTestId("linked")).toContainText("Linked to C00084.");
+  await expect(panel.getByTestId("linked")).toContainText("Linked to Bệnh viện Chợ Rẫy (C00084).");
   await expect(panel.getByTestId("linked")).toContainText(
     "the duplicate never reached an approver",
   );
@@ -47,6 +47,9 @@ test("DEMO-01: typed request is caught as a likely duplicate and linked", async 
   await expect(page.getByTestId("request-state")).toHaveAttribute(
     "data-state",
     "LINKED_TO_EXISTING",
+  );
+  await expect(page.getByTestId("request-status")).toContainText(
+    "Linked to Bệnh viện Chợ Rẫy (C00084).",
   );
 });
 

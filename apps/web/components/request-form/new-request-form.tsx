@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import { type DedupDecision, DuplicatePanel } from "@/components/dedup/duplicate-panel";
 import { useDedupCheck } from "@/components/dedup/use-dedup-check";
+import { useClock } from "@/components/shell/clock-provider";
 import { usePersona } from "@/components/shell/persona-provider";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -21,7 +22,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, isApiError, issuesOf, type Schema } from "@/lib/api/client";
 import { announceWorkflowChange, DEMO_RESET_EVENT } from "@/lib/demo-events";
-import { countryName } from "@/lib/format";
+import { countryName, sgtDay } from "@/lib/format";
+import { rememberLinkedName } from "@/lib/linked-names";
 import {
   asFormSchema,
   COUNTRIES,
@@ -30,6 +32,7 @@ import {
   ENTITIES,
   ENTITY_NAMES,
   type Entity,
+  expiredRegistrations,
   type FieldValues,
   FORM_DOMAINS,
   type FormSpec,
@@ -188,6 +191,13 @@ export function NewRequestForm() {
 
   // The country comes from the bar at the top, not from a form field, so count it as filled.
   const missing = specReady ? missingRequired({ ...values, Country: country }, spec) : [];
+  // Registrations already expired on the demo clock (never the wall clock); the server checks too.
+  const { clock } = useClock();
+  const today = clock ? sgtDay(clock.now) : null;
+  const expired = specReady && domain === "item" ? expiredRegistrations(values, spec, today) : {};
+  const expiredMessages = Object.values(expired);
+  // Once linked, the form is read-only: no "missing" highlights on fields nobody can fill.
+  const flagMissing = showMissing && !linked;
 
   function payloadFields(): FieldValues {
     if (!schema || !spec) return {};
@@ -226,14 +236,19 @@ export function NewRequestForm() {
     try {
       const id = await ensureDraft();
       await api.POST("/requests/{req_id}/dedup-decision", { path: { req_id: id }, body });
+      const cardName = (currentResult?.candidates ?? []).find(
+        (c) => c.CardCode === body.card_code,
+      )?.CardName;
       setDecision(
         body.action === "link_to_existing"
-          ? { action: "link_to_existing", card_code: body.card_code ?? "" }
+          ? { action: "link_to_existing", card_code: body.card_code ?? "", card_name: cardName }
           : { action: "not_duplicate", reason: body.reason ?? "" },
       );
       setDecidedFor(candidateKey);
       if (body.action === "link_to_existing") {
-        toast.success(`Linked to ${body.card_code}`, {
+        if (cardName && body.card_code) rememberLinkedName(id, body.card_code, cardName);
+        const label = cardName ? `${cardName} (${body.card_code})` : body.card_code;
+        toast.success(`Linked to ${label}`, {
           description: "No approval needed; nothing was sent to an approver.",
         });
       }
@@ -309,7 +324,14 @@ export function NewRequestForm() {
   };
 
   // A "missing" issue only shows once the person has tried to submit (like the red outline).
-  const shownIssues = issues.filter((i) => i.kind !== "missing" || showMissing);
+  const shownIssues = linked
+    ? []
+    : issues.filter(
+        (i) =>
+          (i.kind !== "missing" || showMissing) &&
+          // The live expiry message under the row already says this; don't say it twice.
+          !(i.kind === "expired" && (expired as Record<string, string>)[i.field.split(".")[1] ?? ""]),
+      );
   const issuesFor = (key: string) =>
     shownIssues.filter((i) => issueKey(i) === key).map((i) => i.message);
   const placed = new Set(
@@ -467,7 +489,7 @@ export function NewRequestForm() {
                   const field = schema.properties[key]!;
                   const wide = WIDE_TYPES.has(field.type ?? "") || (field.maxLength ?? 0) >= 200;
                   // Registration rows highlight themselves, one per country.
-                  const isMissing = showMissing && missing.includes(key);
+                  const isMissing = flagMissing && missing.includes(key);
                   return (
                     <div key={key} className={cn(wide && "col-span-2")}>
                       <FieldShell
@@ -486,7 +508,8 @@ export function NewRequestForm() {
                             field={field}
                             values={values}
                             spec={spec}
-                            showMissing={showMissing}
+                            showMissing={flagMissing}
+                            expired={linked ? {} : expired}
                             onChange={(rows) => setField("registrations", rows)}
                           />
                         ) : (
@@ -514,8 +537,14 @@ export function NewRequestForm() {
                     <ArrowRight data-icon="inline-end" />
                   </Link>
                 </Button>
-                <p className="text-sm text-muted-foreground">
-                  Nothing to submit: you are using the existing record.
+                <p className="text-sm text-muted-foreground" data-testid="linked-note">
+                  Linked to{" "}
+                  {activeDecision?.action === "link_to_existing" && activeDecision.card_name
+                    ? `${activeDecision.card_name} (${activeDecision.card_code})`
+                    : activeDecision?.action === "link_to_existing"
+                      ? activeDecision.card_code
+                      : "the existing record"}
+                  . Nothing to submit: you are using the existing record.
                 </p>
               </div>
             ) : (
@@ -533,7 +562,9 @@ export function NewRequestForm() {
                     ? "Paused: decide on the likely duplicate first."
                     : missing.length > 0
                       ? `${missing.length} required ${missing.length === 1 ? "field is" : "fields are"} still empty.`
-                      : "Everything required is filled in."}
+                      : expiredMessages.length > 0
+                        ? `${expiredMessages.length === 1 ? "A registration has" : `${expiredMessages.length} registrations have`} expired: renew or remove ${expiredMessages.length === 1 ? "it" : "them"} first.`
+                        : "Everything required is filled in."}
                 </p>
               </div>
             )}

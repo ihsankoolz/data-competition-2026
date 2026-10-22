@@ -32,13 +32,14 @@ function Monogram({ name, className }: { name: string; className?: string }) {
 }
 
 function where(p: Persona): string {
+  if (!p.country) return p.entity;
   return p.entity === "Group"
     ? `Group, ${countryName(p.country)}`
     : `${p.entity}, ${countryName(p.country)}`;
 }
 
 export function PersonaSwitcher() {
-  const { personas, persona, setPersona } = usePersona();
+  const { personas, persona, setPersona, isOther } = usePersona();
 
   if (!personas || !persona) {
     return (
@@ -91,6 +92,28 @@ export function PersonaSwitcher() {
               </span>
             </DropdownMenuRadioItem>
           ))}
+          {isOther && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                Other people in this demo
+              </DropdownMenuLabel>
+              <DropdownMenuRadioItem
+                value={persona.user_id}
+                className="gap-2.5 py-1.5"
+                data-testid="persona-other"
+              >
+                <Monogram name={persona.name} className="size-7 bg-muted text-[0.7rem] text-foreground" />
+                <span className="flex min-w-0 flex-1 flex-col leading-tight">
+                  <span className="flex items-baseline justify-between gap-2">
+                    <span className="text-sm font-medium">{persona.name}</span>
+                    <span className="text-xs text-muted-foreground">{where(persona)}</span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">{persona.title}</span>
+                </span>
+              </DropdownMenuRadioItem>
+            </>
+          )}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

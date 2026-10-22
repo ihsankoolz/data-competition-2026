@@ -318,10 +318,12 @@ function PublishPane({
               One call to SAP Business One:{" "}
               <code className="rounded bg-muted px-1 py-0.5 font-mono">
                 POST /b1s/v2/{RESOURCE[detail.domain]}
-              </code>
-              . The record is created inactive, read back and checked, then switched on.
+              </code>{" "}
+              (the call our system makes to SAP). The record is created inactive, read back and
+              checked, then switched on.
             </p>
           </div>
+          <DuplicateCheckLine detail={detail} />
           <RequestFields detail={detail} />
           <div className="flex flex-col gap-2 border-t pt-5">
             <div className="flex items-center gap-4">
@@ -371,5 +373,22 @@ function PublishPane({
           </div>
         ))}
     </section>
+  );
+}
+
+/** One line on what the duplicate check concluded, so Priya does not have to look it up. */
+function DuplicateCheckLine({ detail }: { detail: RequestDetail }) {
+  const d = detail.dedup_decision;
+  return (
+    <p className="text-sm" data-testid="dedup-line">
+      <span className="text-muted-foreground">Duplicate check: </span>
+      {!d
+        ? "no existing record matched."
+        : d.action === "link_to_existing"
+          ? `linked to the existing record ${d.card_code ?? ""}.`
+          : `a possible match was reviewed by a person and kept as a new record${
+              d.reason ? ` ("${d.reason}")` : ""
+            }.`}
+    </p>
   );
 }

@@ -164,7 +164,12 @@ test("likely duplicate: side by side, submit blocked, link to existing", async (
 
   await panel.getByTestId("link-C00084").click();
   const linked = panel.getByTestId("linked");
-  await expect(linked).toContainText("Linked to C00084.");
+  await expect(linked).toContainText("Linked to Bệnh viện Chợ Rẫy (C00084).");
+  await expect(page.getByTestId("linked-note")).toContainText(
+    "Linked to Bệnh viện Chợ Rẫy (C00084).",
+  );
+  // The read-only form no longer flags fields nobody can fill in.
+  await expect(page.locator('[data-missing="true"]')).toHaveCount(0);
   await expect(linked).toContainText(
     "No approval needed; the duplicate never reached an approver.",
   );

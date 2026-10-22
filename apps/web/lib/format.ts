@@ -40,3 +40,16 @@ export function formatSgt(iso: string): string {
 export function demoDay(elapsedHours: number): number {
   return Math.floor(elapsedHours / 24) + 1;
 }
+
+/** "15 Aug 2026" from "2026-08-15"; anything else is returned as it is. */
+export function formatDay(isoDate: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(isoDate);
+  if (!m) return isoDate;
+  return `${Number(m[3])} ${MONTHS[Number(m[2]) - 1] ?? m[2]} ${m[1]}`;
+}
+
+/** Today's date ("2026-10-05") on the demo clock, in Singapore time. */
+export function sgtDay(iso: string): string {
+  const d = new Date(new Date(iso).getTime() + SGT_OFFSET_HOURS * 3_600_000);
+  return d.toISOString().slice(0, 10);
+}

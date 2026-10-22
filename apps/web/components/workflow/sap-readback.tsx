@@ -14,6 +14,13 @@ const RESOURCE_TEXT: Record<SapPublishView["resource"], string> = {
   ProfitCenters: "Cost Center",
 };
 
+/** Short plain-English glosses for SAP field names a judge may not know. */
+const GLOSS: Record<string, string> = {
+  CardCode: "customer/vendor code",
+  Frozen: "inactive until checked",
+  ItemCode: "item code",
+};
+
 /** Shown when the request is published but no read-back could be loaded. */
 export function ReadbackUnavailable() {
   return (
@@ -76,6 +83,11 @@ export function SapReadback({ view }: { view: SapPublishView }) {
         is created inactive, read back from SAP and compared, and only switched on when every field
         matches.
       </p>
+      <p className="text-sm text-muted-foreground" data-testid="readback-caption">
+        Each row is one field: on the left what our system sent to SAP, on the right what SAP
+        actually saved when we read the record back. &ldquo;Same&rdquo; means nobody has to re-type
+        or re-check it by hand.
+      </p>
       <div className="overflow-hidden rounded-xl border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
@@ -83,7 +95,7 @@ export function SapReadback({ view }: { view: SapPublishView }) {
               <th className="px-4 py-2 font-medium">SAP field</th>
               <th className="px-4 py-2 font-medium">What we sent</th>
               <th className="px-4 py-2 font-medium">What SAP saved</th>
-              <th className="w-24 px-4 py-2 font-medium">Match</th>
+              <th className="w-44 px-4 py-2 font-medium">Match</th>
             </tr>
           </thead>
           <tbody>
@@ -94,7 +106,12 @@ export function SapReadback({ view }: { view: SapPublishView }) {
                 data-testid="readback-row"
                 data-match={r.match ? "true" : "false"}
               >
-                <td className="px-4 py-2 font-mono text-xs">{r.field}</td>
+                <td className="px-4 py-2">
+                  <span className="font-mono text-xs">{r.field}</span>
+                  {GLOSS[r.field] && (
+                    <span className="block text-xs text-muted-foreground">{GLOSS[r.field]}</span>
+                  )}
+                </td>
                 <td className="px-4 py-2 break-all">
                   <Value value={r.sent} />
                 </td>
@@ -102,7 +119,15 @@ export function SapReadback({ view }: { view: SapPublishView }) {
                   <Value value={r.read_back} />
                 </td>
                 <td className="px-4 py-2">
-                  {r.match ? (
+                  {r.match && (looksMasked(r.sent) || looksMasked(r.read_back)) ? (
+                    <span
+                      className="inline-flex items-start gap-1 text-xs text-success-foreground"
+                      data-testid="masked-match"
+                    >
+                      <Lock className="mt-0.5 size-3.5 shrink-0" />
+                      Checked by SAP on the full value (hidden for you)
+                    </span>
+                  ) : r.match ? (
                     <span className="inline-flex items-center gap-1 text-success-foreground">
                       <Check className="size-4" /> Same
                     </span>

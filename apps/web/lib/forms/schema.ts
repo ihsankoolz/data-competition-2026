@@ -4,6 +4,7 @@
  * (`FormSpec.json_schema`), so this module is the one place that narrows it.
  */
 import type { Schema } from "@/lib/api/client";
+import { countryName, formatDay } from "@/lib/format";
 
 export type FormSpec = Schema<"FormSpec">;
 export type Domain = FormSpec["domain"];
@@ -140,10 +141,42 @@ export function syncRegistrations(values: FieldValues, spec: FormSpec): Registra
   );
 }
 
+/**
+ * What each registration row must have. The server also refuses a regulated
+ * IVD registration without an expiry date, so the form asks for it up front.
+ */
+export function requiredPerCountry(spec: FormSpec): string[] {
+  const listed = spec.required_per_selling_country ?? [];
+  if (spec.domain !== "item") return listed;
+  return listed.includes("expiry_date") ? listed : [...listed, "expiry_date"];
+}
+
+/**
+ * Registrations whose expiry date is on or before `today` (YYYY-MM-DD on the
+ * demo clock), as plain-English messages keyed by country.
+ */
+export function expiredRegistrations(
+  values: FieldValues,
+  spec: FormSpec,
+  today: string | null,
+): Partial<Record<Country, string>> {
+  const out: Partial<Record<Country, string>> = {};
+  if (!today) return out;
+  for (const reg of syncRegistrations(values, spec)) {
+    const exp = reg.expiry_date;
+    if (exp && /^\d{4}-\d{2}-\d{2}$/.test(exp) && exp <= today) {
+      const name = countryName(reg.country);
+      out[reg.country] =
+        `The ${name} registration expired on ${formatDay(exp)}. Renew it or remove ${name} from the selling countries.`;
+    }
+  }
+  return out;
+}
+
 /** Field keys still empty that the form must have, including per-country registration numbers. */
 export function missingRequired(values: FieldValues, spec: FormSpec): string[] {
   const missing = spec.required.filter((k) => !isFilled(values[k]));
-  const perCountry = spec.required_per_selling_country ?? [];
+  const perCountry = requiredPerCountry(spec);
   if (spec.domain === "item" && perCountry.length > 0) {
     const regs = syncRegistrations(values, spec);
     for (const reg of regs) {

@@ -18,6 +18,7 @@ import {
   type FormSpec,
   type Registration,
   registrationCountries,
+  requiredPerCountry,
   syncRegistrations,
 } from "@/lib/forms/schema";
 import { cn } from "@/lib/utils";
@@ -32,18 +33,21 @@ export function RegistrationsInput({
   values,
   spec,
   showMissing,
+  expired,
   onChange,
 }: {
   field: FieldSchema;
   values: FieldValues;
   spec: FormSpec;
   showMissing: boolean;
+  /** Messages for registrations that have expired on the demo clock, by country. */
+  expired: Partial<Record<string, string>>;
   onChange: (rows: Registration[]) => void;
 }) {
   const countries = registrationCountries(values, spec);
   const rows = syncRegistrations(values, spec);
   const props = field.items?.properties ?? {};
-  const required = new Set(spec.required_per_selling_country ?? []);
+  const required = new Set(requiredPerCountry(spec));
 
   if (values.U_IVD !== "tYES") {
     return (
@@ -67,13 +71,16 @@ export function RegistrationsInput({
     <div className="flex flex-col gap-3">
       {rows.map((row) => {
         const regMissing = showMissing && required.has("reg_no") && !row.reg_no?.trim();
+        const expiryMissing = showMissing && required.has("expiry_date") && !row.expiry_date;
+        const expiredText = expired[row.country];
         return (
           <fieldset
             key={row.country}
             data-testid={`registration-${row.country}`}
             className={cn(
               "grid grid-cols-[10rem_1fr_9rem_10rem] items-end gap-3 rounded-lg border p-3",
-              regMissing && "border-destructive/50 bg-destructive/5",
+              (regMissing || expiryMissing || expiredText) &&
+                "border-destructive/50 bg-destructive/5",
             )}
           >
             <legend className="sr-only">Registration in {countryName(row.country)}</legend>
@@ -120,14 +127,29 @@ export function RegistrationsInput({
             <div className="flex flex-col gap-1.5">
               <Label htmlFor={`reg-${row.country}-expiry_date`} className="text-xs">
                 {props.expiry_date?.title ?? "Expiry date"}
+                {required.has("expiry_date") && (
+                  <span className="ml-1.5 font-normal text-muted-foreground">Required</span>
+                )}
               </Label>
               <Input
                 id={`reg-${row.country}-expiry_date`}
                 type="date"
                 value={row.expiry_date ?? ""}
+                aria-invalid={expiryMissing || !!expiredText || undefined}
+                aria-describedby={expiredText ? `reg-${row.country}-expired` : undefined}
                 onChange={(e) => update(row.country, "expiry_date", e.target.value)}
               />
             </div>
+            {expiredText && (
+              <p
+                id={`reg-${row.country}-expired`}
+                className="col-span-4 text-sm text-destructive"
+                role="alert"
+                data-testid={`expired-${row.country}`}
+              >
+                {expiredText}
+              </p>
+            )}
           </fieldset>
         );
       })}
