@@ -61,7 +61,12 @@ def _to_extract(domain: str, country: str, fields: Mapping[str, Any]) -> dict[st
 def missing_form_fields(domain: str, country: str, fields: Mapping[str, Any]) -> list[str]:
     """Required form fields (SAP names) that are still empty, in display order.
     Per-country registrations are reported as `registrations[SG]`."""
-    keys = missing_keys(domain, _to_extract(domain, country, fields), include_form_only=True)  # type: ignore[arg-type]
+    keys = missing_keys(
+        domain,  # type: ignore[arg-type]
+        _to_extract(domain, country, fields),
+        include_form_only=True,
+        foreign_vendors=True,
+    )
     to_field = (
         COST_CENTER_FIELDS | {"entity": "entity"}
         if domain == "cost_center"

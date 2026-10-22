@@ -85,6 +85,7 @@
           "forms"
         ],
         "summary": "Get Form",
+        "description": "`country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns\nthe shorter foreign-vendor required list (D-020 #2).",
         "operationId": "getForm",
         "parameters": [
           {
@@ -109,13 +110,6 @@
             "schema": {
               "anyOf": [
                 {
-                  "enum": [
-                    "SG",
-                    "MY",
-                    "ID",
-                    "VN",
-                    "TH"
-                  ],
                   "type": "string"
                 },
                 {
@@ -2831,20 +2825,14 @@
           "country": {
             "anyOf": [
               {
-                "type": "string",
-                "enum": [
-                  "SG",
-                  "MY",
-                  "ID",
-                  "VN",
-                  "TH"
-                ]
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Country"
+            "title": "Country",
+            "description": "ISO 3166 alpha-2 code. SG/MY/ID/VN/TH, or any other country for a vendor"
           },
           "json_schema": {
             "additionalProperties": true,

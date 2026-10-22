@@ -1,0 +1,12 @@
+# Vendors outside our five operating countries (D-020 #2). IVD makers are often in Europe, the
+# US or Japan. For such a vendor the five-country tax-ID formats (D-003) are not applied, the tax
+# ID is optional, and only these fields are required (keys as in required_fields.yaml).
+#
+# Customers must stay within the five countries. The request's own country (it routes the
+# approvals) is always one of the five.
+home_countries: [SG, MY, ID, VN, TH]
+
+vendor:
+  all: [name, country, address, city]
+  # Never extracted from email and never sent to the LLM (rule 5): bank details stay required.
+  form_only: [bank_account]

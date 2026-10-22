@@ -60,11 +60,14 @@ def required_keys(
     is_ivd: bool = False,
     selling_countries: list[str] | None = None,
     include_form_only: bool = False,
+    foreign_vendors: bool = False,
 ) -> list[str]:
     """Required extract keys, in order. `form_only` keys (bank details) are never asked of the
     email interpreter, so they are excluded unless `include_form_only` is set."""
     cfg = _required_config()
     spec = cfg.get(domain, {})
+    if foreign_vendors and domain == "vendor" and is_foreign(country):
+        spec = _foreign_config()["vendor"]
     keys = list(spec.get("all", []))
     if include_form_only:
         keys += spec.get("form_only", [])
@@ -76,13 +79,40 @@ def required_keys(
     return keys
 
 
+@cache
+def _foreign_config() -> dict[str, Any]:
+    with open(CONFIG_DIR / "foreign_vendors.yaml", encoding="utf-8") as fh:
+        return yaml.safe_load(fh)
+
+
+def home_countries() -> list[str]:
+    """The five countries we operate in (customers must be in one of them)."""
+    return list(_foreign_config()["home_countries"])
+
+
+def is_foreign(country: str | None) -> bool:
+    """A country code outside the five. An empty code is not foreign (it is just missing)."""
+    return bool(country) and country not in home_countries()
+
+
+@cache
+def country_names() -> dict[str, str]:
+    """ISO 3166-1 alpha-2 code -> English name (`config/countries.json`)."""
+    with open(CONFIG_DIR / "countries.json", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
 def regulated_countries() -> list[str]:
     """Countries where an IVD item needs a registration number."""
     return list(_required_config()["item"].get("ivd_registration_required_in", []))
 
 
 def missing_keys(
-    domain: Domain, fields: Mapping[str, Any], *, include_form_only: bool = False
+    domain: Domain,
+    fields: Mapping[str, Any],
+    *,
+    include_form_only: bool = False,
+    foreign_vendors: bool = False,
 ) -> list[str]:
     """Required extract keys that are absent or empty in `fields` (keyed by extract key).
 
@@ -96,6 +126,7 @@ def missing_keys(
         is_ivd=_truthy(fields.get("is_ivd")),
         selling_countries=_countries(fields.get("selling_countries")),
         include_form_only=include_form_only,
+        foreign_vendors=foreign_vendors,
     )
     return [k for k in keys if k not in present]
 
