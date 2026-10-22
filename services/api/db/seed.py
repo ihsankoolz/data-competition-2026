@@ -38,7 +38,7 @@ from services.api import clock
 from services.api.audit import AuditAction, append_audit
 from services.api.crypto import EncryptionKeyError, require_key
 from services.api.db import models as m
-from services.api.db.session import default_db_path, make_engine
+from services.api.db.session import IMMEDIATE_OPTION, default_db_path, make_engine
 from services.api.schemas import Role
 
 
@@ -439,7 +439,10 @@ def reload_in_place(engine: Engine, data: Loaded, fixtures_dir: Path) -> dict[st
     replaced, so an open session or connection held by the running API does not get in the way
     (the old temp-file-and-`os.replace` approach fails on Windows).
     """
-    with engine.begin() as conn:
+    # BEGIN IMMEDIATE: take the write lock first and wait for it (busy_timeout). A deferred
+    # transaction would read (reflect) and then fail at DROP TABLE with "database is locked"
+    # whenever a write was in flight.
+    with engine.execution_options(**{IMMEDIATE_OPTION: True}).begin() as conn:
         existing = MetaData()
         existing.reflect(bind=conn)
         existing.drop_all(bind=conn)  # a table this code no longer knows is dropped too
@@ -528,8 +531,15 @@ def _reset_via_running_api() -> dict[str, int] | None:
     url = os.environ.get("API_URL", "http://localhost:8000").rstrip("/") + "/admin/reset-demo"
     try:
         resp = httpx.post(url, timeout=60)
-    except httpx.HTTPError:
-        return None
+    except (httpx.ConnectError, httpx.ConnectTimeout):
+        return None  # nothing is listening: safe to reload the file directly
+    except httpx.HTTPError as exc:
+        # The API is there but did not answer in time. A reset may still be running in it, and
+        # a second one from here would overlap it, so stop instead of falling back.
+        raise SeedError(
+            f"The running API did not answer ({type(exc).__name__}); its reset may still be "
+            "running. Wait a moment, then run `make reset-demo` again."
+        ) from None
     if resp.status_code != 200:
         raise SeedError(f"The running API could not reset the demo: {resp.text[:300]}")
     body = resp.json()

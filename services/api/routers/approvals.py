@@ -58,7 +58,7 @@ def approval_inbox(actor: CurrentUser) -> list[ApprovalInboxItem]:
 )
 def decide_approval(task_id: str, body: ApprovalDecisionIn, actor: CurrentUser) -> RequestDetail:
     """Approve / reject / ask for info. Maker-checker enforced. A human always decides."""
-    with session_scope() as session:
+    with session_scope(write=True) as session:
         task = session.get(m.ApprovalTaskRow, task_id)
         if task is None:
             raise HTTPException(404, f"There is no approval task {task_id}.")

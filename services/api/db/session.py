@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session, sessionmaker
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_DB_PATH = REPO_ROOT / "data" / "app.db"
 DB_PATH_ENV = "APP_DB_PATH"
+IMMEDIATE_OPTION = "immediate"  # connection execution option: start with BEGIN IMMEDIATE
 
 
 def default_db_path() -> Path:
@@ -55,7 +56,11 @@ def make_engine(db_path: str | Path | None = None) -> Engine:
 
     @event.listens_for(engine, "begin")
     def _on_begin(conn: Any) -> None:
-        conn.exec_driver_sql("BEGIN")
+        # A transaction that will write takes the write lock up front (BEGIN IMMEDIATE) and
+        # waits for it on busy_timeout. A deferred transaction that reads first and writes later
+        # fails at once with "database is locked" in WAL mode once another writer has committed.
+        immediate = conn.get_execution_options().get(IMMEDIATE_OPTION)
+        conn.exec_driver_sql("BEGIN IMMEDIATE" if immediate else "BEGIN")
 
     return engine
 
@@ -92,9 +97,16 @@ def dispose_default() -> None:
 
 
 @contextmanager
-def session_scope(factory: sessionmaker[Session] | None = None) -> Iterator[Session]:
-    """One transaction: commit on success, roll back on error."""
+def session_scope(
+    factory: sessionmaker[Session] | None = None, *, write: bool = False
+) -> Iterator[Session]:
+    """One transaction: commit on success, roll back on error.
+
+    Pass `write=True` for any transaction that may write: it starts with BEGIN IMMEDIATE, so
+    concurrent writers queue instead of failing with "database is locked"."""
     with (factory or get_session_factory()).begin() as session:
+        if write:
+            session.connection(execution_options={IMMEDIATE_OPTION: True})
         yield session
 
 

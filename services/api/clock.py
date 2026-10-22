@@ -77,7 +77,7 @@ def _save() -> None:
     if not default_db_path().exists():
         return
     try:
-        with session_scope() as session:
+        with session_scope(write=True) as session:
             persist(session, now())
     except SQLAlchemyError:
         log.warning("Could not save the simulated time.")

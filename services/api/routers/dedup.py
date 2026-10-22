@@ -16,9 +16,9 @@ router = APIRouter(tags=["dedup"])
 @router.post("/dedup/check", response_model=DedupResult, operation_id="checkDuplicates")
 def check_duplicates(body: DedupCheckRequest, actor: CurrentUser) -> DedupResult:
     """Called while the requester types (debounced) and again on submit. Read-only, fast."""
-    result = dedup_service.run_check(body.domain, body.entity, body.fields)
+    result = dedup_service.run_check(body.domain, body.entity, body.fields, use_judge=True)
     if body.request_id:
-        with session_scope() as session:
+        with session_scope(write=True) as session:
             if session.get(m.Request, body.request_id) is None:
                 raise HTTPException(404, f"There is no request {body.request_id}.")
             top = result.candidates[0] if result.candidates else None
