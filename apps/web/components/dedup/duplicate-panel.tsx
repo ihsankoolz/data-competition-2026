@@ -40,8 +40,7 @@ import type { DedupResult, DedupState } from "./use-dedup-check";
 type Candidate = Schema<"Candidate">;
 
 export type DedupDecision =
-  | { action: "link_to_existing"; card_code: string }
-  | { action: "not_duplicate"; reason: string };
+  { action: "link_to_existing"; card_code: string } | { action: "not_duplicate"; reason: string };
 
 export const MIN_REASON_LENGTH = 10;
 
@@ -68,7 +67,7 @@ function compare(a: unknown, b: unknown, similar = false): Match {
 
 const MATCH_TEXT: Record<Match, string> = {
   same: "Same",
-  same_unaccented: "Same once accents are ignored",
+  same_unaccented: "Same without accents",
   similar: "Very similar",
   different: "Different",
   empty: "",
@@ -79,9 +78,7 @@ type Row = { label: string; typed: string; existing: string; match: Match };
 function rowsFor(c: Candidate, typed: FieldValues, entity: string, country: string): Row[] {
   const str = (v: unknown) => (typeof v === "string" ? v : v == null ? "" : String(v));
   const nameSimilar = c.name_score >= 0.85;
-  const taxMatch: Match = c.tax_id_match
-    ? "same"
-    : compare(typed.FederalTaxID, c.FederalTaxID);
+  const taxMatch: Match = c.tax_id_match ? "same" : compare(typed.FederalTaxID, c.FederalTaxID);
   return [
     {
       label: "Legal name",
@@ -128,11 +125,11 @@ function MatchMark({ match }: { match: Match }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 text-xs whitespace-nowrap",
+        "inline-flex items-start gap-1 text-xs",
         isMatch ? "font-medium text-foreground" : "text-muted-foreground",
       )}
     >
-      {isMatch ? <Equal className="size-3.5" aria-hidden /> : null}
+      {isMatch ? <Equal className="mt-px size-3.5 shrink-0" aria-hidden /> : null}
       {MATCH_TEXT[match]}
     </span>
   );
@@ -142,10 +139,10 @@ function ComparisonTable({ rows, cardCode }: { rows: Row[]; cardCode: string }) 
   return (
     <table className="w-full table-fixed border-collapse text-sm" data-testid="comparison">
       <colgroup>
+        <col className="w-24" />
+        <col />
+        <col />
         <col className="w-28" />
-        <col />
-        <col />
-        <col className="w-36" />
       </colgroup>
       <thead>
         <tr className="text-left text-xs text-muted-foreground">
@@ -172,7 +169,10 @@ function ComparisonTable({ rows, cardCode }: { rows: Row[]; cardCode: string }) 
               data-match={isMatch ? "true" : "false"}
               className={cn("border-t align-top", isMatch && "bg-warning/10")}
             >
-              <th scope="row" className="py-2 pr-3 pl-2 text-left text-xs font-normal text-muted-foreground">
+              <th
+                scope="row"
+                className="py-2 pr-3 pl-2 text-left text-xs font-normal text-muted-foreground"
+              >
                 {r.label}
               </th>
               <td className="py-2 pr-3 break-words">{r.typed || <Empty />}</td>
@@ -232,7 +232,13 @@ function VerdictBanner({ result }: { result: DedupResult }) {
   );
 }
 
-function JudgeNote({ judge, candidates }: { judge: DedupResult["judge"]; candidates: Candidate[] }) {
+function JudgeNote({
+  judge,
+  candidates,
+}: {
+  judge: DedupResult["judge"];
+  candidates: Candidate[];
+}) {
   if (!judge || judge.status === "not_needed" || judge.status === "disabled") return null;
   if (judge.status === "offline" || judge.status === "error") {
     return (
@@ -442,7 +448,10 @@ function PanelBody({
   }
   if (state.status === "unavailable") {
     return (
-      <p className="flex items-start gap-2 text-sm text-muted-foreground" data-testid="dup-unavailable">
+      <p
+        className="flex items-start gap-2 text-sm text-muted-foreground"
+        data-testid="dup-unavailable"
+      >
         <CircleAlert className="mt-0.5 size-4 shrink-0" />
         {state.message}
       </p>
@@ -515,7 +524,11 @@ function PanelBody({
       {candidates.length > 0 && (
         <div className="flex flex-col gap-2 border-t pt-4">
           {decision?.action === "not_duplicate" ? (
-            <div className="flex items-start gap-2 text-sm" data-testid="override-saved" role="status">
+            <div
+              className="flex items-start gap-2 text-sm"
+              data-testid="override-saved"
+              role="status"
+            >
               <Check className="mt-0.5 size-4 shrink-0 text-success" />
               <p>
                 You marked this as a new customer: <q>{decision.reason}</q>. You can submit now.

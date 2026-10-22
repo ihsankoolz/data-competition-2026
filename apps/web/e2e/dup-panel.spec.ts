@@ -42,7 +42,8 @@ const LIKELY_CHO_RAY = {
       country: "TH",
       rule: "same_group_other_country",
       group_id: "G-CHORAY",
-      explanation: "Same hospital group in another country: a separate legal entity, not a duplicate.",
+      explanation:
+        "Same hospital group in another country: a separate legal entity, not a duplicate.",
     },
   ],
   judge: { status: "offline", reasons: [], message: "AI offline" },
@@ -140,14 +141,16 @@ test("likely duplicate: side by side, submit blocked, link to existing", async (
   const nameRow = table.getByRole("row", { name: /Legal name/ });
   await expect(nameRow).toContainText("Benh vien Cho Ray");
   await expect(nameRow).toContainText("Bệnh viện Chợ Rẫy");
-  await expect(nameRow).toContainText("Same once accents are ignored");
+  await expect(nameRow).toContainText("Same without accents");
   await expect(table.getByRole("row", { name: /Entity/ })).toHaveAttribute("data-match", "false");
 
   // Plain-English reasons, related records and the AI status.
   const reasons = candidate.getByTestId("reasons");
   await expect(reasons).toContainText("Same tax ID (MST 0301234567) in Vietnam.");
   await expect(reasons).toContainText("Same name once Vietnamese accents are removed");
-  await expect(panel.getByTestId("related")).toContainText("Same hospital group in another country");
+  await expect(panel.getByTestId("related")).toContainText(
+    "Same hospital group in another country",
+  );
   await expect(panel.getByTestId("judge")).toContainText("AI offline");
 
   // Submit is blocked until a human decides.
@@ -157,7 +160,9 @@ test("likely duplicate: side by side, submit blocked, link to existing", async (
   await panel.getByTestId("link-C00084").click();
   const linked = panel.getByTestId("linked");
   await expect(linked).toContainText("Linked to C00084.");
-  await expect(linked).toContainText("No approval needed; the duplicate never reached an approver.");
+  await expect(linked).toContainText(
+    "No approval needed; the duplicate never reached an approver.",
+  );
   expect(captured.decisions).toEqual([{ action: "link_to_existing", card_code: "C00084" }]);
   await expect(page.getByRole("link", { name: "See the request" })).toHaveAttribute(
     "href",

@@ -67,7 +67,9 @@ type Prefill = { emailId: string; subject: string };
 
 export function NewRequestForm() {
   const router = useRouter();
-  const { persona } = usePersona();
+  const { persona, error: personaError } = usePersona();
+  // Wait for the acting person so Marcus never sees a Singapore form flash first.
+  const contextReady = persona !== null || personaError !== null;
 
   const [domain, setDomain] = useState<FormDomain>("customer");
   const [entityChoice, setEntityChoice] = useState<Entity | null>(null);
@@ -98,6 +100,7 @@ export function NewRequestForm() {
 
   // Load the form definition for this domain x country.
   useEffect(() => {
+    if (!contextReady) return;
     let current = true;
     api.GET("/forms/{domain}", { path: { domain }, query: { country } }).then(
       (next) => {
@@ -110,7 +113,7 @@ export function NewRequestForm() {
     return () => {
       current = false;
     };
-  }, [domain, country, specAttempt]);
+  }, [domain, country, specAttempt, contextReady]);
 
   const clearAll = () => {
     setValues({});
@@ -256,7 +259,9 @@ export function NewRequestForm() {
       setShowMissing(true);
       return true;
     } catch (e) {
-      toast.error("Could not pre-fill from that email", { description: readable(e, "Pre-filling") });
+      toast.error("Could not pre-fill from that email", {
+        description: readable(e, "Pre-filling"),
+      });
       return false;
     } finally {
       setPicking(null);
@@ -302,6 +307,8 @@ export function NewRequestForm() {
                   if (d.value === domain) return;
                   setDomain(d.value);
                   setDecision(null);
+                  setSubmitError(null);
+                  setShowMissing(false);
                 }}
                 className={cn(
                   "rounded-md px-4 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
@@ -405,12 +412,9 @@ export function NewRequestForm() {
                 .filter((key) => !CONTEXT_FIELDS.has(key) && schema.properties[key])
                 .map((key) => {
                   const field = schema.properties[key]!;
-                  const wide =
-                    WIDE_TYPES.has(field.type ?? "") || (field.maxLength ?? 0) >= 200;
-                  const isMissing =
-                    showMissing &&
-                    (missing.includes(key) ||
-                      missing.some((m) => key === "registrations" && m.startsWith("registrations.")));
+                  const wide = WIDE_TYPES.has(field.type ?? "") || (field.maxLength ?? 0) >= 200;
+                  // Registration rows highlight themselves, one per country.
+                  const isMissing = showMissing && missing.includes(key);
                   return (
                     <div key={key} className={cn(wide && "col-span-2")}>
                       <FieldShell

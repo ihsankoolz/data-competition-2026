@@ -150,7 +150,10 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
                 {s.tasks.map((t) => (
                   <li
                     key={t.task_id}
-                    className={cn("flex items-center gap-2 text-sm", t.status === "waiting" && "text-muted-foreground")}
+                    className={cn(
+                      "flex items-center gap-2 text-sm",
+                      t.status === "waiting" && "text-muted-foreground",
+                    )}
                   >
                     <TaskIcon status={t.status} />
                     <span className="font-medium">{t.assignee_name}</span>

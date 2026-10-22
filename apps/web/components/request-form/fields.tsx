@@ -68,12 +68,16 @@ export function FieldShell({
         </Label>
       )}
       {children}
-      {help && <p className="text-xs text-muted-foreground">{help}</p>}
-      {sensitive && (
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Lock className="size-3" />
-          Visible to Finance only. Never read from email.
+      {sensitive ? (
+        <p
+          className="flex items-start gap-1.5 text-xs text-muted-foreground"
+          data-testid="sensitive-note"
+        >
+          <Lock className="mt-0.5 size-3 shrink-0" />
+          {help?.includes("Finance only") ? help : `Visible to Finance only. ${help ?? ""}`.trim()}
         </p>
+      ) : (
+        help && <p className="text-xs text-muted-foreground">{help}</p>
       )}
       {quote && (
         <p className="flex items-start gap-1.5 text-xs text-muted-foreground" data-testid="quote">
@@ -90,17 +94,26 @@ export function FieldShell({
   );
 }
 
+/** SAP's yes/no flags and ISO country codes, in words. */
+const ENUM_WORDS: Record<string, string> = { tYES: "Yes", tNO: "No" };
+
+function enumLabel(v: string): string {
+  return ENUM_WORDS[v] ?? countryName(v);
+}
+
 type InputProps = {
   id: string;
   field: FieldSchema;
   value: unknown;
   onChange: (value: unknown) => void;
   invalid?: boolean;
+  /** Inside a row: always a single-line input. */
+  compact?: boolean;
 };
 
 /** A select from `oneOf` or `enum`. Values keep their schema type (number stays number). */
 function SelectInput({ id, field, value, onChange, invalid }: InputProps) {
-  const options = optionsOf(field, field.title === "Country" ? countryName : undefined) ?? [];
+  const options = optionsOf(field, enumLabel) ?? [];
   const current = value === undefined || value === null ? "" : String(value);
   return (
     <Select
@@ -160,14 +173,14 @@ function ChipsInput({ id, field, value, onChange }: InputProps) {
   );
 }
 
-function ScalarInput({ id, field, value, onChange, invalid }: InputProps) {
+function ScalarInput({ id, field, value, onChange, invalid, compact }: InputProps) {
   if (field.oneOf || field.enum) {
     return (
       <SelectInput id={id} field={field} value={value} onChange={onChange} invalid={invalid} />
     );
   }
   const text = value === undefined || value === null ? "" : String(value);
-  if (field.type === "string" && (field.maxLength ?? 0) >= 200) {
+  if (!compact && field.type === "string" && (field.maxLength ?? 0) >= 200) {
     return (
       <Textarea
         id={id}
@@ -236,6 +249,7 @@ function RowsInput({ id, field, value, onChange }: InputProps) {
                 </Label>
                 <ScalarInput
                   id={subId}
+                  compact
                   field={sub}
                   value={row[key]}
                   onChange={(v) => update(index, key, v)}

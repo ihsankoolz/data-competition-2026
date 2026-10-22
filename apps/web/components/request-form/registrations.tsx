@@ -72,7 +72,7 @@ export function RegistrationsInput({
             key={row.country}
             data-testid={`registration-${row.country}`}
             className={cn(
-              "grid grid-cols-[8rem_1fr_9rem_10rem] items-end gap-3 rounded-lg border p-3",
+              "grid grid-cols-[10rem_1fr_9rem_10rem] items-end gap-3 rounded-lg border p-3",
               regMissing && "border-destructive/50 bg-destructive/5",
             )}
           >

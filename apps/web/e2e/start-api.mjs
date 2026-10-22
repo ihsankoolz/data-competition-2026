@@ -23,10 +23,14 @@ function findEnvFile() {
   const local = path.join(repoRoot, ".env");
   if (existsSync(local)) return local;
   try {
-    const common = execFileSync("git", ["rev-parse", "--path-format=absolute", "--git-common-dir"], {
-      cwd: repoRoot,
-      encoding: "utf8",
-    }).trim();
+    const common = execFileSync(
+      "git",
+      ["rev-parse", "--path-format=absolute", "--git-common-dir"],
+      {
+        cwd: repoRoot,
+        encoding: "utf8",
+      },
+    ).trim();
     const main = path.join(path.dirname(common), ".env");
     if (existsSync(main)) return main;
   } catch {
