@@ -173,3 +173,10 @@ Each decision: what, why, and what we rejected. Agents must follow these. Change
 - **Evaluation scripts are percent-format `.py` files** (`# %%` cells) in `notebooks/`, run by `make eval`. No Jupyter dependency.
 - **Fixtures layout (contract between generator and seed loader):** `data/fixtures/seasonal_trend/` mirrors the `data-spec.md` §10 layout exactly (all CSVs, `emails.jsonl`, `users.csv`, `ground_truth/`); `data/fixtures/llm_cache/` holds the replay cache (`.gitkeep` until recorded). `users.csv` columns: `user_id, name, title, roles` (pipe-separated `Role` values from `services/api/schemas.py`), `entity, country, backup_for` (nullable `user_id`). User IDs match `services/api/personas.py` (`amy, marcus, weijie, priya, daniel, nurul, meiling, huimin`) plus one backup per approver role. Ground-truth files are never loaded into the app database.
 - **Field encryption:** bank fields are encrypted at rest with `cryptography` Fernet. The key is read from env `FIELD_ENCRYPTION_KEY` at runtime only; tests generate a key at test time. No key is ever hard-coded or committed.
+
+## D-016 Submission and finals constraints (22 Oct, organisers via Ihsan)
+
+- **The GitHub repo must be public at submission.** It stays private until Wed 28 Oct morning, then we run a secret scan and flip it to public before the 10:00 submit. Only `.env.example` is tracked; no keys, tokens or real bank data anywhere in the history.
+- **Finals are a 15-minute presentation + 5-minute Q&A,** with a live demo. The demo must be robust:
+  - `make reset-demo` restores the seeded demo state in **under 10 seconds**.
+  - **Every demo step works in LLM replay mode with no network** (`LLM_MODE=replay`, cache in `data/fixtures/llm_cache/`, see D-010).
