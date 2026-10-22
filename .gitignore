@@ -5,6 +5,8 @@ node_modules/
 .next/
 data/generated/
 data/app.db
+data/e2e.db
+data/e2e.db-*
 *.pyc
 .DS_Store
 

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { ScreenPlaceholder } from "@/components/shell/screen-placeholder";
+import { NewRequestForm } from "@/components/request-form/new-request-form";
 
 export const metadata: Metadata = { title: "New request" };
 
 export default function NewRequestPage() {
-  return <ScreenPlaceholder href="/requests/new" />;
+  return <NewRequestForm />;
 }

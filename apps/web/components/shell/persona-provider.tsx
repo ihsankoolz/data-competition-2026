@@ -30,7 +30,7 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
 
   // Load on mount, on "reload", and when the server comes back online.
   useEffect(() => {
-    if (!online || personas !== null) return;
+    if (!online) return;
     let current = true;
     api.GET("/personas").then(
       (list) => {
@@ -46,7 +46,7 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
     return () => {
       current = false;
     };
-  }, [online, personas, attempt]);
+  }, [online, attempt]);
 
   const persona =
     personas && actingUserId

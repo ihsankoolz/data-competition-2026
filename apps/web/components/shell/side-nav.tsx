@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 
 import { activeHref, NAV_GROUPS } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export function SideNav() {
-  const pathname = usePathname();
-  const active = activeHref(pathname);
-
+function NavLinks({ active }: { active: string | null }) {
   return (
     <nav aria-label="Screens" className="flex flex-col gap-6 px-3 py-6">
       {NAV_GROUPS.map((group) => (
@@ -44,5 +42,22 @@ export function SideNav() {
         </div>
       ))}
     </nav>
+  );
+}
+
+function ActiveNav() {
+  const pathname = usePathname();
+  return <NavLinks active={activeHref(pathname)} />;
+}
+
+/**
+ * On dynamic routes (e.g. /requests/[id]) the pathname is only known at
+ * request time, so the active highlight streams in; the links render at once.
+ */
+export function SideNav() {
+  return (
+    <Suspense fallback={<NavLinks active={null} />}>
+      <ActiveNav />
+    </Suspense>
   );
 }
