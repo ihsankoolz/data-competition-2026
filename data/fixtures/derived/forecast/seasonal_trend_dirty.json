@@ -1,0 +1,811 @@
+{
+ "scenario": "seasonal_trend",
+ "data": "dirty",
+ "setup": "Rolling-origin backtest over the last 12 months: from each of 10 month-ends (one month apart) we forecast the next 3 months using only the data up to that point, then compare with what customers actually ordered. Units per month. Error = WAPE (absolute error as % of volume); bias = over (+) or under (-) forecasting as % of volume. Overall = all 15 country x product series pooled. Customer-level rows cover the 379 intermittent customer x product series (ordering in fewer than 1 month in 1.32 on average before the first origin). Dirty: the models learn from the spreadsheet view (POs plus leaked enquiries, purchase requests and master data requests, raw customer records) but are scored against the real confirmed POs.",
+ "overall": [
+  {
+   "method": "excel_6m",
+   "label": "Excel average (last 6 months)",
+   "wape_pct": 15.0,
+   "bias_pct": 3.1
+  },
+  {
+   "method": "excel_12m",
+   "label": "Excel average (last 12 months)",
+   "wape_pct": 15.5,
+   "bias_pct": 0.1
+  },
+  {
+   "method": "combination",
+   "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+   "wape_pct": 15.2,
+   "bias_pct": 1.1
+  }
+ ],
+ "series": [
+  {
+   "level": "country_product",
+   "country": "ID",
+   "product": "A",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 11.0,
+     "bias_pct": 5.0
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 9.8,
+     "bias_pct": 6.1
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 11.7,
+     "bias_pct": 5.5
+    }
+   ],
+   "winner": "excel_12m"
+  },
+  {
+   "level": "country_product",
+   "country": "ID",
+   "product": "B",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 340.5,
+     "bias_pct": 340.5
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 405.4,
+     "bias_pct": 405.4
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 419.1,
+     "bias_pct": 419.1
+    }
+   ],
+   "winner": "excel_6m"
+  },
+  {
+   "level": "country_product",
+   "country": "ID",
+   "product": "C",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 66.4,
+     "bias_pct": 18.3
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 65.0,
+     "bias_pct": 13.9
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 55.6,
+     "bias_pct": 11.0
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "MY",
+   "product": "A",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 26.2,
+     "bias_pct": 15.2
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 24.7,
+     "bias_pct": 15.3
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 23.9,
+     "bias_pct": 12.5
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "MY",
+   "product": "B",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 222.7,
+     "bias_pct": 209.1
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 178.8,
+     "bias_pct": 161.4
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 153.2,
+     "bias_pct": 129.9
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "MY",
+   "product": "C",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 64.8,
+     "bias_pct": 2.3
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 57.9,
+     "bias_pct": -7.7
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 45.1,
+     "bias_pct": -13.0
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "SG",
+   "product": "A",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 13.4,
+     "bias_pct": 5.5
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 13.0,
+     "bias_pct": 5.7
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 12.2,
+     "bias_pct": 6.4
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "SG",
+   "product": "B",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 433.3,
+     "bias_pct": 433.3
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 412.9,
+     "bias_pct": 412.9
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 402.3,
+     "bias_pct": 402.3
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "SG",
+   "product": "C",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 62.4,
+     "bias_pct": 14.8
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 54.9,
+     "bias_pct": 10.2
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 56.9,
+     "bias_pct": 4.5
+    }
+   ],
+   "winner": "excel_12m"
+  },
+  {
+   "level": "country_product",
+   "country": "TH",
+   "product": "A",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 12.5,
+     "bias_pct": 7.3
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 13.3,
+     "bias_pct": 6.3
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 12.8,
+     "bias_pct": 6.8
+    }
+   ],
+   "winner": "excel_6m"
+  },
+  {
+   "level": "country_product",
+   "country": "TH",
+   "product": "B",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 249.7,
+     "bias_pct": 221.0
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 221.7,
+     "bias_pct": 201.0
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 214.9,
+     "bias_pct": 202.8
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "TH",
+   "product": "C",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 66.5,
+     "bias_pct": 48.9
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 51.4,
+     "bias_pct": 33.9
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 30.9,
+     "bias_pct": 22.4
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "country_product",
+   "country": "VN",
+   "product": "A",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 13.8,
+     "bias_pct": -6.4
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 16.6,
+     "bias_pct": -15.2
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 15.5,
+     "bias_pct": -11.4
+    }
+   ],
+   "winner": "excel_6m"
+  },
+  {
+   "level": "country_product",
+   "country": "VN",
+   "product": "B",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 200.4,
+     "bias_pct": 198.8
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 233.9,
+     "bias_pct": 233.9
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 229.2,
+     "bias_pct": 228.6
+    }
+   ],
+   "winner": "excel_6m"
+  },
+  {
+   "level": "country_product",
+   "country": "VN",
+   "product": "C",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 66.6,
+     "bias_pct": -6.9
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 63.3,
+     "bias_pct": -18.7
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 44.9,
+     "bias_pct": -18.7
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "product",
+   "country": null,
+   "product": "A",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 7.8,
+     "bias_pct": 2.6
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 6.5,
+     "bias_pct": -0.3
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 7.0,
+     "bias_pct": 2.3
+    }
+   ],
+   "winner": "excel_12m"
+  },
+  {
+   "level": "product",
+   "country": null,
+   "product": "B",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 271.1,
+     "bias_pct": 271.1
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 273.1,
+     "bias_pct": 273.1
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 266.5,
+     "bias_pct": 266.5
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "product",
+   "country": null,
+   "product": "C",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 42.1,
+     "bias_pct": 13.1
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 40.6,
+     "bias_pct": 3.4
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 31.0,
+     "bias_pct": 2.0
+    }
+   ],
+   "winner": "combination"
+  },
+  {
+   "level": "customer_product",
+   "country": null,
+   "product": "A",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 88.4,
+     "bias_pct": 8.8
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 88.1,
+     "bias_pct": 7.4
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 91.3,
+     "bias_pct": 9.3
+    },
+    {
+     "method": "tsb",
+     "label": "Intermittent-demand method (TSB)",
+     "wape_pct": 87.5,
+     "bias_pct": 2.5
+    }
+   ],
+   "winner": "tsb"
+  },
+  {
+   "level": "customer_product",
+   "country": null,
+   "product": "B",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 495.3,
+     "bias_pct": 347.1
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 509.9,
+     "bias_pct": 365.4
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 540.1,
+     "bias_pct": 395.9
+    },
+    {
+     "method": "tsb",
+     "label": "Intermittent-demand method (TSB)",
+     "wape_pct": 497.5,
+     "bias_pct": 351.4
+    }
+   ],
+   "winner": "excel_6m"
+  },
+  {
+   "level": "customer_product",
+   "country": null,
+   "product": "C",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 175.7,
+     "bias_pct": 36.7
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 170.8,
+     "bias_pct": 33.6
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 134.6,
+     "bias_pct": 34.9
+    },
+    {
+     "method": "tsb",
+     "label": "Intermittent-demand method (TSB)",
+     "wape_pct": 166.8,
+     "bias_pct": 22.4
+    }
+   ],
+   "winner": "combination"
+  }
+ ],
+ "chart": [
+  {
+   "month": "2023-10-01",
+   "actual": 878.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2023-11-01",
+   "actual": 1065.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2023-12-01",
+   "actual": 1491.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-01-01",
+   "actual": 986.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-02-01",
+   "actual": 968.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-03-01",
+   "actual": 1035.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-04-01",
+   "actual": 1111.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-05-01",
+   "actual": 1113.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-06-01",
+   "actual": 667.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-07-01",
+   "actual": 968.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-08-01",
+   "actual": 1133.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-09-01",
+   "actual": 1293.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-10-01",
+   "actual": 1484.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-11-01",
+   "actual": 1287.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2024-12-01",
+   "actual": 2100.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-01-01",
+   "actual": 868.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-02-01",
+   "actual": 1335.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-03-01",
+   "actual": 1236.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-04-01",
+   "actual": 1538.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-05-01",
+   "actual": 1101.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-06-01",
+   "actual": 1134.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-07-01",
+   "actual": 1033.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-08-01",
+   "actual": 1570.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-09-01",
+   "actual": 1610.0,
+   "excel_6m": null,
+   "combination": null
+  },
+  {
+   "month": "2025-10-01",
+   "actual": 1710.0,
+   "excel_6m": 1470.67,
+   "combination": 1522.75
+  },
+  {
+   "month": "2025-11-01",
+   "actual": 2147.0,
+   "excel_6m": 1477.0,
+   "combination": 1508.85
+  },
+  {
+   "month": "2025-12-01",
+   "actual": 1945.0,
+   "excel_6m": 1643.17,
+   "combination": 1872.29
+  },
+  {
+   "month": "2026-01-01",
+   "actual": 2060.0,
+   "excel_6m": 1749.83,
+   "combination": 1550.66
+  },
+  {
+   "month": "2026-02-01",
+   "actual": 1468.0,
+   "excel_6m": 1958.17,
+   "combination": 1746.55
+  },
+  {
+   "month": "2026-03-01",
+   "actual": 1820.0,
+   "excel_6m": 1971.0,
+   "combination": 1710.77
+  },
+  {
+   "month": "2026-04-01",
+   "actual": 1712.0,
+   "excel_6m": 2018.0,
+   "combination": 1870.94
+  },
+  {
+   "month": "2026-05-01",
+   "actual": 2310.0,
+   "excel_6m": 2024.33,
+   "combination": 1747.56
+  },
+  {
+   "month": "2026-06-01",
+   "actual": 1980.0,
+   "excel_6m": 2031.67,
+   "combination": 1859.27
+  },
+  {
+   "month": "2026-07-01",
+   "actual": 2084.0,
+   "excel_6m": 2043.83,
+   "combination": 1741.25
+  },
+  {
+   "month": "2026-08-01",
+   "actual": 2332.0,
+   "excel_6m": 2043.83,
+   "combination": 1968.12
+  },
+  {
+   "month": "2026-09-01",
+   "actual": 2102.0,
+   "excel_6m": 2043.83,
+   "combination": 1976.65
+  }
+ ],
+ "chart_series": "Vietnam, Product A (units)",
+ "honest_note": "In seasonal_trend the two are effectively tied: our method's error is 15.2% of volume against 15.0% for the 6-month Excel average. Ours is better on 10 of 15 country x product series. A 12-month Excel average (15.5%) does as well as ours, so we do not claim a better country-level forecast here. Planning from the spreadsheet view biases every method upwards (Excel average +3.1%), because leaked enquiries and requests are counted as orders."
+}
