@@ -13,6 +13,7 @@ simulated clock.
 
 from __future__ import annotations
 
+import json
 import logging
 
 from fastapi import HTTPException
@@ -167,22 +168,32 @@ def route(session: Session, req: m.Request, actor: Actor) -> list[m.ApprovalTask
     return tasks
 
 
-def _edited_since_info_request(session: Session, req: m.Request) -> bool:
-    """Did the requestor change any field after the last time information was requested?"""
+# An approval that was already given is kept when the requestor answers a question, with one
+# safety exception: if a field that role signed off on changed after the question was asked,
+# that role looks again. (Finance approved a bank account; the requestor swapping the account
+# number must not ride on the old approval.)
+REAPPROVAL_FIELDS: dict[str, tuple[str, ...]] = {
+    "finance": (bankfields.BANK_KEY, "CreditLimit", "PayTermsGrpCode"),
+}
+
+
+def _fields_edited_since_info_request(session: Session, req: m.Request) -> set[str]:
+    """Top-level form fields the requestor changed after information was last requested."""
     rows = session.execute(
-        select(m.AuditLog.id, m.AuditLog.action, m.AuditLog.payload)
+        select(m.AuditLog.action, m.AuditLog.payload)
         .where(
             m.AuditLog.request_id == req.req_id,
             m.AuditLog.action.in_(("state_change", "field_edit")),
         )
         .order_by(m.AuditLog.id)
     ).all()
-    edited = False
-    for _id, action, payload in rows:
-        if action == "state_change" and '"to":"INFO_REQUESTED"' in payload:
-            edited = False
+    edited: set[str] = set()
+    for action, payload in rows:
+        data = json.loads(payload) if isinstance(payload, str) else dict(payload or {})
+        if action == "state_change" and data.get("to") == "INFO_REQUESTED":
+            edited = set()
         elif action == "field_edit":
-            edited = True
+            edited.add(str(data.get("field", "")).split("[")[0].split(".")[0])
     return edited
 
 
@@ -241,50 +252,62 @@ def _resync_tasks(
             )  # fmt: skip
 
 
+def _resubmit(session: Session, req: m.Request, actor: Actor, names: dict[str, str]) -> None:
+    """INFO_REQUESTED -> IN_APPROVAL. The requestor answered, so:
+    - approvals already given stay (except Finance when what Finance signed off changed);
+    - the task(s) that asked for information reopen with a fresh SLA and their approver is told;
+    - the rule table is applied again: a newly needed task (say a new selling country for an IVD
+      item) is added, a no-longer-needed one is cancelled. The whole routing is not rebuilt.
+    """
+    tasks = tasks_for(session, req.req_id)
+    changed = _fields_edited_since_info_request(session, req)
+    _resync_tasks(session, req, actor, tasks, names)
+    reopened: list[str] = []
+    for task in tasks:
+        if task.status == "info_requested":
+            _open_task(task)
+            task.decided_at = task.decided_by = None
+            _audit_task(
+                session, actor.user_id, req, task, f"{role_label(task)} approval reopened",
+                action="reopen",
+            )  # fmt: skip
+            notify(
+                session, task.assignee_user_id, "task_assigned", req,
+                f"{actor.name} answered your question on {_describe(req, names)}. "
+                "It is back in your inbox.", task,
+            )  # fmt: skip
+            reopened.append(role_label(task))
+        elif (
+            task.status == "approved"
+            and task.stage == 1
+            and changed & set(REAPPROVAL_FIELDS.get(task.role, ()))
+        ):
+            _open_task(task)
+            task.decided_at = task.decided_by = None
+            _audit_task(
+                session, actor.user_id, req, task,
+                f"{role_label(task)} approval reopened because the request changed",
+                action="reopen",
+            )  # fmt: skip
+            notify(
+                session, task.assignee_user_id, "task_assigned", req,
+                f"{actor.name} changed {_describe(req, names)} after you approved it. "
+                "Please look at it again.", task,
+            )  # fmt: skip
+            reopened.append(role_label(task))
+    again = f"; back with {', '.join(reopened)}" if reopened else ""
+    audit_state(
+        session, req, actor.user_id, S.IN_APPROVAL,
+        f"{actor.name} answered and sent the request back for approval{again}",
+    )  # fmt: skip
+    advance_if_complete(session, req, actor, tasks_for(session, req.req_id), names)
+
+
 def submit(session: Session, req: m.Request, actor: Actor) -> None:
-    """DRAFT -> SUBMITTED -> IN_APPROVAL, or INFO_REQUESTED -> IN_APPROVAL (tasks reopen)."""
+    """DRAFT -> SUBMITTED -> IN_APPROVAL, or INFO_REQUESTED -> IN_APPROVAL (see `_resubmit`)."""
     names = user_names(session)
     if req.state == S.INFO_REQUESTED:
-        tasks = tasks_for(session, req.req_id)
-        edited = _edited_since_info_request(session, req)
-        for task in tasks:
-            if edited and task.status == "approved" and task.stage == 1:
-                # What they approved is not what is there now: they decide again.
-                _open_task(task)
-                task.decided_at = task.decided_by = None
-                _audit_task(
-                    session, actor.user_id, req, task,
-                    f"{role_label(task)} approval reopened because the request changed",
-                    action="reopen",
-                )  # fmt: skip
-                notify(
-                    session, task.assignee_user_id, "task_assigned", req,
-                    f"{actor.name} changed {_describe(req, names)} after you approved it. "
-                    "Please look at it again.", task,
-                )  # fmt: skip
-            elif task.status == "info_requested":
-                _open_task(task)
-                _audit_task(
-                    session, actor.user_id, req, task, f"{role_label(task)} approval reopened"
-                )
-                notify(
-                    session,
-                    task.assignee_user_id,
-                    "task_assigned",
-                    req,
-                    f"{actor.name} answered your question on {_describe(req, names)}. "
-                    "It is back in your inbox.",
-                    task,
-                )
-        _resync_tasks(session, req, actor, tasks, names)
-        audit_state(
-            session,
-            req,
-            actor.user_id,
-            S.IN_APPROVAL,
-            f"{actor.name} sent the request back for approval",
-        )
-        advance_if_complete(session, req, actor, tasks_for(session, req.req_id), names)
+        _resubmit(session, req, actor, names)
         return
     audit_state(session, req, actor.user_id, S.SUBMITTED, f"{actor.name} submitted the request")
     route(session, req, actor)

@@ -19,6 +19,7 @@ from services.api.schemas import (
     ApprovalTask,
     DedupDecisionOut,
     FieldIssue,
+    InfoRequestView,
     RequestDetail,
     RequestSummary,
     Stage,
@@ -143,7 +144,7 @@ def allowed_actions(
     owner = actor.user_id == req.requestor_user_id and actor.has("requestor")
     if owner and req.state in (m.RequestState.DRAFT, m.RequestState.INFO_REQUESTED):
         out += ["edit", "submit"]
-        if req.state == m.RequestState.DRAFT and req.domain.value in ("customer", "vendor"):
+        if req.domain.value in ("customer", "vendor"):
             out.append("decide_duplicate")
     if req.state in OPEN_STATES and actor.user_id != req.requestor_user_id:
         stage2 = [t for t in tasks if t.stage == 2]
@@ -217,6 +218,35 @@ def current_issues(req: m.Request, plain: dict[str, Any]) -> list[FieldIssue]:
     return validate_fields(req.domain.value, req.country, plain, clock.now().date())
 
 
+def info_request_view(
+    req: m.Request, tasks: list[m.ApprovalTaskRow], names: dict[str, str]
+) -> InfoRequestView | None:
+    """While INFO_REQUESTED: the most recent question and who asked it."""
+    if req.state != m.RequestState.INFO_REQUESTED:
+        return None
+    asked = [t for t in tasks if t.status == "info_requested" and t.decided_at is not None]
+    if not asked:
+        return None
+    task = max(asked, key=lambda t: (t.decided_at, t.task_id))
+    who = task.decided_by or task.assignee_user_id
+    return InfoRequestView(
+        task_id=task.task_id,
+        asked_by_user_id=who,
+        asked_by_name=names.get(who, who),
+        role=task.role,  # type: ignore[arg-type]
+        question=task.comment or "",
+        asked_at=task.decided_at,  # type: ignore[arg-type]
+    )
+
+
+def linked_card_name(session: Session, req: m.Request) -> str | None:
+    if not req.linked_card_code:
+        return None
+    return session.scalar(
+        select(m.BusinessPartner.CardName).where(m.BusinessPartner.CardCode == req.linked_card_code)
+    )
+
+
 def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetail:
     clock.now()  # (SLA states are stored; the sweep keeps them current)
     names = user_names(session)
@@ -232,6 +262,8 @@ def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetai
         prefill_quotes={k: str(v) for k, v in (req.prefill_quotes or {}).items()},
         dedup_decision=decision_model(decision, names),
         linked_card_code=req.linked_card_code,
+        linked_card_name=linked_card_name(session, req),
+        info_request=info_request_view(req, tasks, names),
         stages=stage_models(tasks, names),
         allowed_actions=allowed_actions(actor, req, tasks, decision is not None),  # type: ignore[arg-type]
         issues=current_issues(req, plain),

@@ -328,9 +328,11 @@ def decide_duplicate(req_id: str, body: DedupDecisionIn, actor: CurrentUser) -> 
         domain = req.domain.value
         if domain not in ("customer", "vendor"):
             raise HTTPException(409, "Duplicate checks only apply to customers and vendors.")
-        if req.state != m.RequestState.DRAFT:
+        if req.state not in EDITABLE:
             raise HTTPException(
-                409, "A duplicate decision can only be made while the request is a draft."
+                409,
+                "A duplicate decision can only be made while the request is a draft "
+                "or waiting for your answer.",
             )
         link: m.BusinessPartner | None = None
         if body.action == "link_to_existing":
@@ -383,6 +385,9 @@ def decide_duplicate(req_id: str, body: DedupDecisionIn, actor: CurrentUser) -> 
         )  # fmt: skip
         if link is not None:
             req.linked_card_code = link.CardCode
+            for task in tasks_for(session, req_id):  # (only after a question; none for a draft)
+                if task.status in ("pending", "waiting", "info_requested"):
+                    task.status = "cancelled"
             engine.audit_state(
                 session, req, actor.user_id, m.RequestState.LINKED_TO_EXISTING,
                 f"Linked to {link.CardCode}; no new record and no approvals needed",
