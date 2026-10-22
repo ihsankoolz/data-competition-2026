@@ -11,7 +11,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from services.api import bankfields, clock, sap_readback
+from services.api import bankfields, clock, item_suggestions, sap_readback
 from services.api.db import models as m
 from services.api.deps import Actor
 from services.api.formfields import missing_form_fields, title_of
@@ -260,6 +260,7 @@ def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetai
         missing_fields=missing_form_fields(req.domain.value, req.country, plain),
         source_email_id=req.source_email_id,
         prefill_quotes={k: str(v) for k, v in (req.prefill_quotes or {}).items()},
+        prefill_suggested=item_suggestions.shown_reasons(session, req, plain),
         dedup_decision=decision_model(decision, names),
         linked_card_code=req.linked_card_code,
         linked_card_name=linked_card_name(session, req),

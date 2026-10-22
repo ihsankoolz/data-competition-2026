@@ -9,7 +9,14 @@ from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from ds.interpreter.api import interpret_email
-from services.api import audit_view, bankfields, clock, dedup_service, sap_readback
+from services.api import (
+    audit_view,
+    bankfields,
+    clock,
+    dedup_service,
+    item_suggestions,
+    sap_readback,
+)
 from services.api.audit import AuditAction, append_audit, audit_field_edit
 from services.api.db import models as m
 from services.api.db.session import session_scope
@@ -238,6 +245,11 @@ def create_request_from_email(email_id: str, actor: CurrentUser) -> RequestDetai
         country = actor.country if actor.country in ("SG", "MY", "ID", "VN", "TH") else "SG"
     entity = actor.entity if actor.entity in ("SPD", "QTS", "QTG") else "SPD"
     with session_scope(write=True) as session:
+        if interp.domain == "item":  # deterministic suggestions; the email's own values win
+            for name, (value, _why) in item_suggestions.suggest_item_fields(
+                str(fields.get("ItemName") or ""), entity, fields, item_suggestions.catalogue(session)
+            ).items():
+                fields.setdefault(name, value)
         req = _new_request(
             session, actor, interp.domain, entity, country, fields, email_id, quotes
         )  # fmt: skip
