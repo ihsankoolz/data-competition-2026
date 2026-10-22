@@ -9,7 +9,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
-    "gen:api": "openapi-typescript lib/api/openapi.json -o lib/api/schema.d.ts"
+    "gen:api": "openapi-typescript lib/api/openapi.json -o lib/api/schema.d.ts --default-non-nullable false"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

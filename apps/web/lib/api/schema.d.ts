@@ -99,12 +99,12 @@ export interface components {
              * Hours
              * @default 0
              */
-            hours: number;
+            hours?: number;
             /**
              * Days
              * @default 0
              */
-            days: number;
+            days?: number;
         };
         /**
          * ClockState

@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
+/** Where the FastAPI backend runs. The browser reaches it via /api/*. */
+const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8000";
+
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
@@ -11,6 +13,12 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async redirects() {
+    return [{ source: "/", destination: "/inbox", permanent: false }];
+  },
+  async rewrites() {
+    return [{ source: "/api/:path*", destination: `${API_ORIGIN}/:path*` }];
   },
 };
 
