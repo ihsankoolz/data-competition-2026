@@ -40,7 +40,9 @@ Organisers confirmed: no dataset is provided; synthetic data is fine "as long as
 ## 4. Raw SAP master (`bp_records.csv`) — this is what the MDM team sees today
 
 - Each golden customer gets one record per entity it buys from (CardType `cCustomer`), **plus injected duplicates**.
-- Target totals: ~350 golden → **~560 raw customer records**; ~20% of golden customers have at least one *true* duplicate beyond legitimate entity records.
+- In one shared B1, those **per-entity copies are true duplicates too** (the easy kind: each entity set up its own record for the same customer). They are not labelled in `dup_pairs.csv`, but they share a `golden_id` in `bp_golden_map.csv` and are scored as true matches (D-015). They also inflate customer counts in the before-merge regional view.
+- Target totals: ~350 golden → **~560 raw customer records**; ~20% of golden customers have at least one *injected* duplicate on top of the per-entity copies.
+- `U_Entity` is the entity that **created** the record. Orders carry their own `entity` from the product family, so a record created by one entity can carry another entity's orders (e.g. a migrated record created by QTS carrying SPD Product A orders). D-015.
 - Columns mirror SAP: `CardCode`, `CardName`, `CardType`, `GroupCode`, `FederalTaxID`, `Currency`, `PayTermsGrpCode`, `CreditLimit`, `EmailAddress`, `Phone1`, `City`, `Country`, `U_Entity`, `CreateDate`, `CreatedBy`, plus hidden ground-truth column `golden_id` (stored only in `ground_truth/`, never in the app's raw table).
 
 ### 4.1 Duplicate types to inject (labelled in `ground_truth/dup_pairs.csv`)
@@ -131,7 +133,7 @@ Organisers confirmed: no dataset is provided; synthetic data is fine "as long as
 | ID | Persona | Content |
 |---|---|---|
 | DEMO-01 | Marcus (QTG, VN) | "Pls create new customer Benh vien Cho Ray, HCMC, MST 0301234567, for service contract" → duplicate of existing SPD record "Bệnh viện Chợ Rẫy" |
-| DEMO-02 | Amy (SPD, SG) | New item "Rapid Dengue NS1 Ag Test Kit", selling in SG, MY, VN; no registration numbers given → missing fields + Q/R routing |
+| DEMO-02 | Amy (SPD, SG) | New item "Malaria Pf/Pan Antigen Rapid Test Kit" (IVD; not in `items.csv`), selling in SG, MY, VN; no registration numbers given → missing fields + Q/R routing (D-015) |
 | DEMO-03 | Customer (ID) | "Mohon dikirim 50 box A-DEN-NS1, PO RSCM/2026/118" → purchase_order |
 | DEMO-04 | Customer (TH) | "Could you quote 2 units of haematology analyser for Siriraj?" → enquiry |
 | DEMO-05 | Customer (SG) | "Following up on our order last week, any ETA?" → follow_up |
@@ -178,7 +180,7 @@ Concrete choices made while building `ds/generator/`. They add detail; they do n
 
 - **Code layout:** `params.yaml` (all numbers; `common` + per-scenario overrides, resolved copy written to the output), `curated.py` (real public hospitals, the 6 invented groups, 15 similar-site pairs, demo anchors), `names.py` (templated SG/MY names, Faker `id_ID`/`vi_VN` only for doctor names in clinic names), `variants.py` (one transform per `dup_type`), `master.py`, `catalog.py`, `core.py`.
 - **Determinism:** one `numpy` RNG per named stream (`default_rng([seed, crc32(name)])`), so adding a stream never shifts existing output. CSVs are UTF-8 without BOM, `\n` endings, fixed column order. The test regenerates through the CLI in a fresh process with a different `PYTHONHASHSEED` and byte-compares every file.
-- **Legitimate entity records vs true duplicates:** §4 says each golden customer gets one record per entity it buys from (A→SPD, B→QTS, C→QTG), plus injected duplicates. The per-entity records are `record_role=entity_record` in `ground_truth/bp_golden_map.csv` and are **not** in `dup_pairs.csv`, so the §4.1 shares apply to the injected duplicates only. They still share a `golden_id`, so any dedup evaluation that scores all record pairs should treat them as true matches (use `bp_golden_map.csv`) and report them as their own row.
+- **Per-entity copies vs injected duplicates:** §4 says each golden customer gets one record per entity it buys from (A→SPD, B→QTS, C→QTG), plus injected duplicates. The per-entity records are `record_role=entity_record` in `ground_truth/bp_golden_map.csv` and are **not** in `dup_pairs.csv`, so the §4.1 shares apply to the injected duplicates only. They are still true duplicates (D-015): the dedup evaluation scores every same-`golden_id` pair as a true match (via `bp_golden_map.csv`) and reports "existing per-entity copies" as its own row.
 - **`bp_golden_map.csv`:** `CardCode, golden_id, record_role (primary | entity_record | duplicate | migration_new), dup_of, family`. `golden_id` is never in `bp_records.csv`.
 - **`dup_pairs.csv`:** `golden_id, card_code_a (source), card_code_b (duplicate), dup_type, tax_id_state (same | blank | malformed), is_migration, entity_a, entity_b`. Migration new records are true duplicates and appear here with `is_migration=true`. Non-`missing_tax_id` duplicates carry the tax ID 55% of the time, so the tax-ID layer cannot find everything on its own.
 - **`hard_negatives.csv`:** one row per *record* pair: every customer record of the golden × its vendor twin (`customer_vendor_pair`), and every record × record across group members in different countries or across similar-site pairs. Golden-level counts (seed 42): 10 C/V, 12 cross-country group pairs (6 groups), 15 similar-site pairs; 88 record-level rows.
