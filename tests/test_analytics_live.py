@@ -31,6 +31,7 @@ def test_every_precomputed_forecast_run_is_served(client, scenario: str, data: s
     r = client.get(f"/analytics/forecast/{scenario}?data={data}", headers=HEADERS)
     assert r.status_code == 200, r.text
     assert r.json()["scenario"] == scenario and r.json()["data"] == data
+    assert len(r.json()["bias_by_country"]) == 20 and r.json()["bias_note"]  # D-020 item 1
 
 
 def test_summary_lists_all_six_runs(client) -> None:
