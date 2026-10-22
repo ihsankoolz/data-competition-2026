@@ -126,6 +126,35 @@ def test_unknown_email_falls_back_to_keywords_without_raising(monkeypatch, tmp_p
     assert it.fields == []
 
 
+def test_demo06_offline_fallback_still_flags_and_queues_for_review(monkeypatch, tmp_path):
+    monkeypatch.setenv("LLM_CACHE_DIR", str(tmp_path))  # AI offline: empty cache
+    it = run("DEMO-06")
+    assert it.method == "keyword_fallback"
+    assert it.injection_suspected
+    assert it.needs_review
+
+
+def test_bank_details_in_subject_and_body_never_reach_the_model(monkeypatch):
+    import ds.interpreter.api as api_mod
+
+    seen: list[str] = []
+
+    def fake_call(task, prompt_version, system, user_input, output_model, *a, **kw):
+        seen.append(user_input)
+        return llm.LLMResult[output_model](
+            status="offline", task=task, model="m", prompt_version=prompt_version, cache_key="k"
+        )
+
+    monkeypatch.setattr(api_mod, "call_structured", fake_call)
+    subject = "New vendor, Account No 555-123456-9, SWIFT ABCDSGSGXXX"
+    body = "Bank: IBAN GB29NWBK60161331926819, acct 9988776655. Please create the vendor."
+    it = api_mod.interpret_email("X-4", subject, body, "ap@vendor.example")
+    assert it.bank_details_stripped
+    assert len(seen) == 1
+    for secret in ("555-123456-9", "ABCDSGSGXXX", "GB29NWBK60161331926819", "9988776655"):
+        assert secret not in seen[0]
+
+
 def test_fallback_never_raises_on_empty_input(monkeypatch, tmp_path):
     monkeypatch.setenv("LLM_CACHE_DIR", str(tmp_path))
     it = interpret_email("X-3", "", "", "")

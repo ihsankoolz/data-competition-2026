@@ -59,11 +59,17 @@ _ALLOWED: dict[str, set[str]] = {
     "cost_center": {"center_name", "entity", "effective_from", "country"},
 }
 
-# Deterministic second check for prompt injection (OR-ed with the model's own flag).
+# Deterministic second check for prompt injection (OR-ed with the model's own flag). Generic
+# phrasings of the usual attacks, not tuned to any one email.
 _INJECTION = re.compile(
-    r"ignore (?:all |any )?(?:previous|prior|above) instructions|system note|"
-    r"note to (?:the )?ai|ai assistant|approve this (?:vendor|customer|request)|"
-    r"(?:change|update) the bank (?:account|details) of|set credit terms",
+    r"\bignore (?:all |any |the )?(?:previous |prior |above |earlier )?instructions\b|"
+    r"\bdisregard (?:all |any |the |your )?(?:previous |prior |above )?"
+    r"(?:instructions|rules|guidelines)\b|"
+    r"\byou are (?:an? |the )?(?:ai|assistant|language model|chatbot)\b|"
+    r"\bsystem (?:note|prompt|message|instruction)s? (?:to|for)\b|"
+    r"\bapprove (?:this|the) (?:vendor|customer|supplier|request) "
+    r"(?:immediately|now|right away)\b|"
+    r"\bchange (?:the )?bank (?:account|details)\b",
     re.IGNORECASE,
 )
 
@@ -137,14 +143,15 @@ def _fallback(
     email_id: str, subject: str, body: str, stripped: bool, status: str, message: str | None
 ) -> Interpretation:
     kw = classify_keywords(subject, body)
+    injection = bool(_INJECTION.search(f"{subject}\n{body}"))
     return Interpretation(
         email_id=email_id,
         category=kw.category,
         confidence=kw.confidence,
         domain=kw.domain,
         bank_details_stripped=stripped,
-        injection_suspected=bool(_INJECTION.search(f"{subject}\n{body}")),
-        needs_review=kw.confidence < REVIEW_BELOW,
+        injection_suspected=injection,
+        needs_review=kw.confidence < REVIEW_BELOW or injection,
         method="keyword_fallback",
         ai_status="error" if status == "error" else "offline",
         ai_message=message or "AI offline: showing the keyword rules' best guess",
