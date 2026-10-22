@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data and outputs
+data/
+outputs/
+*.csv
+*.parquet
+*.xlsx
+*.zip
+*.pkl
+*.joblib
+*.h5
+
+# Secrets
+.env
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
