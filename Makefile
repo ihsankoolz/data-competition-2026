@@ -2,6 +2,10 @@
 SEED ?= 42
 SCENARIO ?= seasonal_trend
 WEB := apps/web
+# Web recipes call node on each tool's JS entry point instead of going through pnpm/.cmd shims:
+# on Windows those shims run under cmd.exe, which may not see node even when Git Bash does
+# ('"node"' is not recognized). Override if node is not on PATH: make dev NODE="/c/Program Files/nodejs/node"
+NODE ?= node
 
 # Load .env (never committed). Values are stripped because .env.example has inline comments,
 # and only non-empty values are exported so an unset key still fails loudly.
@@ -34,7 +38,7 @@ dev-sap:
 	uv run uvicorn services.sap_mock.main:app --port 8001
 
 dev-web:
-	cd $(WEB) && pnpm dev --port 3000
+	cd $(WEB) && "$(NODE)" node_modules/next/dist/bin/next dev --port 3000
 
 reset-demo:       ## restore the seeded demo state: asks the running API (same code as the Reset demo button), else reloads data/app.db directly (needs FIELD_ENCRYPTION_KEY in .env)
 	uv run python -m services.api.db.seed --fixtures data/fixtures/seasonal_trend
@@ -45,7 +49,7 @@ test-py:
 	uv run pytest
 
 test-web:
-	cd $(WEB) && pnpm typecheck && pnpm lint
+	cd $(WEB) && "$(NODE)" node_modules/next/dist/bin/next typegen && "$(NODE)" node_modules/typescript/bin/tsc --noEmit && "$(NODE)" node_modules/eslint/bin/eslint.js
 
 eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
 	LLM_MODE=replay uv run python notebooks/eval_dedup.py
@@ -53,7 +57,7 @@ eval:             ## dedup, classifier and forecast evaluations -> docs/results.
 
 api-types:        ## regenerate the typed API client from the FastAPI OpenAPI spec
 	uv run python -m services.api.export_openapi $(WEB)/lib/api/openapi.json
-	cd $(WEB) && pnpm gen:api
+	cd $(WEB) && "$(NODE)" node_modules/openapi-typescript/bin/cli.js lib/api/openapi.json -o lib/api/schema.d.ts --default-non-nullable false
 
 record:           ## record the LLM replay cache: 88 emails + dedup judge cases (needs ANTHROPIC_API_KEY; prints a cost estimate, stops over US$5)
 	LLM_MODE=record uv run python -m ds.interpreter.record
