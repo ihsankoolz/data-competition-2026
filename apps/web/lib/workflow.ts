@@ -42,7 +42,7 @@ const ROLE_TEXT: Record<ApprovalTask["role"], string> = {
   finance: "Finance",
   quality_regulatory: "Quality/Regulatory",
   business_support: "Business Support",
-  mdm_analyst: "MDM publish to SAP",
+  mdm_analyst: "Publishes to SAP",
 };
 
 export function roleLabel(task: Pick<ApprovalTask, "role" | "country">): string {

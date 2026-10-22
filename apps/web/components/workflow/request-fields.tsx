@@ -27,10 +27,30 @@ function show(key: string, value: unknown, schema: FormSchema | null): string {
         .map((r) => `${countryName(r.country ?? "")}: ${r.reg_no || "not given"}`)
         .join("; ");
     }
-    return JSON.stringify(value);
+    return value
+      .map((v) => plain(v))
+      .filter(Boolean)
+      .join("; ");
   }
   if (typeof value === "string")
     return WORDS[value] ?? (key === "Country" ? countryName(value) : value);
+  return plain(value);
+}
+
+/** Any nested value as words: objects become "Key: value, Key: value", never "[object Object]". */
+function plain(value: unknown): string {
+  if (value === null || value === undefined || value === "") return "";
+  if (typeof value === "string") return WORDS[value] ?? value;
+  if (Array.isArray(value)) return value.map(plain).filter(Boolean).join("; ");
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([k, v]) => {
+        const text = plain(v);
+        return text ? `${k}: ${text}` : "";
+      })
+      .filter(Boolean)
+      .join(", ");
+  }
   return String(value);
 }
 

@@ -42,7 +42,8 @@ const DONE: Record<Action, string> = {
 };
 
 function explain(e: unknown): string {
-  if (isApiError(e) && e.status === 501) return "Approvals aren't switched on in this build yet.";
+  if (isApiError(e) && e.status === 501)
+    return "Approvals aren't available right now. Try again in a moment.";
   return isApiError(e) ? e.message : "Your decision was not saved. Please try again.";
 }
 
@@ -118,6 +119,7 @@ export function DecisionActions({
           disabled={busy !== null}
           onClick={() => {
             setComment("");
+            setError(null);
             setAsking("ask_info");
           }}
           data-testid="ask-info"
@@ -132,6 +134,7 @@ export function DecisionActions({
           disabled={busy !== null}
           onClick={() => {
             setComment("");
+            setError(null);
             setAsking("reject");
           }}
           data-testid="reject"
@@ -146,7 +149,14 @@ export function DecisionActions({
         </p>
       )}
 
-      <Dialog open={asking !== null} onOpenChange={(open) => !busy && !open && setAsking(null)}>
+      <Dialog
+        open={asking !== null}
+        onOpenChange={(open) => {
+          if (busy || open) return;
+          setAsking(null);
+          setError(null);
+        }}
+      >
         <DialogContent>
           {dialog && asking && (
             <form

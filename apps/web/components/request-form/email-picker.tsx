@@ -21,7 +21,7 @@ type EmailSummary = Schema<"EmailSummary">;
 
 function explain(e: unknown): string {
   if (isApiError(e) && e.status === 501) {
-    return "The email list isn't switched on in this build yet. Fill in the form by hand for now.";
+    return "The email list isn't available right now. Fill in the form by hand, or try again in a moment.";
   }
   return isApiError(e) ? e.message : "The email list could not be loaded.";
 }

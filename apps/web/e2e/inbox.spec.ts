@@ -28,9 +28,13 @@ test("read with AI shows category, highlighted quotes and creates a request", as
   await expect(pane.getByTestId("email-body")).toContainText("Benh vien Cho Ray");
 
   await reading.getByTestId("create-request").click();
-  await expect(page).toHaveURL(/\/requests\/new\?email=DEMO-01/);
   await expect(page.getByTestId("prefill-note")).toContainText("New customer - Benh vien Cho Ray");
   await expect(page.getByLabel("Legal name")).toHaveValue("Benh vien Cho Ray");
+  // The ?email= hand-off is dropped from the address, so a reload cannot create a second draft.
+  await expect(page).toHaveURL(/\/requests\/new$/);
+  await page.reload();
+  await expect(page.getByLabel("Legal name")).toHaveValue("");
+  await expect(page.getByTestId("prefill-note")).toHaveCount(0);
 });
 
 test("an email that gives the AI orders is flagged for a person", async ({ page }) => {
@@ -39,7 +43,7 @@ test("an email that gives the AI orders is flagged for a person", async ({ page 
   await page.getByTestId("inbox-DEMO-06").click();
   const pane = page.getByTestId("email-pane");
   await pane.getByTestId("read-with-ai").click();
-  await expect(pane.getByTestId("injection-warning")).toContainText("Injection suspected");
+  await expect(pane.getByTestId("injection-warning")).toContainText("Possible hidden instructions");
   await expect(pane.getByTestId("needs-review")).toBeVisible();
 });
 

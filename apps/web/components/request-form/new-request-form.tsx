@@ -61,7 +61,7 @@ const WIDE_TYPES = new Set(["array"]);
 
 function readable(e: unknown, what: string): string {
   if (isApiError(e) && e.status === 501) {
-    return `${what} isn't switched on in this build yet. Your form is kept; try again once the server is updated.`;
+    return `${what} isn't available right now. Your form is kept; try again in a moment.`;
   }
   if (isApiError(e)) return e.message;
   return `${what} did not work. Please try again.`;
@@ -589,18 +589,21 @@ function EmailHandoff({
   ready: boolean;
   onPick: (email: Schema<"EmailSummary">) => Promise<boolean>;
 }) {
+  const router = useRouter();
   const emailId = useSearchParams().get("email");
   const handled = useRef<string | null>(null);
 
   useEffect(() => {
     if (!ready || !emailId || handled.current === emailId) return;
     handled.current = emailId;
+    // Drop ?email= at once, so a reload does not create a second draft from the same email.
+    router.replace("/requests/new", { scroll: false });
     api.GET("/emails/{email_id}", { path: { email_id: emailId } }).then(
       (email) => void onPick(email),
       (e: unknown) =>
         toast.error("Could not open that email", { description: readable(e, "Opening the email") }),
     );
-  }, [ready, emailId, onPick]);
+  }, [ready, emailId, onPick, router]);
 
   return null;
 }

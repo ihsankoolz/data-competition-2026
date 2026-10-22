@@ -1,8 +1,9 @@
-import { Check, CircleCheck, CircleDashed, TriangleAlert, X } from "lucide-react";
+import { Check, CircleCheck, CircleDashed, Lock, TriangleAlert, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import type { Schema } from "@/lib/api/client";
 import { formatSgt } from "@/lib/format";
+import { looksMasked } from "@/lib/forms/schema";
 import { cn } from "@/lib/utils";
 
 type SapPublishView = Schema<"SapPublishView">;
@@ -13,7 +14,7 @@ const RESOURCE_TEXT: Record<SapPublishView["resource"], string> = {
   ProfitCenters: "Cost Center",
 };
 
-/** Shown when the request is published but the read-back details have not reached this build. */
+/** Shown when the request is published but no read-back could be loaded. */
 export function ReadbackUnavailable() {
   return (
     <div
@@ -22,8 +23,7 @@ export function ReadbackUnavailable() {
     >
       <CircleDashed className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
       <p className="text-muted-foreground">
-        Read-back details are not available yet. The record was sent to SAP; the field-by-field
-        check will show here once the server provides it.
+        Read-back details are not available for this record. It was sent to SAP.
       </p>
     </div>
   );
@@ -95,8 +95,12 @@ export function SapReadback({ view }: { view: SapPublishView }) {
                 data-match={r.match ? "true" : "false"}
               >
                 <td className="px-4 py-2 font-mono text-xs">{r.field}</td>
-                <td className="px-4 py-2 break-all">{r.sent ?? <Empty />}</td>
-                <td className="px-4 py-2 break-all">{r.read_back ?? <Empty />}</td>
+                <td className="px-4 py-2 break-all">
+                  <Value value={r.sent} />
+                </td>
+                <td className="px-4 py-2 break-all">
+                  <Value value={r.read_back} />
+                </td>
                 <td className="px-4 py-2">
                   {r.match ? (
                     <span className="inline-flex items-center gap-1 text-success-foreground">
@@ -114,6 +118,21 @@ export function SapReadback({ view }: { view: SapPublishView }) {
         </table>
       </div>
     </section>
+  );
+}
+
+/** Bank values arrive masked from the API; they are shown as they are, never unmasked. */
+function Value({ value }: { value: string | null }) {
+  if (value === null || value === "") return <Empty />;
+  if (!looksMasked(value)) return <>{value}</>;
+  return (
+    <span className="inline-flex items-center gap-1.5 tabular-nums" data-testid="masked-value">
+      {value}
+      <Lock
+        className="size-3 text-muted-foreground"
+        aria-label="Hidden: only Finance sees bank details"
+      />
+    </span>
   );
 }
 

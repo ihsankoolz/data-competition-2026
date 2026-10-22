@@ -22,7 +22,7 @@ test("Priya publishes in one click and sees the read-back or its empty state", a
 }) => {
   const d = await approvedCustomer(request, "Quillon Publish Medical Pte Ltd");
 
-  // Someone who is not an MDM analyst is told who can publish.
+  // Someone who is not a master-data analyst is told who can publish.
   await openAs(page, "amy", "/publish");
   await expect(page.getByTestId("not-analyst")).toContainText("Priya");
 

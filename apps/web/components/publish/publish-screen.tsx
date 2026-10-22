@@ -32,7 +32,8 @@ const RESOURCE: Record<RequestDetail["domain"], string> = {
 type Lists = { waiting: RequestSummary[]; published: RequestSummary[] };
 
 function explain(e: unknown, what: string): string {
-  if (isApiError(e) && e.status === 501) return `${what} isn't switched on in this build yet.`;
+  if (isApiError(e) && e.status === 501)
+    return `${what} isn't available right now. Try again in a moment.`;
   return isApiError(e) ? e.message : `${what} did not work. Please try again.`;
 }
 
@@ -104,8 +105,8 @@ export function PublishScreen() {
         >
           <UserRoundCog className="size-4 shrink-0 text-muted-foreground" />
           <p>
-            Only an MDM analyst can publish. You are acting as {persona.name} ({persona.title});
-            switch to Priya in the top right to publish.
+            Only a master-data analyst can publish. You are acting as {persona.name} (
+            {persona.title}); switch to Priya in the top right to publish.
           </p>
         </div>
       )}
@@ -338,7 +339,7 @@ function PublishPane({
               </Button>
               <p className="text-sm text-muted-foreground">
                 {!canPublish
-                  ? "Switch to Priya (MDM analyst) to publish."
+                  ? "Switch to Priya (master-data analyst) to publish."
                   : allowed
                     ? "All approvals are in."
                     : "The server will check that you are allowed to publish this one."}

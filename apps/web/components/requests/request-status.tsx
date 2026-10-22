@@ -52,12 +52,20 @@ const STAGE_TEXT: Record<Stage["status"], string> = {
 
 function explainLoad(e: unknown, id: string): string {
   if (isApiError(e) && e.status === 501)
-    return "Request details aren't switched on in this build yet.";
+    return "Request details aren't available right now. Try again in a moment.";
   if (isApiError(e) && e.status === 404) {
     return `There is no request ${id}. It may have been cleared by "Reset demo".`;
   }
   return isApiError(e) ? e.message : "The request could not be loaded.";
 }
+
+const REFRESH_MS = 8_000;
+const LIVE_STATES = new Set<RequestDetail["state"]>([
+  "SUBMITTED",
+  "IN_APPROVAL",
+  "INFO_REQUESTED",
+  "APPROVED",
+]);
 
 /** Loads one request and its audit trail; reloads when the demo clock or the persona changes. */
 function useRequest(id: string) {
@@ -94,6 +102,14 @@ function useRequest(id: string) {
       current = false;
     };
   }, [id, attempt, now, actingUser]);
+
+  // While other people can still act on it, check again every few seconds.
+  const live = !!detail && LIVE_STATES.has(detail.state);
+  useEffect(() => {
+    if (!live) return;
+    const timer = window.setInterval(() => setAttempt((n) => n + 1), REFRESH_MS);
+    return () => window.clearInterval(timer);
+  }, [live]);
 
   const reload = useCallback(() => setAttempt((n) => n + 1), []);
   return { detail, setDetail, audit, auditError, error, reload };
@@ -294,8 +310,8 @@ function YourTurn({
       {canResubmit && (
         <div className="flex flex-col gap-2">
           <p className="text-sm">
-            An approver asked you a question (see the stage below). Once the answer is in the
-            request, send it back to them.
+            An approver asked you a question (their comment is in the stage below). Answer it, then
+            send the request back to the approvers.
           </p>
           <div>
             <Button onClick={() => void resubmit()} disabled={submitting} data-testid="resubmit">

@@ -21,7 +21,8 @@ type InboxItem = Schema<"ApprovalInboxItem">;
 type RequestDetail = Schema<"RequestDetail">;
 
 function explain(e: unknown): string {
-  if (isApiError(e) && e.status === 501) return "Approvals aren't switched on in this build yet.";
+  if (isApiError(e) && e.status === 501)
+    return "Approvals aren't available right now. Try again in a moment.";
   return isApiError(e) ? e.message : "Your approvals could not be loaded.";
 }
 

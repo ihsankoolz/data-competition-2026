@@ -11,7 +11,7 @@ import {
   Stamp,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   DropdownMenu,
@@ -33,6 +33,7 @@ import { useClock } from "./clock-provider";
 type Notification = Schema<"Notification">;
 
 const POLL_MS = 8_000;
+const SHOWN = 30;
 const SEEN_PREFIX = "lives-mdm.notifications-seen.";
 
 const KIND_ICON: Record<Notification["kind"], typeof Bell> = {
@@ -118,9 +119,11 @@ export function NotificationsBell() {
     user && seen?.user === user ? seen.ids : user ? readSeen(user) : new Set<string>();
   const unread = list.filter((n) => !seenIds.has(n.notification_id)).length;
 
-  const markAllSeen = () => {
+  // Only what was on screen when the list opened counts as read; later arrivals stay new.
+  const shownAtOpen = useRef<string[]>([]);
+  const markShownSeen = () => {
     if (!user) return;
-    const ids = list.map((n) => n.notification_id);
+    const ids = [...new Set([...seenIds, ...shownAtOpen.current])];
     writeSeen(user, ids);
     setSeen({ user, ids: new Set(ids) });
   };
@@ -129,7 +132,8 @@ export function NotificationsBell() {
     <DropdownMenu
       onOpenChange={(open) => {
         // Mark as read when the list closes, so the dots stay visible while it is open.
-        if (!open) markAllSeen();
+        if (open) shownAtOpen.current = list.slice(0, SHOWN).map((n) => n.notification_id);
+        else markShownSeen();
       }}
     >
       <DropdownMenuTrigger
@@ -161,7 +165,7 @@ export function NotificationsBell() {
               Nothing yet. Reminders, questions and approvals for you will show up here.
             </p>
           ) : (
-            list.slice(0, 30).map((n) => {
+            list.slice(0, SHOWN).map((n) => {
               const Icon = KIND_ICON[n.kind];
               const isNew = !seenIds.has(n.notification_id);
               return (

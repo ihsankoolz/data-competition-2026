@@ -40,7 +40,8 @@ type EmailDetail = Schema<"EmailDetail">;
 const PARALLEL_READS = 6;
 
 function explain(e: unknown, what: string): string {
-  if (isApiError(e) && e.status === 501) return `${what} isn't switched on in this build yet.`;
+  if (isApiError(e) && e.status === 501)
+    return `${what} isn't available right now. Try again in a moment.`;
   return isApiError(e) ? e.message : `${what} did not work. Please try again.`;
 }
 
@@ -507,7 +508,8 @@ function Reading({
           )}
         </div>
         <p className="text-sm" data-testid="confidence">
-          The AI is {pct}% sure this is {CATEGORY_WITH_ARTICLE[read.category]}.
+          {read.method === "keyword_fallback" ? "The keyword rules are" : "The AI is"} {pct}% sure
+          this is {CATEGORY_WITH_ARTICLE[read.category]}.
           <span className="text-muted-foreground">
             {" "}
             {read.injection_suspected
@@ -532,8 +534,8 @@ function Reading({
         >
           <ShieldAlert className="mt-0.5 size-4 shrink-0 text-destructive" />
           <p>
-            <span className="font-medium">Injection suspected.</span> This email seems to give
-            instructions to the AI. They were ignored: an email can never change approvers, bank
+            <span className="font-medium">Possible hidden instructions.</span> This email seems to
+            give orders to the AI. They were ignored: an email can never change approvers, bank
             details or credit terms. A person should check it.
           </p>
         </div>

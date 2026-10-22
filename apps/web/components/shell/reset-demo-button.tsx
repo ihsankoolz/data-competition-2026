@@ -23,7 +23,7 @@ import { useClock } from "./clock-provider";
 import { usePersona } from "./persona-provider";
 
 function explain(e: unknown): string {
-  if (isApiError(e) && e.status === 501) return "Reset isn't switched on in this build yet.";
+  if (isApiError(e) && e.status === 501) return "Reset isn't available right now. Try again in a moment.";
   return isApiError(e) ? e.message : "The demo could not be reset.";
 }
 
