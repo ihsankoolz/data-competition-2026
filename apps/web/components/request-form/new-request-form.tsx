@@ -34,7 +34,9 @@ import {
   FORM_DOMAINS,
   type FormSpec,
   isFilled,
+  looksMasked,
   missingRequired,
+  prefillableFields,
   syncRegistrations,
 } from "@/lib/forms/schema";
 import { cn } from "@/lib/utils";
@@ -127,6 +129,19 @@ export function NewRequestForm() {
     setSubmitError(null);
   };
 
+  /**
+   * A draft is created for one domain and entity, and the API cannot change
+   * either later. When they change, drop the draft and its duplicate decision;
+   * the next save creates a fresh draft.
+   */
+  const detachDraft = () => {
+    setReqId(null);
+    setDecision(null);
+    setDecidedFor("");
+    setDecisionError(null);
+    setSubmitError(null);
+  };
+
   // "Reset demo" in the header wipes the database, so a draft here is gone too.
   useEffect(() => {
     const onReset = () => {
@@ -169,7 +184,8 @@ export function NewRequestForm() {
     if (!schema || !spec) return {};
     const out: FieldValues = {};
     for (const key of schema["x-order"]) {
-      if (isFilled(values[key])) out[key] = values[key];
+      // A masked value ("••••1234") is never sent back as if it were the real one.
+      if (isFilled(values[key]) && !looksMasked(values[key])) out[key] = values[key];
     }
     if ("Country" in schema.properties) out.Country = country;
     if (domain === "item") out.registrations = syncRegistrations(values, spec);
@@ -252,7 +268,8 @@ export function NewRequestForm() {
       if (isFormDomain(detail.domain)) setDomain(detail.domain);
       setEntityChoice(detail.entity);
       setCountryChoice(detail.country);
-      setValues(detail.fields);
+      // Never bank details or credit terms from the server, and nothing masked.
+      setValues(prefillableFields(detail.fields, spec?.domain === detail.domain ? schema : null));
       setQuotes(detail.prefill_quotes ?? {});
       setReqId(detail.req_id);
       setPrefill({ emailId: email.email_id, subject: email.subject });
@@ -306,8 +323,7 @@ export function NewRequestForm() {
                 onClick={() => {
                   if (d.value === domain) return;
                   setDomain(d.value);
-                  setDecision(null);
-                  setSubmitError(null);
+                  detachDraft();
                   setShowMissing(false);
                 }}
                 className={cn(
@@ -326,7 +342,11 @@ export function NewRequestForm() {
           <Label htmlFor="ctx-entity">For entity</Label>
           <Select
             value={entity}
-            onValueChange={(v) => setEntityChoice(v as Entity)}
+            onValueChange={(v) => {
+              if (v === entity) return;
+              setEntityChoice(v as Entity);
+              detachDraft();
+            }}
             disabled={linked}
           >
             <SelectTrigger id="ctx-entity" className="w-full">
@@ -495,6 +515,7 @@ export function NewRequestForm() {
           <aside className="sticky top-24">
             <DuplicatePanel
               state={dedup}
+              domain={domain === "vendor" ? "vendor" : "customer"}
               typed={values}
               entity={entity}
               country={country}

@@ -306,9 +306,11 @@ function RelatedRecords({ related }: { related: Schema<"RelatedRecord">[] }) {
 }
 
 function NotDuplicateDialog({
+  domain,
   disabled,
   onConfirm,
 }: {
+  domain: "customer" | "vendor";
   disabled: boolean;
   onConfirm: (reason: string) => Promise<boolean>;
 }) {
@@ -332,7 +334,7 @@ function NotDuplicateDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Why is this a different customer?</DialogTitle>
+          <DialogTitle>Why is this a different {domain}?</DialogTitle>
           <DialogDescription>
             Your reason is saved with the request and shown to the approvers, so they can check it.
           </DialogDescription>
@@ -380,6 +382,7 @@ export type DuplicatePanelProps = {
   error: string | null;
   onLink: (cardCode: string) => void;
   onNotDuplicate: (reason: string) => Promise<boolean>;
+  domain: "customer" | "vendor";
 };
 
 export function DuplicatePanel(props: DuplicatePanelProps) {
@@ -437,6 +440,7 @@ function PanelBody({
   error,
   onLink,
   onNotDuplicate,
+  domain,
 }: DuplicatePanelProps) {
   if (state.status === "idle") {
     return (
@@ -540,7 +544,7 @@ function PanelBody({
                 Sure it is a different customer or vendor?
               </p>
               <div>
-                <NotDuplicateDialog disabled={busy} onConfirm={onNotDuplicate} />
+                <NotDuplicateDialog domain={domain} disabled={busy} onConfirm={onNotDuplicate} />
               </div>
             </>
           )}

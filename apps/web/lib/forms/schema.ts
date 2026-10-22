@@ -84,6 +84,32 @@ export function isFilled(value: unknown): boolean {
   return true;
 }
 
+/**
+ * Fields the form never takes from a server response (a pre-fill or a saved
+ * draft): bank details and credit terms are typed by a person only (rules 5 and 7).
+ */
+const NEVER_PREFILLED = new Set(["BPBankAccounts", "PayTermsGrpCode", "CreditLimit"]);
+
+/** True for a value the API masked for this role, e.g. "••••1234" or "****". */
+export function looksMasked(value: unknown): boolean {
+  if (typeof value === "string") return value.includes("•") || value.includes("****");
+  if (Array.isArray(value)) return value.some(looksMasked);
+  if (value && typeof value === "object") return Object.values(value).some(looksMasked);
+  return false;
+}
+
+/** Server fields that are safe to put in the form: no bank, no credit terms, nothing masked. */
+export function prefillableFields(fields: FieldValues, schema?: FormSchema | null): FieldValues {
+  const out: FieldValues = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (NEVER_PREFILLED.has(key)) continue;
+    if (schema?.properties[key]?.["x-sensitive"]) continue;
+    if (looksMasked(value)) continue;
+    out[key] = value;
+  }
+  return out;
+}
+
 export type Registration = {
   country: Country;
   reg_no?: string;
