@@ -52,7 +52,7 @@ START, END = "<!-- holdout:start -->", "<!-- holdout:end -->"
 PRE_RUN_COMMIT = "e2ff0fe"
 LINE_CATEGORIES = {"purchase_order", "purchase_request", "enquiry"}
 # Set to False only when Ihsan has spot-checked the labels and said so.
-LABELS_PENDING_SPOT_CHECK = True
+LABELS_PENDING_SPOT_CHECK = False  # spot-checked by Ihsan, 22 Oct 2026: all 24 kept
 
 
 # %%
@@ -259,8 +259,10 @@ def section(t: dict, h: dict) -> str:
     a(f"- **Small sample.** {h['n']} emails, about 5 per kind: one email moves accuracy by "
       f"{100 / h['n']:.1f} points, and a per-class F1 rests on 4 or 5 emails.")  # fmt: skip
     a("- **The answer key is the writing model's intent**, not an independent human label. "
-      "It is being spot-checked by a person, and no label was changed after the "
-      "interpreter's answers were seen. Labels we consider debatable: the `requested_date` "
+      + ("It is being spot-checked by a person" if LABELS_PENDING_SPOT_CHECK else
+         "A person spot-checked all 24 labels and kept every one as written")
+      + ", and no label was changed after the interpreter's answers were seen. Labels we "
+      "consider debatable (kept and scored as written): the `requested_date` "
       "of HO-08 ('năm 2027' is a tender year), HO-10 ('Q1', while the PO comes in January) "
       "and HO-14 ('mid-July' on an enquiry); the class of HO-09 (planned order with an "
       "internal requisition, but it also asks for stock and a price) and HO-15 (enquiry that "
