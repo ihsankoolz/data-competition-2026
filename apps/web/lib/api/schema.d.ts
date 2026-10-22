@@ -153,7 +153,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List Requests */
+        /**
+         * List Requests
+         * @description `mine` = requests I made plus requests with a task for me. `all` = everything.
+         */
         get: operations["listRequests"];
         put?: never;
         /**
@@ -627,7 +630,7 @@ export interface components {
             card_code?: string | null;
             /**
              * Reason
-             * @description Required for not_duplicate: why this is a different customer/vendor
+             * @description Required for not_duplicate, at least 10 characters (checked by the API with a plain-English message): why this is a different customer/vendor
              */
             reason?: string | null;
         };
@@ -870,7 +873,7 @@ export interface components {
             injection_suspected?: boolean;
             /**
              * Needs Review
-             * @description confidence < 0.6 -> human review queue
+             * @description confidence < 0.6, or the email looks like it is instructing the AI -> human review queue
              * @default false
              */
             needs_review?: boolean;
@@ -1387,7 +1390,10 @@ export interface operations {
     listEmails: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1402,12 +1408,24 @@ export interface operations {
                     "application/json": components["schemas"]["EmailSummary"][];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     getEmail: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 email_id: string;
             };
@@ -1438,7 +1456,10 @@ export interface operations {
     interpretEmail: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 email_id: string;
             };
@@ -1469,7 +1490,10 @@ export interface operations {
     checkDuplicates: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1505,7 +1529,10 @@ export interface operations {
                 scope?: "mine" | "all";
                 state?: ("DRAFT" | "SUBMITTED" | "IN_APPROVAL" | "INFO_REQUESTED" | "REJECTED" | "APPROVED" | "PUBLISHED_INACTIVE" | "ACTIVE" | "LINKED_TO_EXISTING") | null;
             };
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1534,7 +1561,10 @@ export interface operations {
     createRequest: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1567,7 +1597,10 @@ export interface operations {
     createRequestFromEmail: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 email_id: string;
             };
@@ -1598,7 +1631,10 @@ export interface operations {
     getRequest: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 req_id: string;
             };
@@ -1629,7 +1665,10 @@ export interface operations {
     updateRequest: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 req_id: string;
             };
@@ -1664,7 +1703,10 @@ export interface operations {
     decideDuplicate: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 req_id: string;
             };
@@ -1699,7 +1741,10 @@ export interface operations {
     submitRequest: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 req_id: string;
             };
@@ -1730,7 +1775,10 @@ export interface operations {
     publishRequest: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 req_id: string;
             };
@@ -1761,7 +1809,10 @@ export interface operations {
     getRequestAudit: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 req_id: string;
             };
@@ -1792,7 +1843,10 @@ export interface operations {
     approvalInbox: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1807,12 +1861,24 @@ export interface operations {
                     "application/json": components["schemas"]["ApprovalInboxItem"][];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     decideApproval: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path: {
                 task_id: string;
             };
@@ -1847,7 +1913,10 @@ export interface operations {
     listNotifications: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1860,6 +1929,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Notification"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
