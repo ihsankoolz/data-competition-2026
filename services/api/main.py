@@ -1,5 +1,6 @@
 """Lives MDM API (port 8000): workflow, dedup, interpreter, analytics."""
 
+import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -46,6 +47,7 @@ def validation_sentence(exc: RequestValidationError) -> str:
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     clock.restore()  # the simulated time survives a restart
+    threading.Thread(target=analytics.warm, name="analytics-warm", daemon=True).start()
     yield
 
 

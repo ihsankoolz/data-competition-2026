@@ -82,6 +82,22 @@ def _serve(area: str, model: type[T], compute: Callable[[], dict[str, Any]]) -> 
         raise HTTPException(503, UNREADABLE) from None
 
 
+def warm() -> None:
+    """Load the fixtures and compute the regional view once, so the first visit to the regional
+    screen during a live demo does not pay for it. Called in a background thread at API start;
+    a failure is logged and the endpoints still compute on demand."""
+    try:
+        for view in ("before", "after"):
+            regional.regional_view(data_dir(), view, None)
+        regional.merge_impact(data_dir())
+        _summary()
+    except Exception:
+        log.warning(
+            "Analytics warm-up skipped; the regional view will compute on first visit",
+            exc_info=True,
+        )
+
+
 @router.get("/analytics/regional", response_model=RegionalView, operation_id="getRegionalView")
 def regional_view(
     view: Annotated[
