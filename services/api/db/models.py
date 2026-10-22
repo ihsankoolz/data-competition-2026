@@ -192,7 +192,9 @@ class Order(Base):
 
     __tablename__ = "orders"
 
-    doc_num: Mapped[str] = mapped_column(String(32), primary_key=True)
+    # One row per document line: a PO with several items repeats its doc_num.
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    doc_num: Mapped[str] = mapped_column(String(32), index=True)
     card_code: Mapped[str] = mapped_column(String(15), index=True)
     entity: Mapped[str] = mapped_column(String(3))
     country: Mapped[str] = mapped_column(String(2))
@@ -209,7 +211,9 @@ class Enquiry(Base):
 
     __tablename__ = "enquiries"
 
-    doc_num: Mapped[str] = mapped_column(String(32), primary_key=True)
+    # One row per document line, like orders.
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    doc_num: Mapped[str] = mapped_column(String(32), index=True)
     card_code: Mapped[str] = mapped_column(String(15), index=True)
     entity: Mapped[str] = mapped_column(String(3))
     country: Mapped[str] = mapped_column(String(2))

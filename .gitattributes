@@ -1,0 +1,2 @@
+# Generator output is byte-deterministic with LF endings; keep it that way on Windows checkouts.
+data/fixtures/** text eol=lf

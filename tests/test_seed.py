@@ -32,7 +32,7 @@ def test_seed_row_counts_match_files(fixtures, db_path):
     assert counts["items"] == count_lines(fixtures / "items.csv")
     assert counts["item_registrations"] == count_lines(fixtures / "item_registrations.csv")
     assert counts["users"] == count_lines(fixtures / "users.csv")
-    assert counts["orders"] == count_lines(fixtures / "orders.csv") == 3
+    assert counts["orders"] == count_lines(fixtures / "orders.csv") == 4  # one row per PO line
     assert counts["enquiries"] == 2
     assert counts["dirty_demand"] == 2
     assert counts["mdm_history"] == 2
@@ -216,7 +216,10 @@ def test_v2_tables_content(fixtures, db_path):
         assert s.get(m.MdmHistory, "H-0002").keyed_at is None
         email = s.get(m.Email, "DEMO-03")
         assert email.attachments == ["PO_118.pdf"] and email.to_address == "orders@lives.example"
-        assert s.get(m.Enquiry, "EQ200002").kind == "purchase_request"
+        eq = s.scalars(select(m.Enquiry).where(m.Enquiry.doc_num == "EQ200002")).one()
+        assert eq.kind == "purchase_request"
+        po_lines = s.scalars(select(m.Order).where(m.Order.doc_num == "SO100003")).all()
+        assert sorted(o.item_code for o in po_lines) == ["A-CRP-QT", "A-DEN-IGM"]
         assert s.scalars(select(m.DirtyDemand).where(m.DirtyDemand.leak_source == "enquiry")).one()
         reg = s.scalars(select(m.ItemRegistration).where(m.ItemRegistration.status == "expired"))
         assert reg.one().item_code == "A-CRP-QT"

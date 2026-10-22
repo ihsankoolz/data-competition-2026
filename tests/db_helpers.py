@@ -94,6 +94,8 @@ def make_fixture_dir(dest: Path) -> Path:
             ["SO100001", "C00001", "SPD", "VN", "A-DEN-NS1", 20, 118.0, "2026-01-12", "PO-1", ""],
             ["SO100002", "C00002", "SPD", "VN", "A-HBA-1C", 5, 165.0, "2026-02-03", "PO-2", "E-9"],
             ["SO100003", "C00003", "QTG", "ID", "A-DEN-IGM", 8, 96.0, "2026-02-20", "", ""],
+            # second line of the same PO: doc_num repeats per line, as in the generator
+            ["SO100003", "C00003", "QTG", "ID", "A-CRP-QT", 4, 72.0, "2026-02-20", "", ""],
         ],
     )
     _write_csv(
