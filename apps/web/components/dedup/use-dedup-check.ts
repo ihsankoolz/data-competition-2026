@@ -70,6 +70,16 @@ export function useDedupCheck(opts: {
   const [settled, setSettled] = useState<Settled | null>(null);
   const [lastResult, setLastResult] = useState<DedupResult | null>(null);
 
+  // The previous answer is only shown (dimmed) while re-checking the same kind
+  // of record. "Start over", or a new domain or entity, forgets it, so stale
+  // candidates and a stale block never linger.
+  const scope = key ? JSON.stringify([domain, entity]) : "";
+  const [prevScope, setPrevScope] = useState(scope);
+  if (scope !== prevScope) {
+    setPrevScope(scope);
+    setLastResult(null);
+  }
+
   useEffect(() => {
     if (!key) return;
     const controller = new AbortController();
