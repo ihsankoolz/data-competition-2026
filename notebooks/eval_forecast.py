@@ -25,6 +25,7 @@ sys.path.insert(0, str(ROOT))
 import pandas as pd  # noqa: E402
 
 from ds.forecasting import backtest as bt  # noqa: E402
+from ds.forecasting import bias as fb  # noqa: E402
 
 RESULTS = ROOT / "docs" / "results.md"
 START, END = "<!-- forecast:start -->", "<!-- forecast:end -->"
@@ -77,6 +78,253 @@ def leakage(scenario: str) -> dict[str, tuple[float, float]]:
     return out
 
 
+def product_scores(run: dict, product: str) -> dict[str, dict]:
+    return scores(
+        next(x for x in run["series"] if x["level"] == "product" and x["product"] == product)
+    )
+
+
+def pitch(runs: dict) -> list[str]:
+    """Three pitch-ready sentences (D-020 item 1), every number from the stored runs."""
+    st_c, st_d = runs[("seasonal_trend", "clean")], runs[("seasonal_trend", "dirty")]
+    b_c, b_d = product_scores(st_c, "B"), product_scores(st_d, "B")
+    c_c = product_scores(st_c, "C")
+    ov = {x["method"]: x for x in st_c["overall"]}
+    w6, n = wins(st_c, "excel_6m")
+    return [
+        "### In three sentences (demo scenario, for the pitch)",
+        "",
+        f"1. **The biggest forecast error is the data, not the model.** When leaked enquiries "
+        f"and requests are counted as orders, as today's spreadsheet does, the Excel plan's error "
+        f"on equipment (Product B) for the region goes from {b_c['excel_6m']['wape_pct']:.1f}% "
+        f"to {b_d['excel_6m']['wape_pct']:.0f}% of the units customers really ordered.",
+        f"2. **Ours wins where there is a yearly pattern.** For service contracts (Product C), "
+        f"many of which renew once a year, our error for the region is "
+        f"{c_c['combination']['wape_pct']:.1f}% against {c_c['excel_6m']['wape_pct']:.1f}% for "
+        f"the 6-month Excel average ({c_c['excel_12m']['wape_pct']:.1f}% for 12 months).",
+        f"3. **Country by country, the Excel average ties ours.** Over all 15 country x product "
+        f"series the error is {ov['excel_6m']['wape_pct']:.1f}% (Excel, 6 months), "
+        f"{ov['excel_12m']['wape_pct']:.1f}% (Excel, 12 months) and "
+        f"{ov['combination']['wape_pct']:.1f}% (ours); ours is better on {w6} of {n} series but "
+        f"not by enough to matter, so we do not claim a better country-level forecast.",
+        "",
+    ]
+
+
+def _cb(row: dict) -> dict[str, dict]:
+    return {s["method"]: s for s in row["scores"]}
+
+
+def bias_section(runs: dict) -> list[str]:
+    """D-020 item 1: growth vs bias by country, from the stored frames and run JSON."""
+    L: list[str] = []
+    L.append("### Does the Excel average under-forecast growing markets? (D-020)")
+    L.append("")
+    L.append(
+        "**Question.** Does the Excel 6-month average systematically plan too low in the "
+        "fast-growing markets? (Hypothesis named before the analysis: Vietnam and Indonesia.) "
+        "**How.** A new cut of the same rolling-origin forecasts as above, not a new backtest: "
+        "no data, setting or model changed. The country x product forecasts are refitted with "
+        "the same code (`ds/forecasting/bias.py`), stored as a raw frame "
+        "(`data/fixtures/derived/forecast/<scenario>_<data>_country_cv.csv`), and checked to "
+        "reproduce every stored per-series score exactly. *Growth* = confirmed-PO units, last 12 "
+        "full months (Oct 2025 - Sep 2026) vs the 12 before (% change), measured on real orders "
+        "for both the clean and the dirty run. *Fast-growing* = a country growing faster than the "
+        "region as a whole (fixed before looking at bias). Bias and WAPE are pooled as in the "
+        "headline: a country's row adds up its 3 products, so it is mostly test kits. Cells: "
+        "WAPE (bias); bias + = plan ran high, - = plan ran low."
+    )
+    L.append("")
+    L.append(
+        "| Scenario | Data | Country | Orders growth, last 12 months | Excel 6-month | "
+        "Excel 12-month | Ours |"
+    )
+    L.append("|---|---|---|---|---|---|---|")
+    shown = [(s, "clean") for s in bt.SCENARIOS] + [("seasonal_trend", "dirty")]
+    region: dict[str, float] = {}
+    for s, d in shown:
+        gr = fb.growth(bt.scenario_dir(s))
+        region[s] = gr[(None, None)] or 0.0
+        fast = fb.fast_growing(gr)
+        for row in (r for r in runs[(s, d)]["bias_by_country"] if r["product"] is None):
+            sc = _cb(row)
+            star = " (fast)" if row["country"] in fast else ""
+            L.append(
+                f"| {SC_LABEL[s]} | {d} | {bt.COUNTRY_NAMES[row['country']]}{star} | "
+                f"{row['growth_pct']:+.1f}% | {fmt(sc['excel_6m'])} | {fmt(sc['excel_12m'])} | "
+                f"{fmt(sc['combination'])} |"
+            )
+    L.append("")
+    L.append(
+        "Region-wide growth, last 12 months: "
+        + "; ".join(f"{SC_LABEL[s]} {region[s]:+.1f}%" for s in bt.SCENARIOS)
+        + ". *(fast)* = above that."
+    )
+    L.append("")
+
+    # country x product, demo clean
+    L.append("Demo scenario, clean data, every country x product:")
+    L.append("")
+    L.append("| Country | Product | Orders growth | Excel 6-month | Excel 12-month | Ours |")
+    L.append("|---|---|---|---|---|---|")
+    st_rows = runs[("seasonal_trend", "clean")]["bias_by_country"]
+    for row in (r for r in st_rows if r["product"] is not None):
+        sc = _cb(row)
+        g = "n/a" if row["growth_pct"] is None else f"{row['growth_pct']:+.1f}%"
+        L.append(
+            f"| {bt.COUNTRY_NAMES[row['country']]} | {PRODUCT[row['product']]} | {g} | "
+            f"{fmt(sc['excel_6m'])} | {fmt(sc['excel_12m'])} | {fmt(sc['combination'])} |"
+        )
+    L.append("")
+
+    # relationship
+    L.append(
+        "**Is there a relationship?** Spearman rank correlation between growth and bias "
+        "(-1 = the faster a series grew, the lower its plan ran, every time). Two growth "
+        "measures: the same year that was forecast (the definition above), and the year "
+        "*before* it (Oct 2024 - Sep 2025 vs Oct 2023 - Sep 2024, which ends at the first "
+        "forecast origin, so a planner knew it). The second was added after the first look, as "
+        "a check: a "
+        "series that dips by chance in the forecast year makes every plan look high, so part of "
+        "a same-year correlation is mechanical."
+    )
+    L.append("")
+    L.append(
+        "| Scenario | Data | Growth measured | Points | Excel 6-month | Excel 12-month | Ours |"
+    )
+    L.append("|---|---|---|---|---|---|---|")
+    rho: dict[tuple[str, str, str, str], dict] = {}
+    for s, d in shown:
+        rows = runs[(s, d)]["bias_by_country"]
+        prior = fb.growth(bt.scenario_dir(s), offset=12)
+        for when, cor in (
+            ("forecast year", fb.correlations(rows)),
+            ("year before", fb.correlations(rows, prior)),
+        ):
+            for level, pts in (("series", "15 country x product"), ("countries", "5 countries")):
+                vals = {m: cor[m][level] for m in fb.METHODS}
+                rho[(s, d, when, level)] = vals
+                cells = " | ".join(
+                    "n/a" if vals[m][0] is None else f"{vals[m][0]:+.2f}" for m in fb.METHODS
+                )
+                L.append(f"| {SC_LABEL[s]} | {d} | {when} | {pts} | {cells} |")
+    L.append("")
+
+    # diagnosis: the parts of our combination in the fast markets of the demo
+    gr_st = fb.growth(bt.scenario_dir("seasonal_trend"))
+    fast_st = fb.fast_growing(gr_st)
+    cv_st = fb.read_frame(fb.frame_path(bt.DERIVED, "seasonal_trend", "clean"))
+    by_c = {r["country"]: _cb(r) for r in st_rows if r["product"] is None}
+    parts = []
+    trend_lag_less = True
+    for c in fast_st:
+        comp = fb.component_bias(cv_st, c)
+        ex_c = by_c[c]["excel_6m"]["bias_pct"]
+        trend_lag_less &= comp["ets"] > ex_c and comp["theta"] > ex_c
+        parts.append(
+            f"{bt.COUNTRY_NAMES[c]}: seasonal naive {comp['snaive']:+.1f}%, AutoETS "
+            f"{comp['ets']:+.1f}%, AutoTheta {comp['theta']:+.1f}% (Excel 6-month "
+            f"{ex_c:+.1f}%, ours {by_c[c]['combination']['bias_pct']:+.1f}%)"
+        )
+    L.append(
+        "**Why ours under-plans growth too.** Bias of the three parts of our combination in the "
+        "fast-growing market(s) of the demo scenario, clean data: "
+        + "; ".join(parts)
+        + ". Seasonal naive copies the same month last year, so in a market growing fast it "
+        "is low by about a year's growth; it is one third of our average. "
+        + (
+            "The two trend-following parts lag less than the Excel average there. "
+            if trend_lag_less
+            else "The trend-following parts do not all lag less than the Excel average there. "
+        )
+        + "(Diagnosis only: the combination is not changed, D-008 / D-020.)"
+    )
+    L.append("")
+
+    # verdict: every claim below is computed, so it changes if the data does
+    vn, idn = "VN", "ID"
+    ex_st = {c: by_c[c]["excel_6m"]["bias_pct"] for c in fb.COUNTRIES}
+    others = [c for c in fb.COUNTRIES if c not in fast_st]
+    r_same = rho[("seasonal_trend", "clean", "forecast year", "series")]["excel_6m"][0]
+    r_prior = rho[("seasonal_trend", "clean", "year before", "series")]["excel_6m"][0]
+    r_prior_c = rho[("seasonal_trend", "clean", "year before", "countries")]["excel_6m"][0]
+    gr_by_s = {s: fb.growth(bt.scenario_dir(s)) for s in bt.SCENARIOS}
+    fast_by_s = {s: fb.fast_growing(gr_by_s[s]) for s in bt.SCENARIOS}
+    big_by_s = {
+        s: [c for c in fast_by_s[s] if (gr_by_s[s][(c, None)] or 0.0) >= fb.MIN_FAST_GROWTH]
+        for s in bt.SCENARIOS
+    }
+    # does ours under-plan more than Excel 6-month in the fast markets (clean, all scenarios)?
+    fast_cells = [
+        _cb(r)
+        for s in bt.SCENARIOS
+        for r in runs[(s, "clean")]["bias_by_country"]
+        if r["product"] is None and r["country"] in fast_by_s[s]
+    ]
+    n_ours_lower = sum(
+        1 for x in fast_cells if x["combination"]["bias_pct"] < x["excel_6m"]["bias_pct"]
+    )
+    vn_yes = vn in fast_st and ex_st[vn] < min(ex_st[c] for c in others)
+    id_yes = idn in fast_st and ex_st[idn] < min(ex_st[c] for c in others)
+    id_elsewhere = ""
+    for s in (s for s in bt.SCENARIOS if s != "seasonal_trend" and idn in big_by_s[s]):
+        r_id = next(
+            _cb(r)
+            for r in runs[(s, "clean")]["bias_by_country"]
+            if r["product"] is None and r["country"] == idn
+        )
+        id_elsewhere += (
+            f" In the {SC_LABEL[s].lower()} scenario Indonesia does grow fast "
+            f"({gr_by_s[s][(idn, None)]:+.1f}%), and there the Excel plan's bias was "
+            f"{r_id['excel_6m']['bias_pct']:+.1f}%."
+        )
+    L.append(
+        f"**What it shows.** Vietnam: {'yes' if vn_yes else 'no'}. In the demo scenario "
+        f"Vietnam's orders grew {gr_st[(vn, None)]:+.1f}% (region "
+        f"{region['seasonal_trend']:+.1f}%) and the Excel 6-month average's bias over the test "
+        f"year was {ex_st[vn]:+.1f}%, against {min(ex_st[c] for c in others):+.1f}% to "
+        f"{max(ex_st[c] for c in others):+.1f}% in the other markets; the 12-month average "
+        f"lags more ({by_c[vn]['excel_12m']['bias_pct']:+.1f}%), as an older window should. "
+        f"Indonesia: {'yes' if id_yes else 'not in the demo scenario'}. Its orders grew "
+        f"{gr_st[(idn, None)]:+.1f}% in the last 12 months and the Excel plan's bias there was "
+        f"{ex_st[idn]:+.1f}%.{id_elsewhere} Markets growing faster than the region and by "
+        f"{fb.MIN_FAST_GROWTH:.0f}% or more, per scenario: "
+        + "; ".join(
+            f"{SC_LABEL[s]}: " + (", ".join(bt.COUNTRY_NAMES[c] for c in big_by_s[s]) or "none")
+            for s in bt.SCENARIOS
+        )
+        + f". Ours under-plans more than the Excel 6-month average in {n_ours_lower} of the "
+        f"{len(fast_cells)} faster-than-region country rows (clean data, all scenarios): it "
+        f"shares the bias. Across the 15 country x product series of the demo the same-year "
+        f"correlation is {r_same:+.2f}, but with growth from the year before it is "
+        f"{r_prior:+.2f}: much of the series-level pattern is noise in the small Product B and "
+        f"C series. At country level, where growth carries over from one year to the next, it "
+        f"is {r_prior_c:+.2f}, on 5 points."
+    )
+    L.append("")
+    L.append(
+        "**Caveat.** The data is synthetic and the generator gives Vietnam the highest trend "
+        "(data-spec: VN +18% a year, ID +12%), so this shows the mechanism, not a fact about "
+        "Lives Group's markets. Any average of past months plans low in a market that keeps "
+        "growing; the fix is to put the expected growth (or the enquiry pipeline) into the plan "
+        "on purpose, not a longer average."
+    )
+    L.append("")
+    L.append(
+        f"> **For judges:** {'yes' if vn_yes else 'no'} for Vietnam, "
+        f"{'yes' if id_yes else 'no'} for Indonesia in our demo data. Vietnam's orders grew "
+        f"{gr_st[(vn, None)]:.0f}% last year and the 6-month Excel average planned "
+        f"{fb.plan_words(ex_st[vn])} there; in the other markets its bias was between "
+        f"{min(ex_st[c] for c in others):+.0f}% and {max(ex_st[c] for c in others):+.0f}%. "
+        f"Indonesia's orders grew {gr_st[(idn, None)]:.0f}% and its plan was "
+        f"{fb.plan_words(ex_st[idn])}. Our statistical method does not fix this: it planned "
+        f"{fb.plan_words(by_c[vn]['combination']['bias_pct'])} in Vietnam. Growth has to be put "
+        f"into the plan on purpose."
+    )
+    L.append("")
+    return L
+
+
 # %%
 def section() -> str:
     runs = {(s, d): bt.load_backtest(bt.DERIVED, s, d) for s in bt.SCENARIOS for d in bt.DATAS}
@@ -105,6 +353,7 @@ def section() -> str:
         "cell shows WAPE (bias). Lower WAPE is better."
     )
     L.append("")
+    L.extend(pitch(runs))
 
     # ---------------------------------------------------------------- headline
     L.append("### Headline: 15 country x product series")
@@ -344,6 +593,7 @@ def section() -> str:
         + (f"; not in {', '.join(c_other)}." if c_other else ".")
     )
     L.append("")
+    L.extend(bias_section(runs))
     L.append("Honest notes generated with each run (shown in the app):")
     L.append("")
     for s in bt.SCENARIOS:
