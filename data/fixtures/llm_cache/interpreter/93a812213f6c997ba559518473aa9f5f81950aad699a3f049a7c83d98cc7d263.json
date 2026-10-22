@@ -1,0 +1,53 @@
+{
+  "cache_key": "93a812213f6c997ba559518473aa9f5f81950aad699a3f049a7c83d98cc7d263",
+  "input": "<email>\nFrom domain: livesgroup.example\nSubject: Vendor onboarding: Kencana Cold Chain Logistics Sdn Bhd (MY)\n\nHi MDM,\n\nPlease onboard a new logistics supplier for our Malaysia cold-chain deliveries. Details below:\n\nName: Kencana Cold Chain Logistics Sdn Bhd\nSSM no. 202201012345\nAddress: Lot 12, Jalan Perusahaan 3, Seksyen 23, Shah Alam, Selangor, Malaysia\nContact: accounts@kencanacoldchain.com.my.example\n\nBank details will follow separately on the secure vendor form, please do not ask them to email it.\n\nThank you,\nFarah Ismail\nProcurement Executive, Lives Group\n+60 3 5555 0188\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.95,
+    "domain": "vendor",
+    "fields": [
+      {
+        "key": "name",
+        "source_quote": "Kencana Cold Chain Logistics Sdn Bhd",
+        "value": "Kencana Cold Chain Logistics Sdn Bhd"
+      },
+      {
+        "key": "tax_id",
+        "source_quote": "SSM no. 202201012345",
+        "value": "202201012345"
+      },
+      {
+        "key": "city",
+        "source_quote": "Shah Alam",
+        "value": "Shah Alam"
+      },
+      {
+        "key": "country",
+        "source_quote": "Malaysia",
+        "value": "MY"
+      },
+      {
+        "key": "address",
+        "source_quote": "Lot 12, Jalan Perusahaan 3, Seksyen 23, Shah Alam, Selangor, Malaysia",
+        "value": "Lot 12, Jalan Perusahaan 3, Seksyen 23, Shah Alam, Selangor, Malaysia"
+      },
+      {
+        "key": "contact_email",
+        "source_quote": "accounts@kencanacoldchain.com.my.example",
+        "value": "accounts@kencanacoldchain.com.my.example"
+      },
+      {
+        "key": "purpose",
+        "source_quote": "new logistics supplier for our Malaysia cold-chain deliveries",
+        "value": "logistics supplier for our Malaysia cold-chain deliveries"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:02:02+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

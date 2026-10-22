@@ -1,0 +1,35 @@
+{
+  "cache_key": "99a4d962cfeec43dacb1fe24f1dabada8def394d800e84a747f3c49abdf1e4f8",
+  "input": "<email>\nFrom domain: bvbinhthuy.gov.vn.example\nSubject: Dat hang test nhanh Dengue - PO BT-2026-088\n\nKinh gui Quy cong ty Lives,\n\nBenh vien Quan Binh Thuy xin dat hang theo PO so BT-2026-088:\n- Bo test nhanh Dengue IgG/IgM: 30 hop\n\nNho cong ty xac nhan don hang giup. Cam on.\n\nDuoc si Tran Thi Mai\nKhoa Xet nghiem\nDT: 0292 3888 123\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Benh vien Quan Binh Thuy",
+        "value": "Benh vien Quan Binh Thuy"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO so BT-2026-088",
+        "value": "BT-2026-088"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "Bo test nhanh Dengue IgG/IgM",
+        "qty": 30.0,
+        "source_quote": "Bo test nhanh Dengue IgG/IgM: 30 hop"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:00:53+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

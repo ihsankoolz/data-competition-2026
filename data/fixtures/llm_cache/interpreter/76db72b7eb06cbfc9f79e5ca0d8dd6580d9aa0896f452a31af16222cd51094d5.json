@@ -1,0 +1,43 @@
+{
+  "cache_key": "76db72b7eb06cbfc9f79e5ca0d8dd6580d9aa0896f452a31af16222cd51094d5",
+  "input": "<email>\nFrom domain: livesgroup.example\nSubject: New item creation - Influenza A/B rapid test\n\nHi MDM,\n\nPlease create a new item for the Influenza A/B Rapid Test Kit. It is an IVD and not in our catalogue yet. We will sell in Singapore, Malaysia and Thailand. The Singapore registration no. is HSA-IVD-26-03318. MY and TH are still pending with the authorities, will send the numbers once approved. Sales unit: box of 25.\n\nThanks,\nRachel Ong\nProduct Manager, SPD\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "mdm_request",
+    "confidence": 0.9,
+    "domain": "item",
+    "fields": [
+      {
+        "key": "item_name",
+        "source_quote": "Influenza A/B rapid test",
+        "value": "Influenza A/B Rapid Test Kit"
+      },
+      {
+        "key": "is_ivd",
+        "source_quote": "It is an IVD",
+        "value": "true"
+      },
+      {
+        "key": "selling_countries",
+        "source_quote": "We will sell in Singapore, Malaysia and Thailand",
+        "value": "SG,MY,TH"
+      },
+      {
+        "key": "sales_unit",
+        "source_quote": "Sales unit: box of 25",
+        "value": "box of 25"
+      },
+      {
+        "key": "registration_number_SG",
+        "source_quote": "The Singapore registration no. is HSA-IVD-26-03318",
+        "value": "HSA-IVD-26-03318"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:02:04+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

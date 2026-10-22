@@ -236,7 +236,24 @@ def evaluate(seed: int, verbose: bool = False) -> dict:
 # candidate the pair is flagged (counted as Likely), if it answers "none" the grey-zone
 # candidates of that query are not flagged. Judge answers come from the replay cache.
 
+
 # %%
+def pair_kinds(gt: Path, gmap: dict, truth: set) -> dict:
+    """Pair -> the type label used in the per-type table (true pairs) or the look-alike reason
+    (hard negatives). Other wrong pairs are 'different customers, similar name'."""
+    kind: dict = {}
+    for d in read_csv(gt / "dup_pairs.csv"):
+        kind.setdefault(pair(d["card_code_a"], d["card_code_b"]), d["dup_type"])
+    roles = {"primary", "entity_record"}
+    for p in truth:
+        if p not in kind:
+            both_base = gmap[p[0]]["record_role"] in roles and gmap[p[1]]["record_role"] in roles
+            kind[p] = "existing per-entity copies" if both_base else "other same-customer pairs"
+    for h in read_csv(gt / "hard_negatives.csv"):
+        kind.setdefault(pair(h["card_code_a"], h["card_code_b"]), h["not_dup_reason"])
+    return kind
+
+
 NAME_HEAVY = ["abbreviation", "diacritics", "local_language", "typo", "suffix_punctuation"]
 
 
@@ -255,17 +272,23 @@ def ablation(seed: int) -> dict:
     types: dict[str, set] = defaultdict(set)
     for d in read_csv(gt / "dup_pairs.csv"):
         types[d["dup_type"]].add(pair(d["card_code_a"], d["card_code_b"]))
-    out: dict = {"seed": seed}
+    out: dict = {"seed": seed, "_kind": pair_kinds(gt, gmap, truth)}
     for setting, hide, use_judge in (("a", False, True), ("b", True, False), ("c", True, True)):
         master = [r.model_copy(update={"FederalTaxID": None}) for r in master0] if hide else master0
         index = MasterIndex(master)
         likely, possible = set(), set()
+        # dedup-ai block: rules-only flags vs flags with the judge's answer applied, per pair
+        lk_rules, ps_rules, lk_app, ps_app = set(), set(), set(), set()
+        rescues: list[dict] = []
         judged = judge_ok = judge_offline = 0
         for r in master:
             q = BPQuery.model_validate(r.model_dump())
             res = check(q, index, use_judge=use_judge, with_related=False)
             lk = {pair(r.CardCode, c.CardCode) for c in res.candidates if c.verdict == "likely"}
             ps = {pair(r.CardCode, c.CardCode) for c in res.candidates}
+            lk_rules |= lk
+            ps_rules |= ps
+            lk_j, ps_j = set(lk), set(ps)
             if res.grey_zone and use_judge:
                 judged += 1
                 op = res.judge
@@ -277,6 +300,24 @@ def ablation(seed: int) -> dict:
                 else:
                     sel = op.selected_card_code
                     judge_ok += (sel in true_codes) if sel else not true_codes
+                    ps_j -= {
+                        pair(r.CardCode, c.CardCode)
+                        for c in res.candidates
+                        if c.verdict != "likely" and c.CardCode != sel
+                    }
+                    if sel:
+                        lk_j.add(pair(r.CardCode, sel))
+                        cand = next(c for c in res.candidates if c.CardCode == sel)
+                        if pair(r.CardCode, sel) in truth and cand.verdict != "likely":
+                            rescues.append(
+                                dict(
+                                    pair=pair(r.CardCode, sel),
+                                    query=f"{r.CardName} [{r.City or '-'}]",
+                                    cand=f"{cand.CardName} [{cand.city or '-'}]",
+                                    score=cand.score,
+                                    reasons=list(op.reasons),
+                                )
+                            )
                     if setting == "c":
                         grey = {
                             pair(r.CardCode, c.CardCode)
@@ -288,7 +329,12 @@ def ablation(seed: int) -> dict:
                             lk.add(pair(r.CardCode, sel))
             likely |= lk
             possible |= ps
+            lk_app |= lk_j
+            ps_app |= ps_j
         out[setting] = {
+            "_ai": dict(
+                rules=(lk_rules, ps_rules), judged=(lk_app, ps_app), rescues=rescues, truth=truth
+            ),
             "likely": prf(likely, truth),
             "possible": prf(possible, truth),
             "judge": (judged, judge_ok, judge_offline),
@@ -637,6 +683,120 @@ def section(dev: dict, test: dict, abl: list[dict] | None = None) -> str:
     return "\n".join(L)
 
 
+AI_START, AI_END = "<!-- dedup-ai:start -->", "<!-- dedup-ai:end -->"
+
+
+def ai_rescues(abl: list[dict]) -> list[dict]:
+    """Per seed x setting: what applying the judge's answer changes, pair by pair."""
+    rows = []
+    for x in abl:
+        kind = x["_kind"]
+        for setting in ("a", "c"):
+            ai = x[setting]["_ai"]
+            (lr, pr), (lj, pj), truth = ai["rules"], ai["judged"], ai["truth"]
+            rows.append(
+                dict(
+                    seed=x["seed"],
+                    setting=setting,
+                    judged=x[setting]["judge"][0],
+                    rules_blocked=len(lr & truth),
+                    rescued=sorted(kind.get(p, "?") for p in (lj - lr) & truth),
+                    new_wrong_blocks=len((lj - lr) - truth),
+                    cleared=sorted(
+                        kind.get(p, "different customers, similar name") for p in (pr - pj) - truth
+                    ),
+                    lost_warnings=len((pr - pj) & truth),
+                    rules_wrong_warnings=len(pr - truth),
+                    examples=ai["rescues"],
+                    kind=kind,
+                )
+            )
+    return rows
+
+
+def _counts(labels: list[str]) -> str:
+    if not labels:
+        return "none"
+    c: dict[str, int] = defaultdict(int)
+    for k in labels:
+        c[k] += 1
+    return ", ".join(f"{k} {n}" for k, n in sorted(c.items(), key=lambda kv: (-kv[1], kv[0])))
+
+
+def ai_section(abl: list[dict]) -> str:
+    rows = ai_rescues(abl)
+    L: list[str] = []
+    a = L.append
+    a("### Where the AI judge helps, and where it does not (D-018)")
+    a("")
+    a(
+        "**Rules where rules work, AI only where they fail.** Tax ID, normalised names, the "
+        "multilingual dictionary and the fuzzy score settle almost every request on their own. "
+        "The AI judge is asked only when the best candidate sits in the grey zone (0.70 to "
+        "0.92). The table counts, pair by pair, what applying the judge's answer changes "
+        "compared with the rules alone: grey-zone true duplicates it turns into blocks "
+        "('rescued'), wrong warnings it clears, and the damage (new wrong blocks, true "
+        "warnings it clears). In the app the judge's answer is only an opinion next to the "
+        "candidates; a human decides (rule 6)."
+    )
+    a("")
+    a(
+        "| Seed | Setting | Grey-zone queries judged | True duplicates blocked by rules alone "
+        "| Rescued: extra true duplicates blocked, by type | Wrong warnings cleared, by type "
+        "| New wrong blocks | True warnings cleared |"
+    )
+    a("|---|---|---|---|---|---|---|---|")
+    setting_label = {"a": "with tax ID", "c": "name only (tax IDs hidden)"}
+    for r in rows:
+        held = "42 (dev)" if r["seed"] == 42 else f"{r['seed']} (held-out)"
+        a(
+            f"| {held} | {setting_label[r['setting']]} | {r['judged']} | {r['rules_blocked']} "
+            f"| {len(r['rescued'])}: {_counts(r['rescued'])} "
+            f"| {len(r['cleared'])} of {r['rules_wrong_warnings']}: {_counts(r['cleared'])} "
+            f"| {r['new_wrong_blocks']} | {r['lost_warnings']} |"
+        )
+    a("")
+    a(
+        "Type names as in the recall table above. 'With tax ID' is what the form does today "
+        "(the judge's answer is shown, flags are not changed), so that row is what the judge "
+        "would add if its answer were applied. 'Name only' is ablation (c) above. 'Wrong "
+        "warnings cleared' is out of all wrong warnings the rules raised at Possible."
+    )
+    a("")
+    pool = [
+        (r["seed"], e)
+        for r in rows
+        if r["setting"] == "c"
+        for e in r["examples"]
+        if r["kind"].get(e["pair"]) in NAME_HEAVY
+    ] or [(r["seed"], e) for r in rows for e in r["examples"]]
+    if pool:
+        pool.sort(key=lambda se: (se[0] != 7, se[1]["pair"]))  # prefer the held-out seed
+        seed, ex = pool[0]
+        kind = next(r["kind"] for r in rows if r["seed"] == seed)
+        reason = " ".join(ex["reasons"]) or "(no reason recorded)"
+        a(
+            f"**One rescued pair** (seed {seed}, tax IDs hidden, type "
+            f"`{kind.get(ex['pair'], '?')}`): the request **{ex['query']}** against the existing "
+            f"record **{ex['cand']}**. Rule score {ex['score']:.3f}, below the 0.92 block "
+            "line, so the rules only warned. "
+            f'The judge picked this record and said: "{reason}"'
+        )
+        a("")
+    held = [r for r in rows if r["seed"] != 42 and r["setting"] == "c"]
+    if held:
+        h = held[0]
+        a(
+            f"> **For judges:** on unseen data with tax IDs hidden, the rules alone block "
+            f"{h['rules_blocked']} true duplicates; the AI, asked on {h['judged']} unsure "
+            f"cases, adds {len(h['rescued'])} more blocks and clears {len(h['cleared'])} "
+            f"wrong warnings, at the cost of {h['new_wrong_blocks']} new wrong "
+            f"block{'' if h['new_wrong_blocks'] == 1 else 's'}. Small "
+            "numbers, by design: the AI only works where the rules run out."
+        )
+    return "\n".join(L)
+
+
 def write_results(text: str) -> None:
     body = f"{START}\n{text}\n{END}"
     if RESULTS.exists():
@@ -644,7 +804,7 @@ def write_results(text: str) -> None:
         if START in cur and END in cur:
             pre, rest = cur.split(START, 1)
             post = rest.split(END, 1)[1]
-            RESULTS.write_text(pre + body + post, encoding="utf-8")
+            RESULTS.write_text(pre + body + post, encoding="utf-8", newline="\n")
             return
         RESULTS.write_text(cur.rstrip() + "\n\n" + body + "\n", encoding="utf-8")
         return
@@ -701,5 +861,5 @@ if __name__ == "__main__":
                     f"ablation seed {x['seed']} ({k}): likely {y['likely'][:3]}, "
                     f"possible {y['possible'][:3]}, judge {y['judge']}"
                 )
-        write_results(section(dev, test, abl))
+        write_results(f"{section(dev, test, abl)}\n{AI_START}\n{ai_section(abl)}\n{AI_END}")
         print(f"wrote {RESULTS.relative_to(ROOT)}")

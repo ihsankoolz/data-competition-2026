@@ -1,0 +1,36 @@
+{
+  "cache_key": "b2b377d104e4863eec6020c0c7533a8722f44a2a6835d863448113a73f2d5e5b",
+  "input": "<email>\nFrom domain: unmandiri.ac.id.example\nSubject: Price and lead time: biosafety cabinet and microscopes\n\nDear Sales Team,\n\nWe are the Integrated Research Laboratory at Universitas Nusantara Mandiri in Bandung. We are equipping a new microbiology teaching room and would like to ask for the price and lead time to Bandung for the following:\n\n- 1 unit Class II biosafety cabinet\n- 2 units binocular microscope (for student practicals)\n\nCould you also tell us whether installation is included in the price? Thank you in advance.\n\nBest regards,\nDr. Rini Kusumawati\nHead of Laboratory\nUniversitas Nusantara Mandiri\nTel: +62 22 555 0188\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Universitas Nusantara Mandiri",
+        "value": "Universitas Nusantara Mandiri"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-BSC-II",
+        "product_text": "Class II biosafety cabinet",
+        "qty": 1.0,
+        "source_quote": "1 unit Class II biosafety cabinet"
+      },
+      {
+        "item_code": "B-MIC-BIN",
+        "product_text": "binocular microscope",
+        "qty": 2.0,
+        "source_quote": "2 units binocular microscope"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:25+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

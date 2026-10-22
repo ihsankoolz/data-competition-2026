@@ -1,0 +1,30 @@
+{
+  "cache_key": "f8b5a2c7cfb9f028b83ae918627de779835db442d7ae399cf27090d0a9c6153d",
+  "input": "<email>\nFrom domain: anphumed.com.vn.example\nSubject: Hoi demo va bao gia LIS\n\nChao anh chi,\n\nBen em la Cong ty TNHH Xet Nghiem Y Khoa An Phu o TP.HCM. Ben em dang tim phan mem quan ly xet nghiem cho phong lab moi. Anh chi cho em hoi ben minh co the demo goi thue bao LIS cho ben em xem truoc duoc khong a? Va cho em xin bao gia thue bao LIS theo nam nua nhe.\n\nEm cam on anh chi nhieu.\nLan Anh\nDT: 0903 555 014\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Cong ty TNHH Xet Nghiem Y Khoa An Phu",
+        "value": "Cong ty TNHH Xet Nghiem Y Khoa An Phu"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-LIS-SUB",
+        "product_text": "goi thue bao LIS",
+        "qty": null,
+        "source_quote": "goi thue bao LIS"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:31+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

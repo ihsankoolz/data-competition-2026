@@ -1,0 +1,46 @@
+{
+  "cache_key": "deef2e4b961f9a3cebe17a20794d4286ac07b680d96c07aa6f20796489eb2e4a",
+  "input": "<email>\nFrom domain: livesgroup.example\nSubject: Fwd: PO 7700-3321 - Greenfield Polyclinic\n\npls process\n\n---------- Forwarded message ---------\nFrom: Priya Nair <purchasing@greenfieldpoly.com.sg.example>\nDate: Tue, 14 Apr 2026 09:12\nSubject: PO 7700-3321\nTo: Daniel Koh <daniel.koh@livesgroup.example>\n\nHi Daniel,\n\nAttached is our PO 7700-3321 for the following:\n- Rapid Dengue NS1 Ag Test Kit x 40 boxes\n- CRP Quantitative Reagent x 10 kits\n\nPlease deliver to our Bishan clinic by 30 Apr 2026.\n\nRegards,\nPriya Nair\nPurchasing, Greenfield Polyclinic\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Purchasing, Greenfield Polyclinic",
+        "value": "Greenfield Polyclinic"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "Attached is our PO 7700-3321 for the following:",
+        "value": "7700-3321"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "Please deliver to our Bishan clinic by 30 Apr 2026.",
+        "value": "2026-04-30"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-NS1",
+        "product_text": "Rapid Dengue NS1 Ag Test Kit",
+        "qty": 40.0,
+        "source_quote": "Rapid Dengue NS1 Ag Test Kit x 40 boxes"
+      },
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "CRP Quantitative Reagent",
+        "qty": 10.0,
+        "source_quote": "CRP Quantitative Reagent x 10 kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:00:50+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

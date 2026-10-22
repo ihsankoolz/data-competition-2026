@@ -1,0 +1,23 @@
+{
+  "cache_key": "0d2d1bc30c6f9a635eaa1c35aeca08127abcb1c6c6c86be4893788b0e630af80",
+  "input": "<email>\nFrom domain: livesgroup.example\nSubject: Re: Customer account request - Poliklinik Seri Impian\n\nHi MDM team,\n\nFollowing up on my request below, sent last week. I still cannot book the order for Poliklinik Seri Impian Sdn Bhd because the account is not in SAP yet. Customer is waiting, boleh tolong check status ya? Tq.\n\nAzlan Ibrahim\nSales Executive, Lives Group Malaysia\nHP 012-345 6789\n\nOn Mon, 2 Mar 2026 at 09:40, Azlan Ibrahim <azlan.ibrahim@livesgroup.example> wrote:\n> Hi MDM,\n> Pls open a new customer account for Poliklinik Seri Impian Sdn Bhd, Kuala Lumpur. They want to order HbA1c kits for SPD.\n> SSM no. will follow once I get it from the customer.\n> Tq,\n> Azlan\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "follow_up",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "order for Poliklinik Seri Impian Sdn Bhd",
+        "value": "Poliklinik Seri Impian Sdn Bhd"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:49+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}
