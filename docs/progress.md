@@ -5,15 +5,16 @@ One line per finished task: `YYYY-MM-DD HH:MM | agent | what changed | status`.
 ## Must checklist (PRD §5.1)
 
 - [x] M1 Synthetic data generator
-- [x] M2 Messy-inbox interpreter (API done; inbox screen next session)
+- [x] M2 Messy-inbox interpreter (inbox screen done; held-out unseen-email test, labels pending human spot-check)
 - [x] M3 Schema-driven request form
 - [x] M4 Layered duplicate check (engine, eval, API, live panel)
-- [ ] M5 Parallel approvals + status page (engine + API done; approvals inbox, status page, Priya publish screens pending)
+- [x] M5 Parallel approvals + status page (approvals inbox, status page with audit timeline, notifications bell, Priya publish + read-back)
 - [x] M6 Audit log (hooked into every workflow event; timeline UI with M5 screens)
 - [x] M7 SAP B1 mock + publisher
-- [ ] M8 Regional business view
-- [ ] M9 Forecast backtest
-- [ ] M10 Ops impact numbers
+- [ ] M8 Regional business view (analytics + API done, own dedup clusters; screen in session 5)
+- [x] M9 Forecast backtest (3 scenarios x clean/dirty, precomputed; methods tie at country level, reported honestly)
+- [ ] M10 Ops impact numbers (model + API done; summary card in session 5)
+- [x] D-018 #3 Field validation (schema values, tax-ID formats, required fields, registration expiry)
 
 ## Log
 
