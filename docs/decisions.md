@@ -161,3 +161,6 @@ Each decision: what, why, and what we rejected. Agents must follow these. Change
 - **Faker:** no `en_SG` or `ms_MY` locale. Generator templates SG and MY names itself.
 - **anyascii** replaces unidecode (licence) for diacritic stripping and rough Thai romanisation.
 - **Windows:** stdio MCP servers in `.mcp.json` run through `cmd /c npx`. `statsforecast` uses `n_jobs=1`.
+- **Note (22 Oct, orchestrator; replaces the `CardName`/`CardForeignName` bullet above):** `CardName` holds whatever the creating entity typed, so it can be romanised **or** native script / diacritics. That inconsistency is the realistic mess the dedup check must handle. `CardForeignName` is optional (e.g. an English name). The existing SPD Chợ Rẫy record has `CardName` = "Bệnh viện Chợ Rẫy" **with** diacritics and `FederalTaxID` = `0301234567`, so DEMO-01 ("Benh vien Cho Ray") matches only via diacritic stripping + the MST.
+- **Next.js is pinned to 16** (next-devtools MCP requires it).
+- **PyYAML added** (22 Oct, approved by Ihsan) for `params.yaml`, `suffixes.yaml`, `terms.yaml` and `config/*.yaml`.

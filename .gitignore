@@ -10,3 +10,10 @@ data/app.db
 
 # Competition material (keep out of the repo in case it goes public)
 *.pdf
+
+# Playwright MCP snapshots
+.playwright-mcp/
+
+# Python / tooling caches
+.pytest_cache/
+.ruff_cache/
