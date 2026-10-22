@@ -107,6 +107,38 @@ def extract_to_form_field(domain: Domain) -> dict[str, str]:
     return {p["x-extract"]: name for name, p in props.items() if "x-extract" in p}
 
 
+def dedup_query(domain: Domain, entity: str | None, fields: Mapping[str, Any]):
+    """The duplicate-check query for a customer/vendor form (form fields = SAP names).
+
+    The one place this mapping lives: the API's live check and the replay-cache recorder both
+    use it, so a recorded AI-judge answer matches the request the demo actually sends.
+    Returns None until a name and a country have been typed.
+    """
+    from ds.dedup.schemas import BPQuery
+
+    name = str(fields.get("CardName") or "").strip()
+    country = str(fields.get("Country") or "").strip()
+    if domain not in ("customer", "vendor") or not name or not country:
+        return None
+
+    def opt(key: str) -> str | None:
+        v = str(fields.get(key) or "").strip()
+        return v or None
+
+    return BPQuery(
+        CardName=name,
+        CardForeignName=opt("CardForeignName"),
+        CardType="cCustomer" if domain == "customer" else "cSupplier",
+        FederalTaxID=opt("FederalTaxID"),
+        Country=country,
+        City=opt("City"),
+        Phone1=opt("Phone1"),
+        EmailAddress=opt("EmailAddress"),
+        U_Entity=entity,
+        CardCode=opt("CardCode"),
+    )
+
+
 def _value(v: Any) -> Any:
     return v.get("value") if isinstance(v, Mapping) else v
 

@@ -69,3 +69,18 @@ def test_form_endpoint_lists_required_fields_and_stubs_answer_501():
     assert item["regulated_countries"] == ["SG", "MY", "ID", "VN", "TH"]
     assert client.get("/forms/cost_center").status_code == 404
     assert client.post("/admin/reset-demo").status_code == 501
+
+
+def test_dedup_query_from_demo_01_form_finds_cho_ray():
+    from ds.dedup import MasterIndex, check, load_master
+    from ds.forms import dedup_query
+
+    assert dedup_query("customer", "QTG", {"CardName": "x"}) is None
+    q = dedup_query(
+        "customer",
+        "QTG",
+        {"CardName": "Benh vien Cho Ray", "Country": "VN", "FederalTaxID": "0301234567"},
+    )
+    result = check(q, MasterIndex(load_master("data/fixtures/seasonal_trend")), use_judge=False)
+    assert result.verdict == "likely" and result.block_submit
+    assert result.candidates[0].CardName == "Bệnh viện Chợ Rẫy"
