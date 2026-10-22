@@ -1,0 +1,352 @@
+scenario: seasonal_trend
+seed: 42
+params:
+  time:
+    start_month: '2023-10-01'
+    n_months: 36
+  countries:
+    SG:
+      n_golden: 60
+      currency: SGD
+    MY:
+      n_golden: 70
+      currency: MYR
+    ID:
+      n_golden: 80
+      currency: IDR
+    VN:
+      n_golden: 75
+      currency: VND
+    TH:
+      n_golden: 65
+      currency: THB
+  fx_usd:
+    SGD: 0.74
+    MYR: 0.22
+    IDR: 6.4e-05
+    VND: 4.0e-05
+    THB: 0.028
+  segment_mix:
+    public_hospital: 0.25
+    private_hospital: 0.25
+    laboratory: 0.25
+    clinic: 0.2
+    distributor: 0.05
+  entities:
+    A: SPD
+    B: QTS
+    C: QTG
+  lifecycle:
+    legacy_start_year_range:
+    - 2015
+    - 2023
+    new_starter_share: 0.12
+    new_starter_month_range:
+    - 12
+    - 32
+    churner_share: 0.1
+    churn_month_range:
+    - 12
+    - 35
+    decline_months_range:
+    - 3
+    - 6
+  adoption:
+    primary_family:
+      public_hospital:
+        A: 0.75
+        B: 0.12
+        C: 0.13
+      private_hospital:
+        A: 0.65
+        B: 0.17
+        C: 0.18
+      laboratory:
+        A: 0.75
+        B: 0.08
+        C: 0.17
+      clinic:
+        A: 0.88
+        B: 0.07
+        C: 0.05
+      distributor:
+        A: 0.65
+        B: 0.25
+        C: 0.1
+    cross_sell_prob:
+      public_hospital:
+        A: 0.4
+        B: 0.2
+        C: 0.22
+      private_hospital:
+        A: 0.4
+        B: 0.2
+        C: 0.2
+      laboratory:
+        A: 0.4
+        B: 0.12
+        C: 0.38
+      clinic:
+        A: 0.3
+        B: 0.03
+        C: 0.05
+      distributor:
+        A: 0.4
+        B: 0.2
+        C: 0.08
+    last_adoption_month: 33
+  name_forms:
+    SG:
+      legal: 0.5
+      local: 0.5
+    MY:
+      legal: 0.45
+      local: 0.4
+      english: 0.15
+    ID:
+      legal: 0.3
+      local: 0.5
+      english: 0.2
+    VN:
+      local: 0.35
+      rom: 0.25
+      legal: 0.15
+      legal_rom: 0.1
+      english: 0.15
+    TH:
+      english: 0.4
+      legal_rom: 0.2
+      local: 0.25
+      legal: 0.15
+  base_record:
+    taxid_blank_prob: 0.04
+    npwp_dotted_prob: 0.7
+    city_variant_prob: 0.25
+    phone_blank_prob: 0.08
+    email_blank_prob: 0.1
+    foreign_name_prob: 0.35
+    group_code_mismatch_prob: 0.15
+  duplicates:
+    golden_with_dup_share: 0.2
+    second_dup_prob: 0.2
+    dup_taxid_same_prob: 0.55
+    missing_tax_malformed_prob: 0.4
+    same_entity_prob: 0.4
+    type_shares:
+      cross_entity_recreate: 0.35
+      abbreviation: 0.12
+      suffix_punctuation: 0.1
+      diacritics: 0.1
+      local_language: 0.13
+      typo: 0.1
+      missing_tax_id: 0.1
+  migrations:
+    share: 0.06
+    min_vn_product_a: 4
+    switch_month_range:
+    - 12
+    - 31
+  hard_negatives:
+    customer_vendor_pairs: 10
+  vendors:
+    n_total: 60
+    kinds:
+      manufacturer: 0.6
+      logistics: 0.25
+      services: 0.15
+  demand:
+    lambda_shape: 2.0
+    lambda_mean:
+      A:
+        public_hospital: 40
+        private_hospital: 22
+        laboratory: 28
+        clinic: 4
+        distributor: 60
+      B:
+        public_hospital: 0.6
+        private_hospital: 0.4
+        laboratory: 0.4
+        clinic: 0.05
+        distributor: 1.0
+      C:
+        public_hospital: 2.5
+        private_hospital: 1.5
+        laboratory: 1.5
+        clinic: 0.3
+        distributor: 1.0
+    country_size:
+      SG: 1.0
+      MY: 0.9
+      ID: 1.25
+      VN: 1.1
+      TH: 1.0
+    small_customer_prob:
+      public_hospital: 0.0
+      private_hospital: 0.2
+      laboratory: 0.3
+      clinic: 1.0
+      distributor: 0.1
+    p_order:
+      A:
+        large: 0.7
+        small: 0.3
+      B:
+        low: 0.05
+        high: 0.1
+      C_adhoc: 0.04
+    c_contract:
+      quarterly_prob: 0.4
+      renewal_prob: 0.95
+      annual_items:
+        C-SVC-ANN: 0.6
+        C-LIS-SUB: 0.4
+      quarterly_item: C-SVC-PM
+      adhoc_items:
+        C-TRN-OPS: 0.6
+        C-INS-VAL: 0.4
+    item_weights:
+      A:
+        A-DEN-NS1: 0.25
+        A-DEN-IGM: 0.2
+        A-HBA-1C: 0.2
+        A-CRP-QT: 0.2
+        A-COV-AG: 0.15
+      B:
+        B-HEM-5P: 0.3
+        B-CHE-AUT: 0.2
+        B-CEN-REF: 0.2
+        B-MIC-BIN: 0.15
+        B-BSC-II: 0.15
+    item_pref_concentration: 8.0
+    second_line_prob: 0.35
+    nb_dispersion:
+      A: 6.0
+      B: 3.0
+      C: 8.0
+    extra_noise_sigma: 0.0
+    trend_annual:
+      SG: 0.01
+      MY: 0.03
+      ID: 0.12
+      VN: 0.18
+      TH: 0.06
+    trend_extra:
+      A: 0.0
+      B: 0.0
+      C: 0.08
+    seasonality_on: true
+    season:
+      budget_flush:
+        months:
+        - 11
+        - 12
+        mult: 1.15
+      cny_dip:
+        countries:
+        - SG
+        - MY
+        - VN
+        mult: 0.8
+      ramadan_dip:
+        countries:
+        - ID
+        - MY
+        mult: 0.85
+      songkran_dip:
+        countries:
+        - TH
+        mult: 0.85
+    price_noise: 0.05
+    tender:
+      segments:
+      - public_hospital
+      families:
+      - A
+      - B
+      prob: 0.01
+      mult_range:
+      - 3
+      - 5
+    po_ref_blank_prob: 0.08
+  enquiries:
+    pr_per_order:
+      A: 0.2
+      B: 0.45
+      C: 0.1
+    enq_per_order:
+      A: 0.1
+      B: 0.6
+      C: 0.08
+    pr_conversion: 0.35
+    enq_conversion: 0.1
+    lead_days:
+    - 5
+    - 60
+  leakage:
+    enquiry_share: 0.1
+    mdm_share: 0.05
+  mdm_history:
+    start_month: 12
+    per_month_mean: 40
+    domain_mix:
+      customer: 0.45
+      vendor: 0.2
+      item: 0.25
+      cost_center: 0.1
+    item_ivd_prob: 0.5
+    sequence:
+      customer:
+      - bu_head
+      - finance
+      - business_support
+      vendor:
+      - bu_head
+      - finance
+      - business_support
+      item:
+      - bu_head
+      - quality_regulatory
+      - business_support
+      cost_center:
+      - finance
+      - bu_head
+    step_wait_median_days: 3.0
+    step_wait_sigma: 0.55
+    keying_wait_median_days: 2.5
+    keying_wait_sigma: 0.5
+    bounce_prob: 0.4
+    second_bounce_prob: 0.3
+    bounce_delay_median_days: 3.2
+    bounce_delay_sigma: 0.5
+    missing_field_options:
+      customer:
+      - tax_id
+      - billing_address
+      - credit_terms
+      - contact_email
+      vendor:
+      - tax_id
+      - bank_details
+      - payment_terms
+      - address
+      item:
+      - registration_number
+      - risk_class
+      - sales_unit
+      - supplier
+      cost_center:
+      - effective_from
+      - dimension
+      - owner
+  emails:
+    n_eval: 80
+    class_counts:
+      purchase_order: 24
+      purchase_request: 12
+      enquiry: 20
+      follow_up: 12
+      mdm_request: 12
+    window:
+    - '2026-07-01'
+    - '2026-10-02'

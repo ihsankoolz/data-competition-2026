@@ -1,0 +1,89 @@
+card_code_a,card_code_b,not_dup_reason,golden_id_a,golden_id_b,group_id,note
+C00018,V00009,customer_vendor_pair,GLD00108,GLD00108,,same legal entity as customer and supplier (B1 needs both)
+C00027,V00011,customer_vendor_pair,GLD00038,GLD00038,,same legal entity as customer and supplier (B1 needs both)
+C00166,V00026,customer_vendor_pair,GLD00207,GLD00207,,same legal entity as customer and supplier (B1 needs both)
+C00224,V00031,customer_vendor_pair,GLD00329,GLD00329,,same legal entity as customer and supplier (B1 needs both)
+C00225,V00011,customer_vendor_pair,GLD00038,GLD00038,,same legal entity as customer and supplier (B1 needs both)
+C00227,V00032,customer_vendor_pair,GLD00350,GLD00350,,same legal entity as customer and supplier (B1 needs both)
+C00231,V00033,customer_vendor_pair,GLD00266,GLD00266,,same legal entity as customer and supplier (B1 needs both)
+C00292,V00033,customer_vendor_pair,GLD00266,GLD00266,,same legal entity as customer and supplier (B1 needs both)
+C00312,V00045,customer_vendor_pair,GLD00284,GLD00284,,same legal entity as customer and supplier (B1 needs both)
+C00340,V00047,customer_vendor_pair,GLD00129,GLD00129,,same legal entity as customer and supplier (B1 needs both)
+C00347,V00031,customer_vendor_pair,GLD00329,GLD00329,,same legal entity as customer and supplier (B1 needs both)
+C00362,V00044,customer_vendor_pair,GLD00058,GLD00058,,same legal entity as customer and supplier (B1 needs both)
+C00388,V00052,customer_vendor_pair,GLD00107,GLD00107,,same legal entity as customer and supplier (B1 needs both)
+C00002,C00055,same_group_other_country,GLD00268,GLD00335,GRP04,Mekong Health Partners: VN vs TH
+C00008,C00160,same_group_other_country,GLD00309,GLD00086,GRP03,Andaman Medical Group: MY vs TH
+C00008,C00524,same_group_other_country,GLD00309,GLD00086,GRP03,Andaman Medical Group: MY vs TH
+C00038,C00157,same_group_other_country,GLD00157,GLD00085,GRP01,Sentosa Healthcare Group: MY vs ID
+C00038,C00242,same_group_other_country,GLD00157,GLD00022,GRP01,Sentosa Healthcare Group: SG vs ID
+C00077,C00177,same_group_other_country,GLD00033,GLD00098,GRP06,Straits Clinical Group: SG vs MY
+C00114,C00160,same_group_other_country,GLD00309,GLD00086,GRP03,Andaman Medical Group: MY vs TH
+C00114,C00524,same_group_other_country,GLD00309,GLD00086,GRP03,Andaman Medical Group: MY vs TH
+C00136,C00183,same_group_other_country,GLD00031,GLD00319,GRP02,Merlion Diagnostics Group: SG vs TH
+C00136,C00404,same_group_other_country,GLD00031,GLD00319,GRP02,Merlion Diagnostics Group: SG vs TH
+C00136,C00523,same_group_other_country,GLD00031,GLD00249,GRP02,Merlion Diagnostics Group: SG vs VN
+C00136,C00568,same_group_other_country,GLD00031,GLD00249,GRP02,Merlion Diagnostics Group: SG vs VN
+C00136,C00570,same_group_other_country,GLD00031,GLD00249,GRP02,Merlion Diagnostics Group: SG vs VN
+C00150,C00181,same_group_other_country,GLD00097,GLD00171,GRP05,Garuda Lab Network: MY vs ID
+C00150,C00424,same_group_other_country,GLD00097,GLD00171,GRP05,Garuda Lab Network: MY vs ID
+C00150,C00543,same_group_other_country,GLD00097,GLD00032,GRP05,Garuda Lab Network: SG vs MY
+C00150,C00550,same_group_other_country,GLD00097,GLD00171,GRP05,Garuda Lab Network: MY vs ID
+C00157,C00242,same_group_other_country,GLD00085,GLD00022,GRP01,Sentosa Healthcare Group: SG vs MY
+C00160,C00414,same_group_other_country,GLD00086,GLD00309,GRP03,Andaman Medical Group: MY vs TH
+C00177,C00210,same_group_other_country,GLD00098,GLD00033,GRP06,Straits Clinical Group: SG vs MY
+C00181,C00543,same_group_other_country,GLD00171,GLD00032,GRP05,Garuda Lab Network: SG vs ID
+C00183,C00521,same_group_other_country,GLD00319,GLD00031,GRP02,Merlion Diagnostics Group: SG vs TH
+C00183,C00523,same_group_other_country,GLD00319,GLD00249,GRP02,Merlion Diagnostics Group: VN vs TH
+C00183,C00568,same_group_other_country,GLD00319,GLD00249,GRP02,Merlion Diagnostics Group: VN vs TH
+C00183,C00570,same_group_other_country,GLD00319,GLD00249,GRP02,Merlion Diagnostics Group: VN vs TH
+C00404,C00521,same_group_other_country,GLD00319,GLD00031,GRP02,Merlion Diagnostics Group: SG vs TH
+C00404,C00523,same_group_other_country,GLD00319,GLD00249,GRP02,Merlion Diagnostics Group: VN vs TH
+C00404,C00568,same_group_other_country,GLD00319,GLD00249,GRP02,Merlion Diagnostics Group: VN vs TH
+C00404,C00570,same_group_other_country,GLD00319,GLD00249,GRP02,Merlion Diagnostics Group: VN vs TH
+C00414,C00524,same_group_other_country,GLD00309,GLD00086,GRP03,Andaman Medical Group: MY vs TH
+C00424,C00543,same_group_other_country,GLD00171,GLD00032,GRP05,Garuda Lab Network: SG vs ID
+C00521,C00523,same_group_other_country,GLD00031,GLD00249,GRP02,Merlion Diagnostics Group: SG vs VN
+C00521,C00568,same_group_other_country,GLD00031,GLD00249,GRP02,Merlion Diagnostics Group: SG vs VN
+C00521,C00570,same_group_other_country,GLD00031,GLD00249,GRP02,Merlion Diagnostics Group: SG vs VN
+C00543,C00550,same_group_other_country,GLD00032,GLD00171,GRP05,Garuda Lab Network: SG vs ID
+C00004,C00228,similar_name_different_site,GLD00232,GLD00233,,PAIR10: different site / legal entity
+C00004,C00364,similar_name_different_site,GLD00232,GLD00233,,PAIR10: different site / legal entity
+C00004,C00546,similar_name_different_site,GLD00232,GLD00233,,PAIR10: different site / legal entity
+C00017,C00086,similar_name_different_site,GLD00308,GLD00307,,PAIR14: different site / legal entity
+C00017,C00155,similar_name_different_site,GLD00308,GLD00307,,PAIR14: different site / legal entity
+C00017,C00426,similar_name_different_site,GLD00308,GLD00307,,PAIR14: different site / legal entity
+C00021,C00376,similar_name_different_site,GLD00228,GLD00229,,PAIR11: different site / legal entity
+C00028,C00325,similar_name_different_site,GLD00154,GLD00153,,PAIR07: different site / legal entity
+C00029,C00226,similar_name_different_site,GLD00082,GLD00081,,PAIR04: different site / legal entity
+C00029,C00257,similar_name_different_site,GLD00082,GLD00081,,PAIR04: different site / legal entity
+C00036,C00147,similar_name_different_site,GLD00034,GLD00035,,PAIR15: different site / legal entity
+C00036,C00386,similar_name_different_site,GLD00034,GLD00035,,PAIR15: different site / legal entity
+C00052,C00089,similar_name_different_site,GLD00016,GLD00017,,PAIR01: different site / legal entity
+C00052,C00151,similar_name_different_site,GLD00016,GLD00017,,PAIR01: different site / legal entity
+C00061,C00244,similar_name_different_site,GLD00152,GLD00151,,PAIR06: different site / legal entity
+C00066,C00159,similar_name_different_site,GLD00306,GLD00305,,PAIR13: different site / legal entity
+C00066,C00464,similar_name_different_site,GLD00306,GLD00305,,PAIR13: different site / legal entity
+C00091,C00325,similar_name_different_site,GLD00154,GLD00153,,PAIR07: different site / legal entity
+C00092,C00148,similar_name_different_site,GLD00155,GLD00156,,PAIR08: different site / legal entity
+C00098,C00260,similar_name_different_site,GLD00079,GLD00080,,PAIR03: different site / legal entity
+C00098,C00418,similar_name_different_site,GLD00079,GLD00080,,PAIR03: different site / legal entity
+C00131,C00325,similar_name_different_site,GLD00154,GLD00153,,PAIR07: different site / legal entity
+C00147,C00369,similar_name_different_site,GLD00035,GLD00034,,PAIR15: different site / legal entity
+C00148,C00182,similar_name_different_site,GLD00156,GLD00155,,PAIR08: different site / legal entity
+C00148,C00197,similar_name_different_site,GLD00156,GLD00155,,PAIR08: different site / legal entity
+C00178,C00214,similar_name_different_site,GLD00303,GLD00304,,PAIR12: different site / legal entity
+C00190,C00198,similar_name_different_site,GLD00230,GLD00231,,PAIR09: different site / legal entity
+C00190,C00385,similar_name_different_site,GLD00230,GLD00231,,PAIR09: different site / legal entity
+C00212,C00232,similar_name_different_site,GLD00046,GLD00047,,PAIR02: different site / legal entity
+C00214,C00311,similar_name_different_site,GLD00304,GLD00303,,PAIR12: different site / legal entity
+C00214,C00462,similar_name_different_site,GLD00304,GLD00303,,PAIR12: different site / legal entity
+C00232,C00313,similar_name_different_site,GLD00047,GLD00046,,PAIR02: different site / legal entity
+C00260,C00519,similar_name_different_site,GLD00080,GLD00079,,PAIR03: different site / legal entity
+C00357,C00376,similar_name_different_site,GLD00228,GLD00229,,PAIR11: different site / legal entity
+C00369,C00386,similar_name_different_site,GLD00034,GLD00035,,PAIR15: different site / legal entity
+C00377,C00406,similar_name_different_site,GLD00084,GLD00083,,PAIR05: different site / legal entity
+C00377,C00484,similar_name_different_site,GLD00084,GLD00083,,PAIR05: different site / legal entity
+C00406,C00419,similar_name_different_site,GLD00083,GLD00084,,PAIR05: different site / legal entity
+C00418,C00519,similar_name_different_site,GLD00080,GLD00079,,PAIR03: different site / legal entity
+C00419,C00484,similar_name_different_site,GLD00084,GLD00083,,PAIR05: different site / legal entity
