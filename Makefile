@@ -54,6 +54,10 @@ test-web:
 eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
 	LLM_MODE=replay uv run python notebooks/eval_dedup.py
 	LLM_MODE=replay uv run python notebooks/eval_interpreter.py
+	LLM_MODE=replay uv run python notebooks/eval_holdout.py
+	uv run python notebooks/eval_forecast.py
+	uv run python notebooks/eval_regional.py
+	uv run python notebooks/eval_ops.py
 
 api-types:        ## regenerate the typed API client from the FastAPI OpenAPI spec
 	uv run python -m services.api.export_openapi $(WEB)/lib/api/openapi.json
