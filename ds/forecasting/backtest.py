@@ -152,8 +152,14 @@ def _cv(train: pd.DataFrame, models: list) -> pd.DataFrame:
     return out
 
 
-def _forecasts(train: pd.DataFrame, with_tsb: bool, with_combo: bool = True) -> pd.DataFrame:
-    """Cross-validated forecasts: unique_id, ds, cutoff, excel_6m, excel_12m, combination[, tsb]."""
+def _forecasts(
+    train: pd.DataFrame, with_tsb: bool, with_combo: bool = True, components: bool = False
+) -> pd.DataFrame:
+    """Cross-validated forecasts: unique_id, ds, cutoff, excel_6m, excel_12m, combination[, tsb].
+
+    `components=True` also returns the three parts of the combination (ets, theta, snaive, each
+    floored at zero as averaged) for diagnosis only (D-020 bias analysis); nothing is scored on
+    them and the combination is unchanged."""
     from statsforecast.models import TSB, AutoETS, AutoTheta, SeasonalNaive, WindowAverage
 
     models: list = [
@@ -174,6 +180,8 @@ def _forecasts(train: pd.DataFrame, with_tsb: bool, with_combo: bool = True) -> 
     if with_combo:
         cv["combination"] = cv[["ets", "theta", "snaive"]].clip(lower=0).mean(axis=1)
     methods = method_list(with_tsb, with_combo)
+    if components and with_combo:
+        methods = [*methods, "ets", "theta", "snaive"]
     cv[methods] = cv[methods].clip(lower=0)
     return cv[["unique_id", "ds", "cutoff", *methods]]
 
@@ -520,6 +528,9 @@ def main(scenarios: tuple[str, ...] = SCENARIOS) -> None:
             path = write_backtest(run_backtest(d, s, data))
             print(f"wrote {path.relative_to(ROOT)}")
     refresh_notes()  # dirty notes quote the clean run's bias
+    from ds.forecasting import bias  # D-020: bias by country, a cut of the same forecasts
+
+    bias.main(refit=True)
     print(f"model fits that fell back to SeasonalNaive(12): {FALLBACKS['count']}")
 
 
