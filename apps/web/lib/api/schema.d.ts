@@ -4,23 +4,6 @@
  */
 
 export interface paths {
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Health */
-        get: operations["health"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/clock": {
         parameters: {
             query?: never;
@@ -72,6 +55,334 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/forms/{domain}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Form */
+        get: operations["getForm"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/emails": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Emails */
+        get: operations["listEmails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/emails/{email_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Email */
+        get: operations["getEmail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/emails/{email_id}/interpret": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Interpret
+         * @description Classify and extract (ds.interpreter.api.interpret_email). Works offline in replay mode.
+         */
+        post: operations["interpretEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dedup/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Duplicates
+         * @description Called while the requester types (debounced) and again on submit. Read-only, fast.
+         */
+        post: operations["checkDuplicates"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Requests */
+        get: operations["listRequests"];
+        put?: never;
+        /**
+         * Create Request
+         * @description Creates a DRAFT for the acting user.
+         */
+        post: operations["createRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/from-email/{email_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Request From Email
+         * @description Interprets the email and creates a pre-filled DRAFT with a source quote per field.
+         *     Email text never sets approvers, bank details or credit terms (rule 7).
+         */
+        post: operations["createRequestFromEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/{req_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Request */
+        get: operations["getRequest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Request */
+        patch: operations["updateRequest"];
+        trace?: never;
+    };
+    "/requests/{req_id}/dedup-decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Decide Duplicate
+         * @description Link to the existing record (-> LINKED_TO_EXISTING, no approvals) or confirm it is not
+         *     a duplicate with a reason. Always a human decision; always audited.
+         */
+        post: operations["decideDuplicate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/{req_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Request
+         * @description Re-runs the duplicate check. 409 if a Likely duplicate has no human decision; 422 if
+         *     required fields are missing. Otherwise routes approvals (config/routing_rules.yaml).
+         */
+        post: operations["submitRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/{req_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish Request
+         * @description MDM analyst only, after every approval. Publishes to the SAP B1 mock (D-004).
+         */
+        post: operations["publishRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/requests/{req_id}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Request Audit */
+        get: operations["getRequestAudit"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/inbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Approval Inbox
+         * @description Open tasks assigned to the acting user (including escalated ones).
+         */
+        get: operations["approvalInbox"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/{task_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Decide Approval
+         * @description Approve / reject / ask for info. Maker-checker enforced. A human always decides.
+         */
+        post: operations["decideApproval"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Notifications
+         * @description Notifications for the acting user, newest first (reminders, escalations, ...).
+         */
+        get: operations["listNotifications"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/reset-demo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset Demo
+         * @description Restore the seeded demo state in under 10 s without stopping the API: database,
+         *     simulated clock, audit chain and the SAP mock. `make reset-demo` uses the same code path.
+         */
+        post: operations["resetDemo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Health */
+        get: operations["health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/personas": {
         parameters: {
             query?: never;
@@ -93,6 +404,148 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ApprovalDecisionIn */
+        ApprovalDecisionIn: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "approve" | "reject" | "ask_info";
+            /**
+             * Comment
+             * @description Required for reject and ask_info
+             */
+            comment?: string | null;
+        };
+        /** ApprovalInboxItem */
+        ApprovalInboxItem: {
+            task: components["schemas"]["ApprovalTask"];
+            request: components["schemas"]["RequestSummary"];
+        };
+        /** ApprovalTask */
+        ApprovalTask: {
+            /** Task Id */
+            task_id: string;
+            /** Req Id */
+            req_id: string;
+            /**
+             * Stage
+             * @description 1-based stage number
+             */
+            stage: number;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "requestor" | "bu_head" | "finance" | "quality_regulatory" | "business_support" | "mdm_analyst";
+            /**
+             * Country
+             * @description Quality/Regulatory tasks
+             */
+            country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+            /** Assignee User Id */
+            assignee_user_id: string;
+            /** Assignee Name */
+            assignee_name: string;
+            /**
+             * Status
+             * @description waiting = its stage has not opened yet
+             * @enum {string}
+             */
+            status: "waiting" | "pending" | "approved" | "rejected" | "info_requested" | "cancelled";
+            /** Assigned At */
+            assigned_at?: string | null;
+            /**
+             * Due At
+             * @description Simulated clock, SLA end
+             */
+            due_at?: string | null;
+            /** Reminded At */
+            reminded_at?: string | null;
+            /** Escalated At */
+            escalated_at?: string | null;
+            /** Escalated To User Id */
+            escalated_to_user_id?: string | null;
+            /** Decided At */
+            decided_at?: string | null;
+            /** Decided By */
+            decided_by?: string | null;
+            /** Comment */
+            comment?: string | null;
+            /**
+             * Sla State
+             * @default on_track
+             * @enum {string}
+             */
+            sla_state?: "on_track" | "reminded" | "overdue" | "done";
+        };
+        /**
+         * AuditEntry
+         * @description One audit row for the status-page timeline (bank values are already masked).
+         */
+        AuditEntry: {
+            /** Id */
+            id: number;
+            /**
+             * Ts
+             * Format: date-time
+             */
+            ts: string;
+            /** Actor */
+            actor: string;
+            /** Action */
+            action: string;
+            /** Entity Type */
+            entity_type: string;
+            /** Entity Id */
+            entity_id: string;
+            /**
+             * Summary
+             * @description Plain English, e.g. 'Wei Jie approved (Finance)'
+             */
+            summary: string;
+        };
+        /** Candidate */
+        Candidate: {
+            /** Cardcode */
+            CardCode: string;
+            /** Cardname */
+            CardName: string;
+            /** Cardforeignname */
+            CardForeignName?: string | null;
+            /**
+             * Cardtype
+             * @enum {string}
+             */
+            CardType: "cCustomer" | "cSupplier" | "cLid";
+            /** Entity */
+            entity?: string | null;
+            /** Country */
+            country: string;
+            /** City */
+            city?: string | null;
+            /** Federaltaxid */
+            FederalTaxID?: string | null;
+            /** Score */
+            score: number;
+            /** Name Score */
+            name_score: number;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "likely" | "possible";
+            /**
+             * Tax Id Match
+             * @default false
+             */
+            tax_id_match?: boolean;
+            /**
+             * Reasons
+             * @default []
+             */
+            reasons?: components["schemas"]["Reason"][];
+        };
         /** ClockAdvance */
         ClockAdvance: {
             /**
@@ -129,6 +582,223 @@ export interface components {
              */
             elapsed_hours: number;
         };
+        /**
+         * DedupCheckRequest
+         * @description What the requester has typed so far (debounced on change, and again on submit).
+         */
+        DedupCheckRequest: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor";
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Fields
+             * @description Partial customer/vendor form fields
+             */
+            fields: {
+                [key: string]: unknown;
+            };
+            /**
+             * Request Id
+             * @description Set when checking an existing draft; the check is logged
+             */
+            request_id?: string | null;
+        };
+        /**
+         * DedupDecisionIn
+         * @description The human decision on a duplicate warning. The AI never makes it (rule 6).
+         */
+        DedupDecisionIn: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "link_to_existing" | "not_duplicate";
+            /**
+             * Card Code
+             * @description Required for link_to_existing
+             */
+            card_code?: string | null;
+            /**
+             * Reason
+             * @description Required for not_duplicate: why this is a different customer/vendor
+             */
+            reason?: string | null;
+        };
+        /** DedupDecisionOut */
+        DedupDecisionOut: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "link_to_existing" | "not_duplicate";
+            /** Card Code */
+            card_code?: string | null;
+            /** Reason */
+            reason?: string | null;
+            /** Decided By */
+            decided_by: string;
+            /**
+             * Decided At
+             * Format: date-time
+             */
+            decided_at: string;
+            /**
+             * Verdict At Decision
+             * @enum {string}
+             */
+            verdict_at_decision: "likely" | "possible" | "none";
+        };
+        /** DedupResult */
+        DedupResult: {
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "likely" | "possible" | "none";
+            /** Message */
+            message: string;
+            /**
+             * Block Submit
+             * @description True for 'likely': submit is blocked until a human links the record or overrides with a reason
+             */
+            block_submit: boolean;
+            /**
+             * Candidates
+             * @default []
+             */
+            candidates?: components["schemas"]["Candidate"][];
+            /**
+             * Related
+             * @default []
+             */
+            related?: components["schemas"]["RelatedRecord"][];
+            /**
+             * Grey Zone
+             * @default false
+             */
+            grey_zone?: boolean;
+            /**
+             * @default {
+             *       "status": "not_needed",
+             *       "reasons": []
+             *     }
+             */
+            judge?: components["schemas"]["JudgeOpinion"];
+            /**
+             * Elapsed Ms
+             * @default 0
+             */
+            elapsed_ms?: number;
+        };
+        /** EmailDetail */
+        EmailDetail: {
+            /** Email Id */
+            email_id: string;
+            /**
+             * Received At
+             * Format: date-time
+             */
+            received_at: string;
+            /** From Name */
+            from_name?: string | null;
+            /** From Address */
+            from_address: string;
+            /** Subject */
+            subject: string;
+            /**
+             * Snippet
+             * @description First ~160 characters of the body
+             */
+            snippet: string;
+            /**
+             * Has Attachments
+             * @default false
+             */
+            has_attachments?: boolean;
+            /** To Address */
+            to_address?: string | null;
+            /**
+             * Body
+             * @description Bank details are masked unless the acting user is Finance
+             */
+            body: string;
+            /**
+             * Attachments
+             * @default []
+             */
+            attachments?: string[];
+            /** Thread Id */
+            thread_id?: string | null;
+        };
+        /** EmailSummary */
+        EmailSummary: {
+            /** Email Id */
+            email_id: string;
+            /**
+             * Received At
+             * Format: date-time
+             */
+            received_at: string;
+            /** From Name */
+            from_name?: string | null;
+            /** From Address */
+            from_address: string;
+            /** Subject */
+            subject: string;
+            /**
+             * Snippet
+             * @description First ~160 characters of the body
+             */
+            snippet: string;
+            /**
+             * Has Attachments
+             * @default false
+             */
+            has_attachments?: boolean;
+        };
+        /**
+         * FormSpec
+         * @description Everything the web app needs to render a request form for one domain x country.
+         */
+        FormSpec: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /** Country */
+            country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+            /**
+             * Json Schema
+             * @description config/forms/<domain>.schema.json
+             */
+            json_schema: {
+                [key: string]: unknown;
+            };
+            /**
+             * Required
+             * @description Required form fields (SAP names) for this country, in display order
+             */
+            required: string[];
+            /**
+             * Required Per Selling Country
+             * @description Item only: sub-fields of `registrations` required for each regulated selling country when U_IVD = tYES
+             * @default []
+             */
+            required_per_selling_country?: string[];
+            /**
+             * Regulated Countries
+             * @default []
+             */
+            regulated_countries?: ("SG" | "MY" | "ID" | "VN" | "TH")[];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -140,6 +810,152 @@ export interface components {
             status: string;
             /** Service */
             service: string;
+        };
+        /** Interpretation */
+        Interpretation: {
+            /** Email Id */
+            email_id: string;
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "purchase_order" | "purchase_request" | "enquiry" | "follow_up" | "mdm_request";
+            /** Confidence */
+            confidence: number;
+            /**
+             * Domain
+             * @description Set for mdm_request only
+             */
+            domain?: ("customer" | "vendor" | "item" | "cost_center") | null;
+            /**
+             * Fields
+             * @default []
+             */
+            fields?: components["schemas"]["QuotedValue"][];
+            /**
+             * Lines
+             * @description purchase_order / request / enquiry
+             * @default []
+             */
+            lines?: components["schemas"]["OrderLine"][];
+            /**
+             * Missing Fields
+             * @description Required extract keys not found (ds.forms.missing_keys)
+             * @default []
+             */
+            missing_fields?: string[];
+            /**
+             * Questions For Requester
+             * @description Plain-English questions, one per missing field
+             * @default []
+             */
+            questions_for_requester?: string[];
+            /**
+             * Dropped Fields
+             * @description Keys the model returned without a matching source quote
+             * @default []
+             */
+            dropped_fields?: string[];
+            /**
+             * Bank Details Stripped
+             * @description Bank details were removed before any LLM call (rule 5)
+             * @default false
+             */
+            bank_details_stripped?: boolean;
+            /**
+             * Injection Suspected
+             * @description Flagged for a human; never acted on (rule 7)
+             * @default false
+             */
+            injection_suspected?: boolean;
+            /**
+             * Needs Review
+             * @description confidence < 0.6 -> human review queue
+             * @default false
+             */
+            needs_review?: boolean;
+            /**
+             * Method
+             * @description keyword_fallback = AI offline (no cached answer); show the badge
+             * @enum {string}
+             */
+            method: "llm" | "keyword_fallback";
+            /**
+             * Ai Status
+             * @enum {string}
+             */
+            ai_status: "ok" | "offline" | "error";
+            /** Ai Message */
+            ai_message?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+        };
+        /** JudgeOpinion */
+        JudgeOpinion: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_needed" | "ok" | "offline" | "error" | "disabled";
+            /** Selected Card Code */
+            selected_card_code?: string | null;
+            /**
+             * Reasons
+             * @default []
+             */
+            reasons?: string[];
+            /** Model */
+            model?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /** Message */
+            message?: string | null;
+        };
+        /**
+         * Notification
+         * @description In-app stand-in for Teams/Outlook messages. Created on the simulated clock.
+         */
+        Notification: {
+            /** Notification Id */
+            notification_id: string;
+            /** User Id */
+            user_id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "task_assigned" | "reminder" | "escalated" | "info_requested" | "approved" | "rejected" | "published";
+            /** Req Id */
+            req_id: string;
+            /** Task Id */
+            task_id?: string | null;
+            /**
+             * Message
+             * @description Plain English, e.g. 'Reminder: Amy's item request ...'
+             */
+            message: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** OrderLine */
+        OrderLine: {
+            /**
+             * Item Code
+             * @description Catalogue code if recognised
+             */
+            item_code?: string | null;
+            /**
+             * Product Text
+             * @description Product as written
+             */
+            product_text?: string | null;
+            /** Qty */
+            qty?: number | null;
+            /** Source Quote */
+            source_quote: string;
         };
         /**
          * Persona
@@ -165,6 +981,281 @@ export interface components {
              */
             country: string;
         };
+        /**
+         * QuotedValue
+         * @description One extracted field. `key` is an extract key from config/required_fields.yaml
+         *     (`name`, `tax_id`, `registration_number_SG`, ...) or an order key (`customer_name`,
+         *     `po_number`, `requested_date`).
+         */
+        QuotedValue: {
+            /** Key */
+            key: string;
+            /** Value */
+            value: string | number | boolean | string[];
+            /**
+             * Source Quote
+             * @description Exact substring of the email the value came from
+             */
+            source_quote: string;
+        };
+        /** Reason */
+        Reason: {
+            /**
+             * Layer
+             * @enum {string}
+             */
+            layer: "tax_id" | "normalise" | "dictionary" | "fuzzy" | "evidence" | "rule" | "judge";
+            /**
+             * Text
+             * @description Plain English, shown to the requester
+             */
+            text: string;
+            /**
+             * Weight
+             * @description Contribution to the score (+/-), for tooltips
+             * @default 0
+             */
+            weight?: number;
+        };
+        /**
+         * RelatedRecord
+         * @description A record that looks similar but is NOT a duplicate by rule (C/V twin, other country).
+         */
+        RelatedRecord: {
+            /** Cardcode */
+            CardCode: string;
+            /** Cardname */
+            CardName: string;
+            /**
+             * Cardtype
+             * @enum {string}
+             */
+            CardType: "cCustomer" | "cSupplier" | "cLid";
+            /** Country */
+            country: string;
+            /**
+             * Rule
+             * @enum {string}
+             */
+            rule: "customer_vendor" | "other_country" | "same_group_other_country";
+            /** Group Id */
+            group_id?: string | null;
+            /** Explanation */
+            explanation: string;
+        };
+        /** RequestCreate */
+        RequestCreate: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Fields
+             * @default {}
+             */
+            fields?: {
+                [key: string]: unknown;
+            };
+            /** Source Email Id */
+            source_email_id?: string | null;
+        };
+        /** RequestDetail */
+        RequestDetail: {
+            /** Req Id */
+            req_id: string;
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "DRAFT" | "SUBMITTED" | "IN_APPROVAL" | "INFO_REQUESTED" | "REJECTED" | "APPROVED" | "PUBLISHED_INACTIVE" | "ACTIVE" | "LINKED_TO_EXISTING";
+            /**
+             * Title
+             * @description CardName / ItemName / CenterName, or 'Untitled'
+             */
+            title: string;
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /** Requestor User Id */
+            requestor_user_id: string;
+            /** Requestor Name */
+            requestor_name: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Pending With
+             * @description Names of people the request waits on
+             * @default []
+             */
+            pending_with?: string[];
+            /**
+             * Fields
+             * @description Bank fields are masked unless the actor is Finance
+             */
+            fields: {
+                [key: string]: unknown;
+            };
+            /**
+             * Missing Fields
+             * @description Required form fields still empty
+             * @default []
+             */
+            missing_fields?: string[];
+            /** Source Email Id */
+            source_email_id?: string | null;
+            /**
+             * Prefill Quotes
+             * @description Form field -> source quote, when created from an email
+             * @default {}
+             */
+            prefill_quotes?: {
+                [key: string]: string;
+            };
+            dedup_decision?: components["schemas"]["DedupDecisionOut"] | null;
+            /** Linked Card Code */
+            linked_card_code?: string | null;
+            /**
+             * Stages
+             * @default []
+             */
+            stages?: components["schemas"]["Stage"][];
+            /**
+             * Allowed Actions
+             * @description For the acting user; the backend still enforces them
+             * @default []
+             */
+            allowed_actions?: ("edit" | "submit" | "decide_duplicate" | "approve" | "reject" | "ask_info" | "publish")[];
+        };
+        /** RequestSummary */
+        RequestSummary: {
+            /** Req Id */
+            req_id: string;
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "DRAFT" | "SUBMITTED" | "IN_APPROVAL" | "INFO_REQUESTED" | "REJECTED" | "APPROVED" | "PUBLISHED_INACTIVE" | "ACTIVE" | "LINKED_TO_EXISTING";
+            /**
+             * Title
+             * @description CardName / ItemName / CenterName, or 'Untitled'
+             */
+            title: string;
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /** Requestor User Id */
+            requestor_user_id: string;
+            /** Requestor Name */
+            requestor_name: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Pending With
+             * @description Names of people the request waits on
+             * @default []
+             */
+            pending_with?: string[];
+        };
+        /**
+         * RequestUpdate
+         * @description Partial update of a DRAFT or INFO_REQUESTED request. Every changed field is audited.
+         */
+        RequestUpdate: {
+            /**
+             * Fields
+             * @default {}
+             */
+            fields?: {
+                [key: string]: unknown;
+            };
+            /** Country */
+            country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+        };
+        /** ResetResult */
+        ResetResult: {
+            /** Ok */
+            ok: boolean;
+            /** Duration Ms */
+            duration_ms: number;
+            /**
+             * Counts
+             * @description Rows per table after the reset
+             */
+            counts: {
+                [key: string]: number;
+            };
+            clock: components["schemas"]["ClockState"];
+            /**
+             * Sap Mock Reset
+             * @description False if the SAP mock was not reachable
+             */
+            sap_mock_reset: boolean;
+        };
+        /** Stage */
+        Stage: {
+            /** Number */
+            number: number;
+            /** Name */
+            name: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "waiting" | "open" | "done" | "rejected";
+            /** Tasks */
+            tasks: components["schemas"]["ApprovalTask"][];
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -187,26 +1278,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    health: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Health"];
-                };
-            };
-        };
-    };
     getClock: {
         parameters: {
             query?: never;
@@ -276,6 +1347,559 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClockState"];
+                };
+            };
+        };
+    };
+    getForm: {
+        parameters: {
+            query?: {
+                country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+            };
+            header?: never;
+            path: {
+                domain: "customer" | "vendor" | "item" | "cost_center";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormSpec"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listEmails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmailSummary"][];
+                };
+            };
+        };
+    };
+    getEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                email_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmailDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    interpretEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                email_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Interpretation"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checkDuplicates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DedupCheckRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DedupResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listRequests: {
+        parameters: {
+            query?: {
+                scope?: "mine" | "all";
+                state?: ("DRAFT" | "SUBMITTED" | "IN_APPROVAL" | "INFO_REQUESTED" | "REJECTED" | "APPROVED" | "PUBLISHED_INACTIVE" | "ACTIVE" | "LINKED_TO_EXISTING") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    createRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    createRequestFromEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                email_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    updateRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decideDuplicate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DedupDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submitRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publishRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRequestAudit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                req_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditEntry"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approvalInbox: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApprovalInboxItem"][];
+                };
+            };
+        };
+    };
+    decideApproval: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApprovalDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequestDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listNotifications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Notification"][];
+                };
+            };
+        };
+    };
+    resetDemo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResetResult"];
+                };
+            };
+        };
+    };
+    health: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Health"];
                 };
             };
         };

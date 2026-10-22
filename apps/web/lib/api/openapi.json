@@ -5,24 +5,6 @@
     "version": "0.1.0"
   },
   "paths": {
-    "/health": {
-      "get": {
-        "summary": "Health",
-        "operationId": "health",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Health"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/clock": {
       "get": {
         "summary": "Get Clock",
@@ -97,6 +79,812 @@
         }
       }
     },
+    "/forms/{domain}": {
+      "get": {
+        "tags": [
+          "forms"
+        ],
+        "summary": "Get Form",
+        "operationId": "getForm",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "customer",
+                "vendor",
+                "item",
+                "cost_center"
+              ],
+              "type": "string",
+              "title": "Domain"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "SG",
+                    "MY",
+                    "ID",
+                    "VN",
+                    "TH"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Country"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormSpec"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emails": {
+      "get": {
+        "tags": [
+          "emails"
+        ],
+        "summary": "List Emails",
+        "operationId": "listEmails",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EmailSummary"
+                  },
+                  "type": "array",
+                  "title": "Response Listemails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emails/{email_id}": {
+      "get": {
+        "tags": [
+          "emails"
+        ],
+        "summary": "Get Email",
+        "operationId": "getEmail",
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Email Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emails/{email_id}/interpret": {
+      "post": {
+        "tags": [
+          "emails"
+        ],
+        "summary": "Interpret",
+        "description": "Classify and extract (ds.interpreter.api.interpret_email). Works offline in replay mode.",
+        "operationId": "interpretEmail",
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Email Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interpretation"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dedup/check": {
+      "post": {
+        "tags": [
+          "dedup"
+        ],
+        "summary": "Check Duplicates",
+        "description": "Called while the requester types (debounced) and again on submit. Read-only, fast.",
+        "operationId": "checkDuplicates",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DedupCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DedupResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "List Requests",
+        "operationId": "listRequests",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "mine",
+                "all"
+              ],
+              "type": "string",
+              "default": "mine",
+              "title": "Scope"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "DRAFT",
+                    "SUBMITTED",
+                    "IN_APPROVAL",
+                    "INFO_REQUESTED",
+                    "REJECTED",
+                    "APPROVED",
+                    "PUBLISHED_INACTIVE",
+                    "ACTIVE",
+                    "LINKED_TO_EXISTING"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RequestSummary"
+                  },
+                  "title": "Response Listrequests"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Create Request",
+        "description": "Creates a DRAFT for the acting user.",
+        "operationId": "createRequest",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/from-email/{email_id}": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Create Request From Email",
+        "description": "Interprets the email and creates a pre-filled DRAFT with a source quote per field.\nEmail text never sets approvers, bank details or credit terms (rule 7).",
+        "operationId": "createRequestFromEmail",
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Email Id"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{req_id}": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Get Request",
+        "operationId": "getRequest",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Update Request",
+        "operationId": "updateRequest",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{req_id}/dedup-decision": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Decide Duplicate",
+        "description": "Link to the existing record (-> LINKED_TO_EXISTING, no approvals) or confirm it is not\na duplicate with a reason. Always a human decision; always audited.",
+        "operationId": "decideDuplicate",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DedupDecisionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{req_id}/submit": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Submit Request",
+        "description": "Re-runs the duplicate check. 409 if a Likely duplicate has no human decision; 422 if\nrequired fields are missing. Otherwise routes approvals (config/routing_rules.yaml).",
+        "operationId": "submitRequest",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{req_id}/publish": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Publish Request",
+        "description": "MDM analyst only, after every approval. Publishes to the SAP B1 mock (D-004).",
+        "operationId": "publishRequest",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requests/{req_id}/audit": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "summary": "Get Request Audit",
+        "operationId": "getRequestAudit",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Req Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEntry"
+                  },
+                  "title": "Response Getrequestaudit"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/approvals/inbox": {
+      "get": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "Approval Inbox",
+        "description": "Open tasks assigned to the acting user (including escalated ones).",
+        "operationId": "approvalInbox",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ApprovalInboxItem"
+                  },
+                  "type": "array",
+                  "title": "Response Approvalinbox"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/approvals/{task_id}/decision": {
+      "post": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "Decide Approval",
+        "description": "Approve / reject / ask for info. Maker-checker enforced. A human always decides.",
+        "operationId": "decideApproval",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalDecisionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "List Notifications",
+        "description": "Notifications for the acting user, newest first (reminders, escalations, ...).",
+        "operationId": "listNotifications",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Notification"
+                  },
+                  "type": "array",
+                  "title": "Response Listnotifications"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/reset-demo": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Reset Demo",
+        "description": "Restore the seeded demo state in under 10 s without stopping the API: database,\nsimulated clock, audit chain and the SAP mock. `make reset-demo` uses the same code path.",
+        "operationId": "resetDemo",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/personas": {
       "get": {
         "summary": "List Personas",
@@ -122,6 +910,396 @@
   },
   "components": {
     "schemas": {
+      "ApprovalDecisionIn": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject",
+              "ask_info"
+            ],
+            "title": "Action"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment",
+            "description": "Required for reject and ask_info"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "ApprovalDecisionIn"
+      },
+      "ApprovalInboxItem": {
+        "properties": {
+          "task": {
+            "$ref": "#/components/schemas/ApprovalTask"
+          },
+          "request": {
+            "$ref": "#/components/schemas/RequestSummary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "task",
+          "request"
+        ],
+        "title": "ApprovalInboxItem"
+      },
+      "ApprovalTask": {
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task Id"
+          },
+          "req_id": {
+            "type": "string",
+            "title": "Req Id"
+          },
+          "stage": {
+            "type": "integer",
+            "title": "Stage",
+            "description": "1-based stage number"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "requestor",
+              "bu_head",
+              "finance",
+              "quality_regulatory",
+              "business_support",
+              "mdm_analyst"
+            ],
+            "title": "Role"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "SG",
+                  "MY",
+                  "ID",
+                  "VN",
+                  "TH"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country",
+            "description": "Quality/Regulatory tasks"
+          },
+          "assignee_user_id": {
+            "type": "string",
+            "title": "Assignee User Id"
+          },
+          "assignee_name": {
+            "type": "string",
+            "title": "Assignee Name"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "waiting",
+              "pending",
+              "approved",
+              "rejected",
+              "info_requested",
+              "cancelled"
+            ],
+            "title": "Status",
+            "description": "waiting = its stage has not opened yet"
+          },
+          "assigned_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned At"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At",
+            "description": "Simulated clock, SLA end"
+          },
+          "reminded_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reminded At"
+          },
+          "escalated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalated At"
+          },
+          "escalated_to_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalated To User Id"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "sla_state": {
+            "type": "string",
+            "enum": [
+              "on_track",
+              "reminded",
+              "overdue",
+              "done"
+            ],
+            "title": "Sla State",
+            "default": "on_track"
+          }
+        },
+        "type": "object",
+        "required": [
+          "task_id",
+          "req_id",
+          "stage",
+          "role",
+          "assignee_user_id",
+          "assignee_name",
+          "status"
+        ],
+        "title": "ApprovalTask"
+      },
+      "AuditEntry": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "ts": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ts"
+          },
+          "actor": {
+            "type": "string",
+            "title": "Actor"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "entity_type": {
+            "type": "string",
+            "title": "Entity Type"
+          },
+          "entity_id": {
+            "type": "string",
+            "title": "Entity Id"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "description": "Plain English, e.g. 'Wei Jie approved (Finance)'"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "ts",
+          "actor",
+          "action",
+          "entity_type",
+          "entity_id",
+          "summary"
+        ],
+        "title": "AuditEntry",
+        "description": "One audit row for the status-page timeline (bank values are already masked)."
+      },
+      "Candidate": {
+        "properties": {
+          "CardCode": {
+            "type": "string",
+            "title": "Cardcode"
+          },
+          "CardName": {
+            "type": "string",
+            "title": "Cardname"
+          },
+          "CardForeignName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cardforeignname"
+          },
+          "CardType": {
+            "type": "string",
+            "enum": [
+              "cCustomer",
+              "cSupplier",
+              "cLid"
+            ],
+            "title": "Cardtype"
+          },
+          "entity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "FederalTaxID": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Federaltaxid"
+          },
+          "score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score"
+          },
+          "name_score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Name Score"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "likely",
+              "possible"
+            ],
+            "title": "Verdict"
+          },
+          "tax_id_match": {
+            "type": "boolean",
+            "title": "Tax Id Match",
+            "default": false
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/Reason"
+            },
+            "type": "array",
+            "title": "Reasons",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "CardCode",
+          "CardName",
+          "CardType",
+          "country",
+          "score",
+          "name_score",
+          "verdict"
+        ],
+        "title": "Candidate"
+      },
       "ClockAdvance": {
         "properties": {
           "hours": {
@@ -169,6 +1347,434 @@
         "title": "ClockState",
         "description": "Simulated clock. All SLA logic uses `now`, never the wall clock."
       },
+      "DedupCheckRequest": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor"
+            ],
+            "title": "Domain"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fields",
+            "description": "Partial customer/vendor form fields"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id",
+            "description": "Set when checking an existing draft; the check is logged"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "entity",
+          "fields"
+        ],
+        "title": "DedupCheckRequest",
+        "description": "What the requester has typed so far (debounced on change, and again on submit)."
+      },
+      "DedupDecisionIn": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "link_to_existing",
+              "not_duplicate"
+            ],
+            "title": "Action"
+          },
+          "card_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Card Code",
+            "description": "Required for link_to_existing"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Required for not_duplicate: why this is a different customer/vendor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "DedupDecisionIn",
+        "description": "The human decision on a duplicate warning. The AI never makes it (rule 6)."
+      },
+      "DedupDecisionOut": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "link_to_existing",
+              "not_duplicate"
+            ],
+            "title": "Action"
+          },
+          "card_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Card Code"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "decided_by": {
+            "type": "string",
+            "title": "Decided By"
+          },
+          "decided_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Decided At"
+          },
+          "verdict_at_decision": {
+            "type": "string",
+            "enum": [
+              "likely",
+              "possible",
+              "none"
+            ],
+            "title": "Verdict At Decision"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "decided_by",
+          "decided_at",
+          "verdict_at_decision"
+        ],
+        "title": "DedupDecisionOut"
+      },
+      "DedupResult": {
+        "properties": {
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "likely",
+              "possible",
+              "none"
+            ],
+            "title": "Verdict"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "block_submit": {
+            "type": "boolean",
+            "title": "Block Submit",
+            "description": "True for 'likely': submit is blocked until a human links the record or overrides with a reason"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/Candidate"
+            },
+            "type": "array",
+            "title": "Candidates",
+            "default": []
+          },
+          "related": {
+            "items": {
+              "$ref": "#/components/schemas/RelatedRecord"
+            },
+            "type": "array",
+            "title": "Related",
+            "default": []
+          },
+          "grey_zone": {
+            "type": "boolean",
+            "title": "Grey Zone",
+            "default": false
+          },
+          "judge": {
+            "$ref": "#/components/schemas/JudgeOpinion",
+            "default": {
+              "status": "not_needed",
+              "reasons": []
+            }
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "verdict",
+          "message",
+          "block_submit"
+        ],
+        "title": "DedupResult"
+      },
+      "EmailDetail": {
+        "properties": {
+          "email_id": {
+            "type": "string",
+            "title": "Email Id"
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Received At"
+          },
+          "from_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Name"
+          },
+          "from_address": {
+            "type": "string",
+            "title": "From Address"
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "snippet": {
+            "type": "string",
+            "title": "Snippet",
+            "description": "First ~160 characters of the body"
+          },
+          "has_attachments": {
+            "type": "boolean",
+            "title": "Has Attachments",
+            "default": false
+          },
+          "to_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Address"
+          },
+          "body": {
+            "type": "string",
+            "title": "Body",
+            "description": "Bank details are masked unless the acting user is Finance"
+          },
+          "attachments": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Attachments",
+            "default": []
+          },
+          "thread_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thread Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email_id",
+          "received_at",
+          "from_address",
+          "subject",
+          "snippet",
+          "body"
+        ],
+        "title": "EmailDetail"
+      },
+      "EmailSummary": {
+        "properties": {
+          "email_id": {
+            "type": "string",
+            "title": "Email Id"
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Received At"
+          },
+          "from_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Name"
+          },
+          "from_address": {
+            "type": "string",
+            "title": "From Address"
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "snippet": {
+            "type": "string",
+            "title": "Snippet",
+            "description": "First ~160 characters of the body"
+          },
+          "has_attachments": {
+            "type": "boolean",
+            "title": "Has Attachments",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "email_id",
+          "received_at",
+          "from_address",
+          "subject",
+          "snippet"
+        ],
+        "title": "EmailSummary"
+      },
+      "FormSpec": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "SG",
+                  "MY",
+                  "ID",
+                  "VN",
+                  "TH"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "json_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Json Schema",
+            "description": "config/forms/<domain>.schema.json"
+          },
+          "required": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Required",
+            "description": "Required form fields (SAP names) for this country, in display order"
+          },
+          "required_per_selling_country": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Required Per Selling Country",
+            "description": "Item only: sub-fields of `registrations` required for each regulated selling country when U_IVD = tYES",
+            "default": []
+          },
+          "regulated_countries": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "SG",
+                "MY",
+                "ID",
+                "VN",
+                "TH"
+              ]
+            },
+            "type": "array",
+            "title": "Regulated Countries",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "json_schema",
+          "required"
+        ],
+        "title": "FormSpec",
+        "description": "Everything the web app needs to render a request form for one domain x country."
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -199,6 +1805,341 @@
           "service"
         ],
         "title": "Health"
+      },
+      "Interpretation": {
+        "properties": {
+          "email_id": {
+            "type": "string",
+            "title": "Email Id"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "purchase_order",
+              "purchase_request",
+              "enquiry",
+              "follow_up",
+              "mdm_request"
+            ],
+            "title": "Category"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "customer",
+                  "vendor",
+                  "item",
+                  "cost_center"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain",
+            "description": "Set for mdm_request only"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/QuotedValue"
+            },
+            "type": "array",
+            "title": "Fields",
+            "default": []
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/OrderLine"
+            },
+            "type": "array",
+            "title": "Lines",
+            "description": "purchase_order / request / enquiry",
+            "default": []
+          },
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Fields",
+            "description": "Required extract keys not found (ds.forms.missing_keys)",
+            "default": []
+          },
+          "questions_for_requester": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Questions For Requester",
+            "description": "Plain-English questions, one per missing field",
+            "default": []
+          },
+          "dropped_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Dropped Fields",
+            "description": "Keys the model returned without a matching source quote",
+            "default": []
+          },
+          "bank_details_stripped": {
+            "type": "boolean",
+            "title": "Bank Details Stripped",
+            "description": "Bank details were removed before any LLM call (rule 5)",
+            "default": false
+          },
+          "injection_suspected": {
+            "type": "boolean",
+            "title": "Injection Suspected",
+            "description": "Flagged for a human; never acted on (rule 7)",
+            "default": false
+          },
+          "needs_review": {
+            "type": "boolean",
+            "title": "Needs Review",
+            "description": "confidence < 0.6 -> human review queue",
+            "default": false
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "llm",
+              "keyword_fallback"
+            ],
+            "title": "Method",
+            "description": "keyword_fallback = AI offline (no cached answer); show the badge"
+          },
+          "ai_status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "offline",
+              "error"
+            ],
+            "title": "Ai Status"
+          },
+          "ai_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Message"
+          },
+          "prompt_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email_id",
+          "category",
+          "confidence",
+          "method",
+          "ai_status"
+        ],
+        "title": "Interpretation"
+      },
+      "JudgeOpinion": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_needed",
+              "ok",
+              "offline",
+              "error",
+              "disabled"
+            ],
+            "title": "Status"
+          },
+          "selected_card_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Card Code"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons",
+            "default": []
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "prompt_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Version"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "JudgeOpinion"
+      },
+      "Notification": {
+        "properties": {
+          "notification_id": {
+            "type": "string",
+            "title": "Notification Id"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "task_assigned",
+              "reminder",
+              "escalated",
+              "info_requested",
+              "approved",
+              "rejected",
+              "published"
+            ],
+            "title": "Kind"
+          },
+          "req_id": {
+            "type": "string",
+            "title": "Req Id"
+          },
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Plain English, e.g. 'Reminder: Amy's item request ...'"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "notification_id",
+          "user_id",
+          "kind",
+          "req_id",
+          "message",
+          "created_at"
+        ],
+        "title": "Notification",
+        "description": "In-app stand-in for Teams/Outlook messages. Created on the simulated clock."
+      },
+      "OrderLine": {
+        "properties": {
+          "item_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Code",
+            "description": "Catalogue code if recognised"
+          },
+          "product_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Text",
+            "description": "Product as written"
+          },
+          "qty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qty"
+          },
+          "source_quote": {
+            "type": "string",
+            "title": "Source Quote"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_quote"
+        ],
+        "title": "OrderLine"
       },
       "Persona": {
         "properties": {
@@ -251,6 +2192,585 @@
         ],
         "title": "Persona",
         "description": "A seeded demo user. The web app sends the chosen `user_id` in the X-Acting-User header."
+      },
+      "QuotedValue": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            ],
+            "title": "Value"
+          },
+          "source_quote": {
+            "type": "string",
+            "title": "Source Quote",
+            "description": "Exact substring of the email the value came from"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "value",
+          "source_quote"
+        ],
+        "title": "QuotedValue",
+        "description": "One extracted field. `key` is an extract key from config/required_fields.yaml\n(`name`, `tax_id`, `registration_number_SG`, ...) or an order key (`customer_name`,\n`po_number`, `requested_date`)."
+      },
+      "Reason": {
+        "properties": {
+          "layer": {
+            "type": "string",
+            "enum": [
+              "tax_id",
+              "normalise",
+              "dictionary",
+              "fuzzy",
+              "evidence",
+              "rule",
+              "judge"
+            ],
+            "title": "Layer"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Plain English, shown to the requester"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight",
+            "description": "Contribution to the score (+/-), for tooltips",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "layer",
+          "text"
+        ],
+        "title": "Reason"
+      },
+      "RelatedRecord": {
+        "properties": {
+          "CardCode": {
+            "type": "string",
+            "title": "Cardcode"
+          },
+          "CardName": {
+            "type": "string",
+            "title": "Cardname"
+          },
+          "CardType": {
+            "type": "string",
+            "enum": [
+              "cCustomer",
+              "cSupplier",
+              "cLid"
+            ],
+            "title": "Cardtype"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "rule": {
+            "type": "string",
+            "enum": [
+              "customer_vendor",
+              "other_country",
+              "same_group_other_country"
+            ],
+            "title": "Rule"
+          },
+          "group_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Id"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "CardCode",
+          "CardName",
+          "CardType",
+          "country",
+          "rule",
+          "explanation"
+        ],
+        "title": "RelatedRecord",
+        "description": "A record that looks similar but is NOT a duplicate by rule (C/V twin, other country)."
+      },
+      "RequestCreate": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fields",
+            "default": {}
+          },
+          "source_email_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Email Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "entity",
+          "country"
+        ],
+        "title": "RequestCreate"
+      },
+      "RequestDetail": {
+        "properties": {
+          "req_id": {
+            "type": "string",
+            "title": "Req Id"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "IN_APPROVAL",
+              "INFO_REQUESTED",
+              "REJECTED",
+              "APPROVED",
+              "PUBLISHED_INACTIVE",
+              "ACTIVE",
+              "LINKED_TO_EXISTING"
+            ],
+            "title": "State"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "CardName / ItemName / CenterName, or 'Untitled'"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "requestor_user_id": {
+            "type": "string",
+            "title": "Requestor User Id"
+          },
+          "requestor_name": {
+            "type": "string",
+            "title": "Requestor Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "pending_with": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pending With",
+            "description": "Names of people the request waits on",
+            "default": []
+          },
+          "fields": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fields",
+            "description": "Bank fields are masked unless the actor is Finance"
+          },
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Fields",
+            "description": "Required form fields still empty",
+            "default": []
+          },
+          "source_email_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Email Id"
+          },
+          "prefill_quotes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Prefill Quotes",
+            "description": "Form field -> source quote, when created from an email",
+            "default": {}
+          },
+          "dedup_decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DedupDecisionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "linked_card_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linked Card Code"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/Stage"
+            },
+            "type": "array",
+            "title": "Stages",
+            "default": []
+          },
+          "allowed_actions": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "edit",
+                "submit",
+                "decide_duplicate",
+                "approve",
+                "reject",
+                "ask_info",
+                "publish"
+              ]
+            },
+            "type": "array",
+            "title": "Allowed Actions",
+            "description": "For the acting user; the backend still enforces them",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "req_id",
+          "domain",
+          "state",
+          "title",
+          "entity",
+          "country",
+          "requestor_user_id",
+          "requestor_name",
+          "created_at",
+          "updated_at",
+          "fields"
+        ],
+        "title": "RequestDetail"
+      },
+      "RequestSummary": {
+        "properties": {
+          "req_id": {
+            "type": "string",
+            "title": "Req Id"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "IN_APPROVAL",
+              "INFO_REQUESTED",
+              "REJECTED",
+              "APPROVED",
+              "PUBLISHED_INACTIVE",
+              "ACTIVE",
+              "LINKED_TO_EXISTING"
+            ],
+            "title": "State"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "CardName / ItemName / CenterName, or 'Untitled'"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "requestor_user_id": {
+            "type": "string",
+            "title": "Requestor User Id"
+          },
+          "requestor_name": {
+            "type": "string",
+            "title": "Requestor Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "pending_with": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pending With",
+            "description": "Names of people the request waits on",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "req_id",
+          "domain",
+          "state",
+          "title",
+          "entity",
+          "country",
+          "requestor_user_id",
+          "requestor_name",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RequestSummary"
+      },
+      "RequestUpdate": {
+        "properties": {
+          "fields": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fields",
+            "default": {}
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "SG",
+                  "MY",
+                  "ID",
+                  "VN",
+                  "TH"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          }
+        },
+        "type": "object",
+        "title": "RequestUpdate",
+        "description": "Partial update of a DRAFT or INFO_REQUESTED request. Every changed field is audited."
+      },
+      "ResetResult": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "duration_ms": {
+            "type": "number",
+            "title": "Duration Ms"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Counts",
+            "description": "Rows per table after the reset"
+          },
+          "clock": {
+            "$ref": "#/components/schemas/ClockState"
+          },
+          "sap_mock_reset": {
+            "type": "boolean",
+            "title": "Sap Mock Reset",
+            "description": "False if the SAP mock was not reachable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok",
+          "duration_ms",
+          "counts",
+          "clock",
+          "sap_mock_reset"
+        ],
+        "title": "ResetResult"
+      },
+      "Stage": {
+        "properties": {
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "waiting",
+              "open",
+              "done",
+              "rejected"
+            ],
+            "title": "Status"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/ApprovalTask"
+            },
+            "type": "array",
+            "title": "Tasks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "number",
+          "name",
+          "status",
+          "tasks"
+        ],
+        "title": "Stage"
       },
       "ValidationError": {
         "properties": {

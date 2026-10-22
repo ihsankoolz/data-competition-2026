@@ -1,0 +1,29 @@
+# Required fields per request domain x country (PRD M3). One source for the form, the API and
+# the email interpreter's `missing_fields` (D-006).
+#
+# Keys are the interpreter's extract keys, the same names as ground_truth/email_labels.jsonl.
+# config/forms/<domain>.schema.json maps each key to its SAP field via "x-extract".
+# Order matters: `missing_fields` lists keys in this order, then the per-country keys.
+
+customer:
+  all: [name, tax_id, country, address, contact_email]
+
+vendor:
+  all: [name, tax_id, country, address, contact_email]
+  # Required on the form, but never extracted from email and never sent to the LLM (rule 5).
+  form_only: [bank_account]
+
+item:
+  all: [item_name, is_ivd, selling_countries]
+  # An IVD item needs a registration number for every selling country listed here.
+  # SG (HSA), ID (AKL/NIE) and VN (Decree 98/2021) are researched; MY and TH are assumptions (D-011).
+  ivd_registration_required_in: [SG, MY, ID, VN, TH]
+  ivd_per_country_key: registration_number # -> registration_number_SG, registration_number_MY, ...
+
+cost_center:
+  all: [center_name, entity, effective_from]
+
+# Extra keys required only for one domain x country, e.g. {customer: {TH: [branch_code]}}.
+# Empty today: the five countries differ in tax-ID format (validated in the form), not in
+# which fields are required.
+by_country: {}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "New vendor",
+  "description": "A vendor (CardType cSupplier) in the shared SAP Business One. A company that is both a customer and a vendor needs two records (domain rule 2).",
+  "type": "object",
+  "x-domain": "vendor",
+  "x-card-type": "cSupplier",
+  "x-order": [
+    "CardName",
+    "CardForeignName",
+    "Country",
+    "FederalTaxID",
+    "City",
+    "Street",
+    "ZipCode",
+    "EmailAddress",
+    "Phone1",
+    "PayTermsGrpCode",
+    "purpose",
+    "BPBankAccounts"
+  ],
+  "properties": {
+    "CardName": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "Legal name",
+      "description": "As it appears on the tax registration.",
+      "x-extract": "name"
+    },
+    "CardForeignName": { "type": "string", "maxLength": 100, "title": "Other name (optional)" },
+    "Country": {
+      "type": "string",
+      "enum": ["SG", "MY", "ID", "VN", "TH"],
+      "title": "Country",
+      "x-extract": "country"
+    },
+    "FederalTaxID": {
+      "type": "string",
+      "maxLength": 32,
+      "title": "Tax ID",
+      "description": "UEN (SG), SSM no. (MY), NPWP (ID), MST (VN) or TIN (TH).",
+      "x-extract": "tax_id"
+    },
+    "City": { "type": "string", "maxLength": 100, "title": "City", "x-extract": "city" },
+    "Street": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "Address",
+      "x-extract": "address",
+      "x-sap-path": "BPAddresses[bo_BillTo].Street"
+    },
+    "ZipCode": {
+      "type": "string",
+      "maxLength": 20,
+      "title": "Postal code",
+      "x-sap-path": "BPAddresses[bo_BillTo].ZipCode"
+    },
+    "EmailAddress": {
+      "type": "string",
+      "format": "email",
+      "maxLength": 100,
+      "title": "Accounts email",
+      "x-extract": "contact_email"
+    },
+    "Phone1": { "type": "string", "maxLength": 20, "title": "Phone" },
+    "PayTermsGrpCode": {
+      "type": "integer",
+      "title": "Payment terms",
+      "description": "Our payment terms to the vendor.",
+      "oneOf": [
+        { "const": 1, "title": "30 days" },
+        { "const": 2, "title": "60 days" },
+        { "const": 3, "title": "90 days" }
+      ]
+    },
+    "purpose": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "What will we buy from this vendor?",
+      "x-app-only": true
+    },
+    "BPBankAccounts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "title": "Bank account",
+      "description": "Entered here only, never taken from email. Visible to Finance only.",
+      "x-sensitive": true,
+      "x-extract": "bank_account",
+      "x-form-only": true,
+      "items": {
+        "type": "object",
+        "required": ["BankCode", "AccountNo", "AccountName", "Country"],
+        "properties": {
+          "BankCode": { "type": "string", "maxLength": 30, "title": "Bank code" },
+          "AccountNo": { "type": "string", "maxLength": 50, "title": "Account number" },
+          "AccountName": { "type": "string", "maxLength": 250, "title": "Account name" },
+          "BICSwiftCode": { "type": "string", "maxLength": 11, "title": "SWIFT / BIC" },
+          "IBAN": { "type": "string", "maxLength": 50, "title": "IBAN (if any)" },
+          "Country": {
+            "type": "string",
+            "enum": ["SG", "MY", "ID", "VN", "TH"],
+            "title": "Bank country"
+          }
+        }
+      }
+    }
+  }
+}

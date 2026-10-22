@@ -1,0 +1,56 @@
+# Approval routing (D-007). Read by the workflow engine in services/api; no LLM involved.
+# Stages run in order. Every task inside a stage runs in parallel. The next stage opens when
+# every task in the current stage is approved.
+
+sla:
+  business_days: 2 # per approval task, on the simulated clock (GET /clock)
+  reminder_at: 0.5 # share of the SLA elapsed -> reminder to the approver
+  escalate_at: 1.0 # share of the SLA elapsed -> escalate to the approver's backup
+
+# How a role becomes a person (users.csv):
+#   entity          = the BU head of the request's entity (SPD / QTS / QTG)
+#   selling_country = one Quality/Regulatory task per selling country (users.csv `country`)
+#   primary         = the first user with the role who is not someone's backup
+# Escalation goes to the user whose `backup_for` is the assigned approver.
+assignment:
+  bu_head: entity
+  finance: primary
+  business_support: primary
+  quality_regulatory: selling_country
+  mdm_analyst: primary
+
+# Maker-checker (D-007): the requestor never approves their own request, and the person who
+# publishes is never the person who gave the Finance approval.
+maker_checker:
+  requestor_cannot_approve: true
+  publisher_not_finance_approver: true
+
+domains:
+  customer:
+    stages:
+      - name: Business review
+        roles: [bu_head, finance, business_support]
+      - name: MDM publish
+        roles: [mdm_analyst]
+  vendor:
+    stages:
+      - name: Business review
+        roles: [bu_head, finance, business_support]
+        # Stretch S1: a second Finance approver (Hui Min) when bank details are present.
+        when_bank_details: { add_roles: [finance], enabled: false }
+      - name: MDM publish
+        roles: [mdm_analyst]
+  item:
+    stages:
+      - name: Business review
+        roles: [bu_head, business_support]
+        # IVD -> one Quality/Regulatory task per selling country.
+        when_ivd: { add_roles: [quality_regulatory] }
+      - name: MDM publish
+        roles: [mdm_analyst]
+  cost_center:
+    stages:
+      - name: Business review
+        roles: [finance, bu_head]
+      - name: MDM publish
+        roles: [mdm_analyst]

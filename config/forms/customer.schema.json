@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "New customer",
+  "description": "A customer (CardType cCustomer) in the shared SAP Business One.",
+  "type": "object",
+  "x-domain": "customer",
+  "x-card-type": "cCustomer",
+  "x-order": [
+    "CardName",
+    "CardForeignName",
+    "Country",
+    "FederalTaxID",
+    "City",
+    "Street",
+    "ZipCode",
+    "EmailAddress",
+    "Phone1",
+    "PayTermsGrpCode",
+    "CreditLimit",
+    "purpose"
+  ],
+  "properties": {
+    "CardName": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "Legal name",
+      "description": "As it appears on the tax registration. Native script or diacritics are fine.",
+      "x-extract": "name"
+    },
+    "CardForeignName": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "Other name (optional)",
+      "description": "For example the English name of a Thai or Vietnamese hospital."
+    },
+    "Country": {
+      "type": "string",
+      "enum": ["SG", "MY", "ID", "VN", "TH"],
+      "title": "Country",
+      "x-extract": "country"
+    },
+    "FederalTaxID": {
+      "type": "string",
+      "maxLength": 32,
+      "title": "Tax ID",
+      "description": "UEN (SG), SSM no. (MY), NPWP (ID), MST (VN) or TIN (TH).",
+      "x-extract": "tax_id"
+    },
+    "City": { "type": "string", "maxLength": 100, "title": "City", "x-extract": "city" },
+    "Street": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "Billing address",
+      "x-extract": "address",
+      "x-sap-path": "BPAddresses[bo_BillTo].Street"
+    },
+    "ZipCode": {
+      "type": "string",
+      "maxLength": 20,
+      "title": "Postal code",
+      "x-sap-path": "BPAddresses[bo_BillTo].ZipCode"
+    },
+    "EmailAddress": {
+      "type": "string",
+      "format": "email",
+      "maxLength": 100,
+      "title": "Contact email",
+      "x-extract": "contact_email"
+    },
+    "Phone1": { "type": "string", "maxLength": 20, "title": "Phone" },
+    "PayTermsGrpCode": {
+      "type": "integer",
+      "title": "Credit terms",
+      "description": "Approved by Finance.",
+      "oneOf": [
+        { "const": 1, "title": "30 days" },
+        { "const": 2, "title": "60 days" },
+        { "const": 3, "title": "90 days" },
+        { "const": -1, "title": "Cash on delivery" }
+      ]
+    },
+    "CreditLimit": {
+      "type": "number",
+      "minimum": 0,
+      "title": "Credit limit (local currency)",
+      "description": "Approved by Finance."
+    },
+    "purpose": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Why is this customer needed?",
+      "x-extract": "purpose",
+      "x-app-only": true
+    }
+  }
+}
