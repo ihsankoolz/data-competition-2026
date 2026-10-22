@@ -165,6 +165,10 @@ class PublishResult(BaseModel):
     audit_failed: bool = Field(
         default=False, description="True if an audit row could not be written for a SAP call"
     )
+    # The payload as sent and the record as read back, for the read-back view. They can hold
+    # bank values, so they never serialise or print (`exclude`, `repr=False`).
+    sent: dict[str, Any] = Field(default_factory=dict, exclude=True, repr=False)
+    read_back: dict[str, Any] | None = Field(default=None, exclude=True, repr=False)
 
 
 class _Abort(Exception):
@@ -419,6 +423,7 @@ class SapPublisher:
         stage: Stage = "login"
         final_state: Literal["active", "inactive", "not_created"] = "not_created"
         mismatches: list[FieldMismatch] = []
+        got: dict[str, Any] | None = None
         error: B1Failure | None = None
         logged_in = False
         try:
@@ -478,6 +483,8 @@ class SapPublisher:
             relogins=self._relogins,
             calls=self._calls,
             audit_failed=self._audit_error is not None,
+            sent=sent,
+            read_back=got,
         )
 
     def close(self) -> None:

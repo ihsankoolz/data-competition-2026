@@ -241,8 +241,8 @@ export interface paths {
         put?: never;
         /**
          * Submit Request
-         * @description Re-runs the duplicate check. 409 if a Likely duplicate has no human decision; 422 if
-         *     required fields are missing. Otherwise routes approvals (config/routing_rules.yaml).
+         * @description Validates the fields (422 {"detail", "issues"}), re-runs the duplicate check (409 if a
+         *     Likely duplicate has no human decision), then routes approvals (config/routing_rules.yaml).
          */
         post: operations["submitRequest"];
         delete?: never;
@@ -1846,6 +1846,17 @@ export interface components {
             /** Tasks */
             tasks: components["schemas"]["ApprovalTask"][];
         };
+        /**
+         * ValidationBlocked
+         * @description The 422 body of POST /requests/{req_id}/submit when validation fails. `detail` stays a
+         *     plain string so a client that only reads `detail` keeps working.
+         */
+        ValidationBlocked: {
+            /** Detail */
+            detail: string;
+            /** Issues */
+            issues: components["schemas"]["FieldIssue"][];
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -2362,13 +2373,13 @@ export interface operations {
                     "application/json": components["schemas"]["RequestDetail"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Validation failed */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ValidationBlocked"];
                 };
             };
         };

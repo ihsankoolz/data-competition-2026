@@ -8,16 +8,14 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
-from ds.forms import FORM_DOMAINS, load_form_schema
 from ds.interpreter.api import interpret_email
-from services.api import audit_view, bankfields, clock, dedup_service
+from services.api import audit_view, bankfields, clock, dedup_service, sap_readback
 from services.api.audit import AuditAction, append_audit, audit_field_edit
 from services.api.db import models as m
 from services.api.db.session import session_scope
 from services.api.deps import CurrentUser
 from services.api.formfields import (
     form_properties,
-    missing_form_fields,
     prefill_from_interpretation,
 )
 from services.api.ids import next_id
@@ -30,7 +28,14 @@ from services.api.schemas import (
     RequestSummary,
     RequestUpdate,
     SapPublishView,
+    ValidationBlocked,
     ValidationReport,
+)
+from services.api.validation import (
+    ValidationFailed,
+    normalise_fields,
+    submit_sentence,
+    validate_fields,
 )
 from services.api.views import (
     detail_model,
@@ -74,18 +79,6 @@ def _check_keys(domain: str, fields: dict[str, Any]) -> None:
             422,
             f"These are not fields on the {domain.replace('_', ' ')} form: {', '.join(unknown)}.",
         )
-
-
-def _field_label(domain: str, name: str) -> str:
-    if name.startswith("registrations["):
-        return f"Registration number for {name[len('registrations[') : -1]}"
-    if name == bankfields.BANK_KEY:
-        return "Bank account"
-    if domain in FORM_DOMAINS:
-        title = load_form_schema(domain)["properties"].get(name, {}).get("title")  # type: ignore[arg-type]
-        if title:
-            return f"{title} ({name})"
-    return name
 
 
 def _diffs(key: str, old: Any, new: Any):
@@ -165,6 +158,7 @@ def _new_request(
     fields = dict(fields)
     if domain in ("customer", "vendor"):
         fields.setdefault("Country", country)
+    fields = normalise_fields(fields, str(fields.get("Country") or country))
     now = clock.now()
     req = m.Request(
         req_id=next_id(session, "request", "REQ", 4),
@@ -271,7 +265,10 @@ def update_request(req_id: str, body: RequestUpdate, actor: CurrentUser) -> Requ
         domain = req.domain.value
         _check_keys(domain, body.fields)
         old = bankfields.unseal(req.payload)
-        incoming = bankfields.merge_masked(old, body.fields)
+        tax_country = (
+            body.fields.get("Country") or old.get("Country") or body.country or req.country
+        )
+        incoming = normalise_fields(bankfields.merge_masked(old, body.fields), str(tax_country))
         new = dict(old)
         for key, value in incoming.items():
             if value is None:
@@ -396,11 +393,14 @@ def decide_duplicate(req_id: str, body: DedupDecisionIn, actor: CurrentUser) -> 
 
 
 @router.post(
-    "/requests/{req_id}/submit", response_model=RequestDetail, operation_id="submitRequest"
+    "/requests/{req_id}/submit",
+    response_model=RequestDetail,
+    operation_id="submitRequest",
+    responses={422: {"model": ValidationBlocked, "description": "Validation failed"}},
 )
 def submit_request(req_id: str, actor: CurrentUser) -> RequestDetail:
-    """Re-runs the duplicate check. 409 if a Likely duplicate has no human decision; 422 if
-    required fields are missing. Otherwise routes approvals (config/routing_rules.yaml)."""
+    """Validates the fields (422 {"detail", "issues"}), re-runs the duplicate check (409 if a
+    Likely duplicate has no human decision), then routes approvals (config/routing_rules.yaml)."""
     with session_scope(write=True) as session:
         req = _get(session, req_id)
         _require_owner(req, actor)
@@ -412,14 +412,9 @@ def submit_request(req_id: str, actor: CurrentUser) -> RequestDetail:
             )
         domain = req.domain.value
         plain = bankfields.unseal(req.payload)
-        missing = missing_form_fields(domain, req.country, plain)
-        if missing:
-            raise HTTPException(
-                422,
-                "Some required details are still missing: "
-                + ", ".join(_field_label(domain, f) for f in missing)
-                + ". Fill them in and submit again.",
-            )
+        issues = validate_fields(domain, req.country, plain, clock.now().date())
+        if issues:
+            raise ValidationFailed(submit_sentence(issues), issues)
         if domain in ("customer", "vendor"):
             result = dedup_service.run_check(domain, req.entity, plain)
             decision = session.scalars(
@@ -480,7 +475,11 @@ def validate_request(req_id: str, actor: CurrentUser) -> ValidationReport:
     """Checks the current fields against the form schema, country tax-ID formats, required
     fields per domain x country and registration expiry (D-018 item 3). Submit runs the same
     checks and answers 422 {"detail", "issues"} when any fail."""
-    raise HTTPException(501, "Field validation is being built.")
+    with session_scope() as session:
+        req = _get(session, req_id)
+        plain = bankfields.unseal(req.payload)
+        issues = validate_fields(req.domain.value, req.country, plain, clock.now().date())
+    return ValidationReport(ok=not issues, issues=issues)
 
 
 @router.get(
@@ -490,4 +489,9 @@ def validate_request(req_id: str, actor: CurrentUser) -> ValidationReport:
 )
 def get_sap_readback(req_id: str, actor: CurrentUser) -> SapPublishView:
     """Priya's publish screen: the record in the SAP mock and the field-by-field read-back."""
-    raise HTTPException(501, "The read-back view is being built.")
+    with session_scope() as session:
+        req = _get(session, req_id)
+        found = sap_readback.view(session, req, user_names(session), is_finance=actor.is_finance)
+    if found is None:
+        raise HTTPException(404, "This request has not been published to SAP yet.")
+    return found

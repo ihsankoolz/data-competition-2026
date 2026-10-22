@@ -58,7 +58,8 @@ export default defineConfig({
     },
     {
       name: "web",
-      command: `pnpm exec next dev --port ${WEB_PORT}`,
+      // Node's own entry point, not `pnpm exec`: the pnpm/.cmd shims break under Windows bash.
+      command: `"${process.execPath}" node_modules/next/dist/bin/next dev --port ${WEB_PORT}`,
       cwd: __dirname,
       // Own build folder, so it does not collide with a `next dev` already running here.
       env: { API_ORIGIN: `http://localhost:${API_PORT}`, NEXT_DIST_DIR: ".next-e2e" },
