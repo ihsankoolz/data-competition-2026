@@ -340,8 +340,9 @@ def ablation_section(abl: list[dict]) -> str:
     a("*P* = precision, *R* = recall, *F1* balances the two (definitions above).")
     a("")
     a(
-        "Recall on the name-heavy duplicate types, as *blocked (Likely) / warned or blocked "
-        "(Possible or Likely)*:"
+        "Recall on the name-heavy duplicate types. Each cell is *pairs blocked (Likely) / pairs "
+        "warned or blocked (Possible or Likely)*, so `9 / 9` means 9 blocked and 9 caught at "
+        "all, out of the Pairs column (not necessarily all of them):"
     )
     a("")
     a("| Duplicate type | Seed | Pairs | (a) with tax ID | (b) name only | (c) name only + AI |")
@@ -373,6 +374,19 @@ def ablation_section(abl: list[dict]) -> str:
     )
     if beats:
         a("> **For judges:** Tax IDs catch the easy ones; the AI catches differently-typed names.")
+        a("")
+        extra = [x["c"]["likely"][3] - x["b"]["likely"][3] for x in abl]
+        a(
+            "The AI's gain is small: "
+            + " and ".join(
+                f"{e} more true duplicate{'s' if e != 1 else ''} blocked on seed {x['seed']}"
+                for e, x in zip(extra, abl, strict=True)
+            )
+            + f" (F1 at Likely {pct(b['likely'][2])} -> {pct(c['likely'][2])} on unseen data), "
+            f"and it stays below matching with tax IDs ({pct(test['a']['likely'][2])}). Each "
+            "duplicate type has only 8 to 10 pairs, so one pair moves a type's recall by "
+            "10 points or more."
+        )
     else:
         a(
             "> **For judges:** on the held-out seed the AI judge does not improve on name-only "

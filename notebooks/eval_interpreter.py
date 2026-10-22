@@ -280,7 +280,10 @@ def section(r: dict) -> str:
         "**Honest caveat.** The prompt and the keyword rules were both written while looking at "
         "one example email from each generator template, and every email here comes from "
         "those same templates (with different names, products, languages and quoted threads). "
-        "So both scores are optimistic: this tests whether the reader copes with the mess we "
+        "The examples inside the prompt are invented and a test checks that none of them "
+        "occurs in these emails (`tests/test_prompt_hygiene.py`); the keyword rules, by "
+        "contrast, do reuse phrasings seen in the templates. So both "
+        "scores are optimistic: this tests whether the reader copes with the mess we "
         "generated, not with real customers' email. Real inbox traffic will be lower for both, "
         "and we expect the keyword rules to drop much more than the AI, because rules only "
         "know the phrasings someone wrote down."
@@ -392,10 +395,9 @@ def section(r: dict) -> str:
         "may not set payment or credit terms (rule 7), so it is typed in the form. Customer "
         "names are scored strictly: the AI writing `RS Cipto Mangunkusumo` where the key says "
         "`RSCM` counts as wrong, although the duplicate check resolves both. Most missing-field "
-        "mismatches are about inference: the answer key infers the country from a city "
-        "(Jakarta = ID) or a legal form (PT = ID), the AI only writes a country it sees, so "
-        "it asks one extra question; it also takes a forwarded sender's address as the "
-        "contact email, and writes HK for 'Hong Kong' in the injection email."
+        "mismatches are about inference: the answer key infers Indonesia from the legal form "
+        '"PT" where the AI asks for the country instead, and the AI writes HK for '
+        "'Hong Kong' in the injection email where the key leaves the country blank."
     )
     a("")
     a(
@@ -446,10 +448,14 @@ def section(r: dict) -> str:
     a(f"| ... found in any of the {nc} recorded AI answers in the cache | {len(cl)} |")
     a("")
     a(
-        "The injection flag is the AI's own judgement OR-ed with a small fixed list of phrases "
-        '("ignore previous instructions", "system note", "change the bank account of"...). '
-        "A flagged email still gets read normally; it goes to a human with a warning and "
-        "nothing in it is acted on."
+        "The injection flag is the AI's own judgement OR-ed with a short list of generic attack "
+        'phrasings ("ignore ... instructions", "disregard ... rules", "system prompt to", '
+        '"change the bank details"...). A flagged email still gets read normally; it goes to '
+        "a human with a warning and nothing in it is acted on. **Small sample, said plainly:** "
+        f"there is only one injection email in this set (n={len(pos)}), and the phrase list was "
+        "written knowing it. So this shows the safety path works end to end, not how well "
+        "injections are caught in general. The real protection is structural: the AI has no "
+        "tools, and its answer cannot change approvers, bank details or credit terms."
     )
     a("")
     a(
