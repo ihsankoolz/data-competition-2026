@@ -1,0 +1,46 @@
+{
+  "cache_key": "c1ab03967fe3c4124fd1c76c88ee00bebe18e30d610a5c38f517846f8e4ecff9",
+  "input": "<email>\nFrom domain: seri-kenanga.com.my.example\nSubject: RE: Quotation QT-26-0388 - Refrigerated Centrifuge\n\nDear Sales Team,\n\nHope you are well and that the long weekend treated you nicely. Thank you for your quotation QT-26-0388 dated 2 March. Our finance committee finally approved the budget last Thursday so we are happy to accept the quotation as is. Please proceed with the order: our PO number is HSK/PO/2026/1190 (copy attached). Kindly deliver the Refrigerated Benchtop Centrifuge, 2 units, to our Lab Block at Hospital Seri Kenanga, Shah Alam, and please arrange the Installation and Validation Service together with it, 1 job. We would like everything by 29 May 2026 if possible, as the lab renovation will be done by then.\n\nAny issue, just call me.\n\nBest regards,\nNurul Aisyah binti Rahman\nProcurement Executive, Hospital Seri Kenanga\nTel: 03-5544 8821\n\nOn Mon, 23 Feb 2026 at 10:05, Lee Wei <lee.wei@livesgroup.example> wrote:\n> Noted on your plan to buy 2 centrifuges in Q2 once the budget is approved. We will send a quotation shortly.\n> Regards, Lee Wei\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Hospital Seri Kenanga, Shah Alam",
+        "value": "Hospital Seri Kenanga"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "our PO number is HSK/PO/2026/1190",
+        "value": "HSK/PO/2026/1190"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "by 29 May 2026",
+        "value": "2026-05-29"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-CEN-REF",
+        "product_text": "Refrigerated Benchtop Centrifuge",
+        "qty": 2.0,
+        "source_quote": "Refrigerated Benchtop Centrifuge, 2 units"
+      },
+      {
+        "item_code": "C-INS-VAL",
+        "product_text": "Installation and Validation Service",
+        "qty": 1.0,
+        "source_quote": "Installation and Validation Service together with it, 1 job"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:01+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

@@ -1,0 +1,40 @@
+{
+  "cache_key": "ab6b643fe116219e3afb1d8260f68b1f1fbea104b810b701b17d5c480c60a620",
+  "input": "<email>\nFrom domain: mitrabahari.co.id.example\nSubject: PO reagen HbA1c\n\nSelamat siang,\n\nMohon kirim HbA1c Reagent Kit 6 kit sesuai PO no. PO/LAB/2026/0417. Kirim paling lambat 15 Mei 2026 ya.\n\nTerima kasih.\nSri - Lab RS Mitra Bahari Surabaya\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Lab RS Mitra Bahari Surabaya",
+        "value": "RS Mitra Bahari Surabaya"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO/LAB/2026/0417",
+        "value": "PO/LAB/2026/0417"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "15 Mei 2026",
+        "value": "2026-05-15"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "HbA1c Reagent Kit",
+        "qty": 6.0,
+        "source_quote": "HbA1c Reagent Kit 6 kit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:00:48+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

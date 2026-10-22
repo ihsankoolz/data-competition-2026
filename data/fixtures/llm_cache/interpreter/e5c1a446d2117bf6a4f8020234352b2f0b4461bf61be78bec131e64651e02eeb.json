@@ -1,0 +1,41 @@
+{
+  "cache_key": "e5c1a446d2117bf6a4f8020234352b2f0b4461bf61be78bec131e64651e02eeb",
+  "input": "<email>\nFrom domain: rsmitrasejahtera.co.id.example\nSubject: Permintaan pembelian reagen - PR RS Mitra Sejahtera\n\nSelamat siang Bapak/Ibu,\n\nBerikut kami sampaikan kebutuhan RS Mitra Sejahtera berdasarkan Purchase Requisition internal nomor PR-2026/0457 (bukan nomor PO):\n- Dengue IgG/IgM Rapid Test Kit: 30 box\n- SARS-CoV-2 Antigen Rapid Test Kit: 50 box\n\nPO resmi akan menyusul setelah PR ditandatangani oleh direktur. Rencananya barang dibutuhkan awal bulan depan. Mohon dibantu stok dan konfirmasi harga terlebih dahulu ya.\n\nTerima kasih.\nDewi Anggraini\nStaf Purchasing, RS Mitra Sejahtera Bekasi\nHP 0812-3456-7788\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.7,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "RS Mitra Sejahtera Bekasi",
+        "value": "RS Mitra Sejahtera"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "awal bulan depan",
+        "value": "awal bulan depan"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-DEN-IGM",
+        "product_text": "Dengue IgG/IgM Rapid Test Kit",
+        "qty": 30.0,
+        "source_quote": "Dengue IgG/IgM Rapid Test Kit: 30 box"
+      },
+      {
+        "item_code": "A-COV-AG",
+        "product_text": "SARS-CoV-2 Antigen Rapid Test Kit",
+        "qty": 50.0,
+        "source_quote": "SARS-CoV-2 Antigen Rapid Test Kit: 50 box"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:17+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

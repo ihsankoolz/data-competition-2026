@@ -1,0 +1,35 @@
+{
+  "cache_key": "eaa737247fba490d82f1f122023180eba1f7bfae2aa7370e744d1d513d82f589",
+  "input": "<email>\nFrom domain: lannalivelab.co.th.example\nSubject: ใบสั่งซื้อบริการ Preventive Maintenance - PO-CM-2569-0123\n\nเรียน ฝ่ายขาย Lives Group\n\nบริษัท ล้านนา ไลฟ์ แล็บ จำกัด ขอสั่งซื้อบริการ Preventive Maintenance Visit สำหรับเครื่อง Automated Clinical Chemistry Analyser จำนวน 2 visit ตามใบสั่งซื้อเลขที่ PO-CM-2569-0123\n\nกรุณาติดต่อกลับเพื่อนัดวันเข้าบริการ\n\nขอแสดงความนับถือ\nคุณสมศรี ใจดี\nฝ่ายจัดซื้อ\nโทร 053-123-456\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_order",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "บริษัท ล้านนา ไลฟ์ แล็บ จำกัด",
+        "value": "บริษัท ล้านนา ไลฟ์ แล็บ จำกัด"
+      },
+      {
+        "key": "po_number",
+        "source_quote": "PO-CM-2569-0123",
+        "value": "PO-CM-2569-0123"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-SVC-PM",
+        "product_text": "Preventive Maintenance Visit",
+        "qty": 2.0,
+        "source_quote": "ขอสั่งซื้อบริการ Preventive Maintenance Visit สำหรับเครื่อง Automated Clinical Chemistry Analyser จำนวน 2 visit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:00:58+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

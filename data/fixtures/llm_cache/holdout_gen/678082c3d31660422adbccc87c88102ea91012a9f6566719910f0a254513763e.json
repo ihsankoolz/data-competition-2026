@@ -1,0 +1,153 @@
+{
+  "cache_key": "678082c3d31660422adbccc87c88102ea91012a9f6566719910f0a254513763e",
+  "input": "Write 4 emails of category `follow_up`, one per slot below, each with its label as described in the brief. Every email must be different in sender, organisation, products and wording.\n\nSlots:\n1. English reply in an existing thread ('Re:'), chasing delivery of an earlier order; the earlier PO email is quoted below with '>' lines and mentions the PO number.\n2. Bahasa Indonesia, chasing a quotation requested two weeks ago; the original request is forwarded underneath.\n3. Vietnamese WITH diacritics, chasing an engineer visit for a broken analyser reported last week.\n4. Internal: a Lives Group sales rep in Malaysia chases the MDM team about a customer account request sent last week because they cannot book an order yet; the earlier request is quoted. This is a follow-up, not a new master-data request.",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "emails": [
+      {
+        "attachments": [],
+        "body": "Hi team,\n\nCan you please confirm when the 10 boxes of Dengue NS1 kits under PO TMC-PO-26-0418 will arrive? Our store keeps asking since Monday and we are running low on stock.\n\nThanks,\nPriya Nair\nProcurement Executive, Tanjong Medical Centre Pte Ltd\nTel +65 6123 4567\n\nOn Tue, 3 Mar 2026 at 10:12, Priya Nair <procurement@tanjongmedical.com.sg.example> wrote:\n> Hi Sales,\n>\n> Please find attached our PO TMC-PO-26-0418. Please deliver 10 boxes of Dengue NS1 kits to our clinic at Tanjong Pagar, delivery by 20 March if possible.\n>\n> Regards,\n> Priya",
+        "category": "follow_up",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Tanjong Medical Centre Pte Ltd",
+            "value": "Tanjong Medical Centre Pte Ltd"
+          },
+          {
+            "key": "po_number",
+            "source_quote": "PO TMC-PO-26-0418",
+            "value": "TMC-PO-26-0418"
+          }
+        ],
+        "from_address": "procurement@tanjongmedical.com.sg.example",
+        "from_name": "Priya Nair",
+        "gist": "Customer chases delivery ETA for 10 boxes of Dengue NS1 kits ordered under PO TMC-PO-26-0418.",
+        "language": "English",
+        "lines": [
+          {
+            "item_code": "A-DEN-NS1",
+            "product_text": "Dengue NS1 kits",
+            "qty": 10.0,
+            "source_quote": "10 boxes of Dengue NS1 kits"
+          }
+        ],
+        "messiness": [
+          "quoted_history",
+          "reply_thread",
+          "signature"
+        ],
+        "missing_fields": [],
+        "slot": 1,
+        "subject": "Re: PO TMC-PO-26-0418 - Dengue NS1 kits",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Selamat siang Bapak/Ibu,\n\nMohon update penawaran harga (quotation) untuk 2 unit centrifuge refrigerated yang kami minta dua minggu lalu. Sampai hari ini kami belum menerima balasan, padahal kami perlu segera membawanya ke komite pengadaan. Mohon dibantu ya, terima kasih.\n\nSalam,\nDewi Lestari\nStaf Pengadaan RS Mitra Sentosa\nHP 0812-3456-7788\n\n---------- Forwarded message ---------\nFrom: Dewi Lestari <pengadaan@mitrasentosa.co.id.example>\nDate: Senin, 9 Februari 2026\nSubject: Permintaan penawaran\nTo: sales@livesgroup.example\n\nSelamat pagi, mohon penawaran untuk 2 unit centrifuge refrigerated benchtop dan 3 kit CRP quantitative. Terima kasih. RS Mitra Sentosa",
+        "category": "follow_up",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "RS Mitra Sentosa",
+            "value": "RS Mitra Sentosa"
+          }
+        ],
+        "from_address": "pengadaan@mitrasentosa.co.id.example",
+        "from_name": "Dewi Lestari",
+        "gist": "Hospital chases a quotation for refrigerated centrifuge and CRP reagent requested two weeks ago; original request forwarded below.",
+        "language": "Bahasa Indonesia",
+        "lines": [
+          {
+            "item_code": "B-CEN-REF",
+            "product_text": "centrifuge refrigerated",
+            "qty": 2.0,
+            "source_quote": "2 unit centrifuge refrigerated"
+          },
+          {
+            "item_code": "A-CRP-QT",
+            "product_text": "CRP quantitative",
+            "qty": 3.0,
+            "source_quote": "3 kit CRP quantitative"
+          }
+        ],
+        "messiness": [
+          "forwarded",
+          "quoted_history",
+          "polite_formal"
+        ],
+        "missing_fields": [],
+        "slot": 2,
+        "subject": "Fwd: Permintaan penawaran - belum ada update",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Kính gửi Lives Group,\n\nTuần trước chúng tôi đã báo máy phân tích hóa sinh tự động của phòng xét nghiệm bị lỗi, nhưng đến nay vẫn chưa có kỹ sư nào đến kiểm tra. Hiện phòng xét nghiệm phải gửi mẫu ra ngoài nên rất bị động.\n\nNhờ anh/chị cho biết lịch kỹ sư đến sớm nhất để chúng tôi sắp xếp.\n\nTrân trọng,\nNguyễn Thị Hạnh\nPhòng Vật tư, Công ty TNHH Xét nghiệm Y khoa Phương Nam\nĐT: 028 3822 1199",
+        "category": "follow_up",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Công ty TNHH Xét nghiệm Y khoa Phương Nam",
+            "value": "Công ty TNHH Xét nghiệm Y khoa Phương Nam"
+          }
+        ],
+        "from_address": "vattu@phuongnammed.com.vn.example",
+        "from_name": "Nguyễn Thị Hạnh",
+        "gist": "Customer chases an engineer visit for a faulty chemistry analyser reported last week.",
+        "language": "Vietnamese",
+        "lines": [
+          {
+            "item_code": "B-CHE-AUT",
+            "product_text": "máy phân tích hóa sinh tự động",
+            "qty": null,
+            "source_quote": "máy phân tích hóa sinh tự động"
+          }
+        ],
+        "messiness": [
+          "polite_formal",
+          "signature"
+        ],
+        "missing_fields": [],
+        "slot": 3,
+        "subject": "Nhờ kiểm tra gấp: máy phân tích hóa sinh bị lỗi, chưa có kỹ sư đến",
+        "to": "sales@livesgroup.example"
+      },
+      {
+        "attachments": [],
+        "body": "Hi MDM team,\n\nFollowing up on my request below, sent last week. I still cannot book the order for Poliklinik Seri Impian Sdn Bhd because the account is not in SAP yet. Customer is waiting, boleh tolong check status ya? Tq.\n\nAzlan Ibrahim\nSales Executive, Lives Group Malaysia\nHP 012-345 6789\n\nOn Mon, 2 Mar 2026 at 09:40, Azlan Ibrahim <azlan.ibrahim@livesgroup.example> wrote:\n> Hi MDM,\n> Pls open a new customer account for Poliklinik Seri Impian Sdn Bhd, Kuala Lumpur. They want to order HbA1c kits for SPD.\n> SSM no. will follow once I get it from the customer.\n> Tq,\n> Azlan",
+        "category": "follow_up",
+        "domain": null,
+        "expected_fields": [
+          {
+            "key": "customer_name",
+            "source_quote": "Poliklinik Seri Impian Sdn Bhd",
+            "value": "Poliklinik Seri Impian Sdn Bhd"
+          }
+        ],
+        "from_address": "azlan.ibrahim@livesgroup.example",
+        "from_name": "Azlan Ibrahim",
+        "gist": "Malaysian sales rep chases MDM about a customer account request sent last week because he cannot book an order yet.",
+        "language": "English/Malay",
+        "lines": [],
+        "messiness": [
+          "internal",
+          "quoted_history",
+          "phone_style",
+          "not_new_mdm_request"
+        ],
+        "missing_fields": [],
+        "slot": 4,
+        "subject": "Re: Customer account request - Poliklinik Seri Impian",
+        "to": "mdm@livesgroup.example"
+      }
+    ]
+  },
+  "prompt_version": "holdout_gen_v1",
+  "recorded_at": "2026-10-22T12:58:06+00:00",
+  "system_sha256": "8e5f1d385ff051d0a5b2e35a022d7d8ba6bfd3100757481fc53c87f8aea3e1e8",
+  "task": "holdout_gen"
+}

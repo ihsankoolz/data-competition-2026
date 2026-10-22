@@ -1,0 +1,30 @@
+{
+  "cache_key": "16435ee5d9426eb84b41e8d7616f0f611aab1412dd8812b830c832b28a831e9c",
+  "input": "<email>\nFrom domain: suksomboon-hospital.co.th.example\nSubject: สอบถามราคา HbA1c Reagent Kit\n\nสวัสดีค่ะ\n\nดิฉันสุนิสา จากห้องปฏิบัติการ โรงพยาบาลสุขสมบูรณ์ ต้องการสอบถามว่า HbA1c Reagent Kit (200 tests) ตอนนี้มีสต็อกพร้อมส่งไหมคะ และราคาต่อ kit เท่าไหร่ รบกวนแจ้งกลับทางอีเมลด้วยค่ะ\n\nขอบคุณค่ะ\nสุนิสา ใจดี\nโทร 02-555-0147\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "โรงพยาบาลสุขสมบูรณ์",
+        "value": "โรงพยาบาลสุขสมบูรณ์"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "HbA1c Reagent Kit (200 tests)",
+        "qty": null,
+        "source_quote": "HbA1c Reagent Kit (200 tests)"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:27+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

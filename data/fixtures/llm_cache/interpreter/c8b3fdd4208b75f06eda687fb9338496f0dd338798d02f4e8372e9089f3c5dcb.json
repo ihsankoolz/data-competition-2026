@@ -1,0 +1,41 @@
+{
+  "cache_key": "c8b3fdd4208b75f06eda687fb9338496f0dd338798d02f4e8372e9089f3c5dcb",
+  "input": "<email>\nFrom domain: meridianpath.com.sg.example\nSubject: Quotation for training and installation\n\nHi team,\n\nHope you are all well and the year is treating you kindly. Quick background: we are Meridian Pathology Laboratory Pte Ltd, a small private lab in Singapore, and we have been talking internally about moving to a bigger chemistry analyser for a while now. Nothing is decided yet, the directors still need to look at the numbers, so before we order anything I would like to get a feel for the cost of the services side.\n\nCould you send me a quotation for the operator training package and the installation and validation service? We are hoping to have things running around mid-July if it all goes ahead, but I can't promise anything at this point. Also happy to hear what the usual lead time is for booking your engineers.\n\nThanks a lot, and sorry for the long mail!\n\nMarcus Tan\nLab Manager, Meridian Pathology Laboratory Pte Ltd\nHP: +65 9123 4567\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "enquiry",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Meridian Pathology Laboratory Pte Ltd",
+        "value": "Meridian Pathology Laboratory Pte Ltd"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "mid-July",
+        "value": "mid-July"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "C-TRN-OPS",
+        "product_text": "operator training package",
+        "qty": null,
+        "source_quote": "operator training package"
+      },
+      {
+        "item_code": "C-INS-VAL",
+        "product_text": "installation and validation service",
+        "qty": null,
+        "source_quote": "installation and validation service"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:34+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

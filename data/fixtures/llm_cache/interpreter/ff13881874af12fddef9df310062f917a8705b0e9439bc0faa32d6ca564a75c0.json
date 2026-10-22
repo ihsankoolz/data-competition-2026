@@ -1,0 +1,36 @@
+{
+  "cache_key": "ff13881874af12fddef9df310062f917a8705b0e9439bc0faa32d6ca564a75c0",
+  "input": "<email>\nFrom domain: bvbinhhoa.vn.example\nSubject: Dự kiến số lượng thuốc thử cho kế hoạch đấu thầu 2027\n\nKính gửi Quý công ty,\n\nBệnh viện Đa khoa tỉnh Bình Hòa đang lập kế hoạch đấu thầu vật tư xét nghiệm cho năm 2027. Khoa Xét nghiệm dự kiến số lượng như sau:\n\n- Thuốc thử HbA1c: 120 kit\n- Thuốc thử CRP định lượng: 80 kit\n\nĐề nghị Quý công ty ghi nhận số lượng dự kiến này để chuẩn bị hồ sơ và hàng hóa. Chúng tôi sẽ thông báo chính thức khi kế hoạch được phê duyệt.\n\nTrân trọng,\nNguyễn Thị Lan\nKhoa Xét nghiệm - Bệnh viện Đa khoa tỉnh Bình Hòa\nĐT: 0274 3812 345\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "Bệnh viện Đa khoa tỉnh Bình Hòa",
+        "value": "Bệnh viện Đa khoa tỉnh Bình Hòa"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "Thuốc thử HbA1c",
+        "qty": 120.0,
+        "source_quote": "Thuốc thử HbA1c: 120 kit"
+      },
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "Thuốc thử CRP định lượng",
+        "qty": 80.0,
+        "source_quote": "Thuốc thử CRP định lượng: 80 kit"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:12+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

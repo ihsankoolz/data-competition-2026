@@ -1,0 +1,23 @@
+{
+  "cache_key": "080b121662fa41f2173534308e9364c299252addd9a7a354ccf8e0c39f65403e",
+  "input": "<email>\nFrom domain: mitrasentosa.co.id.example\nSubject: Fwd: Permintaan penawaran - belum ada update\n\nSelamat siang Bapak/Ibu,\n\nMohon update penawaran harga (quotation) untuk 2 unit centrifuge refrigerated yang kami minta dua minggu lalu. Sampai hari ini kami belum menerima balasan, padahal kami perlu segera membawanya ke komite pengadaan. Mohon dibantu ya, terima kasih.\n\nSalam,\nDewi Lestari\nStaf Pengadaan RS Mitra Sentosa\nHP 0812-3456-7788\n\n---------- Forwarded message ---------\nFrom: Dewi Lestari <pengadaan@mitrasentosa.co.id.example>\nDate: Senin, 9 Februari 2026\nSubject: Permintaan penawaran\nTo: sales@livesgroup.example\n\nSelamat pagi, mohon penawaran untuk 2 unit centrifuge refrigerated benchtop dan 3 kit CRP quantitative. Terima kasih. RS Mitra Sentosa\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "follow_up",
+    "confidence": 0.9,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "RS Mitra Sentosa",
+        "value": "RS Mitra Sentosa"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": []
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:44+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

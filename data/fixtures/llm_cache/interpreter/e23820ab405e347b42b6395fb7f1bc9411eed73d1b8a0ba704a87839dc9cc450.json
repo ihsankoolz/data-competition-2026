@@ -1,0 +1,35 @@
+{
+  "cache_key": "e23820ab405e347b42b6395fb7f1bc9411eed73d1b8a0ba704a87839dc9cc450",
+  "input": "<email>\nFrom domain: srinakarinthani-hosp.co.th.example\nSubject: Centrifuge budget approved - Q1\n\nHi,\n\nงบประมาณอนุมัติแล้ว for 1 unit Refrigerated Benchtop Centrifuge, Q1. PO will come in January. Please keep the price valid until then.\n\nThanks\nSomchai P.\nProcurement\nโรงพยาบาลศรีนครินทร์ธานี\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.75,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "โรงพยาบาลศรีนครินทร์ธานี",
+        "value": "โรงพยาบาลศรีนครินทร์ธานี"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "PO will come in January",
+        "value": "January"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "B-CEN-REF",
+        "product_text": "Refrigerated Benchtop Centrifuge",
+        "qty": 1.0,
+        "source_quote": "1 unit Refrigerated Benchtop Centrifuge"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:22+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}

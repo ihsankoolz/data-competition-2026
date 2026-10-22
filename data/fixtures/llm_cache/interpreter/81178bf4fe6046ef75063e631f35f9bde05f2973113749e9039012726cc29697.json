@@ -1,0 +1,41 @@
+{
+  "cache_key": "81178bf4fe6046ef75063e631f35f9bde05f2973113749e9039012726cc29697",
+  "input": "<email>\nFrom domain: tampinesheightspoly.com.sg.example\nSubject: Reserve stock for next month - HbA1c and CRP kits\n\nHi team,\n\nWe are planning to place an order next month for HbA1c Reagent Kit x 6 kits and CRP Quantitative Reagent x 4 kits for the lab at Tampines Heights Polyclinic. Could you please reserve the stock for us first? We will raise the PO once finance signs off, so there is no PO number yet.\n\nPlease let me know if the current stock can cover this.\n\nThanks and regards,\nRachel Tan\nSenior Medical Technologist, Laboratory\nTampines Heights Polyclinic\nTel: +65 6123 4567\n</email>",
+  "model": "claude-haiku-5-5",
+  "output": {
+    "category": "purchase_request",
+    "confidence": 0.7,
+    "domain": null,
+    "fields": [
+      {
+        "key": "customer_name",
+        "source_quote": "the lab at Tampines Heights Polyclinic",
+        "value": "Tampines Heights Polyclinic"
+      },
+      {
+        "key": "requested_date",
+        "source_quote": "place an order next month",
+        "value": "next month"
+      }
+    ],
+    "injection_suspected": false,
+    "lines": [
+      {
+        "item_code": "A-HBA-1C",
+        "product_text": "HbA1c Reagent Kit",
+        "qty": 6.0,
+        "source_quote": "HbA1c Reagent Kit x 6 kits"
+      },
+      {
+        "item_code": "A-CRP-QT",
+        "product_text": "CRP Quantitative Reagent",
+        "qty": 4.0,
+        "source_quote": "CRP Quantitative Reagent x 4 kits"
+      }
+    ]
+  },
+  "prompt_version": "interpreter_v2",
+  "recorded_at": "2026-10-22T13:01:05+00:00",
+  "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
+  "task": "interpreter"
+}
