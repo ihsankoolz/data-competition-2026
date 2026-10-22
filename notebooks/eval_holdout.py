@@ -258,6 +258,11 @@ def section(t: dict, h: dict) -> str:
       "so they test phrasing and layouts our templates never produced. They are still "
       "AI-written emails, cleaner than a real inbox (no attachments to read, no typos from "
       "a phone keyboard at 2 am, no image-only POs).")  # fmt: skip
+    a(
+        "- **Order lines are the easy part here.** The brief gave the writer our catalogue, so "
+        "most emails name products close to their catalogue names; real customers use their "
+        "own product words, so the perfect order-line score will not carry over as is."
+    )
     a("- Customer names are scored strictly as written, as on the tuned set.")
     a("")
     a(

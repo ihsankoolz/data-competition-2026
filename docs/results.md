@@ -294,6 +294,7 @@ Fields the AI got wrong, by field: `requested_date` 3, `purpose` 3, `customer_na
 - **Small sample.** 24 emails, about 5 per kind: one email moves accuracy by 4.2 points, and a per-class F1 rests on 4 or 5 emails.
 - **The answer key is the writing model's intent**, not an independent human label. It is being spot-checked by a person; where the writer's label is debatable we list it and do not change it after seeing the interpreter's answers.
 - **Different writer, still synthetic.** A different model wrote these from a brief, so they test phrasing and layouts our templates never produced. They are still AI-written emails, cleaner than a real inbox (no attachments to read, no typos from a phone keyboard at 2 am, no image-only POs).
+- **Order lines are the easy part here.** The brief gave the writer our catalogue, so most emails name products close to their catalogue names; real customers use their own product words, so the perfect order-line score will not carry over as is.
 - Customer names are scored strictly as written, as on the tuned set.
 
 > **For judges:** on 24 emails written by a different AI from a style brief (not from our templates), the reader sorts 95.8% (23 of 24) correctly against 100.0% (88 of 88) on the emails we tuned it on, and the keyword rules drop to 54.2% (13 of 24). The emails and answers were locked in before the reader saw them.
