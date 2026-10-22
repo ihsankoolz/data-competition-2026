@@ -32,6 +32,8 @@ type FieldShellProps = {
   children: React.ReactNode;
   /** Groups (chips, rows) are labelled with a legend instead of a <label>. */
   asGroup?: boolean;
+  /** Server-side problems with this field (D-018 #3), in plain English. */
+  issues?: string[];
 };
 
 export function FieldShell({
@@ -44,7 +46,9 @@ export function FieldShell({
   sensitive,
   children,
   asGroup,
+  issues = [],
 }: FieldShellProps) {
+  const flagged = missing || issues.length > 0;
   const labelNode = (
     <span className="flex items-baseline gap-2 text-sm font-medium">
       {label}
@@ -55,10 +59,11 @@ export function FieldShell({
     <div
       className={cn(
         "flex flex-col gap-1.5 rounded-lg",
-        missing && "-mx-3 bg-destructive/5 px-3 py-2.5 ring-1 ring-destructive/30",
+        flagged && "-mx-3 bg-destructive/5 px-3 py-2.5 ring-1 ring-destructive/30",
       )}
       data-testid={`field-${id}`}
       data-missing={missing ? "true" : undefined}
+      data-issue={issues.length > 0 ? "true" : undefined}
     >
       {asGroup ? (
         <span id={`${id}-label`}>{labelNode}</span>
@@ -87,9 +92,15 @@ export function FieldShell({
           </span>
         </p>
       )}
-      {missing && (
-        <p className="text-xs font-medium text-destructive">Needed before you can submit.</p>
-      )}
+      {issues.length > 0
+        ? issues.map((m) => (
+            <p key={m} className="text-xs font-medium text-destructive" data-testid="field-issue">
+              {m}
+            </p>
+          ))
+        : missing && (
+            <p className="text-xs font-medium text-destructive">Needed before you can submit.</p>
+          )}
     </div>
   );
 }
