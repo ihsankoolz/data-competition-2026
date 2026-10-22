@@ -11,9 +11,9 @@ One line per finished task: `YYYY-MM-DD HH:MM | agent | what changed | status`.
 - [x] M5 Parallel approvals + status page (approvals inbox, status page with audit timeline, notifications bell, Priya publish + read-back)
 - [x] M6 Audit log (hooked into every workflow event; timeline UI with M5 screens)
 - [x] M7 SAP B1 mock + publisher
-- [ ] M8 Regional business view (analytics + API done, own dedup clusters; screen in session 5)
+- [x] M8 Regional business view (screen session 5: heatmap, NRR + bridge, cross-sell, separate PO/enquiry/PR/MDM panels, before/after merge, lost list with duplicate markers, forecast panel + bias by country, actions)
 - [x] M9 Forecast backtest (3 scenarios x clean/dirty, precomputed; methods tie at country level, reported honestly)
-- [ ] M10 Ops impact numbers (model + API done; summary card in session 5)
+- [x] M10 Ops impact numbers (card on /ops and /regional, 'Modelled, not measured')
 - [x] D-018 #3 Field validation (schema values, tax-ID formats, required fields, registration expiry)
 
 ## Log
@@ -51,3 +51,4 @@ One line per finished task: `YYYY-MM-DD HH:MM | agent | what changed | status`.
 2026-10-22 23:59 | backend-engineer (session 5) | linked_card_name; ask-for-info -> edit -> resubmit keeps given approvals, reopens only the asker, adds new routing tasks (Finance re-looks if bank/credit/terms changed); deterministic item group + product family suggestions with reasons (prefill_suggested); vendors in any country (config/countries.json, config/foreign_vendors.yaml; FormSpec.country now a string); reset 3-4x faster under load | done
 2026-10-22 23:55 | data-scientist (D-020 #1 bias by country) | New cut of the same backtest (ds/forecasting/bias.py; raw country x product frames committed, reproduce stored scores exactly): ForecastBacktest.bias_by_country + bias_note for all 6 runs; results.md 'In three sentences' + 'Does the Excel average under-forecast growing markets?'. Demo: Vietnam (orders +45%, region +13%) Excel 6-month planned 13% low vs -2..+6% elsewhere; Indonesia grew only +4% (hypothesis half right); ours under-plans VN more (-17%, seasonal-naive part -33%). pytest + make eval green, byte-stable | done
 2026-10-23 00:10 | frontend-engineer (session 5) | /regional M8 screen (before/after merge strip, heatmap, NRR/cross-sell/customers, bridge waterfall, PO/enquiry/PR/MDM panels, lost customers with 'Really a duplicate', actions, forecast panel with scenario + clean/dirty + collapsible bias-by-country, compact ops card); /ops M10 card with assumptions; edit-and-resubmit on the status page (question, edit, Resubmit, live duplicate panel, Finance note); linked_card_name replaces the browser stash; 'Suggested' hints; searchable select for long enums (vendor Country); e2e regional/resubmit/vendor-country specs | done
+2026-10-23 00:25 | orchestrator | Session 5 merged: D-020 (forecast framing + bias by country; foreign vendors; resubmit governance), contract ccfdae3, three tracks each QA'd + fixed (DS bias note wording; backend bank-country message, identity-field reopen, asker-dropped reopen, SAP reset after DB reload; frontend 9 copy/layout items + typecheck); regional e2e race fixed; 30/30 e2e, pytest, test-web green, make eval byte-stable | done
