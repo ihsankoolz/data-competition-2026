@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import os
 import subprocess
 import sys
@@ -87,8 +88,31 @@ def test_expected_files(out):
         "ground_truth/migrations.csv",
         "ground_truth/churn.csv",
         "ground_truth/bp_golden_map.csv",
+        # v2 (data-spec §6-9)
+        "users.csv",
+        "orders.csv",
+        "enquiries.csv",
+        "dirty_demand.csv",
+        "mdm_requests_history.csv",
+        "emails.jsonl",
+        "ground_truth/email_labels.jsonl",
     ]:
         assert (out / f).is_file(), f
+
+
+# sha256 of the v1 (§1-5) master for seed 42 / seasonal_trend. The duplicate-check evaluation
+# depends on these files: v2 tables must use new RNG streams and never shift them.
+PINNED_SHA256 = {
+    "bp_records.csv": "1965c844745d959d942e05990e93d1d51a1fb04f059d023241ca544635268b59",
+    "ground_truth/bp_golden_map.csv": (
+        "c1a98f4decbea576693f8123b539f7f73fbbc353c7dfbf882d70f2310cb50918"
+    ),
+}
+
+
+def test_master_hashes_pinned(out):
+    for f, digest in PINNED_SHA256.items():
+        assert hashlib.sha256((out / f).read_bytes()).hexdigest() == digest, f
 
 
 def within(x: float, target: float, tol: float = 0.10) -> bool:

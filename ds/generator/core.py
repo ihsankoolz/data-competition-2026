@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import copy
+import json
 from pathlib import Path
 
 import yaml
 
-from . import catalog
+from . import catalog, demand, emails, ops
 from .common import write_csv
 from .master import (
     BP_COLS,
@@ -19,6 +20,7 @@ from .master import (
     golden_rows,
     hard_negative_rows,
 )
+from .users import USER_COLS, user_rows
 
 PARAMS_PATH = Path(__file__).with_name("params.yaml")
 
@@ -123,4 +125,27 @@ def generate(scenario: str, seed: int, out: Path | str) -> Path:
             ]
         )
     write_csv(gt / "groups.csv", ["group_id", "group_name", "countries", "golden_ids"], groups)
+
+    # ---- v2 (data-spec §6-9). New named RNG streams only, so §1-5 output never shifts.
+    write_csv(root / "users.csv", USER_COLS, user_rows())
+    dem = demand.build_orders(m, params, seed)
+    enqs = demand.build_enquiries(m, dem, params, seed)
+    mdm_reqs = ops.build_mdm_history(params, seed)
+    email_rows, label_rows = emails.build_inbox(m, dem, enqs, params, seed)  # sets source ids
+    write_csv(root / "orders.csv", demand.ORDER_COLS, demand.order_rows(dem))
+    write_csv(root / "enquiries.csv", demand.ENQUIRY_COLS, demand.enquiry_rows(enqs))
+    write_csv(
+        root / "dirty_demand.csv",
+        demand.DIRTY_COLS,
+        demand.dirty_rows(m, dem, enqs, mdm_reqs, params, seed),
+    )
+    write_csv(root / "mdm_requests_history.csv", ops.MDM_COLS, ops.mdm_rows(mdm_reqs))
+    write_jsonl(root / "emails.jsonl", email_rows)
+    write_jsonl(gt / "email_labels.jsonl", label_rows)
     return root
+
+
+def write_jsonl(path: Path, rows: list[dict]) -> None:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")

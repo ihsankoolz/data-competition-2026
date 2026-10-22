@@ -90,5 +90,119 @@ common:
     n_total: 60
     kinds: {manufacturer: 0.6, logistics: 0.25, services: 0.15}
 
+  # ------------------------------------------------------------------------------------------
+  # Demand DGP (data-spec §6). Units are per order (sales unit in items.csv).
+  # Scenarios may override anything under `demand`, `enquiries` and `leakage` only.
+  # ------------------------------------------------------------------------------------------
+  demand:
+    lambda_shape: 2.0               # base rate lambda ~ Gamma(shape, mean / shape)
+    lambda_mean:                    # mean units per order, by family x segment
+      A: {public_hospital: 40, private_hospital: 22, laboratory: 28, clinic: 4, distributor: 60}
+      B: {public_hospital: 0.6, private_hospital: 0.4, laboratory: 0.4, clinic: 0.05, distributor: 1.0}
+      C: {public_hospital: 2.5, private_hospital: 1.5, laboratory: 1.5, clinic: 0.3, distributor: 1.0}
+    country_size: {SG: 1.0, MY: 0.9, ID: 1.25, VN: 1.1, TH: 1.0}
+    small_customer_prob:            # share of customers per segment that order like a small account
+      public_hospital: 0.0
+      private_hospital: 0.2
+      laboratory: 0.3
+      clinic: 1.0
+      distributor: 0.1
+    p_order:
+      A: {large: 0.7, small: 0.3}
+      B: {low: 0.05, high: 0.10}    # per customer, drawn uniformly
+      C_adhoc: 0.04                 # training / installation jobs outside the contract cycle
+    c_contract:
+      quarterly_prob: 0.4           # else annual renewal in the anniversary month
+      renewal_prob: 0.95
+      annual_items: {C-SVC-ANN: 0.6, C-LIS-SUB: 0.4}
+      quarterly_item: C-SVC-PM
+      adhoc_items: {C-TRN-OPS: 0.6, C-INS-VAL: 0.4}
+    item_weights:
+      A: {A-DEN-NS1: 0.25, A-DEN-IGM: 0.20, A-HBA-1C: 0.20, A-CRP-QT: 0.20, A-COV-AG: 0.15}
+      B: {B-HEM-5P: 0.30, B-CHE-AUT: 0.20, B-CEN-REF: 0.20, B-MIC-BIN: 0.15, B-BSC-II: 0.15}
+    item_pref_concentration: 8.0    # Dirichlet concentration for each customer's item mix
+    second_line_prob: 0.35          # an A order has a second item line
+    nb_dispersion: {A: 6.0, B: 3.0, C: 8.0}   # NegativeBinomial size k (lower = noisier)
+    extra_noise_sigma: 0.0          # optional lognormal multiplier on the monthly mean
+    trend_annual: {SG: 0.01, MY: 0.03, ID: 0.12, VN: 0.18, TH: 0.06}
+    trend_extra: {A: 0.0, B: 0.0, C: 0.08}
+    seasonality_on: true
+    season:
+      budget_flush: {months: [11, 12], mult: 1.15}
+      cny_dip: {countries: [SG, MY, VN], mult: 0.80}
+      ramadan_dip: {countries: [ID, MY], mult: 0.85}
+      songkran_dip: {countries: [TH], mult: 0.85}
+    price_noise: 0.05               # unit price = list price x U(1 - x, 1 + x)
+    tender:
+      segments: [public_hospital]
+      families: [A, B]
+      prob: 0.01
+      mult_range: [3, 5]
+    po_ref_blank_prob: 0.08         # verbal / phone orders keyed without a customer PO number
+
+  enquiries:
+    # converting rows are anchored on a later order; non-converting ones fill the rate
+    pr_per_order: {A: 0.20, B: 0.45, C: 0.10}   # A raised so leaked A units are ~7% of clean A
+    enq_per_order: {A: 0.10, B: 0.60, C: 0.08}
+    pr_conversion: 0.35             # data-spec §7: ~35% of purchase requests convert in 2 months
+    enq_conversion: 0.10            # ~10% of enquiries convert
+    lead_days: [5, 60]
+
+  leakage:                          # data-spec §7.1, today's spreadsheet process
+    enquiry_share: 0.10             # of enquiries + purchase requests counted as orders
+    mdm_share: 0.05                 # of MDM requests (email) counted as orders
+
+  # ------------------------------------------------------------------------------------------
+  # Old email-based MDM process (data-spec §7). Business days, Mon-Fri, 09:00-18:00 SGT.
+  # Calibrated to the brief: median submitted -> keyed ~15 business days, P90 ~25, ~40% bounced.
+  # ------------------------------------------------------------------------------------------
+  mdm_history:
+    start_month: 12                 # Oct 2024 (24 months)
+    per_month_mean: 40
+    domain_mix: {customer: 0.45, vendor: 0.20, item: 0.25, cost_center: 0.10}
+    item_ivd_prob: 0.5
+    sequence:                       # one approver after another, by email
+      customer: [bu_head, finance, business_support]
+      vendor: [bu_head, finance, business_support]
+      item: [bu_head, quality_regulatory, business_support]   # Q/R only when IVD
+      cost_center: [finance, bu_head]
+    step_wait_median_days: 3.0      # lognormal wait per approval step (business days)
+    step_wait_sigma: 0.55
+    keying_wait_median_days: 2.5
+    keying_wait_sigma: 0.5
+    bounce_prob: 0.40               # P(at least one bounce for missing fields)
+    second_bounce_prob: 0.30        # P(another bounce | bounced)
+    bounce_delay_median_days: 3.2   # requestor fixes and re-sends
+    bounce_delay_sigma: 0.5
+    missing_field_options:
+      customer: [tax_id, billing_address, credit_terms, contact_email]
+      vendor: [tax_id, bank_details, payment_terms, address]
+      item: [registration_number, risk_class, sales_unit, supplier]
+      cost_center: [effective_from, dimension, owner]
+
+  emails:
+    n_eval: 80
+    class_counts: {purchase_order: 24, purchase_request: 12, enquiry: 20, follow_up: 12, mdm_request: 12}
+    window: ["2026-07-01", "2026-10-02"]
+
 scenarios:
-  seasonal_trend: {}               # demand DGP params (data-spec §6) are added with orders
+  seasonal_trend: {}               # the default demo scenario (params above)
+  flat_noisy:                      # trend 0, seasonality off, higher noise (Excel average should tie or win)
+    demand:
+      trend_annual: {SG: 0.0, MY: 0.0, ID: 0.0, VN: 0.0, TH: 0.0}
+      trend_extra: {A: 0.0, B: 0.0, C: 0.0}
+      seasonality_on: false
+      nb_dispersion: {A: 2.0, B: 1.5, C: 3.0}
+      extra_noise_sigma: 0.35
+  intermittent:                    # lower order probability, more small accounts
+    demand:
+      small_customer_prob:
+        public_hospital: 0.3
+        private_hospital: 0.6
+        laboratory: 0.7
+        clinic: 1.0
+        distributor: 0.5
+      p_order:
+        A: {large: 0.35, small: 0.12}
+        B: {low: 0.02, high: 0.05}
+        C_adhoc: 0.02

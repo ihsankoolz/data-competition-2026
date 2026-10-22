@@ -1,0 +1,572 @@
+CardCode,CardName,CardForeignName,CardType,GroupCode,FederalTaxID,Currency,PayTermsGrpCode,CreditLimit,EmailAddress,Phone1,City,Country,U_Entity,CreateDate,CreatedBy
+C00001,Trung tâm Xét nghiệm Tâm Đức,,cCustomer,102,0303042749,VND,1,370000000.00,purchasing@tdlc.vn.example,+84 28 7651 6007,Ho Chi Minh City,VN,SPD,2014-11-15,spd.vn02
+C00002,Phòng khám Mekong Health Cần Thơ,Mekong Health Clinic Can Tho,cCustomer,103,0145855795,VND,1,120000000.00,purchasing@mhcct.vn.example,+842923285789,Can Tho,VN,SPD,2014-11-30,spd.vn01
+C00003,Klinik dr. Sutan Mustika Hariyah,,cCustomer,103,029266382781000,IDR,-1,70000000.00,,,Makassar,ID,SPD,2015-01-05,spd.id01
+C00004,Benh vien Da khoa Quoc te Vinmec Times City,,cCustomer,101,0150602553,VND,2,1100000000.00,finance@vtcih.vn.example,+84 24 8584 3663,Hanoi,VN,SPD,2015-01-13,spd.vn01
+C00005,Zenith Lab Services,,cCustomer,102,201601664100,MYR,2,100000.00,purchasing@zls.my.example,(03) 5580-0904,Klang,MY,SPD,2015-01-22,spd.my02
+C00006,Poliklinik Suria,,cCustomer,103,201701129714,MYR,-1,25000.00,accounts@suriapolyclinic.my.example,(07) 730-3852,Johor Bahru,MY,SPD,2015-01-22,spd.my01
+C00007,Unity Women's Hospital Pte Ltd,,cCustomer,101,201898801U,SGD,1,59000.00,store@uwh.sg.example,6252 4130,Singapore,SG,SPD,2015-01-27,spd.sg03
+C00008,ศูนย์การแพทย์อันดามัน ภูเก็ต,,cCustomer,101,0105451206585,THB,2,1600000.00,finance@amcp.th.example,(076) 731-012,Phuket,TH,QTG,2015-02-02,qtg.th01
+C00009,PT Laboratorium Klinik Permata,,cCustomer,102,004403427238000,IDR,1,260000000.00,lab@pcl.id.example,(021) 5280-2718,Jakarta,ID,QTS,2015-02-13,qts.id02
+C00010,Klinik Pratama Dharma,,cCustomer,103,00.958.834.6-570.000,IDR,1,67000000.00,store@dpc.id.example,(021) 6439-3899,Bogor,ID,QTS,2015-02-27,qts.id02
+C00011,Changi General Hospital,,cCustomer,100,197097467O,SGD,4,150000.00,procurement@cgh.sg.example,62026441,SINGAPORE,SG,SPD,2015-03-30,spd.sg03
+C00012,บริษัท ไทยเมด รัชดา แล็บ จำกัด,,cCustomer,102,0105422102224,THB,2,470000.00,accounts@tmrl.th.example,+6622177004,Bangkok,TH,SPD,2015-03-31,spd.th02
+C00013,โรงพยาบาลพรประเสริฐ,,cCustomer,101,0105514924057,THB,1,2500000.00,,(074) 924-524,Hat Yai,TH,SPD,2015-04-13,spd.th01
+C00014,Woodlands Hospital,,cCustomer,100,199902452S,SGD,3,100000.00,finance@woodlandshospital.sg.example,65091766,Singapore,SG,SPD,2015-04-17,spd.sg03
+C00015,Banyan Laboratories Pte Ltd,,cCustomer,102,198982585U,SGD,1,27000.00,lab@banyanlaboratories.sg.example,67236465,Singapore 119074,SG,SPD,2015-04-25,spd.sg02
+C00016,Laboratorium Klinik Mulia,,cCustomer,102,028665125275000,IDR,1,800000000.00,accounts@mcl.id.example,+626176798678,Medan,ID,SPD,2015-04-28,spd.id03
+C00017,Phyathai 2 Hospital,,cCustomer,101,0105528769657,THB,2,1400000.00,finance@p2h.th.example,+6629679530,กรุงเทพมหานคร,TH,SPD,2015-05-25,spd.th02
+C00018,Bluewater Diagnostics,,cCustomer,102,198201334958,MYR,2,86000.00,procurement@bluewaterdiagnostics.my.example,+60356063259,Kuala Lumpur,MY,SPD,2015-06-12,spd.my02
+C00019,Klinik Pratama Husada Sentra,,cCustomer,103,07.477.186.3-528.000,IDR,1,130000000.00,procurement@hspc.id.example,+622130087024,Bekasi,ID,SPD,2015-06-18,spd.id01
+C00020,Benh vien Nhan dan Gia Dinh,,cCustomer,100,0376144023,VND,4,650000000.00,admin@gdph.vn.example,+842856952650,Ho Chi Minh City,VN,QTS,2015-06-20,qts.vn02
+C00021,Children's Hospital 1,,cCustomer,100,0324825654,VND,3,1100000000.00,purchasing@ch1.vn.example,028-7333 8900,Ho Chi Minh City,VN,QTG,2015-06-20,qtg.vn03
+C00022,โรงพยาบาลนครปฐม,,cCustomer,100,0105535994012,THB,4,1300000.00,procurement@nph.th.example,+6623044427,Nakhon Pathom,TH,SPD,2015-06-21,spd.th03
+C00023,Rumah Sakit Umum Pusat Dr. Kariadi,,cCustomer,100,015215233818000,IDR,3,500000000.00,accounts@dkgh.id.example,+62 24 5564 1709,Semarang,ID,SPD,2015-06-27,spd.id01
+C00024,PT Rumah Sakit Utama Anugerah,,cCustomer,101,03.650.511.0-369.000,IDR,2,300000000.00,purchasing@uah.id.example,,Bandung,ID,QTG,2015-07-08,qtg.id02
+C00025,Klinik Delima Kuching,,cCustomer,103,201301644688,MYR,1,16000.00,procurement@dck.my.example,082-718 470,Kuching,MY,SPD,2015-07-17,spd.my01
+C00026,Laboratorium Klinik Utama Bakti,,cCustomer,102,08.777.074.9-992.000,IDR,2,530000000.00,procurement@ubcl.id.example,021-4211 0068,Jakarta,ID,SPD,2015-07-20,spd.id03
+C00027,Northstar Diagnostics Pte Ltd,,cCustomer,102,197052917L,SGD,2,29000.00,lab@northstardiagnostics.sg.example,+65 6903 7384,Singapore,SG,SPD,2015-08-03,spd.sg01
+C00028,RS Mitra Keluarga Bekasi,,cCustomer,101,06.282.708.4-502.000,IDR,2,530000000.00,procurement@mkbh.id.example,+62 21 8867 4228,Bekasi,ID,SPD,2015-08-04,spd.id01
+C00029,KPJ Ampang Puteri Specialist Hospital,,cCustomer,101,198301234905,MYR,3,230000.00,purchasing@kapsh.my.example,(03) 7611-5304,Ampang,MY,SPD,2015-08-05,spd.my03
+C00030,Rumah Sakit Umum Pusat Fatmawati,,cCustomer,100,04.912.545.1-992.000,IDR,4,900000000.00,purchasing@fgh.id.example,+622199335491,Jakarta,ID,SPD,2015-09-09,spd.id03
+C00031,"Sukjai Laboratory Co., Ltd.",,cCustomer,102,0105613112647,THB,2,1400000.00,finance@sukjailaboratory.th.example,(02) 776-5479,Bangkok,TH,SPD,2015-10-14,spd.th02
+C00032,Metta Lat Phrao Clinic,,cCustomer,103,0105616849415,THB,-1,100000.00,store@mlpc.th.example,+6629381775,Bangkok,TH,SPD,2015-10-21,spd.th01
+C00033,Zenith Lab Services,,cCustomer,102,201601664100,MYR,1,100000.00,procurement@zls.my.example,03-5580 0904,Klang,MY,QTG,2015-11-15,qtg.my03
+C00034,Hospital Selayang,,cCustomer,100,198601492365,MYR,4,200000.00,admin@selayanghospital.my.example,+60 3-8419 4292,Selayang,MY,SPD,2015-12-16,spd.my03
+C00035,Hospital Melaka,,cCustomer,100,199701647474,MYR,3,190000.00,admin@mgh.my.example,+60 6-722 4810,Melaka,MY,QTS,2015-12-29,qts.my01
+C00036,Lion City Pathology Novena,,cCustomer,102,201958384H,SGD,1,25000.00,purchasing@lcpn.sg.example,63528083,Singapore,SG,QTS,2016-01-07,qts.sg01
+C00037,Pillai & Ong Surgery,,cCustomer,103,,SGD,1,6500.00,procurement@pos.sg.example,,Singapore,SG,SPD,2016-01-09,spd.sg03
+C00038,RS Sentosa Specialist Jakarta,,cCustomer,101,08.201.479.0-932.000,IDR,1,1300000000.00,,+62 21 6418 8176,Jakarta,ID,SPD,2016-01-15,spd.id01
+C00039,PT Rumah Sakit Wijaya Medika,,cCustomer,101,000553270682000,IDR,1,450000000.00,finance@wmh.id.example,(0361) 429-5719,Denpasar,ID,SPD,2016-02-26,spd.id02
+C00040,RSUP Dr. Mohammad Hoesin,,cCustomer,100,03.896.299.6-871.000,IDR,4,470000000.00,purchasing@dmhgh.id.example,+627119708831,Palembang,ID,SPD,2016-02-28,spd.id01
+C00041,Phong kham Da khoa My Duc Nha Trang,,cCustomer,103,0274484183,VND,1,110000000.00,,028-4638 6667,Nha Trang,VN,SPD,2016-03-05,spd.vn02
+C00042,University Medical Center HCMC,,cCustomer,100,0370283912,VND,4,1600000000.00,purchasing@umch.vn.example,+842886400769,Ho Chi Minh City,VN,SPD,2016-03-08,spd.vn01
+C00043,สยาม แล็บ,,cCustomer,102,0105620542249,THB,1,1200000.00,store@siamlab.th.example,+66 2 458 0252,Bangkok,TH,QTS,2016-03-30,qts.th01
+C00044,Hospital Melaka,,cCustomer,100,199701647474,MYR,4,270000.00,store@mgh.my.example,+6067224810,Melaka,MY,SPD,2016-04-03,spd.my03
+C00045,Bệnh viện Đa khoa Trung ương Cần Thơ,,cCustomer,100,0495829037,VND,3,1700000000.00,accounts@ctcgh.vn.example,(0292) 243-8003,Can Tho,VN,SPD,2016-04-17,spd.vn01
+C00046,Institute of Mental Health,,cCustomer,100,198679542S,SGD,3,58000.00,admin@imh.sg.example,+65 6305 8843,Singapore,SG,SPD,2016-04-21,spd.sg03
+C00047,โรงพยาบาลวชิรพยาบาล,,cCustomer,100,0105620174185,THB,3,3800000.00,finance@vajirahospital.th.example,(02) 640-1118,Bangkok,TH,SPD,2016-05-04,spd.th03
+C00048,คลินิกรักษ์สุข,,cCustomer,103,0105427898514,THB,1,360000.00,store@raksukclinic.th.example,+6674223272,Hat Yai,TH,SPD,2016-05-07,spd.th02
+C00049,"Nawavej Sathorn Hospital Co., Ltd.",,cCustomer,101,0105430917462,THB,1,1100000.00,purchasing@nsh.th.example,(02) 520-2446,Bangkok,TH,QTG,2016-05-23,qtg.th02
+C00050,Klinik Chong Petaling Jaya,,cCustomer,103,198201766472,MYR,1,23000.00,procurement@ccpj.my.example,03-8373 1759,Petaling Jaya,MY,SPD,2016-05-26,spd.my02
+C00051,Makmal Patologi Suria Sdn Bhd,,cCustomer,102,198001909471,MYR,1,68000.00,lab@spl.my.example,+6074017404,Johor Bahru,MY,SPD,2016-05-31,spd.my03
+C00052,Mount Elizabeth Hospital Pte Ltd,,cCustomer,101,202251104R,SGD,3,56000.00,lab@meh.sg.example,6716 1348,SINGAPORE,SG,SPD,2016-07-14,spd.sg01
+C00053,Abdi Cahaya Medika Indonesia,,cCustomer,104,02.592.547.9-010.000,IDR,2,830000000.00,procurement@acmi.id.example,+622175695794,Tangerang,ID,SPD,2016-07-22,spd.id02
+C00054,Cong ty TNHH Phong kham Nhi BS. Ha Nguyen,,cCustomer,103,0768232872,VND,-1,160000000.00,accounts@dhnpc.vn.example,,Nha Trang,VN,SPD,2016-07-27,spd.vn03
+C00055,Mekong Health Clinic Udon Thani,,cCustomer,103,0105532819796,THB,1,330000.00,accounts@mhcut.th.example,02-219 3870,Udon Thani,TH,SPD,2016-08-04,spd.th03
+C00056,"Siam Lab Co., Ltd.",,cCustomer,102,0105620542249,THB,1,1100000.00,lab@siamlab.th.example,02-458 0252,Bangkok 10700,TH,SPD,2016-08-08,spd.th02
+C00057,National Cancer Centre Singapore Pte Ltd,,cCustomer,100,199030400T,SGD,3,90000.00,procurement@nccs.sg.example,+65 6777 1359,Singapore 119074,SG,SPD,2016-09-05,spd.sg03
+C00058,Trinity Surgical Centre,,cCustomer,101,199090574Y,SGD,1,51000.00,finance@tsc.sg.example,66187294,Singapore,SG,SPD,2016-09-14,spd.sg03
+C00059,PT Laboratorium Klinik Husada Citra,,cCustomer,102,09.878.693.7-237.000,IDR,1,420000000.00,lab@hccl.id.example,+622192613947,Tangerang,ID,QTG,2016-10-14,qtg.id01
+C00060,Klinik Pratama Wijaya,,cCustomer,103,07.197.645.0-478.000,IDR,1,71000000.00,accounts@wpc.id.example,(021) 9426-6898,Jakarta,ID,SPD,2016-10-23,spd.id02
+C00061,RS Siloam Lippo Village,,cCustomer,101,08.494.009.9-189.000,IDR,1,550000000.00,lab@slvh.id.example,+622199094322,Tangerang,ID,SPD,2016-11-11,spd.id02
+C00062,Maple Medical Supplies,,cCustomer,104,201944723U,SGD,3,130000.00,,+6562400877,Singapore,SG,QTS,2016-11-20,qts.sg02
+C00063,Hospital Tuanku Ja'afar,,cCustomer,100,198001293489,MYR,3,340000.00,admin@tjah.my.example,+60 3-6296 7244,Seremban,MY,SPD,2016-11-22,spd.my02
+C00064,ห้องปฏิบัติการวัฒนา สาทร,Watthana Sathorn Laboratory,cCustomer,102,0105462859037,THB,2,1000000.00,accounts@wsl.th.example,(02) 883-7713,Bangkok,TH,QTG,2016-11-22,qtg.th02
+C00065,LABORATORIUM KLINIK UTAMA BAKTI,,cCustomer,103,08.777.074.9-992.000,IDR,1,400000000.00,purchasing@ubcl.id.example,021-4211 0068,JAKARTA,ID,QTS,2016-12-04,qts.id02
+C00066,Samitivej Srinakarin Hospital,,cCustomer,101,0105581569163,THB,2,510000.00,lab@ssh2.th.example,(02) 247-5524,กรุงเทพมหานคร,TH,SPD,2016-12-19,spd.th03
+C00067,Teo Family Clinic Hougang,,cCustomer,103,200821454I,SGD,-1,11000.00,finance@tfch.sg.example,65961992,Singapore,SG,QTS,2016-12-21,qts.sg03
+C00068,Banyan Laboratories,,cCustomer,102,198982585U,SGD,1,10000.00,accounts@banyanlaboratories.sg.example,+65 6723 6465,S'pore,SG,QTG,2016-12-24,qtg.sg02
+C00069,Rumah Sakit Umum Daerah Dr. Saiful Anwar,,cCustomer,100,00.317.056.4-478.000,IDR,4,370000000.00,accounts@dsagh.id.example,0341-688 6603,Malang,ID,SPD,2017-01-01,spd.id02
+C00070,RS Ihsan Hikmah,,cCustomer,101,030351449322000,IDR,2,1200000000.00,admin@ihh.id.example,021-4621 7082,Tangerang,ID,SPD,2017-01-07,spd.id02
+C00071,Trung tâm Xét nghiệm Thanh Bình,,cCustomer,102,0000662008,VND,2,900000000.00,procurement@tblc.vn.example,+842924362545,Can Tho,VN,SPD,2017-01-16,spd.vn03
+C00072,Ivory Medical Centre,,cCustomer,101,198355932W,SGD,3,69000.00,lab@imc.sg.example,+65 6289 9290,SINGAPORE,SG,QTS,2017-01-17,qts.sg03
+C00073,Starlight Pathology Lab Pte Ltd,,cCustomer,102,199337127D,SGD,1,25000.00,finance@spl.sg.example,6340 0334,Singapore 119074,SG,SPD,2017-01-17,spd.sg03
+C00074,National Heart Centre Singapore Pte Ltd,,cCustomer,100,201474607G,SGD,4,34000.00,procurement@nhcs.sg.example,6759 7791,Singapore,SG,QTS,2017-02-07,qts.sg02
+C00075,Hospital Sultanah Aminah,,cCustomer,100,199601686745,MYR,3,250000.00,finance@sah.my.example,+60 7-583 2067,Johor Bahru,MY,SPD,2017-02-09,spd.my02
+C00076,Siam Sathorn Medical Clinic,,cCustomer,103,0105532496560,THB,1,180000.00,,+66 2 972 3564,Bangkok,TH,SPD,2017-02-12,spd.th01
+C00077,Straits Clinical Laboratories,,cCustomer,102,200725831H,SGD,1,23000.00,lab@scl.sg.example,+65 6285 0101,Singapore,SG,QTS,2017-02-15,qts.sg02
+C00078,Ivory Medical Centre Pte Ltd,,cCustomer,101,198355932W,SGD,2,100000.00,procurement@imc.sg.example,+6562899290,Singapore,SG,SPD,2017-03-03,spd.sg03
+C00079,Trung tâm Xét nghiệm Kim Ngân,,cCustomer,102,0951775945,VND,1,740000000.00,admin@knlc.vn.example,028-7892 2483,Bien Hoa,VN,SPD,2017-03-14,spd.vn02
+C00080,Lumen Medical Centre,,cCustomer,101,198101082618,MYR,1,240000.00,purchasing@lmc.my.example,(04) 375-3436,Georgetown,MY,QTG,2017-03-30,qtg.my03
+C00081,Cong ty TNHH Xet nghiem Y khoa Viet My Hai Phong,,cCustomer,102,0060103423,VND,1,720000000.00,accounts@vmhplc.vn.example,0225-739 7607,Hai Phong,VN,SPD,2017-04-03,spd.vn02
+C00082,Pearl Diagnostics Sdn Bhd,,cCustomer,102,199501029334,MYR,1,74000.00,finance@pearldiagnostics.my.example,03-7831 7448,Kuala Lumpur,MY,SPD,2017-04-06,spd.my03
+C00083,Rahman & Chua Surgery,,cCustomer,103,201992381L,SGD,1,9600.00,finance@rcs.sg.example,,Singapore,SG,QTG,2017-04-22,qtg.sg01
+C00084,Bệnh viện Chợ Rẫy,,cCustomer,100,0301234567,VND,3,1600000000.00,,+842881081849,Ho Chi Minh City,VN,SPD,2017-04-23,spd.vn01
+C00085,Suphamit Hua Hin Hospital,,cCustomer,101,0105402255790,THB,1,1600000.00,,02-350 4542,Hua Hin,TH,SPD,2017-04-27,spd.th02
+C00086,โรงพยาบาลพญาไท 1,,cCustomer,101,0105450822470,THB,3,1100000.00,store@p1h.th.example,+6624847183,กรุงเทพมหานคร,TH,SPD,2017-05-17,spd.th01
+C00087,Tengku Ampuan Afzan Hospital,,cCustomer,100,199501030999,MYR,4,270000.00,admin@taah.my.example,,Kuantan,MY,SPD,2017-05-19,spd.my03
+C00088,Phong kham Da khoa Duc Tam Hue,,cCustomer,103,0988877464,VND,-1,230000000.00,procurement@dthgc.vn.example,+842347617087,Hue,VN,SPD,2017-05-21,spd.vn01
+C00089,Mount Elizabeth Novena Hospital Pte Ltd,,cCustomer,101,199570035V,SGD,2,33000.00,lab@menh.sg.example,6662 6052,Singapore,SG,QTS,2017-07-08,qts.sg01
+C00090,บริษัท นวเวช หาดใหญ่ เมดิคอล ซัพพลาย จำกัด,,cCustomer,104,0105571462415,THB,2,2600000.00,lab@nhyms.th.example,(074) 317-235,Hat Yai,TH,SPD,2017-07-10,spd.th02
+C00091,PT Rumah Sakit Mitra Keluarga Bekasi,,cCustomer,101,062827084502000,IDR,2,710000000.00,purchasing@mkbh.id.example,(021) 8867-4228,Bekasi,ID,QTG,2017-07-29,qtg.id02
+C00092,RS Hermina Jatinegara,,cCustomer,101,07.653.657.3-709.000,IDR,1,600000000.00,store@hjh.id.example,+62 21 7960 3934,Jakarta,ID,QTS,2017-07-29,qts.id03
+C00093,คลินิกเวชกรรมอุดมสุข,,cCustomer,103,,THB,-1,130000.00,finance@umc.th.example,+66 2 522 4563,Bangkok,TH,SPD,2017-08-29,spd.th03
+C00094,Alexandra Hospital Pte Ltd,,cCustomer,100,200300837M,SGD,3,55000.00,lab@alexandrahospital.sg.example,+6567347974,Singapore,SG,SPD,2017-09-01,spd.sg03
+C00095,Poliklinik Sejahtera,,cCustomer,103,200301791673,MYR,1,22000.00,procurement@sejahterapolyclinic.my.example,+60 9-739 1996,Kuantan,MY,QTG,2017-09-12,qtg.my02
+C00096,Phong kham Da khoa Thien Tam,,cCustomer,103,0428236122,VND,-1,430000000.00,admin@ttgc.vn.example,+84 28 5461 3885,Bien Hoa,VN,SPD,2017-09-27,spd.vn01
+C00097,Hospital Sungai Buloh,,cCustomer,100,198301075096,MYR,4,150000.00,purchasing@sbh2.my.example,+60 3-5804 2302,Sungai Buloh,MY,SPD,2017-10-06,spd.my01
+C00098,Pantai Hospital Kuala Lumpur,,cCustomer,101,200001793446,MYR,1,140000.00,accounts@phkl.my.example,(03) 7112-6078,KL,MY,SPD,2017-10-07,spd.my03
+C00099,RS Dharma Utama,,cCustomer,101,01.720.698.3-308.000,IDR,2,320000000.00,admin@duh.id.example,022-5799 7674,Bandung,ID,QTG,2017-10-19,qtg.id02
+C00100,Poliklinik Mesra,,cCustomer,103,198801375002,MYR,1,25000.00,finance@mesrapolyclinic.my.example,+60386817159,"Petaling Jaya, Selangor",MY,SPD,2017-10-26,spd.my01
+C00101,คลินิกวัฒนา,Watthana Clinic,cCustomer,103,0105460509481,THB,1,120000.00,admin@watthanaclinic.th.example,02-735 9418,Nonthaburi,TH,SPD,2017-10-31,spd.th03
+C00102,Rumah Sakit Umum Pusat Dr. Hasan Sadikin,,cCustomer,100,01.898.443.7-679.000,IDR,3,880000000.00,procurement@dhsgh.id.example,+622246955863,Bandung,ID,QTG,2017-11-05,qtg.id01
+C00103,Makmal Patologi Bakti Sdn Bhd,,cCustomer,102,198501789386,MYR,1,59000.00,lab@bpl.my.example,+60346720969,Subang Jaya,MY,QTS,2017-11-20,qts.my02
+C00104,Unity Lab Services Sdn Bhd,,cCustomer,102,200001989184,MYR,1,100000.00,procurement@uls.my.example,+60 7-933 0473,Johor Bahru,MY,SPD,2017-11-24,spd.my03
+C00105,โรงพยาบาลศรีนครินทร์,Srinagarind Hospital,cCustomer,100,0105493673917,THB,3,3500000.00,,+6643586044,Khon Kaen,TH,QTG,2017-11-30,qtg.th02
+C00106,Benh vien Nhan dan Gia Dinh,,cCustomer,100,0376144023,VND,3,1300000000.00,procurement@gdph.vn.example,+842856952650,Ho Chi Minh City,VN,SPD,2017-12-03,spd.vn02
+C00107,Starlight Pathology Lab Pte Ltd,,cCustomer,102,199337127D,SGD,1,20000.00,purchasing@spl.sg.example,6340 0334,S'pore,SG,QTG,2017-12-12,qtg.sg01
+C00108,Bach Khoa Sai Gon General Hospital,,cCustomer,101,0375855645,VND,1,1000000000.00,finance@bksggh.vn.example,(028) 4654-3878,Saigon,VN,SPD,2017-12-12,spd.vn02
+C00109,คลินิกเวชกรรมพรประเสริฐ,,cCustomer,103,0105451044696,THB,-1,160000.00,admin@pmc.th.example,,Bangkok,TH,SPD,2017-12-18,spd.th03
+C00110,Lab. Klinik Utama Bakti,,cCustomer,100,,IDR,2,320000000.00,admin@ubcl.id.example,+622142110068,Jakarta,ID,SPD,2017-12-19,spd.id02
+C00111,Watthana Bang Na Hospital,,cCustomer,101,0105617335806,THB,3,1300000.00,purchasing@wbnh.th.example,02-977 5070,Bangkok,TH,QTS,2017-12-20,qts.th03
+C00112,Amanah Sentra Clinic,,cCustomer,103,088191509050000,IDR,-1,70000000.00,lab@asc.id.example,+62 21 6275 8060,Tangerang,ID,SPD,2017-12-25,spd.id01
+C00113,RS Hikmah Utama,,cCustomer,101,01.166.336.1-911.000,IDR,2,630000000.00,lab@huh.id.example,0711-681 6456,Palembang,ID,SPD,2017-12-27,spd.id01
+C00114,Andaman Medical Centre Phuket,,cCustomer,101,0105451206585,THB,1,2100000.00,accounts@amcp.th.example,076-731 012,Phuket,TH,QTS,2017-12-30,qts.th01
+C00115,Pusat Perubatan Universiti Malaya,,cCustomer,100,201001139023,MYR,3,220000.00,accounts@ummc.my.example,+60 3-9492 6573,KL,MY,SPD,2018-01-12,spd.my01
+C00116,RSUP Dr. Sardjito,,cCustomer,100,087830789737000,IDR,4,370000000.00,store@dsgh.id.example,+622743582062,Jogja,ID,SPD,2018-02-01,spd.id02
+C00117,Phatthana Pattaya Medical Supply,,cCustomer,104,0105618335503,THB,2,1600000.00,lab@ppms.th.example,+66 38 555 660,Pattaya,TH,SPD,2018-02-04,spd.th03
+C00118,Bệnh viện Đà Nẵng,,cCustomer,100,0463865725,VND,4,2000000000.00,accounts@dnh.vn.example,(0236) 220-5088,Da Nang,VN,QTG,2018-02-23,qtg.vn02
+C00119,Công ty Cổ phần Bệnh viện Đa khoa Phúc An,Phuc An General Hospital,cCustomer,101,0329474227,VND,1,1400000000.00,accounts@pagh.vn.example,(0234) 212-1042,Hue,VN,SPD,2018-03-26,spd.vn03
+C00120,Sarawak General Hospital,,cCustomer,100,201701537080,MYR,4,330000.00,store@sgh.my.example,082-319 651,Kuching,MY,SPD,2018-03-31,spd.my02
+C00121,Jurong Community Hospital Pte Ltd,,cCustomer,100,201375960O,SGD,3,92000.00,,,Singapore,SG,SPD,2018-04-01,spd.sg03
+C00122,Low Family Clinic Bukit Batok Pte Ltd,,cCustomer,103,200768515Y,SGD,1,9300.00,finance@lfcbb.sg.example,+65 6204 8963,SINGAPORE,SG,QTS,2018-04-07,qts.sg02
+C00123,Beacon Medical Clinic Bedok North Pte Ltd,,cCustomer,103,197475032D,SGD,-1,4200.00,admin@bmcbn.sg.example,+6567293553,Singapore,SG,QTG,2018-04-14,qtg.sg03
+C00124,Teo Family Clinic Hougang Pte Ltd,,cCustomer,103,200821454I,SGD,1,9100.00,store@tfch.sg.example,6596 1992,SINGAPORE,SG,SPD,2018-04-28,spd.sg01
+C00125,Cedar Diagnostics Sdn Bhd,,cCustomer,102,200901356807,MYR,2,65000.00,admin@cedardiagnostics.my.example,07-650 9098,Johor Bahru,MY,QTG,2018-05-15,qtg.my01
+C00126,Cedar Lab Services Sdn Bhd,,cCustomer,102,201101469090,MYR,1,97000.00,,,Cheras,MY,QTG,2018-05-19,qtg.my02
+C00127,RS Cipto Mangunkusumo,,cCustomer,100,056900117848000,IDR,4,850000000.00,store@cmh.id.example,(021) 7220-1287,Jakarta,ID,SPD,2018-06-02,spd.id03
+C00128,Cedar Lab Services,,cCustomer,102,201101469090,MYR,1,55000.00,,+60 3-2803 6615,Cheras,MY,SPD,2018-06-06,spd.my03
+C00129,Makmal Patologi Bakti Sdn Bhd,,cCustomer,102,198501789386,MYR,2,120000.00,lab@bpl.my.example,03-4672 0969,Subang Jaya,MY,QTG,2018-06-19,qtg.my01
+C00130,Tarakan General Hospital,,cCustomer,100,02.063.293.1-890.000,IDR,4,1000000000.00,accounts@tgh.id.example,(021) 9694-9493,Jakarta Selatan,ID,SPD,2018-06-23,spd.id01
+C00131,RS Mitra Keluarga Bekasi,,cCustomer,101,06.282.708.4-502.000,IDR,1,930000000.00,procurement@mkbh.id.example,+62 21 8867 4228,Bekasi,ID,QTS,2018-07-09,qts.id03
+C00132,Trung tâm Xét nghiệm Quang Minh,,cCustomer,102,0874997129,VND,2,540000000.00,procurement@qmlc.vn.example,(028) 4660-6352,Nha Trang,VN,QTG,2018-07-13,qtg.vn03
+C00133,Primacare Medical Clinic Clementi,,cCustomer,103,198022149N,SGD,-1,3900.00,lab@pmcc.sg.example,+65 6312 9539,Singapore,SG,SPD,2018-08-01,spd.sg03
+C00134,Bệnh viện Từ Dũ,,cCustomer,100,0323516399,VND,4,2000000000.00,store@tdh.vn.example,(028) 4921-1409,Ho Chi Minh City,VN,SPD,2018-08-03,spd.vn03
+C00135,Hospital Raja Permaisuri Bainun,,cCustomer,100,199501094122,MYR,4,320000.00,lab@rpbh.my.example,05-291 1156,Ipoh,MY,SPD,2018-08-17,spd.my03
+C00136,Merlion Diagnostics Pte Ltd,,cCustomer,102,197876031N,SGD,1,39000.00,accounts@merliondiagnostics.sg.example,65709441,S'pore,SG,SPD,2018-08-28,spd.sg03
+C00137,Vitalis Laboratories Pte Ltd,,cCustomer,102,201857405J,SGD,1,23000.00,finance@vitalislaboratories.sg.example,63668471,Singapore 119074,SG,QTG,2018-08-29,qtg.sg03
+C00138,Bệnh viện Nhân dân 115,,cCustomer,100,0338678143,VND,3,3700000000.00,finance@ph1.vn.example,028-9018 3054,Ho Chi Minh City,VN,SPD,2018-09-01,spd.vn02
+C00139,Raksuk Lab,,cCustomer,102,0105514982691,THB,1,310000.00,procurement@raksuklab.th.example,+6629495305,Bangkok,TH,QTG,2018-09-11,qtg.th03
+C00140,Pusat Perubatan Kenanga Sdn Bhd,,cCustomer,101,199401200728,MYR,3,200000.00,finance@kmc.my.example,05-710 3237,Ipoh,MY,SPD,2018-09-27,spd.my01
+C00141,โรงพยาบาลศิริราช,,cCustomer,100,0105460515817,THB,3,2400000.00,,+6627382513,Bangkok,TH,SPD,2018-10-13,spd.th02
+C00142,Rajavithi Hospital,,cCustomer,100,0105551094266,THB,3,2600000.00,admin@rajavithihospital.th.example,02-821 2087,BKK,TH,SPD,2018-10-19,spd.th03
+C00143,Trung tâm Xét nghiệm Nam Việt Biên Hòa,,cCustomer,102,0810435465,VND,2,790000000.00,accounts@nvbhlc.vn.example,028-3996 5146,Bien Hoa,VN,SPD,2018-10-23,spd.vn01
+C00144,Nopparat Rajathanee Hospital,,cCustomer,100,0105546952907,THB,4,2700000.00,admin@nrh.th.example,+66 2 618 8645,Bangkok,TH,SPD,2018-10-28,spd.th01
+C00145,Prachasuk Medical Clinic,,cCustomer,103,0105544459694,THB,1,630000.00,store@pmc2.th.example,+66 2 769 1256,Bangkok,TH,SPD,2018-10-30,spd.th02
+C00146,Ong & Yeo Surgery,,cCustomer,103,197944387D,SGD,1,3600.00,accounts@oys.sg.example,68747881,Singapore,SG,SPD,2018-10-31,spd.sg01
+C00147,Lion City Pathology (Jurong East) Pte Ltd,,cCustomer,102,200194524B,SGD,1,41000.00,,+6565535840,Singapore,SG,SPD,2018-11-08,spd.sg01
+C00148,PT Rumah Sakit Hermina Depok,,cCustomer,101,03.837.336.5-154.000,IDR,1,480000000.00,finance@hdh.id.example,021-7750 3423,Depok,ID,SPD,2018-11-08,spd.id02
+C00149,Phòng khám Đa khoa Thiên Phúc,,cCustomer,103,0471180487,VND,1,140000000.00,accounts@tpgc2.vn.example,+842365101205,Da Nang,VN,SPD,2018-11-10,spd.vn03
+C00150,Garuda Lab Malaysia,,cCustomer,102,198701273812,MYR,2,220000.00,admin@glm.my.example,+60 3-8781 6239,Kuala Lumpur,MY,SPD,2018-11-17,spd.my01
+C00151,Mount Elizabeth Novena Hospital Pte Ltd,,cCustomer,101,199570035V,SGD,3,49000.00,admin@menh.sg.example,+65 6662 6052,SINGAPORE,SG,QTG,2018-12-04,qtg.sg02
+C00152,Công ty TNHH Xét nghiệm Y khoa Bảo Châu Sài Gòn,Bao Chau Sai Gon Laboratory Center,cCustomer,102,0382673899,VND,1,270000000.00,accounts@bcsglc.vn.example,+84 28 2424 5541,Ho Chi Minh City,VN,SPD,2018-12-05,spd.vn02
+C00153,"Phatthana Chiang Mai Lab Co., Ltd.",,cCustomer,102,0105517994681,THB,1,580000.00,procurement@pcml.th.example,(053) 547-931,Chiang Mai,TH,SPD,2018-12-10,spd.th02
+C00154,Khoo Teck Puat Hospital Pte Ltd,,cCustomer,100,198961150D,SGD,4,74000.00,,+65 6219 4298,Singapore,SG,SPD,2018-12-18,spd.sg02
+C00155,โรงพยาบาลพญาไท 1,,cCustomer,101,0105450822470,THB,2,2000000.00,purchasing@p1h.th.example,(02) 484-7183,Bangkok,TH,QTS,2019-01-07,qts.th01
+C00156,Restu Kurnia Hospital,,cCustomer,101,09.764.583.3-137.000,IDR,1,1300000000.00,,(021) 3736-1734,Jakarta Pusat,ID,SPD,2019-01-22,spd.id01
+C00157,Sentosa Specialist Hospital Kuala Lumpur Sdn Bhd,,cCustomer,101,198601851728,MYR,1,140000.00,procurement@sshkl.my.example,+60 3-2987 8994,Kuala Lumpur,MY,QTG,2019-02-05,qtg.my02
+C00158,Phòng khám Đa khoa Việt Mỹ,Viet My General Clinic,cCustomer,103,0126483450,VND,1,120000000.00,store@vmgc.vn.example,024-6705 5158,Hanoi,VN,SPD,2019-02-08,spd.vn01
+C00159,Samitivej Sukhumvit Hospital,,cCustomer,101,0105592427146,THB,2,2100000.00,admin@ssh.th.example,02-364 4938,Bangkok,TH,QTS,2019-02-27,qts.th03
+C00160,Andaman Medical Centre Penang Sdn Bhd,,cCustomer,101,199301580446,MYR,2,200000.00,purchasing@amcp.my.example,(04) 641-5883,Georgetown,MY,QTS,2019-03-05,qts.my02
+C00161,Makmal Patologi Permata,,cCustomer,102,198201725709,MYR,1,250000.00,admin@ppl.my.example,+60 3-8923 5974,Kuala Lumpur,MY,QTS,2019-03-18,qts.my03
+C00162,Charoensuk Lat Phrao Laboratory,,cCustomer,102,0105416768865,THB,2,410000.00,procurement@clpl.th.example,02-759 0411,Bangkok,TH,QTG,2019-04-03,qtg.th01
+C00163,Nopparat Rajathanee Hospital,,cCustomer,100,0105546952907,THB,3,2000000.00,procurement@nrh.th.example,+66 2 618 8645,Bangkok,TH,QTS,2019-04-05,qts.th02
+C00164,Crest Women's Hospital,,cCustomer,101,200156005H,SGD,2,54000.00,,+6565982517,Singapore,SG,SPD,2019-04-12,spd.sg03
+C00165,Thiết bị Y tế Thành Công,Thanh Cong Medical Equipment,cCustomer,104,0815498361,VND,2,1600000000.00,lab@tcme.vn.example,,Hai Phong,VN,SPD,2019-04-13,spd.vn01
+C00166,Citra Pelita Medical Indonesia,,cCustomer,104,03.280.180.2-229.000,IDR,2,1300000000.00,procurement@cpmi.id.example,,Jakarta,ID,QTS,2019-04-24,qts.id02
+C00167,"Nawavej Sathorn Hospital Co., Ltd.",,cCustomer,101,0105430917462,THB,1,1400000.00,procurement@nsh.th.example,+66 2 520 2446,Bangkok,TH,QTS,2019-05-08,qts.th03
+C00168,Phòng khám Đa khoa Thiện Tâm,Thien Tam General Clinic,cCustomer,103,0428236122,VND,1,73000000.00,procurement@ttgc.vn.example,028-5461 3885,Bien Hoa,VN,QTG,2019-05-11,qtg.vn03
+C00169,Phong kham Nhi BS. Anh Phuc Nguyen,,cCustomer,103,0145054791,VND,1,110000000.00,purchasing@dapnpc.vn.example,+842487740028,Hanoi,VN,SPD,2019-05-18,spd.vn03
+C00170,Tembusu Medical Centre,,cCustomer,101,200301386030,MYR,1,260000.00,store@tmc.my.example,,Kuching,MY,SPD,2019-05-20,spd.my03
+C00171,Trung tam Xet nghiem Thanh Binh,,cCustomer,102,0000662008,VND,1,460000000.00,finance@tblc.vn.example,+84 292 436 2545,Can Tho,VN,SPD,2019-05-20,spd.vn02
+C00172,Klinik Pratama Citra Bina,,cCustomer,103,08.370.458.6-913.000,IDR,1,160000000.00,store@cbpc.id.example,(021) 7755-3214,Balikpapan,ID,SPD,2019-05-28,spd.id01
+C00173,Farrer Park Hospital,,cCustomer,101,199999958Q,SGD,2,63000.00,admin@fph.sg.example,62422882,Singapore,SG,SPD,2019-06-05,spd.sg02
+C00174,Lotus Medical Centre Pte Ltd,,cCustomer,101,198807157X,SGD,2,38000.00,procurement@lmc.sg.example,+6569076184,SINGAPORE,SG,SPD,2019-06-07,spd.sg01
+C00175,Hospital Tengku Ampuan Rahimah,,cCustomer,100,200401454620,MYR,4,300000.00,procurement@tarh.my.example,03-9665 4739,Klang,MY,SPD,2019-06-09,spd.my03
+C00176,Trung tam Xet nghiem Thien Tam,,cCustomer,102,0159681091,VND,1,240000000.00,,+84 24 4030 5675,Hanoi,VN,SPD,2019-06-13,spd.vn03
+C00177,Straits Clinical Laboratories Johor,,cCustomer,102,199901036207,MYR,1,110000.00,procurement@sclj.my.example,,Johor Bahru,MY,QTS,2019-06-18,qts.my03
+C00178,โรงพยาบาลกรุงเทพพัทยา,Bangkok Hospital Pattaya,cCustomer,101,0105574861666,THB,2,940000.00,,038-328 011,Pattaya,TH,QTS,2019-06-20,qts.th01
+C00179,Jurong Community Hospital Pte Ltd,,cCustomer,100,201375960O,SGD,4,74000.00,store@jch.sg.example,+6568066307,SINGAPORE,SG,QTS,2019-07-18,qts.sg03
+C00180,Lumen Medical Centre,,cCustomer,101,198101082618,MYR,3,250000.00,accounts@lmc.my.example,+60 4-375 3436,Georgetown,MY,SPD,2019-07-30,spd.my02
+C00181,Garuda Medika Laboratory,,cCustomer,102,084925378850000,IDR,2,250000000.00,purchasing@gml.id.example,021-4212 3698,DKI Jakarta,ID,SPD,2019-08-02,spd.id03
+C00182,RS Hermina Jatinegara,,cCustomer,101,076536573709000,IDR,1,1100000000.00,procurement@hjh.id.example,+62 21 7960 3934,Jakarta,ID,QTG,2019-08-05,qtg.id03
+C00183,Merlion Diagnostics Thailand,,cCustomer,102,0105406048224,THB,2,660000.00,accounts@mdt.th.example,(02) 578-8164,Bangkok,TH,SPD,2019-08-10,spd.th02
+C00184,Keystone Scientific Pte Ltd,,cCustomer,104,200504625P,SGD,3,100000.00,procurement@keystonescientific.sg.example,6771 2661,Singapore,SG,SPD,2019-08-14,spd.sg03
+C00185,Klinik Pratama Permata Nirmala,,cCustomer,103,07.759.584.7-895.000,IDR,-1,88000000.00,lab@pnpc.id.example,(061) 5747-7145,Medan,ID,QTS,2019-10-08,qts.id02
+C00186,Ramathibodi Hospital,,cCustomer,100,0105465325052,THB,4,1900000.00,lab@ramathibodihospital.th.example,02-943 1989,Bangkok,TH,QTS,2019-10-09,qts.th03
+C00187,Bakti Sehat Clinic,,cCustomer,103,05.998.950.8-944.000,IDR,-1,31000000.00,finance@bsc.id.example,+62 361 812 2188,Denpasar,ID,SPD,2019-10-17,spd.id01
+C00188,Laboratorium Klinik Tirta Medika,,cCustomer,102,02.914.793.4-076.000,IDR,2,210000000.00,procurement@tmcl.id.example,(021) 2564-3736,Tangerang,ID,QTG,2019-10-27,qtg.id01
+C00189,PT Bina Wijaya Medika Indonesia,,cCustomer,104,03.794.870.8-180.000,IDR,3,2100000000.00,purchasing@bwmi.id.example,+623177800195,Kota Surabaya,ID,SPD,2019-10-27,spd.id03
+C00190,Bệnh viện Hoàn Mỹ Sài Gòn,,cCustomer,101,0336271903,VND,1,510000000.00,procurement@hmsh.vn.example,028-9856 1952,TP. Hồ Chí Minh,VN,SPD,2019-11-05,spd.vn03
+C00191,Thiet bi Y te Thanh Cong,,cCustomer,104,0815498361,VND,3,1600000000.00,accounts@tcme.vn.example,+84 225 801 6298,Hai Phong,VN,QTG,2019-11-27,qtg.vn03
+C00192,Alexandra Hospital,,cCustomer,100,200300837M,SGD,3,100000.00,purchasing@alexandrahospital.sg.example,6734 7974,Singapore,SG,QTS,2019-12-13,qts.sg02
+C00193,Laboratorium Klinik Nirmala Tirta,,cCustomer,102,05.755.230.6-265.000,IDR,1,530000000.00,procurement@ntcl.id.example,+622174991063,Bekasi,ID,SPD,2019-12-14,spd.id01
+C00194,Laboratorium Klinik Permata,,cCustomer,102,00.440.342.7-238.000,IDR,2,210000000.00,accounts@pcl.id.example,021-5280 2718,Jakarta,ID,QTG,2019-12-22,qtg.id02
+C00195,Sterling BioAnalytics,,cCustomer,102,197681387Y,SGD,1,17000.00,procurement@sterlingbioanalytics.sg.example,+65 6509 8672,Singapore,SG,QTS,2020-01-20,qts.sg03
+C00196,คลินิกปิยะมิตร,,cCustomer,103,0105591264108,THB,-1,150000.00,admin@piyamitclinic.th.example,(02) 915-7668,Nonthaburi,TH,SPD,2020-01-20,spd.th02
+C00197,Pt Rs Hermina Jatinegara,,cCustomer,101,076536573709000,IDR,3,450000000.00,,,Jakarta,ID,QTS,2020-01-27,qts.id03
+C00198,Công ty Cổ phần Bệnh viện Hoàn Mỹ Đà Nẵng,,cCustomer,101,0433211526,VND,1,880000000.00,procurement@hmdnh.vn.example,(0236) 291-2381,Danang,VN,SPD,2020-01-29,spd.vn03
+C00199,RS Dharma Utama,,cCustomer,101,01.720.698.3-308.000,IDR,1,790000000.00,finance@duh.id.example,(022) 5799-7674,Bandung,ID,SPD,2020-02-05,spd.id02
+C00200,Bệnh viện Đa khoa Phú Mỹ,Phu My General Hospital,cCustomer,101,0123338863,VND,1,1000000000.00,admin@pmgh.vn.example,(024) 5658-9051,Hanoi,VN,QTG,2020-02-11,qtg.vn03
+C00201,My Duc General Clinic,,cCustomer,103,0379207102,VND,1,150000000.00,purchasing@mdgc.vn.example,028-4547 5822,Ho Chi Minh City,VN,SPD,2020-02-21,spd.vn02
+C00202,Phong kham Nhi BS. Trong Hoang,,cCustomer,103,0385120373,VND,-1,68000000.00,admin@dthpc.vn.example,028-3538 0261,Vung Tau,VN,SPD,2020-02-23,spd.vn02
+C00203,An Khang Laboratory Center,,cCustomer,102,0147053834,VND,1,310000000.00,lab@aklc.vn.example,+842420043796,Hanoi,VN,QTG,2020-03-03,qtg.vn01
+C00204,Hospital Raja Permaisuri Bainun,,cCustomer,100,199501094122,MYR,4,460000.00,,(05) 291-1156,Ipoh,MY,QTS,2020-03-04,qts.my01
+C00205,Công ty TNHH Xét nghiệm Y khoa Việt Nhật,,cCustomer,102,0345676184,VND,1,580000000.00,accounts@vnlc.vn.example,(028) 3377-7328,TP.HCM,VN,QTS,2020-03-05,qts.vn01
+C00206,Rumah Sakit Umum Pusat Prof. Dr. I.G.N.G. Ngoerah,,cCustomer,100,00.187.121.8-425.000,IDR,3,690000000.00,finance@pdigngngh.id.example,+623619511276,Denpasar,ID,QTS,2020-03-09,qts.id01
+C00207,Trung tam Xet nghiem Viet Nhat,,cCustomer,102,0345676184,VND,1,800000000.00,store@vnlc.vn.example,+84 28 3377 7328,Ho Chi Minh City,VN,SPD,2020-03-11,spd.vn03
+C00208,Rumah Sakit Cipto Mangunkusumo,,cCustomer,100,056900117848000,IDR,3,2100000000.00,nurse.station25@mail.example,,Jakarta,ID,QTG,2020-04-10,qtg.id02
+C00209,บริษัท ห้องปฏิบัติการศุภมิตร สาทร จำกัด,Suphamit Sathorn Laboratory,cCustomer,102,0105534126688,THB,1,390000.00,,(02) 440-4142,Bangkok,TH,SPD,2020-04-14,spd.th03
+C00210,Straits Clinical Laboratories,,cCustomer,102,200725831H,SGD,1,61000.00,procurement@scl.sg.example,+65 6285 0101,Singapore,SG,SPD,2020-04-15,spd.sg02
+C00211,Laboratorium Klinik Husada Amanah,,cCustomer,102,065701611768000,IDR,1,390000000.00,accounts@hacl.id.example,(0711) 822-4753,Palembang,ID,SPD,2020-04-17,spd.id02
+C00212,Orchid Family Clinic Bedok,,cCustomer,103,198043512R,SGD,1,7200.00,finance@ofcb.sg.example,,Singapore 119074,SG,SPD,2020-04-20,spd.sg02
+C00213,Trung tâm Xét nghiệm Tín Đức,,cCustomer,102,0888742081,VND,1,500000000.00,procurement@tdlc2.vn.example,028-7512 7261,Bien Hoa,VN,QTS,2020-04-28,qts.vn01
+C00214,Bangkok Hospital Phuket,,cCustomer,101,0105633430211,THB,1,1900000.00,purchasing@bhp2.th.example,(076) 267-107,Phuket,TH,SPD,2020-05-01,spd.th02
+C00215,Klinik Teh Kuala Lumpur,,cCustomer,103,199101691925,MYR,1,46000.00,accounts@tckl.my.example,,Kuala Lumpur,MY,SPD,2020-05-11,spd.my02
+C00216,Seri Clinic Georgetown,,cCustomer,103,201301683649,MYR,1,24000.00,admin@scg.my.example,+60 4-816 6046,Georgetown,MY,SPD,2020-05-30,spd.my01
+C00217,Klinik Pratama Sejahtera Mulia,,cCustomer,103,08.827.168.3-589.000,IDR,1,82000000.00,,+622176533553,Jakarta,ID,SPD,2020-06-08,spd.id01
+C00218,Pinnacle Medical Centre Sdn Bhd,,cCustomer,101,198701675138,MYR,2,190000.00,finance@pmc.my.example,,Shah Alam,MY,QTG,2020-06-09,qtg.my01
+C00219,Avalon Diagnostics Pte Ltd,,cCustomer,102,197974965P,SGD,2,20000.00,procurement@avalondiagnostics.sg.example,63399212,Singapore,SG,SPD,2020-06-13,spd.sg02
+C00220,Klinik Pratama Bina,,cCustomer,103,07.514.723.0-305.000,IDR,1,99000000.00,admin@bpc.id.example,+62 711 947 6772,Palembang,ID,SPD,2020-06-16,spd.id02
+C00221,Klinik dr. Sutan Hartana Hakim,,cCustomer,103,08.223.450.7-454.000,IDR,1,91000000.00,lab@dshhc.id.example,+62 22 6588 2074,Bandung,ID,SPD,2020-06-26,spd.id02
+C00222,Hospital Sultanah Bahiyah,,cCustomer,100,199201622915,MYR,4,390000.00,purchasing@sbh.my.example,(03) 7771-3419,Alor Setar,MY,SPD,2020-08-02,spd.my02
+C00223,National Skin Centre Pte Ltd,,cCustomer,100,197094540W,SGD,4,160000.00,lab@nsc.sg.example,6268 1503,Singapore,SG,SPD,2020-08-05,spd.sg02
+C00224,Piyamit Thong Lo Lab,,cCustomer,102,0105436095778,THB,2,1300000.00,accounts@ptll.th.example,+66 2 907 9437,Bangkok,TH,QTG,2020-08-07,qtg.th01
+C00225,Northstar Diagnostics Pte Ltd,,cCustomer,102,197052917L,SGD,1,14000.00,purchasing@northstardiagnostics.sg.example,+65 6903 7384,Singapore 119074,SG,QTG,2020-08-09,qtg.sg01
+C00226,KPJ Damansara Specialist Hospital,,cCustomer,101,201901225813,MYR,1,240000.00,lab@kdsh.my.example,(03) 4254-3184,Petaling Jaya,MY,SPD,2020-08-11,spd.my02
+C00227,"Mittraphap Thong Lo Medical Supply Co., Ltd.",,cCustomer,104,0105573104782,THB,2,2000000.00,lab@mtlms.th.example,(02) 738-5277,Bangkok,TH,SPD,2020-08-22,spd.th02
+C00228,Bệnh viện Đa khoa Quốc tế Vinmec Central Park,,cCustomer,101,0307921915,VND,1,1000000000.00,procurement@vcpih.vn.example,+84 28 5631 2615,Saigon,VN,SPD,2020-08-25,spd.vn03
+C00229,Trinity Diagnostics Pte Ltd,,cCustomer,102,198169078T,SGD,1,55000.00,accounts@trinitydiagnostics.sg.example,+6562774981,Singapore,SG,SPD,2020-08-28,spd.sg03
+C00230,Songklanagarind Hospital,,cCustomer,100,0105466749391,THB,4,1600000.00,,(074) 368-572,Hat Yai,TH,QTG,2020-09-03,qtg.th01
+C00231,Công ty TNHH Xét nghiệm Y khoa Nam Việt,,cCustomer,102,0312571586,VND,2,360000000.00,accounts@nvlc.vn.example,(028) 6348-3775,Ho Chi Minh City,VN,SPD,2020-09-10,spd.vn03
+C00232,Orchid Family Clinic (Tampines) Pte Ltd,,cCustomer,103,201077270N,SGD,-1,5700.00,,+65 6751 8826,Singapore,SG,SPD,2020-09-12,spd.sg02
+C00233,PT Rumah Sakit Husada Sinar,,cCustomer,101,06.944.739.2-060.000,IDR,1,960000000.00,purchasing@hsh.id.example,,Malang,ID,SPD,2020-09-14,spd.id01
+C00234,Laboratorium Klinik Husada Amanah (Palembang),,cCustomer,102,,IDR,1,210000000.00,purchasing@hacl.id.example,0711-822 4753,Palembang,ID,QTG,2020-09-22,qtg.id03
+C00235,Gleneagles Hospital,,cCustomer,101,198167079O,SGD,3,31000.00,admin@gleneagleshospital.sg.example,6729 8056,Singapore 119074,SG,QTS,2020-09-23,qts.sg03
+C00236,Makmal Patologi Gemilang Sdn Bhd,,cCustomer,102,201601592098,MYR,2,120000.00,lab@gpl.my.example,+60 4-762 8802,Georgetown,MY,SPD,2020-10-03,spd.my03
+C00237,บริษัท ห้องปฏิบัติการไทยเมด จำกัด,,cCustomer,102,0105603096372,THB,1,1100000.00,,,กรุงเทพมหานคร,TH,SPD,2020-10-17,spd.th03
+C00238,บริษัท โรงพยาบาลเมตตา จำกัด,,cCustomer,101,0105613796944,THB,2,1700000.00,procurement@mettahospital.th.example,(038) 321-531,Pattaya,TH,SPD,2020-10-19,spd.th03
+C00239,Hospital Pulau Pinang,,cCustomer,100,199501629916,MYR,3,260000.00,admin@pgh.my.example,+60 4-445 2573,Georgetown,MY,SPD,2020-10-27,spd.my01
+C00240,Laboratorium Klinik Bunda Makmur,,cCustomer,102,09.688.596.4-146.000,IDR,1,180000000.00,lab@bmcl.id.example,+62 21 2046 1900,Bekasi,ID,SPD,2020-11-09,spd.id02
+C00241,Công ty TNHH Bệnh viện Quốc tế Việt Mỹ,Viet My International Hospital,cCustomer,101,0442010757,VND,3,870000000.00,store@vmih.vn.example,0236-675 9703,Da Nang,VN,QTS,2020-11-13,qts.vn02
+C00242,Sentosa Specialist Hospital,,cCustomer,101,199651257L,SGD,2,54000.00,lab@ssh.sg.example,+65 6290 1811,S'pore,SG,SPD,2020-11-16,spd.sg01
+C00243,Viet Han International Hospital,,cCustomer,101,0372122660,VND,3,1400000000.00,admin@vhih.vn.example,+84 292 404 1658,Can Tho,VN,SPD,2020-11-16,spd.vn01
+C00244,PT Rumah Sakit Siloam Kebon Jeruk,,cCustomer,101,04.520.032.3-312.000,IDR,2,340000000.00,admin@skjh.id.example,(021) 8049-5398,Jakarta,ID,QTS,2020-11-18,qts.id01
+C00245,PT Laboratorium Klinik Kasih,,cCustomer,102,04.454.304.3-820.000,IDR,2,280000000.00,purchasing@kcl.id.example,(061) 6734-1151,Medan,ID,QTG,2020-11-21,qtg.id03
+C00246,PT Laboratorium Klinik Amanah Husada,,cCustomer,102,088368933749000,IDR,1,400000000.00,procurement@ahcl.id.example,021-2125 4054,Bekasi,ID,SPD,2020-11-30,spd.id02
+C00247,Hospital Serdang,,cCustomer,100,199701636212,MYR,4,420000.00,store@serdanghospital.my.example,+60377314915,Kajang,MY,SPD,2020-12-19,spd.my02
+C00248,PT Laboratorium Klinik Permata,,cCustomer,102,004403427238000,IDR,1,260000000.00,finance@pcl.id.example,,Jakarta,ID,SPD,2020-12-24,spd.id02
+C00249,PK Nhi BS. Anh Phuc Nguyen,,cCustomer,103,0145054791,VND,-1,240000000.00,procurement@dapnpc.vn.example,(024) 8774-0028,Hanoi,VN,QTS,2021-01-07,qts.vn03
+C00250,Gleneagles Hospital Pte Ltd,,cCustomer,101,198167079O,SGD,3,22000.00,purchasing@gleneagleshospital.sg.example,67298056,Singapore,SG,SPD,2021-01-09,spd.sg02
+C00251,ห้องปฏิบัติการเมตตา,,cCustomer,102,0105463459907,THB,1,370000.00,accounts@mettalaboratory.th.example,02-675 1486,Krung Thep,TH,SPD,2021-01-09,spd.th01
+C00252,Benh vien Da khoa Kim Ngan,,cCustomer,101,0309016304,VND,1,680000000.00,purchasing@kngh.vn.example,028-9052 1929,Bien Hoa,VN,SPD,2021-01-17,spd.vn01
+C00253,โรงพยาบาลมหาราชนครเชียงใหม่,,cCustomer,100,0105449404713,THB,3,2300000.00,finance@mncmh.th.example,+66 53 738 315,Chiang Mai,TH,QTG,2021-01-17,qtg.th03
+C00254,Metta Rangsit Hospital,,cCustomer,101,,THB,1,820000.00,purchasing@mrh.th.example,(02) 531-8215,Pathum Thani,TH,SPD,2021-01-24,spd.th03
+C00255,คลินิกเวชกรรมเกษมสุข,,cCustomer,103,0105444586629,THB,-1,190000.00,procurement@kmc.th.example,+66 2 429 2327,Pathum Thani,TH,SPD,2021-01-28,spd.th03
+C00256,H. Adam Malik General Hospital,,cCustomer,100,03.162.963.4-840.000,IDR,3,650000000.00,procurement@hamgh.id.example,+626122728802,Medan,ID,SPD,2021-03-03,spd.id01
+C00257,KPJ Damansara Specialist Hospital,,cCustomer,101,201901225813,MYR,1,140000.00,accounts@kdsh.my.example,(03) 4254-3184,Petaling Jaya,MY,QTG,2021-03-05,qtg.my02
+C00258,Thai Med Chiang Mai Lab,,cCustomer,102,0105514395689,THB,1,960000.00,accounts@tmcml.th.example,053-524 781,Chiang Mai,TH,SPD,2021-03-28,spd.th01
+C00259,Phong kham Da khoa Minh Khang,,cCustomer,103,0115335924,VND,-1,130000000.00,lab@mkgc.vn.example,(024) 4162-4203,Hanoi,VN,SPD,2021-04-12,spd.vn01
+C00260,Pantai Hospital Ampang,,cCustomer,101,198001284329,MYR,2,120000.00,finance@pha.my.example,+60341685779,Ampang,MY,SPD,2021-04-16,spd.my03
+C00261,Phòng khám Nhi BS. Chị Hương Nguyễn,Dr. Chi Huong Nguyen Paediatric Clinic,cCustomer,103,0331032779,VND,1,210000000.00,finance@dchnpc.vn.example,+842857180671,Ho Chi Minh City,VN,SPD,2021-04-25,spd.vn03
+C00262,Singapore General Hospital Pte Ltd,,cCustomer,100,199969400H,SGD,4,67000.00,,+65 6207 8851,S'pore,SG,QTS,2021-04-26,qts.sg01
+C00263,Hospital Serdang (Kajang),,cCustomer,100,199701636212,MYR,4,270000.00,,,Kajang,MY,QTG,2021-05-07,qtg.my01
+C00264,Tirta Sehat Clinical Laboratory,,cCustomer,102,05.984.596.7-649.000,IDR,1,380000000.00,procurement@tscl.id.example,021-6122 9790,Jakarta,ID,SPD,2021-05-08,spd.id02
+C00265,Toh Family Clinic Yishun,,cCustomer,103,201595726D,SGD,-1,3300.00,procurement@tfcy.sg.example,,Singapore,SG,SPD,2021-05-14,spd.sg01
+C00266,Phong kham Nhi BSS. Anh Phuc Nuyen,,cCustomer,103,,VND,1,150000000.00,nurse.station77@mail.example,,Hanoi,VN,SPD,2021-05-18,spd.vn03
+C00267,Pasar Minggu General Hospital,,cCustomer,100,02.276.049.3-185.000,IDR,3,470000000.00,admin@pmgh.id.example,+622143518731,Jakarta,ID,SPD,2021-05-19,spd.id03
+C00268,Hospital Canselor Tuanku Muhriz,,cCustomer,100,199301682452,MYR,3,110000.00,lab@ctmh.my.example,+60 3-7810 9384,Kuala Lumpur,MY,SPD,2021-05-31,spd.my01
+C00269,RSUP Dr. M. Djamil,,cCustomer,100,00.506.079.0-051.000,IDR,3,550000000.00,store@dmdgh.id.example,(021) 7494-0121,Padang,ID,SPD,2021-06-04,spd.id03
+C00270,National University Hospital (S) Pte Ltd,,cCustomer,100,197889196B,SGD,3,85000.00,lab@nuh.sg.example,68962404,Singapore,SG,SPD,2021-06-10,spd.sg01
+C00271,Phatthana Chiang Mai Lab,,cCustomer,102,0105517994681,THB,2,590000.00,lab@pcml.th.example,053-547 931,Chiang Mai,TH,QTG,2021-06-17,qtg.th02
+C00272,Hospital Queen Elizabeth,,cCustomer,100,201101870420,MYR,3,310000.00,lab@qeh.my.example,+6088551034,Kota Kinabalu,MY,SPD,2021-07-03,spd.my02
+C00273,Bệnh viện Đa khoa Tín Đức,Tin Duc General Hospital,cCustomer,101,0437189216,VND,1,650000000.00,purchasing@tdgh.vn.example,+84 28 4941 4779,Vung Tau,VN,QTG,2021-07-06,qtg.vn03
+C00274,RSUP Dr. Mohammad Hoesin,,cCustomer,100,038962996871000,IDR,3,900000000.00,admin@dmhgh.id.example,0711-970 8831,Palembang,ID,QTG,2021-07-09,qtg.id01
+C00275,RS Cipto Mangunkusumo,,cCustomer,100,05.690.011.7-848.000,IDR,4,740000000.00,accounts@cmh.id.example,(021) 7220-1287,Jakarta,ID,QTG,2021-07-25,qtg.id02
+C00276,Primacare Medical Clinic Clementi,,cCustomer,103,198022149N,SGD,1,12000.00,procurement@pmcc.sg.example,+65 6312 9539,Singapore,SG,QTS,2021-07-27,qts.sg02
+C00277,Tay Family Clinic Tiong Bahru,,cCustomer,103,199137154V,SGD,1,8000.00,,64981716,Singapore,SG,QTS,2021-09-04,qts.sg01
+C00278,Laboratorium Klinik Nirmala Tirta,,cCustomer,102,05.755.230.6-265.000,IDR,2,250000000.00,accounts@ntcl.id.example,+62 21 7499 1063,Bekasi,ID,QTG,2021-09-08,qtg.id03
+C00279,Klinik Chong Kuching,,cCustomer,103,201401146483,MYR,-1,25000.00,admin@cck.my.example,082-982 973,Kuching,MY,SPD,2021-09-18,spd.my01
+C00280,"Thai Med Chiang Mai Hospital Co., Ltd.",,cCustomer,101,0105428656949,THB,2,1700000.00,store@tmcmh.th.example,053-924 164,Chiang Mai,TH,SPD,2021-09-27,spd.th02
+C00281,Makmal Patologi Seri Sdn Bhd,,cCustomer,102,198301374380,MYR,1,93000.00,store@spl2.my.example,+6097906143,Kuantan,MY,SPD,2021-10-16,spd.my02
+C00282,Pusat Perubatan Harmoni Sdn Bhd,,cCustomer,101,199001592108,MYR,2,300000.00,finance@hmc.my.example,+6082622376,Kuching,MY,QTG,2021-10-20,qtg.my01
+C00283,Bệnh viện Bạch Mai,Bach Mai Hospital,cCustomer,100,0100894618,VND,3,2600000000.00,purchasing@bmh.vn.example,+842493318417,Hanoi,VN,SPD,2021-10-20,spd.vn03
+C00284,Suksawat Thong Lo Clinic,,cCustomer,103,0105523390463,THB,-1,130000.00,finance@stlc.th.example,(02) 607-3577,Krung Thep,TH,SPD,2021-10-22,spd.th03
+C00285,Bệnh viện Đa khoa Kim Ngân,,cCustomer,101,0309016304,VND,2,1200000000.00,,(028) 9052-1929,Bien Hoa,VN,QTG,2021-10-23,qtg.vn02
+C00286,Police General Hospital,,cCustomer,100,0105609367237,THB,3,4000000.00,store@pgh.th.example,02-351 5411,Bangkok,TH,QTS,2021-10-27,qts.th03
+C00287,Klinik Pratama Sentra Bina,,cCustomer,103,063095323994000,IDR,-1,68000000.00,lab@sbpc.id.example,+626183140036,Medan,ID,SPD,2021-11-01,spd.id01
+C00288,Pasar Minggu General Hospital - Pathology,,cCustomer,102,022760493185000,IDR,4,2000000000.00,,,DKI Jakarta,ID,QTG,2021-11-18,qtg.id01
+C00289,Nova Medical Supplies,,cCustomer,104,199001694282,MYR,2,670000.00,lab@nms.my.example,+6088381935,Kota Kinabalu,MY,SPD,2021-11-20,spd.my01
+C00290,Rumah Sakit Umum Pusat Dr. Sitanala,,cCustomer,100,09.136.491.2-735.000,IDR,4,1400000000.00,,+62 21 9253 7566,Tangerang,ID,QTG,2021-12-01,qtg.id03
+C00291,Bệnh viện Phụ sản Hà Nội,,cCustomer,100,0196754315,VND,3,2500000000.00,store@hogh.vn.example,(024) 4752-1163,Hanoi,VN,SPD,2021-12-05,spd.vn01
+C00292,Nam Viet Laboratory Center,,cCustomer,102,0312571586,VND,2,280000000.00,lab@nvlc.vn.example,(028) 6348-3775,Ho Chi Minh City,VN,QTG,2021-12-26,qtg.vn03
+C00293,Bệnh viện Xanh Pôn,,cCustomer,100,0191522546,VND,3,1200000000.00,accounts@sph.vn.example,+842448632575,Hanoi,VN,QTG,2022-01-05,qtg.vn02
+C00294,โรงพยาบาลภูมิพลอดุลยเดช,Bhumibol Adulyadej Hospital,cCustomer,100,0105419275357,THB,3,1300000.00,accounts@bah.th.example,+6629740563,Bangkok,TH,SPD,2022-01-11,spd.th03
+C00295,Laboratorium Klinik Kasih Sinar,,cCustomer,102,02.794.626.2-091.000,IDR,1,360000000.00,lab@kscl.id.example,021-9162 5955,Bekasi,ID,QTG,2022-01-16,qtg.id01
+C00296,โรงพยาบาลนพรัตนราชธานี,Nopparat Rajathanee Hospital,cCustomer,100,0105546952907,THB,3,750000.00,lab@nrh.th.example,+6626188645,Bangkok,TH,QTG,2022-01-17,qtg.th01
+C00297,Karya Dharma Hospital,,cCustomer,101,09.030.402.2-738.000,IDR,1,600000000.00,store@kdh2.id.example,,Jakarta Pusat,ID,QTS,2022-01-30,qts.id03
+C00298,Makmur Bakti Hospital,,cCustomer,101,07.063.191.1-281.000,IDR,2,440000000.00,,+622154801500,Bogor,ID,SPD,2022-02-07,spd.id02
+C00299,Sehat Utama Hospital,,cCustomer,101,027508443202000,IDR,1,740000000.00,admin@suh.id.example,0274-699 3786,Yogyakarta,ID,SPD,2022-02-20,spd.id01
+C00300,Rumah Sakit Umum Pusat Persahabatan,,cCustomer,100,05.468.527.7-040.000,IDR,4,700000000.00,lab@pgh.id.example,(021) 7075-9134,DKI Jakarta,ID,SPD,2022-03-06,spd.id01
+C00301,Công ty Cổ phần Thiết bị Y tế Kim Ngân,,cCustomer,104,0142005584,VND,2,1700000000.00,store@knme.vn.example,024-8233 2739,Ha Noi,VN,QTG,2022-03-07,qtg.vn02
+C00302,Kingfisher Pathology Lab,,cCustomer,102,198462055F,SGD,1,20000.00,accounts@kpl.sg.example,68701102,Singapore,SG,SPD,2022-03-17,spd.sg02
+C00303,RS Husada Sinar,,cCustomer,101,06.944.739.2-060.000,IDR,1,680000000.00,procurement@hsh.id.example,(0341) 633-7005,Malang,ID,QTS,2022-03-26,qts.id03
+C00304,Công ty Cổ phần Bệnh viện Đa khoa Phúc An,,cCustomer,101,0329474227,VND,2,800000000.00,lab@pagh.vn.example,+842342121042,Hue,VN,QTS,2022-04-08,qts.vn03
+C00305,Trung tam Xet nghiem Phu My Ha Noi,,cCustomer,102,0187456359,VND,2,370000000.00,lab@pmhnlc.vn.example,024-3264 5348,Hanoi,VN,QTS,2022-04-18,qts.vn02
+C00306,RS Dharma Utama,,cCustomer,101,,IDR,2,800000000.00,store@duh.id.example,+62 22 5799 7674,Bandung,ID,QTS,2022-04-20,qts.id03
+C00307,Wellspring Medical Supplies Sdn Bhd,,cCustomer,104,202201865797,MYR,2,210000.00,procurement@wms.my.example,+6079178454,Johor Baharu,MY,QTG,2022-04-22,qtg.my03
+C00308,RS Ihsan,,cCustomer,101,09.039.290.4-189.000,IDR,2,350000000.00,,+622256184535,Bandung,ID,SPD,2022-04-26,spd.id02
+C00309,Klinik Pratama Husada Sentra,,cCustomer,103,07.477.186.3-528.000,IDR,1,190000000.00,finance@hspc.id.example,+62 21 3008 7024,Bekasi,ID,QTS,2022-05-03,qts.id03
+C00310,RSUD Dr. Saiful Anwar,,cCustomer,100,00.317.056.4-478.000,IDR,3,800000000.00,purchasing@dsagh.id.example,+623416886603,Malang,ID,QTG,2022-05-20,qtg.id03
+C00311,Bangkok Hospital Pattaya,,cCustomer,101,0105574861666,THB,1,2500000.00,lab@bhp.th.example,038-328 011,Pattaya,TH,QTG,2022-05-26,qtg.th02
+C00312,Thiết bị Y tế Trường An Hà Nội,Truong An Ha Noi Medical Equipment,cCustomer,104,0102123983,VND,3,2100000000.00,lab@tahnme.vn.example,+84 24 2326 8450,Hanoi,VN,SPD,2022-05-31,spd.vn01
+C00313,Orchid Family Clinic Bedok - Procurement,,cCustomer,102,,SGD,-1,4300.00,purchasing@ofcb.sg.example,,Singapore,SG,QTG,2022-06-01,qtg.sg02
+C00314,Pusat Perubatan Sejahtera Sdn Bhd,,cCustomer,101,201001764430,MYR,3,210000.00,procurement@smc.my.example,+6057574385,Ipoh,MY,QTG,2022-06-09,qtg.my03
+C00315,Viet Nhat Laboratory Center,,cCustomer,102,0345676184,VND,1,340000000.00,store@vnlc.vn.example,+842833777328,Ho Chi Minh City,VN,QTG,2022-06-17,qtg.vn03
+C00316,ห้องปฏิบัติการสุขใจ,Sukjai Laboratory,cCustomer,102,0105613112647,THB,2,1200000.00,admin@sukjailaboratory.th.example,,Bangkok,TH,QTG,2022-07-04,qtg.th03
+C00317,Hospital Pakar Delima,,cCustomer,101,199801216082,MYR,3,300000.00,lab@dsh.my.example,(07) 448-0832,Johor Bahru,MY,SPD,2022-07-08,spd.my02
+C00318,RSCM,,cCustomer,100,,IDR,4,1200000000.00,,+62 21 7220 1287,Jakarta,ID,QTS,2022-07-10,qts.id01
+C00319,"Metta Laboratory Co., Ltd.",,cCustomer,102,0105463459907,THB,2,730000.00,lab@mettalaboratory.th.example,02-675 1486,กรุงเทพมหานคร,TH,QTG,2022-07-16,qtg.th01
+C00320,Gatot Soebroto Hospital,,cCustomer,100,05.520.340.2-459.000,IDR,4,770000000.00,accounts@gsh.id.example,,Jakarta,ID,SPD,2022-07-17,spd.id01
+C00321,Chonburi Hospital,,cCustomer,100,0105613924286,THB,3,2800000.00,procurement@chonburihospital.th.example,+66 38 493 602,Chonburi,TH,SPD,2022-07-19,spd.th01
+C00322,Rumah Sakit Umum Daerah Dr. Soetomo,,cCustomer,100,021385847426000,IDR,3,650000000.00,purchasing@dsgh2.id.example,031-8334 7492,Surabaya,ID,SPD,2022-07-21,spd.id01
+C00323,Benh vien Da khoa Truong An Da Nang,,cCustomer,101,0482828415,VND,3,1500000000.00,purchasing@tadngh.vn.example,+842364920090,Da Nang,VN,SPD,2022-08-01,spd.vn02
+C00324,Phatthana Thong Lo Laboratory,,cCustomer,102,0105488723749,THB,1,1000000.00,procurement@ptll2.th.example,+6623911700,กรุงเทพมหานคร,TH,SPD,2022-08-02,spd.th03
+C00325,RS Mitra Keluarga Kelapa Gading,,cCustomer,101,01.802.766.2-249.000,IDR,1,600000000.00,purchasing@mkkgh.id.example,,Jakarta,ID,SPD,2022-08-06,spd.id01
+C00326,Maharat Nakhon Ratchasima Hospital,,cCustomer,100,0105435884241,THB,4,1600000.00,admin@mnrh.th.example,(02) 307-3602,Nakhon Ratchasima,TH,QTG,2022-08-06,qtg.th03
+C00327,Jurong Community Hospital Pte Ltd,,cCustomer,100,201375960O,SGD,4,91000.00,lab@jch.sg.example,6806 6307,Singapore,SG,QTG,2022-08-19,qtg.sg02
+C00328,Klinik Chong Petaling Jaya Sdn Bhd,,cCustomer,103,,MYR,1,43000.00,,,"Petaling Jaya, Selangor",MY,QTS,2022-08-19,qts.my01
+C00329,Klinik Kurnia Nirmala,,cCustomer,103,00.312.297.0-005.000,IDR,1,46000000.00,finance@knc.id.example,+62 61 9540 0553,Medan,ID,SPD,2022-08-23,spd.id03
+C00330,Thien Tam Laboratory Center,,cCustomer,102,0159681091,VND,1,860000000.00,admin@ttlc.vn.example,(024) 4030-5675,Hanoi,VN,QTG,2022-08-26,qtg.vn01
+C00331,Parkway East Hospital,,cCustomer,101,199671529K,SGD,1,36000.00,admin@peh.sg.example,+65 6347 0137,S'pore,SG,SPD,2022-08-31,spd.sg03
+C00332,Klinik dr. Kamila Suwarno,,cCustomer,103,03.440.772.2-795.000,IDR,1,130000000.00,store@dksc.id.example,+622181390999,Jakarta,ID,SPD,2022-09-07,spd.id02
+C00333,Bunda Makmur Clinical Laboratory,,cCustomer,102,09.688.596.4-146.000,IDR,1,380000000.00,store@bmcl.id.example,(021) 2046-1900,Bekasi,ID,QTG,2022-09-10,qtg.id01
+C00334,Bệnh viện Phụ sản Hà Nội,,cCustomer,100,0196754315,VND,4,2900000000.00,accounts@hogh.vn.example,+84 24 4752 1163,Hanoi,VN,QTS,2022-09-12,qts.vn03
+C00335,โรงพยาบาลตำรวจ,,cCustomer,100,0105609367237,THB,4,3100000.00,procurement@pgh.th.example,+6623515411,Bangkok,TH,QTG,2022-09-22,qtg.th01
+C00336,Phong kham Da khoa Bach Khoa,,cCustomer,103,0188578438,VND,1,120000000.00,accounts@bkgc.vn.example,+842499130256,HN,VN,SPD,2022-09-25,spd.vn01
+C00337,Kanker Dharmais Hospital,,cCustomer,100,06.120.266.2-846.000,IDR,3,560000000.00,accounts@kdh.id.example,+62 21 3444 7643,Jakarta,ID,QTG,2022-09-29,qtg.id02
+C00338,Vitalis Laboratories,,cCustomer,102,201857405J,SGD,1,17000.00,accounts@vitalislaboratories.sg.example,+6563668471,Singapore,SG,SPD,2022-10-15,spd.sg02
+C00339,Klinik Ismail Kuching,,cCustomer,103,199901111954,MYR,1,20000.00,lab@ick.my.example,+60 82-617 785,Kuching,MY,QTG,2022-10-15,qtg.my02
+C00340,Harmoni Saintifik,,cCustomer,104,202201679673,MYR,2,820000.00,store@harmoniscientific.my.example,+60 3-3879 7566,Subang Jaya,MY,QTG,2022-10-19,qtg.my03
+C00341,MAKMAL PATOLOGI SERI SDN BHD,,cCustomer,102,,MYR,2,71000.00,lab@spl2.my.example,,Kuantan,MY,QTS,2022-10-27,qts.my03
+C00342,Tin Duc Laboratory Center,,cCustomer,102,0888742081,VND,1,620000000.00,procurement@tdlc2.vn.example,(028) 7512-7261,Bien Hoa,VN,QTG,2022-11-02,qtg.vn03
+C00343,Laboratorium Klinik Kasih Sinar,,cCustomer,102,02.794.626.2-091.000,IDR,1,420000000.00,procurement@kscl.id.example,(021) 9162-5955,Bekasi,ID,SPD,2022-11-04,spd.id02
+C00344,โรงพยาบาลเลิดสิน,Lerdsin Hospital,cCustomer,100,0105644571769,THB,3,1200000.00,,02-455 5957,Bangkok,TH,QTG,2022-11-06,qtg.th03
+C00345,RS Bunda Ihsan,,cCustomer,101,00.579.987.0-826.000,IDR,2,700000000.00,admin@bih.id.example,+62 31 7544 0250,Surabaya,ID,SPD,2022-11-13,spd.id02
+C00346,โรงพยาบาลสงขลานครินทร์,,cCustomer,100,0105466749391,THB,3,2000000.00,lab@songklanagarindhospital.th.example,+6674368572,Hat Yai,TH,QTS,2022-11-16,qts.th02
+C00347,บริษัท ปิยะมิตร ทองหล่อ แล็บ จำกัด,Piyamit Thong Lo Lab,cCustomer,102,0105436095778,THB,1,450000.00,procurement@ptll.th.example,(02) 907-9437,กรุงเทพมหานคร,TH,SPD,2022-11-19,spd.th02
+C00348,บริษัท ห้องปฏิบัติการศุภมิตร สาทรจำกัด,,cCustomer,100,0105534126688,THB,2,340000.00,accounts@ssl.th.example,+66 2 440 4142,Bangkok,TH,QTG,2022-11-20,qtg.th01
+C00349,Benh vien Benh Nhiet doi Trung uong,,cCustomer,100,0156634639,VND,4,1500000000.00,procurement@nhtd.vn.example,(024) 5290-8706,Hanoi,VN,SPD,2022-11-22,spd.vn02
+C00350,Ng & Wong Surgery,,cCustomer,103,197908087K,SGD,1,7900.00,admin@nws.sg.example,+6562343587,Singapore,SG,SPD,2022-11-23,spd.sg01
+C00351,"Suksawat Thong Lo Clinic Co., Ltd.",,cCustomer,103,0105523390463,THB,1,160000.00,buyer94@mail.example,02-607 3577,BKK,TH,QTS,2022-11-27,qts.th03
+C00352,Rumah Sakit Kanker Dharmais,,cCustomer,100,061202662846000,IDR,3,1400000000.00,finance@kdh.id.example,+622134447643,Jakarta,ID,QTS,2022-11-28,qts.id02
+C00353,Cong ty Co phan Benh vien Da khoa Phu My,,cCustomer,101,0123338863,VND,1,1300000000.00,finance@pmgh.vn.example,+84 24 5658 9051,Hanoi,VN,SPD,2022-11-28,spd.vn01
+C00354,Laboratorium Klinik Tirta Bakti,,cCustomer,102,04.886.064.8-928.000,IDR,2,560000000.00,finance@tbcl.id.example,+622139252111,Bogor,ID,SPD,2022-12-02,spd.id01
+C00355,Ivory Pathology Lab Pte Ltd,,cCustomer,102,198212889S,SGD,2,40000.00,accounts@ipl.sg.example,+65 6674 1827,Singapore,SG,QTG,2022-12-13,qtg.sg03
+C00356,PHATTHANA THONG LO LABORATORY,,cCustomer,103,0105488723749,THB,1,780000.00,,,Bangkok,TH,SPD,2022-12-17,spd.th02
+C00357,Bệnh viện Nhi Đồng 1,Children's Hospital 1,cCustomer,100,,VND,3,630000000.00,accounts@ch1.vn.example,028-7333 8900,Ho Chi Minh City,VN,QTG,2022-12-20,qtg.vn01
+C00358,Maple Diagnostics,,cCustomer,102,201101939552,MYR,1,67000.00,,+60 3-8767 6916,Kuala Lumpur,MY,SPD,2022-12-21,spd.my01
+C00359,KLINIK DR. KAMILA SUWARNO,,cCustomer,103,03.440.772.2-795.000,IDR,1,62000000.00,,021-8139 0999,JAKARTA,ID,QTS,2022-12-21,qts.id01
+C00360,Ramathibodi Hospital,,cCustomer,100,0105465325052,THB,3,2600000.00,admin@ramathibodihospital.th.example,+6629431989,Bangkok 10700,TH,SPD,2022-12-25,spd.th02
+C00361,Hospital Raja Perempuan Zainab II,,cCustomer,100,201301716831,MYR,4,550000.00,procurement@rpzih.my.example,+60 3-5793 3410,Kota Bharu,MY,SPD,2022-12-28,spd.my01
+C00362,BioMed Lab Supplies Pte Ltd,,cCustomer,104,199531523P,SGD,3,100000.00,procurement@bls.sg.example,+65 6902 9176,Singapore,SG,SPD,2023-01-06,spd.sg03
+C00363,Clearview Specialist Hospital,,cCustomer,101,199323319R,SGD,3,82000.00,finance@csh.sg.example,,Singapore 119074,SG,QTG,2023-01-10,qtg.sg02
+C00364,Vinmec Central Park International Hospital,,cCustomer,101,0307921915,VND,2,620000000.00,,028-5631 2615,Ho Chi Minh City,VN,QTS,2023-01-13,qts.vn02
+C00365,Makmal Patologi Seri,,cCustomer,102,198301374380,MYR,1,150000.00,admin@spl2.my.example,+6097906143,Kuantan,MY,QTG,2023-01-19,qtg.my02
+C00366,Cong ty TNHH Phong kham Nhi BS. Anh Quang Vu,,cCustomer,103,0055656337,VND,-1,84000000.00,lab@daqvpc.vn.example,028-9121 6835,Nha Trang,VN,SPD,2023-01-22,spd.vn02
+C00367,Avalon Diagnostics,,cCustomer,102,197974965P,SGD,1,21000.00,lab@avalondiagnostics.sg.example,63399212,Singapore,SG,QTG,2023-01-23,qtg.sg02
+C00368,PT Laboratorium Klinik Amanah Pelita,,cCustomer,102,03.214.040.2-642.000,IDR,1,220000000.00,accounts@apcl.id.example,+622157918998,Jakarta Pusat,ID,SPD,2023-01-23,spd.id02
+C00369,Lion City Pathology (Novena) Pte Ltd,,cCustomer,102,201958384H,SGD,1,21000.00,lab@lcpn.sg.example,+6563528083,Singapore,SG,QTG,2023-01-31,qtg.sg03
+C00370,โรงพยาบาลจุฬาลงกรณ์,,cCustomer,100,0105457825192,THB,4,3300000.00,finance@kcmh.th.example,+6625525308,Bangkok,TH,QTS,2023-02-02,qts.th03
+C00371,Cong ty Co phan Benh vien Da khoa My Duc,,cCustomer,101,0395971145,VND,1,1400000000.00,procurement@mdgh.vn.example,028-2334 1477,TP. Hồ Chí Minh,VN,SPD,2023-02-07,spd.vn02
+C00372,Laboratorium Klinik Abdi Karya,,cCustomer,102,086017261326000,IDR,2,420000000.00,procurement@akcl.id.example,(024) 2049-2467,Semarang,ID,QTG,2023-02-11,qtg.id02
+C00373,Suria Pathology Laboratory,,cCustomer,100,198001909471,MYR,2,170000.00,,,Johor Bahru,MY,QTS,2023-02-19,qts.my02
+C00374,Amanah Utama Medika Indonesia,,cCustomer,104,02.441.011.1-848.000,IDR,2,1700000000.00,purchasing@aumi.id.example,(061) 6888-9092,Medan,ID,SPD,2023-02-22,spd.id02
+C00375,Bệnh viện Bệnh Nhiệt đới Trung ương,,cCustomer,100,0156634639,VND,3,2000000000.00,,+84 24 5290 8706,Hà Nội,VN,QTG,2023-03-01,qtg.vn02
+C00376,Bệnh viện Nhi Đồng 2,,cCustomer,100,0339533196,VND,4,690000000.00,purchasing@ch2.vn.example,+84 28 3726 5050,Ho Chi Minh City,VN,QTS,2023-03-03,qts.vn03
+C00377,Columbia Asia Hospital Petaling Jaya Sdn Bhd,,cCustomer,101,200301095592,MYR,1,270000.00,finance@cahpj.my.example,03-7380 5221,Petaling Jaya,MY,SPD,2023-03-06,spd.my01
+C00378,Watthana Bang Na Hospital,,cCustomer,101,0105617335806,THB,1,1300000.00,store@wbnh.th.example,02-977 5070,Bangkok,TH,SPD,2023-03-07,spd.th03
+C00379,Klinik dr. Ophelia Saefullah,,cCustomer,103,09.586.408.1-359.000,IDR,1,200000000.00,lab@dosc.id.example,(021) 7714-0925,JAKARTA,ID,SPD,2023-03-14,spd.id03
+C00380,Benh vien Quoc te Thanh Cong,,cCustomer,101,0109011675,VND,1,1100000000.00,admin@tcih.vn.example,028-3405 9245,Nha Trang,VN,SPD,2023-03-19,spd.vn02
+C00381,Tay Family Clinic Tiong Bahru - Singapore,,cCustomer,103,,SGD,1,12000.00,finance@tfctb.sg.example,,S'pore,SG,SPD,2023-03-19,spd.sg01
+C00382,Klinik Bahagia Melaka Sdn Bhd,,cCustomer,103,,MYR,-1,8800.00,store@bcm.my.example,+60 6-377 0086,Melaka,MY,QTG,2023-03-26,qtg.my03
+C00383,Ng Teng Fong General Hospital,,cCustomer,100,197629191K,SGD,3,82000.00,finance@ntfgh.sg.example,+65 6579 9774,Singapore,SG,SPD,2023-04-06,spd.sg01
+C00384,บริษัท โรงพยาบาลเมตตา รังสิต จำกัด,,cCustomer,101,0105520606849,THB,2,1700000.00,lab@mrh.th.example,(02) 531-8215,Pathum Thani,TH,QTS,2023-04-07,qts.th01
+C00385,Công ty Cổ phần Bệnh viện Hoàn Mỹ Đà Nẵng,Hoan My Da Nang Hospital,cCustomer,101,0433211526,VND,3,1200000000.00,accounts@hmdnh.vn.example,(0236) 291-2381,Da Nang,VN,QTS,2023-04-17,qts.vn01
+C00386,Lion City Pathology (Jurong East) Pte Ltd,,cCustomer,102,200194524B,SGD,2,34000.00,store@lcpje.sg.example,65535840,Singapore,SG,QTG,2023-05-03,qtg.sg03
+C00387,ห้องปฏิบัติการชัยพฤกษ์ นนทบุรี,Chaiyaphruek Nonthaburi Laboratory,cCustomer,102,0105630219464,THB,2,690000.00,procurement@cnl.th.example,02-747 3901,Nonthaburi,TH,SPD,2023-05-07,spd.th01
+C00388,Makmal Patologi Cahaya,,cCustomer,102,201501055561,MYR,1,200000.00,admin@cpl.my.example,+60 3-5148 7857,Kuala Lumpur,MY,SPD,2023-05-20,spd.my01
+C00389,Klinik Delima Petaling Jaya,,cCustomer,103,201801527292,MYR,1,28000.00,admin@dcpj.my.example,03-4980 5621,Petaling Jaya,MY,SPD,2023-05-20,spd.my02
+C00390,RS Husada Sinar - Procurement,,cCustomer,101,069447392060000,IDR,3,450000000.00,finance@hsh.id.example,+623416337005,Malang,ID,QTG,2023-05-22,qtg.id03
+C00391,Laboratorium Klinik Graha Ihsan,,cCustomer,102,05.174.845.0-715.000,IDR,2,240000000.00,lab@gicl.id.example,+626131437285,Medan,ID,QTG,2023-05-24,qtg.id02
+C00392,Tan Tock Seng Hospital,,cCustomer,100,199960712C,SGD,3,170000.00,procurement@ttsh.sg.example,6564 4151,Singapore 119074,SG,SPD,2023-05-27,spd.sg03
+C00393,Metta Bang Na Clinic,,cCustomer,103,0105541527991,THB,1,200000.00,finance@mbnc.th.example,+66 2 838 5085,Bangkok 10700,TH,QTS,2023-05-30,qts.th01
+C00394,Woodlands Hospital Pte Ltd,,cCustomer,100,199902452S,SGD,4,30000.00,lab@woodlandshospital.sg.example,6509 1766,Singapore 119074,SG,QTS,2023-06-01,qts.sg01
+C00395,Prof. Dr. I.G.N.G. Ngoerah General Hospital,,cCustomer,100,00.187.121.8-425.000,IDR,4,660000000.00,procurement@pdigngngh.id.example,+623619511276,Denpasar,ID,SPD,2023-06-25,spd.id02
+C00396,Hospital Kuala Lumpur,,cCustomer,100,200001618846,MYR,4,240000.00,finance@klh.my.example,(03) 7437-8900,Kuala Lumpur,MY,SPD,2023-06-26,spd.my01
+C00397,Rumah Sakit Jantung Harapan Kita,,cCustomer,100,021258526874000,IDR,4,840000000.00,,+622150130225,DKI Jakarta,ID,SPD,2023-06-28,spd.id02
+C00398,Klinik Teh Kuala Lumpur - Lab Dept,,cCustomer,103,,MYR,-1,24000.00,,,Wilayah Persekutuan Kuala Lumpur,MY,QTS,2023-07-05,qts.my03
+C00399,Dr. Hasan Sadikin General Hospital,,cCustomer,100,01.898.443.7-679.000,IDR,3,760000000.00,lab@dhsgh.id.example,+62 22 4695 5863,Bandung,ID,SPD,2023-07-07,spd.id01
+C00400,บริษัท ห้องปฏิบัติการชัยพฤกษ์ นนทบุรี จำกัด,Chaiyaphruek Nonthaburi Laboratory,cCustomer,102,0105630219464,THB,2,360000.00,purchasing@cnl.th.example,+66 2 747 3901,Nonthaburi,TH,QTG,2023-07-09,qtg.th01
+C00401,Sengkang General Hospital Pte Ltd,,cCustomer,100,197177780H,SGD,4,93000.00,lab@sgh2.sg.example,+65 6280 6789,Singapore,SG,SPD,2023-07-25,spd.sg01
+C00402,Trung tam Xet nghiem Phu My Ha Noi,,cCustomer,102,0187456359,VND,2,330000000.00,finance@pmhnlc.vn.example,,Hanoi,VN,SPD,2023-07-30,spd.vn02
+C00403,Makmal Patologi Wawasan Sdn Bhd,,cCustomer,102,199601807633,MYR,1,130000.00,admin@wpl.my.example,+60356950924,"Petaling Jaya, Selangor",MY,SPD,2023-08-04,spd.my01
+C00404,บริษัท เมอร์ไลออน ไดแอกนอสติกส์ (ประเทศไทย) จำกัด,,cCustomer,102,0105406048224,THB,1,620000.00,finance@mdt.th.example,+6625788164,Bangkok,TH,QTG,2023-08-04,qtg.th02
+C00405,Thomson Medical Centre,,cCustomer,101,197791978M,SGD,2,56000.00,store@tmc.sg.example,+65 6909 6556,Singapore,SG,SPD,2023-08-06,spd.sg01
+C00406,Columbia Asia Hospital Cheras,,cCustomer,101,199501430260,MYR,2,200000.00,finance@cahc.my.example,,Cheras,MY,QTS,2023-08-16,qts.my02
+C00407,Wellspring Medical Supplies Sdn Bhd (Johor Bahru),,cCustomer,104,,MYR,3,310000.00,store@wms.my.example,(07) 917-8454,JB,MY,QTS,2023-08-17,qts.my02
+C00408,Phramongkutklao Hospital,,cCustomer,100,0105588254557,THB,3,4700000.00,admin@phramongkutklaohospital.th.example,02-727 1163,Bangkok,TH,SPD,2023-08-20,spd.th01
+C00409,Bệnh viện Trung ương Huế,,cCustomer,100,0721948309,VND,3,2500000000.00,,(0234) 383-6046,Hue,VN,SPD,2023-09-01,spd.vn02
+C00410,Permata Clinical Laboratory,,cCustomer,102,,IDR,1,190000000.00,procurement@pcl.id.example,(021) 5280-2718,Jakarta,ID,QTS,2023-09-01,qts.id01
+C00411,Maharat Nakhon Ratchasima Hospital,,cCustomer,100,0105435884241,THB,3,2000000.00,procurement@mnrh.th.example,+66 2 307 3602,Nakhon Ratchasima,TH,SPD,2023-10-05,spd.th01
+C00412,Maple Medical Supplies,,cCustomer,104,,SGD,3,110000.00,admin@mms.sg.example,6240 0877,S'pore,SG,SPD,2023-10-06,spd.sg02
+C00413,Metta Bang Na Clinic,,cCustomer,103,0105541527991,THB,-1,150000.00,admin@mbnc.th.example,(02) 838-5085,Bangkok,TH,SPD,2023-10-13,spd.th01
+C00414,ศูนย์การแพทย์อันดามัน ภูเก็ต,Andaman Medical Centre Phuket,cCustomer,101,0105451206585,THB,1,3500000.00,,076-731 012,Phuket,TH,SPD,2023-10-19,spd.th02
+C00415,Sehat Utama Hospital,,cCustomer,101,02.750.844.3-202.000,IDR,3,530000000.00,admin@suh.id.example,+62 274 699 3786,Yogyakarta,ID,QTG,2023-10-24,qtg.id03
+C00416,RSPAD Gatot Soebroto,,cCustomer,100,05.520.340.2-459.000,IDR,4,980000000.00,store@gsh.id.example,+622174260221,DKI Jakarta,ID,QTG,2023-11-07,qtg.id03
+C00417,Bệnh viện Bạch Mai,,cCustomer,100,0100894618,VND,3,1700000000.00,admin@bmh.vn.example,024-9331 8417,Hanoi,VN,QTS,2023-11-20,qts.vn03
+C00418,Pantai Hospital Ampang Sdn Bhd,,cCustomer,101,198001284329,MYR,1,160000.00,purchasing@pha.my.example,03-4168 5779,Ampang,MY,QTS,2023-12-22,qts.my03
+C00419,Columbia Asia Hospital Petaling Jaya,,cCustomer,101,200301095592,MYR,1,150000.00,admin@cahpj.my.example,(03) 7380-5221,Petaling Jaya,MY,QTG,2023-12-22,qtg.my01
+C00420,Police General Hospital,,cCustomer,100,0105609367237,THB,3,2600000.00,store@pgh.th.example,(02) 351-5411,Bangkok,TH,SPD,2024-01-29,spd.th03
+C00421,Charoensuk Lat Phrao Laboratory,,cCustomer,102,0105416768865,THB,2,560000.00,purchasing@clpl.th.example,(02) 759-0411,Bangkok,TH,SPD,2024-02-10,spd.th02
+C00422,Siriraj Hospital,,cCustomer,100,0105460515817,THB,4,3300000.00,admin@sirirajhospital.th.example,+6627382513,Bangkok,TH,QTG,2024-02-13,qtg.th03
+C00423,Cong ty Co phan Benh vien Da khoa Truong An Da Nang,,cCustomer,101,0482828415,VND,2,1400000000.00,admin@tadngh.vn.example,(0236) 492-0090,Da Nang,VN,QTG,2024-04-01,qtg.vn02
+C00424,Garuda Medika Laboratory,,cCustomer,102,084925378850000,IDR,2,220000000.00,finance@gml.id.example,021-4212 3698,Jakarta,ID,QTS,2024-04-25,qts.id03
+C00425,NUH,,cCustomer,100,197889196B,SGD,4,48000.00,lab@nuh.sg.example,,Singapore,SG,SPD,2024-05-08,spd.sg02
+C00426,โรงงพยาบาลพญาไท 1,Phyathai 1 Hospital,cCustomer,100,,THB,3,870000.00,,,Bangkok 10700,TH,QTG,2024-05-23,qtg.th02
+C00427,Thai Med Chiang Mai Hospital Company Limited,,cCustomer,101,0105428656949,THB,1,1900000.00,nurse.station87@mail.example,053-924 164,Chiangmai,TH,QTS,2024-06-01,qts.th02
+C00428,Karya Dharma Hospital - Laboratory,,cCustomer,101,09.030.402.2-738.000,IDR,1,670000000.00,,,DKI Jakarta,ID,SPD,2024-06-05,spd.id03
+C00429,Rumah Sakit Umum Daerah Dr Soetomo,,cCustomer,100,,IDR,3,1100000000.00,lab@dsgh2.id.example,,Surabaya,ID,SPD,2024-06-05,spd.id01
+C00430,Bệnh viện Bạch Mai - Laboratory,,cCustomer,100,,VND,4,660000000.00,admin@bmh.vn.example,024-9331 8417,HN,VN,QTS,2024-06-11,qts.vn01
+C00431,Jantung Harapan Kita Hospital,,cCustomer,100,02.125.852.6-874.000,IDR,4,710000000.00,finance@jhkh.id.example,(021) 5013-0225,Jakarta,ID,QTS,2024-06-21,qts.id02
+C00432,Jurong Community Hospital Ltd Pte,,cCustomer,102,201375960O,SGD,4,120000.00,accounts@jch.sg.example,68066307,Singapore,SG,SPD,2024-06-25,spd.sg02
+C00433,Hospital Tengku Ampuan Afzan,,cCustomer,100,199501030999,MYR,3,210000.00,accounts@taah.my.example,,Kuantan,MY,QTG,2024-06-29,qtg.my02
+C00434,Chonburi Hospital,,cCustomer,100,0105613924286,THB,4,1900000.00,store@chonburihospital.th.example,038-493 602,Chonburi,TH,QTG,2024-07-18,qtg.th03
+C00435,NATIONAL UNIVERSITY HOSPITAL (S) PTE. LTD.,,cCustomer,100,197889196B,SGD,3,140000.00,lab.manager74@mail.example,6896 2404,Singapore,SG,SPD,2024-07-18,spd.sg01
+C00436,Pusat Perubatan Sejahtera Sdn Bhd,,cCustomer,101,201001764430,MYR,1,76000.00,procurement@smc.my.example,+60 5-757 4385,Ipoh,MY,QTS,2024-08-03,qts.my03
+C00437,Ng Teng Fong General Hospital,,cCustomer,100,197629191K,SGD,4,66000.00,procurement@ntfgh.sg.example,65799774,Singapore,SG,QTG,2024-09-07,qtg.sg03
+C00438,King Chulalongkorn Memorial Hospital,,cCustomer,100,0105457825192,THB,4,1700000.00,,+66 2 552 5308,Bangkok,TH,SPD,2024-09-08,spd.th02
+C00439,SUPHAMIT HUA HIN HOSPITAL,,cCustomer,103,TBC,THB,1,1300000.00,,+6623504542,Hua Hin,TH,QTS,2024-09-08,qts.th03
+C00440,Bệnh viện Quốc tế Minh Khang Hải Phòng,,cCustomer,101,0984775327,VND,3,980000000.00,lab@mkhpih.vn.example,0225-643 8302,Hai Phong,VN,SPD,2024-10-10,spd.vn03
+C00441,Vitalis Laboratories (Singapore),,cCustomer,102,201857405J,SGD,1,24000.00,procurement@vitalislaboratories.sg.example,6366 8471,Singapore,SG,QTS,2024-10-16,qts.sg03
+C00442,RSUP Dr. Kariadi,,cCustomer,100,01.521.523.3-818.000,IDR,3,1200000000.00,,+62 24 5564 1709,Semarang,ID,QTG,2024-10-19,qtg.id01
+C00443,Benh vien Huu nghi Viet Duc,,cCustomer,100,0186078745,VND,3,1600000000.00,procurement@vduh.vn.example,024-4136 6205,Hanoi,VN,SPD,2024-10-22,spd.vn02
+C00444,Benh vien Da khoa Trung uong Can Tho,,cCustomer,103,0495829037,VND,4,1300000000.00,accounts@ctcgh.vn.example,,Can Tho,VN,QTS,2024-10-22,qts.vn03
+C00445,Trung tâm Xét nghiệm Tâm Đức,,cCustomer,102,0303042749,VND,1,450000000.00,admin@tdlc.vn.example,(028) 7651-6007,Ho Chi Minh City,VN,QTG,2024-10-24,qtg.vn03
+C00446,Maharaj Nakorn Chiang Mai Hospital,,cCustomer,100,0105449404713,THB,3,2300000.00,procurement@mncmh.th.example,053-738 315,Chiang Mai,TH,SPD,2024-10-25,spd.th01
+C00447,PT Laboratorium Klinik Sehat Aulia,,cCustomer,102,05.095.841.4-312.000,IDR,1,620000000.00,accounts@sacl.id.example,0341-739 0980,Malang,ID,QTS,2024-10-27,qts.id03
+C00448,Trung tam Xet nghiem Binh An,,cCustomer,102,0177533549,VND,2,350000000.00,store@balc.vn.example,+842463551982,Ha Noi,VN,SPD,2024-11-03,spd.vn01
+C00449,Udomsuk Clinic,,cCustomer,103,0105527964701,THB,-1,170000.00,finance@udomsukclinic.th.example,074-432 926,Hat Yai,TH,SPD,2024-11-14,spd.th01
+C00450,Phòng khám Đa khoa Tân Phú,Tan Phu General Clinic,cCustomer,103,0727636191,VND,1,160000000.00,store@tpgc.vn.example,+842850447328,Bien Hoa,VN,SPD,2024-11-17,spd.vn02
+C00451,Wawasan Pathology Laboratory,,cCustomer,102,,MYR,1,170000.00,procurement@wpl.my.example,+60 3-5695 0924,Petaling Jaya,MY,SPD,2024-11-19,spd.my02
+C00452,Aurora Surgical Centre Pte Ltd,,cCustomer,101,199239829J,SGD,2,44000.00,finance@asc.sg.example,6224 7356,Singapore,SG,SPD,2024-12-14,spd.sg01
+C00453,Hospital Raja Permaisuri Bainun (Ipoh),,cCustomer,100,199501094122,MYR,4,210000.00,procurement@rpbh.my.example,(05) 291-1156,Ipoh,MY,QTS,2024-12-19,qts.my02
+C00454,Pusat Perubatan Mesra,,cCustomer,101,202201155925,MYR,3,160000.00,,+60330356679,Kuala Lumpur,MY,QTS,2024-12-20,qts.my01
+C00455,Trung tâm Xét nghiệm Quang Minh,,cCustomer,102,0874997129,VND,1,400000000.00,accounts@qmlc.vn.example,028-4660 6352,Nha Trang,VN,QTS,2024-12-22,qts.vn01
+C00456,Wellspring Clinical Lab Pte Ltd,,cCustomer,102,201740952G,SGD,1,39000.00,finance@wcl.sg.example,6695 4378,Singapore,SG,SPD,2025-01-01,spd.sg02
+C00457,Phong kham Nhi BS. Chi Huong Nguyen,,cCustomer,103,0331032779,VND,-1,65000000.00,,,Ho Chi Minh City,VN,QTS,2025-01-18,qts.vn03
+C00458,Công ty TNHH Bệnh viện Quốc tế Phú Mỹ Đà Nẵng,Phu My Da Nang International Hospital,cCustomer,101,0431915181,VND,1,980000000.00,admin@pmdnih.vn.example,+84 236 831 2604,Da Nang,VN,SPD,2025-01-21,spd.vn02
+C00459,RSUP Dr. Wahidin Sudirohusodo,,cCustomer,100,008880707746000,IDR,4,1300000000.00,admin@dwsgh.id.example,(0411) 694-1164,Makassar,ID,SPD,2025-01-24,spd.id01
+C00460,คลินิกสุขสวัสดิ์ ทองหล่อ,Suksawat Thong Lo Clinic,cCustomer,103,0105523390463,THB,1,170000.00,store@stlc.th.example,+66 2 607 3577,กรุงเทพมหานคร,TH,QTG,2025-02-01,qtg.th03
+C00461,Aurora Surgical Centre,,cCustomer,101,199239829J,SGD,2,85000.00,purchasing@asc.sg.example,62247356,SINGAPORE,SG,QTS,2025-02-10,qts.sg03
+C00462,Bangkok Hosp. Pattaya,,cCustomer,101,,THB,2,1700000.00,admin@bhp.th.example,,Pattaya,TH,QTG,2025-03-10,qtg.th02
+C00463,National University Hospital (S) Pte Ltd,,cCustomer,100,197889196B,SGD,3,74000.00,procurement@nuh.sg.example,+65 6896 2404,Singapore,SG,QTS,2025-03-13,qts.sg02
+C00464,โรงพยาบาลสมิติเวช สุขุมวิท,Samitivej Sukhumvit Hospital,cCustomer,101,0105592427146,THB,1,2800000.00,admin@ssh.th.example,+6623644938,BKK,TH,QTG,2025-03-19,qtg.th03
+C00465,Pinnacle Medical Centre - Procurement,,cCustomer,101,,MYR,1,110000.00,procurement@pmc.my.example,(03) 8010-2559,Shah Alam,MY,SPD,2025-03-19,spd.my02
+C00466,Trung tâm Xét nghiệm Hồng Đức,,cCustomer,102,0931987195,VND,2,850000000.00,procurement@hdlc.vn.example,+842837663338,Nha Trang,VN,SPD,2025-03-25,spd.vn02
+C00467,Maple Diagnostics Sdn Bhd,,cCustomer,102,201101939552,MYR,1,120000.00,finance@maplediagnostics.my.example,+60387676916,Kuala Lumpur,MY,QTS,2025-03-28,qts.my02
+C00468,Starlight Pathology Lab Pte Ltd,,cCustomer,102,,SGD,1,28000.00,procurement@spl.sg.example,,Singapore 119074,SG,QTG,2025-04-02,qtg.sg02
+C00469,RSUD Dr Saiful Anwar,,cCustomer,102,003170564478000,IDR,4,470000000.00,,0341-688 6603,Malang,ID,QTS,2025-04-14,qts.id03
+C00470,Tu Du Hospital,,cCustomer,100,0323516399,VND,3,2800000000.00,,+842849211409,Ho Chi Minh City,VN,SPD,2025-04-22,spd.vn03
+C00471,Thomson Medical Center,,cCustomer,101,,SGD,1,40000.00,procurement@tmc.sg.example,,Singapore,SG,QTG,2025-04-29,qtg.sg01
+C00472,Công ty Cổ phần Bệnh viện Đa khoa Phú Mỹ,,cCustomer,101,0123338863,VND,1,550000000.00,,+84 24 5658 9051,Hà Nội,VN,QTG,2025-05-01,qtg.vn03
+C00473,Bayfront Medical Centre Sdn Bhd,,cCustomer,101,198601085413,MYR,3,270000.00,procurement@bmc2.my.example,+60 3-9426 5906,Klang,MY,SPD,2025-05-14,spd.my02
+C00474,บจก. ห้องปฏิบัติการไทยเมด จำกัด,,cCustomer,102,0105603096372,THB,1,570000.00,accounts@tml.th.example,,Krung Thep,TH,QTG,2025-05-20,qtg.th03
+C00475,Suphamit Hospital,,cCustomer,101,0105605200771,THB,3,1700000.00,store@suphamithospital.th.example,+66 2 845 5200,Bangkok,TH,SPD,2025-05-23,spd.th01
+C00476,Trung tam Xet nghiem Van Phuc Can Tho,,cCustomer,102,0882353302,VND,1,510000000.00,store@vpctlc.vn.example,+842923225884,Can Tho,VN,QTG,2025-05-31,qtg.vn02
+C00477,โรงพยาบาลศรีนครินทร์ - Khon Kaen,Srinagarind Hospital,cCustomer,100,0105493673917,THB,3,2100000.00,,+66 43 586 044,Khon Kaen,TH,SPD,2025-06-04,spd.th03
+C00478,Pusat Perubatan Bahagia,,cCustomer,101,200601928523,MYR,2,130000.00,store@bmc.my.example,+60 9-835 8752,Kuantan,MY,SPD,2025-06-10,spd.my03
+C00479,Klinik Ong Klang,,cCustomer,103,198001380433,MYR,1,15000.00,purchasing@ock.my.example,(03) 7490-1948,Klang,MY,SPD,2025-06-10,spd.my03
+C00480,Bệnh viện Mai Bạch,,cCustomer,100,,VND,4,1800000000.00,admin@bmh.vn.example,,Hà Nội,VN,QTG,2025-06-13,qtg.vn01
+C00481,Tembusu Diagnostics Sdn Bhd,,cCustomer,102,201701520537,MYR,2,94000.00,lab@tembusudiagnostics.my.example,03-5748 8333,Kuala Lumpur,MY,SPD,2025-06-21,spd.my02
+C00482,ห้องปฏิบัติการประชาสุข,Prachasuk Laboratory,cCustomer,102,0105500768401,THB,2,700000.00,accounts@prachasuklaboratory.th.example,02-458 4809,Bangkok,TH,SPD,2025-06-24,spd.th01
+C00483,Benh vien Quoc te Nam Viet,,cCustomer,101,0313924332,VND,2,820000000.00,store@nvih.vn.example,(028) 9974-2119,Ho Chi Minh City,VN,SPD,2025-06-25,spd.vn03
+C00484,Columbia Asia Hospital Cheras Sdn Bhd,,cCustomer,101,199501430260,MYR,3,150000.00,admin@cahc.my.example,03-9361 5984,Cheras,MY,QTG,2025-07-14,qtg.my03
+C00485,Hospital Putrajaya,,cCustomer,100,199801447246,MYR,4,170000.00,store@putrajayahospital.my.example,,Putrajaya,MY,QTG,2025-07-17,qtg.my01
+C00486,Khon Kaen Hospital,,cCustomer,100,0105487127459,THB,4,3000000.00,procurement@kkh.th.example,+6643808008,Khon Kaen,TH,SPD,2025-07-20,spd.th02
+C00487,Singapore General Hospital,,cCustomer,100,199969400H,SGD,4,41000.00,accounts@sgh.sg.example,62078851,Singapore,SG,SPD,2025-07-28,spd.sg01
+C00488,Bệnh viện Hùng Vương,,cCustomer,100,0317159608,VND,3,980000000.00,store@hvh.vn.example,+84 28 4152 5802,Saigon,VN,SPD,2025-08-01,spd.vn02
+C00489,Dr. Kamila Suwarno Clinic,,cCustomer,103,034407722795000,IDR,-1,110000000.00,,,Jakarta,ID,QTG,2025-08-02,qtg.id03
+C00490,Bệnh viện Thống Nhất,,cCustomer,100,0316105709,VND,4,1500000000.00,finance@tnh.vn.example,,Saigon,VN,SPD,2025-08-04,spd.vn02
+C00491,Trung tâm Xét nghiệm Nhân Ái,,cCustomer,102,0386366519,VND,1,760000000.00,admin@nalc.vn.example,(028) 8769-8454,Ho Chi Minh City,VN,QTS,2025-08-04,qts.vn02
+C00492,"Suphamit Hospital Co., Ltd.",,cCustomer,101,0105605200771,THB,2,2300000.00,,(02) 845-5200,Bangkok 10700,TH,QTS,2025-08-04,qts.th01
+C00493,Bệnh viện K,,cCustomer,100,0111831986,VND,3,1800000000.00,accounts@khospital.vn.example,+84 24 2788 2016,Hanoi,VN,SPD,2025-08-06,spd.vn02
+C00494,Trung tam Xet nghiem Thien Tam,,cCustomer,102,,VND,2,560000000.00,,+842440305675,HN,VN,QTS,2025-08-10,qts.vn03
+C00495,Bệnh viện Quốc tế Minh Khang Hải Phòng,Minh Khang Hai Phong International Hospital,cCustomer,101,0984775327,VND,2,940000000.00,,+842256438302,Hai Phong,VN,QTG,2025-08-14,qtg.vn01
+C00496,RS Citra Bakti,,cCustomer,101,06.874.126.9-688.000,IDR,1,380000000.00,procurement@cbh.id.example,031-4116 6958,Surabaya,ID,SPD,2025-08-15,spd.id02
+C00497,Benh vien Hung Vuong,,cCustomer,100,0317159608,VND,3,1400000000.00,store@hvh.vn.example,+842841525802,Saigon,VN,QTS,2025-08-15,qts.vn03
+C00498,RSUD Dr. Moewardi,,cCustomer,100,09.884.639.1-202.000,IDR,3,1100000000.00,procurement@dmgh.id.example,(021) 9901-4244,Surakarta,ID,SPD,2025-08-20,spd.id03
+C00499,Klinik Pratama Sentra Bina,,cCustomer,103,06.309.532.3-994.000,IDR,-1,96000000.00,purchasing@sbpc.id.example,(061) 8314-0036,Medan,ID,QTG,2025-08-21,qtg.id01
+C00500,Crest Women's Hosp.,,cCustomer,101,,SGD,1,36000.00,buyer62@mail.example,+65 6598 2517,Singapore 119074,SG,QTG,2025-08-21,qtg.sg02
+C00501,Nhan Ai International Hospital,,cCustomer,101,0161568915,VND,1,890000000.00,lab@naih.vn.example,+842451140251,Hanoi,VN,QTS,2025-08-25,qts.vn03
+C00502,Bệnh viện Nhi Trung ương,,cCustomer,100,0160170547,VND,3,1100000000.00,accounts@nch.vn.example,+84 24 6342 6940,HN,VN,SPD,2025-08-26,spd.vn02
+C00503,PT Rumah Saki tHusasa Sinar,,cCustomer,101,069447392060000,IDR,2,760000000.00,finance@hsh.id.example,(0341) 633-7005,Malang,ID,SPD,2025-08-27,spd.id02
+C00504,KK Women's and Children's Hospital,,cCustomer,100,199296682M,SGD,4,55000.00,accounts@kwch.sg.example,6807 7502,Singapore,SG,SPD,2025-09-05,spd.sg02
+C00505,Cong ty TNHH Xet nghiem Y khoa An Khang,,cCustomer,102,0147053834,VND,1,750000000.00,finance@aklc.vn.example,(024) 2004-3796,Hanoi,VN,SPD,2025-09-09,spd.vn02
+C00506,Hospital Sultanah Bahiyah,,cCustomer,100,199201622915,MYR,3,360000.00,store@sbh.my.example,+60 3-7771 3419,Alor Setar,MY,QTG,2025-09-22,qtg.my03
+C00507,โรงพยาบาลภูมิพลอดุลยเดช,,cCustomer,100,0105419275357,THB,4,1600000.00,lab@bah.th.example,02-974 0563,กรุงเทพมหานคร,TH,QTG,2025-09-25,qtg.th01
+C00508,Hospiyal Raja Perempuan Zainab II,,cCustomer,100,201301716831,MYR,3,480000.00,admin@rpzih.my.example,03-5793 3410,Kota Bharu,MY,QTG,2025-09-26,qtg.my03
+C00509,Prachasuk Laboratory,,cCustomer,102,0105500768401,THB,1,700000.00,procurement@prachasuklaboratory.th.example,02-458 4809,Bangkok,TH,QTG,2025-09-27,qtg.th03
+C00510,Laboratorium Klinik Husada Citra,,cCustomer,102,09.878.693.7-237.000,IDR,2,500000000.00,store@hccl.id.example,(021) 9261-3947,Tangerang,ID,SPD,2025-09-30,spd.id01
+C00511,Klinik Pratama Aulia Bunda,,cCustomer,103,08.514.974.9-838.000,IDR,-1,110000000.00,store@abpc.id.example,021-7995 9292,Jakarta,ID,SPD,2025-09-30,spd.id02
+C00512,Thong Nhat Hospital,,cCustomer,100,0316105709,VND,4,830000000.00,procurement@tnh.vn.example,+842872283347,Ho Chi Minh City,VN,QTG,2025-10-13,qtg.vn02
+C00513,Phu My Da Nang International Hospital,,cCustomer,101,0431915181,VND,1,1400000000.00,accounts@pmdnih.vn.example,0236-831 2604,Đà Nẵng,VN,QTG,2025-10-14,qtg.vn02
+C00514,"Suphamit Hospital Co., Ltd.",,cCustomer,101,0105605200771,THB,1,1800000.00,accounts@suphamithospital.th.example,+6628455200,Bangkok,TH,QTG,2025-10-15,qtg.th02
+C00515,Bệnh viện Đa khoa Bách Khoa Sài Gòn,,cCustomer,101,0375855645,VND,2,670000000.00,lab@bksggh.vn.example,028-4654 3878,Ho Chi Minh City,VN,QTG,2025-10-28,qtg.vn03
+C00516,PT RS Ihsan,,cCustomer,104,,IDR,2,820000000.00,buyer42@mail.example,(022) 5618-4535,Bandung,ID,QTG,2025-11-01,qtg.id01
+C00517,Benh vien Da khoa Bach Khoa Sai Gon,,cCustomer,101,0375855645,VND,2,1100000000.00,accounts@bksggh.vn.example,028-4654 3878,Ho Chi Minh City,VN,QTS,2025-11-03,qts.vn02
+C00518,Hong Duc Laboratory Center,,cCustomer,102,0931987195,VND,1,540000000.00,store@hdlc.vn.example,+842837663338,Nha Trang,VN,QTG,2025-11-11,qtg.vn03
+C00519,Pantai Hospital Kuala Lumpur Sdn Bhd,,cCustomer,101,200001793446,MYR,3,130000.00,admin@phkl.my.example,03-7112 6078,Kuala Lumpur,MY,QTG,2025-11-22,qtg.my02
+C00520,THIẾT BỊ Y TẾ THÀNH CÔNG,,cCustomer,103,TBC,VND,3,1800000000.00,,(0225) 801-6298,Hai Phong,VN,QTS,2025-11-27,qts.vn03
+C00521,Merlion Diagnostics Pte Ltd - Singapore,,cCustomer,102,,SGD,1,21000.00,finance@merliondiagnostics.sg.example,+65 6570 9441,Singapore 119074,SG,QTS,2025-11-28,qts.sg03
+C00522,Makmal Patologi Suria,,cCustomer,102,198001909471,MYR,1,92000.00,purchasing@spl.my.example,+6074017404,Johor Baharu,MY,QTG,2025-12-03,qtg.my03
+C00523,Merlion Diagnostics Viet Nam,,cCustomer,102,0317646294,VND,1,770000000.00,procurement@mdv.vn.example,(028) 3142-1422,Ho Chi Minh City,VN,SPD,2025-12-05,spd.vn03
+C00524,Medical Andaman Centre Penang Sdn Bhd,,cCustomer,101,199301580446,MYR,3,120000.00,lab@amcp.my.example,,Georgetown,MY,QTS,2025-12-06,qts.my03
+C00525,Trung tâm Xét nghiệm Vạn Phúc Cần Thơ,Van Phuc Can Tho Laboratory Center,cCustomer,102,0882353302,VND,1,480000000.00,lab@vpctlc.vn.example,+84 292 322 5884,Can Tho,VN,SPD,2025-12-08,spd.vn02
+C00526,Pusat Perubatan Sejahtera Sdn Bhd,,cCustomer,101,201001764430,MYR,3,230000.00,purchasing@smc.my.example,+6057574385,Ipoh,MY,SPD,2025-12-11,spd.my02
+C00527,Hospital Sultanah Bahiyah (Alor Setar),,cCustomer,100,199201622915,MYR,4,230000.00,nurse.station78@mail.example,03-7771 3419,Alor Setar,MY,QTS,2025-12-20,qts.my03
+C00528,Khon Kaen Hospital - Laboratory,,cCustomer,100,,THB,4,2800000.00,procurement@kkh.th.example,,Khon Kaen,TH,QTG,2025-12-26,qtg.th02
+C00529,Bunda Ihsan Hospital,,cCustomer,101,005799870826000,IDR,1,1300000000.00,store@bih.id.example,(031) 7544-0250,Surabaya,ID,QTG,2025-12-31,qtg.id01
+C00530,Unity Women's Hospital,,cCustomer,101,,SGD,1,70000.00,lab@uwh.sg.example,+6562524130,Singapore,SG,QTG,2026-01-07,qtg.sg02
+C00531,"Thai Med Hospital Co., Ltd.",,cCustomer,101,0105405129980,THB,1,980000.00,accounts@tmh.th.example,,BKK,TH,QTG,2026-01-17,qtg.th02
+C00532,Poliklinik Bahagia,,cCustomer,103,201501688265,MYR,1,11000.00,,(03) 6824-2441,Petaling Jaya,MY,SPD,2026-01-20,spd.my01
+C00533,Bahagia Clinic Melaka,,cCustomer,101,198001770379,MYR,1,24000.00,,,Melaka,MY,SPD,2026-01-28,spd.my03
+C00534,Brightway Specialist Hospital Pte Ltd,,cCustomer,101,201512205F,SGD,1,56000.00,admin@bsh.sg.example,,Singapore,SG,SPD,2026-01-31,spd.sg01
+C00535,Benh vien Da khoa My Duc,,cCustomer,100,0395971145,VND,3,660000000.00,accounts@mdgh.vn.example,028-2334 1477,TP. Hồ Chí Minh,VN,QTG,2026-02-01,qtg.vn01
+C00536,Phatthana Thong Lo Lab,,cCustomer,102,0105488723749,THB,2,640000.00,accounts@ptll2.th.example,+6623911700,กรุงเทพมหานคร,TH,QTS,2026-02-02,qts.th01
+C00537,Pinnacle Medical Centre,,cCustomer,101,,MYR,1,120000.00,,+60380102559,Shah Alam,MY,QTS,2026-02-03,qts.my02
+C00538,Laboratorium Klinik Amanah Pelita,,cCustomer,102,03.214.040.2-642.000,IDR,2,550000000.00,purchasing@apcl.id.example,+622157918998,DKI Jakarta,ID,QTG,2026-02-08,qtg.id03
+C00539,Rumah Sakit Umum Pusat Dr. Sitanala,,cCustomer,100,TBC,IDR,3,850000000.00,purchasing@dsgh3.id.example,,Tangerang,ID,QTG,2026-02-15,qtg.id03
+C00540,Nova Medical Supplies,,cCustomer,104,,MYR,2,240000.00,store@nms.my.example,+6088381935,Kota Kinabalu,MY,QTG,2026-02-16,qtg.my01
+C00541,PT Laboratorium Klinik Sejahtera Tirta,,cCustomer,102,05.926.002.6-124.000,IDR,2,270000000.00,lab@stcl.id.example,+62 22 7988 8799,Bandung,ID,SPD,2026-02-18,spd.id03
+C00542,Aurora Surgical Centre Pte Ltd,,cCustomer,101,199239829J,SGD,3,92000.00,procurement@asc.sg.example,+6562247356,Singapore,SG,QTG,2026-02-22,qtg.sg02
+C00543,Garuda Lab Singapore,,cCustomer,102,197465413E,SGD,1,16000.00,,+6564632756,Singapore,SG,QTS,2026-02-26,qts.sg01
+C00544,RS Citra Bakti,,cCustomer,101,068741269688000,IDR,2,440000000.00,finance@cbh.id.example,+623141166958,Surabaya,ID,QTS,2026-02-28,qts.id02
+C00545,Rsup Dr. Kariadi,,cCustomer,103,,IDR,3,1200000000.00,lab@dkgh.id.example,+622455641709,Semarang,ID,QTS,2026-03-02,qts.id03
+C00546,Bệnh viện Đa khoa Quốc tế Vinmec Central Park,,cCustomer,101,0307921915,VND,3,1300000000.00,lab@vcpih.vn.example,028-5631 2615,Ho Chi Minh City,VN,QTG,2026-03-04,qtg.vn03
+C00547,Kingfisher Pathology Lab - Singapore,,cCustomer,102,,SGD,1,7200.00,store@kpl.sg.example,,Singapore,SG,QTS,2026-03-11,qts.sg03
+C00548,RSUP Dr. Wahidin Sudirohusodo,,cCustomer,100,00.888.070.7-746.000,IDR,3,1300000000.00,,+62 411 694 1164,Makassar,ID,QTG,2026-03-12,qtg.id02
+C00549,Bệnh viện Quốc tế Trường An,Truong An International Hospital,cCustomer,101,0372568519,VND,3,870000000.00,purchasing@taih.vn.example,(028) 3838-0432,Ho Chi Minh City,VN,SPD,2026-03-12,spd.vn02
+C00550,Garuda Medika Lab,,cCustomer,102,084925378850000,IDR,2,230000000.00,procurement@gml.id.example,021-4212 3698,Jakarta,ID,QTG,2026-03-13,qtg.id01
+C00551,Klinik Aziz Johor Bahru Sdn Bhd,,cCustomer,103,199701601164,MYR,1,22000.00,procurement@acjb.my.example,+6075464587,Johor Bahru,MY,SPD,2026-03-22,spd.my03
+C00552,RSUD Pasar Minggu,,cCustomer,100,02.276.049.3-185.000,IDR,3,510000000.00,,021-4351 8731,Jakarta Pusat,ID,QTS,2026-03-22,qts.id01
+C00553,Bayfront Medical Centre Sdn Bhd,,cCustomer,101,198601085413,MYR,3,180000.00,store@bmc2.my.example,+60394265906,Klang,MY,QTG,2026-03-30,qtg.my02
+C00554,Brightway Specialist Hospital Pte Ltd,,cCustomer,101,201512205F,SGD,1,56000.00,procurement@bsh.sg.example,+6563768892,Singapore,SG,QTS,2026-04-09,qts.sg03
+C00555,PT Laboratorium Klinik Hikmah Makmur,,cCustomer,102,,IDR,1,250000000.00,purchasing@hmcl.id.example,+62 341 905 3759,Malang,ID,SPD,2026-04-20,spd.id02
+C00556,Trung tâm Xét nghiệm Minh Khang,,cCustomer,102,0342055137,VND,2,820000000.00,finance@mklc.vn.example,(028) 7138-5040,Ho Chi Minh City,VN,SPD,2026-04-23,spd.vn01
+C00557,Pusat Perubatan Mesra Sdn Bhd,,cCustomer,101,202201155925,MYR,1,160000.00,purchasing@mmc.my.example,(03) 3035-6679,Wilayah Persekutuan Kuala Lumpur,MY,SPD,2026-05-05,spd.my03
+C00558,Hospital Putrajaya - Procurement,,cCustomer,100,,MYR,4,200000.00,purchasing@putrajayahospital.my.example,+60398494807,Putrajaya,MY,QTS,2026-05-16,qts.my01
+C00559,Hospital Pulau Pinang,,cCustomer,100,199501629916,MYR,4,250000.00,store@pgh.my.example,+60 4-445 2573,Georgetown,MY,QTS,2026-05-19,qts.my03
+C00560,"Metta Bang Na Clinic Co., Ltd.",,cCustomer,104,0105541527991,THB,1,180000.00,accounts@mbnc.th.example,+6628385085,Krung Thep,TH,QTG,2026-05-22,qtg.th01
+C00561,Aziz Clinic Johor Bahru,,cCustomer,103,199701601164,MYR,1,20000.00,purchasing@acjb.my.example,07-546 4587,Johor Bahru,MY,QTG,2026-05-25,qtg.my02
+C00562,Benh vien Quoc te Truong An,,cCustomer,100,0372568519,VND,2,1400000000.00,accounts@taih.vn.example,,TP. Hồ Chí Minh,VN,SPD,2026-05-25,spd.vn03
+C00563,Brightway Specialist Hospital,,cCustomer,101,201512205F,SGD,3,94000.00,,+65 6376 8892,Singapore,SG,QTG,2026-06-04,qtg.sg01
+C00564,Benh vien Trung uong Hue,,cCustomer,100,0721948309,VND,4,1600000000.00,store@hch.vn.example,+84 234 383 6046,Hue,VN,QTG,2026-06-04,qtg.vn01
+C00565,โรงพยาบาลขอนแก่น,Khon Kaen Hospital,cCustomer,100,0105487127459,THB,4,2900000.00,admin@kkh.th.example,043-808 008,Khon Kaen,TH,QTG,2026-06-14,qtg.th01
+C00566,PP Mesra Sdn Bhd,,cCustomer,101,202201155925,MYR,2,220000.00,purchasing@mmc.my.example,,K. Lumpur,MY,SPD,2026-07-16,spd.my03
+C00567,Benh vien Thong Nhat,,cCustomer,103,0316105709,VND,3,2300000000.00,procurement@tnh.vn.example,(028) 7228-3347,Ho Chi Minh City,VN,QTS,2026-07-24,qts.vn03
+C00568,Merlion Diagnostics Việt Nam,Merlion Diagnostics Vietnam,cCustomer,102,,VND,1,470000000.00,,(028) 3142-1422,HCMC,VN,SPD,2026-08-19,spd.vn01
+C00569,Temnusu Diagnostics Sdn Bhd,,cCustomer,102,201701520537,MYR,2,120000.00,buyer94@mail.example,+60357488333,K. Lumpur,MY,QTS,2026-08-21,qts.my01
+C00570,Merlion Diag. Viet Nam,,cCustomer,102,0317646294,VND,1,600000000.00,,+842831421422,TP.HCM,VN,QTG,2026-09-22,qtg.vn01
+C00571,Brightway Specialist Hospital,,cCustomer,100,,SGD,3,50000.00,nurse.station85@mail.example,,S'pore,SG,SPD,2026-09-22,spd.sg03

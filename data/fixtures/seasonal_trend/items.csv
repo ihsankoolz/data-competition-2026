@@ -1,0 +1,16 @@
+ItemCode,ItemName,ItemType,ItemsGroupCode,PurchaseItem,SalesItem,InventoryItem,U_IVD,product_family,entity,sales_unit,unit_price_usd
+A-DEN-NS1,Rapid Dengue NS1 Ag Test Kit,itItems,101,tYES,tYES,tYES,tYES,A,SPD,box of 25,118.00
+A-DEN-IGM,Dengue IgG/IgM Rapid Test Kit,itItems,101,tYES,tYES,tYES,tYES,A,SPD,box of 25,96.00
+A-HBA-1C,HbA1c Reagent Kit,itItems,101,tYES,tYES,tYES,tYES,A,SPD,kit (200 tests),165.00
+A-CRP-QT,CRP Quantitative Reagent,itItems,101,tYES,tYES,tYES,tYES,A,SPD,kit (100 tests),72.00
+A-COV-AG,SARS-CoV-2 Antigen Rapid Test Kit,itItems,101,tYES,tYES,tYES,tYES,A,SPD,box of 25,54.00
+B-HEM-5P,5-part Haematology Analyser,itItems,102,tYES,tYES,tYES,tYES,B,QTS,unit,38500.00
+B-CHE-AUT,Automated Clinical Chemistry Analyser,itItems,102,tYES,tYES,tYES,tYES,B,QTS,unit,62000.00
+B-CEN-REF,Refrigerated Benchtop Centrifuge,itItems,102,tYES,tYES,tYES,tNO,B,QTS,unit,9800.00
+B-MIC-BIN,Binocular Laboratory Microscope,itItems,102,tYES,tYES,tYES,tNO,B,QTS,unit,4200.00
+B-BSC-II,Class II Biosafety Cabinet,itItems,102,tYES,tYES,tYES,tNO,B,QTS,unit,12500.00
+C-SVC-ANN,Annual Analyser Service Contract,itItems,103,tNO,tYES,tNO,tNO,C,QTG,contract-year,6800.00
+C-SVC-PM,Preventive Maintenance Visit,itItems,103,tNO,tYES,tNO,tNO,C,QTG,visit,950.00
+C-LIS-SUB,Lab Information System Subscription,itItems,103,tNO,tYES,tNO,tNO,C,QTG,subscription-year,11500.00
+C-INS-VAL,Installation and Validation Service,itItems,103,tNO,tYES,tNO,tNO,C,QTG,job,3200.00
+C-TRN-OPS,Operator Training Package,itItems,103,tNO,tYES,tNO,tNO,C,QTG,package,1500.00
