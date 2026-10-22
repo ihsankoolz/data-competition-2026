@@ -14,7 +14,7 @@ from typing import Any
 import httpx
 from fastapi import HTTPException
 from pydantic import ValidationError
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from services.api import bankfields, clock, dedup_service
@@ -247,42 +247,81 @@ def _failure_text(result: PublishResult) -> str:
     return f"{where} {err.message} The request is still approved; you can try again."
 
 
+def _claim(req_id: str, actor: Actor) -> None:
+    """Reserve the request for this publisher before SAP is called (committed at once), so two
+    publishes can never both create the record. Zero rows updated = someone else has it."""
+    with session_scope(write=True) as session:
+        claimed = session.execute(
+            update(m.Request)
+            .where(
+                m.Request.req_id == req_id,
+                m.Request.state == m.RequestState.APPROVED,
+                m.Request.published_by.is_(None),
+            )
+            .values(published_by=actor.user_id)
+        ).rowcount
+    if claimed != 1:
+        raise HTTPException(409, "Already being published (or already published) by someone else.")
+
+
+def _release_claim(req_id: str) -> None:
+    with session_scope(write=True) as session:
+        session.execute(
+            update(m.Request)
+            .where(m.Request.req_id == req_id, m.Request.state == m.RequestState.APPROVED)
+            .values(published_by=None)
+        )
+
+
 def publish(req_id: str, actor: Actor) -> None:
-    """Validate, call SAP outside any open write transaction, then record the outcome."""
+    """Validate, claim, call SAP outside any open write transaction, then record the outcome."""
     # 1. read and validate
     with session_scope() as session:
         req = session.get(m.Request, req_id)
         if req is None:
             raise HTTPException(404, f"There is no request {req_id}.")
-        tasks = tasks_for(session, req_id)
-        engine.check_publish_allowed(req, tasks, actor)
-        plain = bankfields.unseal(req.payload)
-        payloads: list[tuple[SapPayload, str]] = [
-            build_payload(session, req, plain, attempt) for attempt in range(MAX_CODE_ATTEMPTS)
-        ]
-
-    # 2. SAP calls (each one is audited by the publisher in its own short transaction)
-    publisher = make_publisher()
-    result: PublishResult | None = None
-    code = ""
+        engine.check_publish_allowed(req, tasks_for(session, req_id), actor)
+    _claim(req_id, actor)
+    sap_done = False
     try:
-        for payload, _code in payloads:
-            result = publisher.publish(payload, request_id=req_id)
-            if result.ok or not (result.error and result.error.code == -5002):
-                break  # -5002 = that code already exists in SAP: try the next one
-    finally:
-        publisher.close()
-    assert result is not None
-    code = result.key
-    if not result.ok:
-        raise HTTPException(502, _failure_text(result))
+        with session_scope() as session:
+            req = session.get(m.Request, req_id)
+            assert req is not None
+            plain = bankfields.unseal(req.payload)
+            payloads: list[tuple[SapPayload, str]] = [
+                build_payload(session, req, plain, attempt) for attempt in range(MAX_CODE_ATTEMPTS)
+            ]
 
-    # 3. record the outcome
-    with session_scope() as session:
+        # 2. SAP calls (each one is audited by the publisher in its own short transaction)
+        publisher = make_publisher()
+        result: PublishResult | None = None
+        try:
+            for payload, _code in payloads:
+                result = publisher.publish(payload, request_id=req_id)
+                if result.ok or not (result.error and result.error.code == -5002):
+                    break  # -5002 = that code already exists in SAP: try the next one
+        finally:
+            publisher.close()
+        if result is None or not result.ok:
+            if result is None:
+                raise HTTPException(502, "SAP did not answer. The request is still approved.")
+            raise HTTPException(502, _failure_text(result))
+        sap_done = True
+        code = result.key
+    except BaseException:
+        if not sap_done:
+            _release_claim(req_id)  # nothing was created in SAP: the next try may go ahead
+        raise
+
+    # 3. record the outcome. The claim stays if this fails: SAP already holds the record.
+    with session_scope(write=True) as session:
         req = session.get(m.Request, req_id)
-        assert req is not None
-        if req.state != m.RequestState.APPROVED:
-            raise HTTPException(409, "This request was changed while it was being published.")
+        if req is None or req.state != m.RequestState.APPROVED:
+            raise HTTPException(
+                409,
+                f"SAP accepted the record as {code}, but the request changed while it was being "
+                "published. Ask an administrator to check it.",
+            )
         engine.audit_state(
             session, req, actor.user_id, m.RequestState.PUBLISHED_INACTIVE,
             f"{actor.name} sent the record to SAP as {code} (inactive until verified)",
