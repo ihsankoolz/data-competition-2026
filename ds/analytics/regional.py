@@ -16,6 +16,8 @@ Definitions (D-009), with the stated period = the last 12 full months in the dat
 - lost-customer alert: a customer active in the period whose last PO is more than
   max(90 days, 2 x its median gap between order dates) before the period end.
 - "customer" = a raw CardCode before merge, one of our dedup clusters after merge.
+- drop-off risk and cross-sell whitespace lists (PRD S1): after merge only; definitions and
+  thresholds in `ds.analytics.accounts`.
 """
 
 from __future__ import annotations
@@ -29,7 +31,9 @@ from typing import Any, Literal
 
 import pandas as pd
 
+from ds.analytics import accounts
 from ds.analytics.golden import golden_clusters
+from ds.forecasting.bias import MIN_FAST_GROWTH
 
 View = Literal["before", "after"]
 
@@ -48,6 +52,7 @@ PRODUCT_NAMES = {
     "C": "Product C (services)",
 }
 LOST_MIN_DAYS = 90
+TOP_ACCOUNTS = 10  # rows shown in the drop-off and whitespace lists (after merge)
 
 
 # --------------------------------------------------------------------------------------------
@@ -201,6 +206,8 @@ class _Core:
     lost: pd.DataFrame
     cross_sell: float
     families: pd.Series  # customer key -> set of families in the period
+    drop_off: pd.DataFrame  # after merge only (empty before): accounts.drop_off_risk
+    whitespace: pd.DataFrame  # after merge only (empty before): accounts.whitespace
 
 
 _core_memo: dict[tuple[str, str, str | None], _Core] = {}
@@ -223,7 +230,13 @@ def _compute_core(f: _Frames, view: View, country: str | None) -> _Core:
     families = orders12.groupby(key)["family"].agg(lambda s: frozenset(s))
     cross = _pct(int((families.map(len) >= 2).sum()), len(families))
     lost = _lost(f, orders, key)
-    return _Core(orders12, len(families), nrr, bridge, lost, cross, families)
+    if view == "after":
+        drop = accounts.drop_off_risk(orders12, key, f.months, lost["key"])
+        ws = accounts.whitespace(orders12, key, [*lost["key"], *drop["key"]], PRODUCTS)
+    else:  # before merge a split customer looks fading or narrow when it is not (S1)
+        drop = accounts.drop_off_risk(orders12.iloc[:0], key, f.months, [])
+        ws = accounts.whitespace(orders12.iloc[:0], key, [], PRODUCTS)
+    return _Core(orders12, len(families), nrr, bridge, lost, cross, families, drop, ws)
 
 
 def _artefacts(f: _Frames, country: str | None) -> set[str]:
@@ -312,6 +325,26 @@ def _forecast_b(data_dir: Path) -> dict[str, float] | None:
     return None
 
 
+def _country_bias(data_dir: Path) -> list[dict[str, Any]]:
+    """Country rows (all products) of the backtest's bias_by_country, clean data; [] if absent."""
+    path = Path(data_dir).parent / "derived" / "forecast" / f"{Path(data_dir).name}_clean.json"
+    if not path.exists():
+        return []
+    run = json.loads(path.read_text(encoding="utf-8"))
+    return [r for r in run.get("bias_by_country") or [] if r.get("product") is None]
+
+
+def _bias(row: dict[str, Any], method: str) -> float | None:
+    return next((x["bias_pct"] for x in row["scores"] if x["method"] == method), None)
+
+
+def _plan_words(b: float) -> str:
+    """'13% too low' / '4% too high' / 'about right' (same wording as the forecast panel)."""
+    if abs(b) < 1.0:
+        return "about right"
+    return f"{abs(b):.0f}% too {'low' if b < 0 else 'high'}"
+
+
 def _money(x: float) -> str:
     if abs(x) >= 1e6:
         return f"US${x / 1e6:.1f}M"
@@ -390,48 +423,103 @@ def _actions(
                 }
             )
 
-    # 4. Fastest-growing test-kit market. Product A is the steady consumable, so its growth is
-    # the cleanest signal; compared year on year (12 months vs the 12 before) so that holiday
-    # dips (Lebaran, Songkran) and lumpy B/C orders cannot fake a trend.
-    a = f.orders[f.orders["family"] == "A"]
-    prior = [m - pd.DateOffset(months=12) for m in f.months]
-    best, best_delta, best_pct = None, 0.0, 0.0
-    for c in [country] if country else COUNTRIES:
-        g = a[a["country"] == c]
-        now = float(g.loc[g["month"].isin(f.months), "value"].sum())
-        before = float(g.loc[g["month"].isin(prior), "value"].sum())
-        if before > 0 and now - before > best_delta:
-            best, best_delta, best_pct = c, now - before, 100.0 * (now - before) / before
-    if best is not None:
-        out.append(
-            {
-                "title": f"Secure test-kit stock and sales cover for {COUNTRY_NAMES[best]}",
-                "detail": (
-                    f"Product A orders in {COUNTRY_NAMES[best]} grew {best_pct:+.0f}% on the "
-                    f"previous 12 months ({_money(best_delta)} more)"
-                    + (", the largest increase of any country." if not country else ".")
-                ),
-                "evidence": "Country x product heatmap (Product A, year on year)",
-            }
-        )
-
-    # 5. Cross-sell: test-kit customers with no service contract (after merge only: before
-    # merge each company's record only sees its own product, so the gap is not real).
+    # 4. After merge only: real accounts fading, and real accounts' cross-sell gaps (PRD S1).
+    # Before merge a customer split across records looks fading or narrow when it is not.
     if view == "after":
-        fam = core.families
-        a_not_c = fam[fam.map(lambda s: "A" in s and "C" not in s)]
-        if len(a_not_c):
+        drop = core.drop_off
+        if len(drop):
             out.append(
                 {
-                    "title": "Offer service contracts to test-kit customers",
+                    "title": f"Check in with the {len(drop)} customers whose orders are fading",
                     "detail": (
-                        f"{len(a_not_c)} of {core.customer_count} active customers in {where} "
-                        f"buy Product A test kits but no Product C service. Cross-sell "
-                        f"penetration is {core.cross_sell:.0f}%."
+                        f"{len(drop)} regular customers in {where} cut their test-kit and service "
+                        f"orders by half or more in the last 3 months but are not yet on the "
+                        f"lost list. Together they ordered "
+                        f"{_money(float(drop['value_at_risk'].sum()))} less than in the 3 months "
+                        f"before."
                     ),
-                    "evidence": "Cross-sell penetration",
+                    "evidence": "At risk of dropping off list",
                 }
             )
+        ws = core.whitespace
+        if len(ws):
+            out.append(
+                {
+                    "title": f"Offer the missing product line to {len(ws)} customers",
+                    "detail": (
+                        f"{len(ws)} of {core.customer_count} active customers in {where} buy "
+                        f"some of Products A, B and C but not all. If each bought its missing "
+                        f"line at what similar customers in its country spend, that is about "
+                        f"{_money(float(ws['est_value'].sum()))} a year. Cross-sell penetration "
+                        f"is {core.cross_sell:.0f}%."
+                    ),
+                    "evidence": "Cross-sell whitespace list; cross-sell penetration",
+                }
+            )
+
+    # 5. Growth adjustment for markets flagged as growing (D-021 #3): in the backtest the Excel
+    # average lags a rising market. Read from the precomputed backtest, never hard-coded.
+    flagged = sorted(
+        (
+            r
+            for r in _country_bias(data_dir)
+            if (country is None or r["country"] == country)
+            and r.get("growth_pct") is not None
+            and r["growth_pct"] >= MIN_FAST_GROWTH
+            and _bias(r, "excel_6m") is not None
+        ),
+        key=lambda r: -r["growth_pct"],
+    )
+    if flagged:
+        top = flagged[0]
+        name = COUNTRY_NAMES[top["country"]]
+        ours = _bias(top, "combination")
+        ours_txt = (
+            f" Our statistical forecast planned {_plan_words(ours)} there as well, so it does "
+            f"not fix this on its own."
+            if ours is not None
+            else ""
+        )
+        also = "".join(f" and {COUNTRY_NAMES[r['country']]}" for r in flagged[1:])
+        out.append(
+            {
+                "title": "Add an explicit growth adjustment for markets flagged as growing",
+                "detail": (
+                    f"{name}'s confirmed orders grew {top['growth_pct']:.0f}% last year, and in "
+                    f"the forecast backtest the 6-month Excel average planned {name} "
+                    f"{_plan_words(_bias(top, 'excel_6m') or 0.0)}: an average of past months "
+                    f"trails a rising market.{ours_txt} Planners should add a stated, reviewed "
+                    f"uplift for {name}{also}."
+                ),
+                "evidence": "Forecast backtest: planning bias by country",
+            }
+        )
+    else:
+        # No flagged market in scope: the fastest-growing test-kit market instead. Product A is
+        # the steady consumable, so its growth is the cleanest signal; year on year so that
+        # holiday dips (Lebaran, Songkran) and lumpy B/C orders cannot fake a trend.
+        a = f.orders[f.orders["family"] == "A"]
+        prior = [m - pd.DateOffset(months=12) for m in f.months]
+        best, best_delta, best_pct = None, 0.0, 0.0
+        for c in [country] if country else COUNTRIES:
+            g = a[a["country"] == c]
+            now = float(g.loc[g["month"].isin(f.months), "value"].sum())
+            before = float(g.loc[g["month"].isin(prior), "value"].sum())
+            if before > 0 and now - before > best_delta:
+                best, best_delta, best_pct = c, now - before, 100.0 * (now - before) / before
+        if best is not None:
+            out.append(
+                {
+                    "title": f"Secure test-kit stock and sales cover for {COUNTRY_NAMES[best]}",
+                    "detail": (
+                        f"Product A orders in {COUNTRY_NAMES[best]} grew {best_pct:+.0f}% on the "
+                        f"previous 12 months ({_money(best_delta)} more)"
+                        + (", the largest increase of any country." if not country else ".")
+                    ),
+                    "evidence": "Country x product heatmap (Product A, year on year)",
+                }
+            )
+
     # 6. Filler so there are always at least 3: open purchase requests to chase.
     if len(out) < 3:
         open_pr = e[(e["kind"] == "purchase_request") & e["month"].isin(t3)]
@@ -506,6 +594,22 @@ CAPTIONS: dict[str, dict[str, str]] = {
             "between orders, whichever is longer."
         ),
     },
+    "drop_off_risk": {
+        "title": "At risk of dropping off",
+        "caption": (
+            "Regular customers whose test-kit and service orders in the last 3 months fell to "
+            "half or less of the 3 months before, but who have not stopped yet. The dollar "
+            "figure is how much less they ordered."
+        ),
+    },
+    "cross_sell_whitespace": {
+        "title": "Cross-sell whitespace",
+        "caption": (
+            "Customers who buy some of Products A, B and C but not all. The dollar figure is "
+            "what similar customers in the same country typically spend a year on the missing "
+            "product (the median), so it is an estimate, not a forecast."
+        ),
+    },
     "panels": {
         "title": "POs, enquiries and requests",
         "caption": (
@@ -550,6 +654,30 @@ def regional_view(data_dir: Path, view: View, country: str | None = None) -> dic
         for r in lost_rows.itertuples()
     ]
     heat = _heatmap(f, core, key)
+    drop_off = [
+        {
+            "card_code": r.key,
+            "name": f.golden_names[r.key],
+            "country": r.country,
+            "last_order": f"{r.last_order:%Y-%m-%d}",
+            "value_at_risk_usd": r.value_at_risk,
+            "change_pct": r.change_pct,
+            "reason": accounts.drop_off_reason(r),
+        }
+        for r in core.drop_off.head(TOP_ACCOUNTS).itertuples()
+    ]
+    whitespace = [
+        {
+            "card_code": r.key,
+            "name": f.golden_names[r.key],
+            "country": r.country,
+            "buys": list(r.buys),
+            "missing": r.missing,
+            "est_value_usd": r.est_value,
+            "reason": accounts.whitespace_reason(r, COUNTRY_NAMES[r.country]),
+        }
+        for r in core.whitespace.head(TOP_ACCOUNTS).itertuples()
+    ]
     return {
         "view": view,
         "period": period_label(f.months),
@@ -561,6 +689,8 @@ def regional_view(data_dir: Path, view: View, country: str | None = None) -> dic
         "customer_count": core.customer_count,
         "lost_customers": lost,
         "panels": _panels(f, country),
+        "drop_off_risk": drop_off,
+        "cross_sell_whitespace": whitespace,
         "actions": _actions(f, Path(data_dir), view, country, core),
         "captions": {k: dict(v) for k, v in CAPTIONS.items()},
     }
