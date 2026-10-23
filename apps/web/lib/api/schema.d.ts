@@ -911,6 +911,44 @@ export interface components {
              */
             elapsed_ms?: number;
         };
+        /**
+         * DropOffRisk
+         * @description A real customer (after merge) whose repeat orders are fading but not yet lost (PRD S1).
+         */
+        DropOffRisk: {
+            /**
+             * Card Code
+             * @description Golden (merged) customer id
+             */
+            card_code: string;
+            /** Name */
+            name: string;
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Last Order
+             * @description YYYY-MM-DD, latest confirmed PO
+             */
+            last_order: string;
+            /**
+             * Value At Risk Usd
+             * @description Repeat (Product A + C) confirmed-PO value in the prior 3 months minus the last 3 months: the quarterly spend that has gone missing. Listed when the last 3 months are at most half the prior 3, the prior 3 were at least US$5,000, the customer ordered in at least 3 of the 9 months before, and it is not on the lost list.
+             */
+            value_at_risk_usd: number;
+            /**
+             * Change Pct
+             * @description Last 3 months vs the 3 before, % change in repeat spend (-100 = stopped)
+             */
+            change_pct: number | null;
+            /**
+             * Reason
+             * @description One plain sentence
+             */
+            reason: string;
+        };
         /** EmailDetail */
         EmailDetail: {
             /** Email Id */
@@ -1627,6 +1665,16 @@ export interface components {
              */
             panels: components["schemas"]["PanelCount"][];
             /**
+             * Drop Off Risk
+             * @description After merge: top 10 fading customers by value at risk (country filter applies). Empty before merge: a customer split across records looks like it is fading when another record is still ordering, so the account is not known yet.
+             */
+            drop_off_risk?: components["schemas"]["DropOffRisk"][];
+            /**
+             * Cross Sell Whitespace
+             * @description After merge: top 10 cross-sell gaps by estimated value (country filter applies; lost and fading customers left out). Empty before merge: each record sees only the products bought under it, so the gaps are not real.
+             */
+            cross_sell_whitespace?: components["schemas"]["WhitespaceOpportunity"][];
+            /**
              * Actions
              * @description 3-5, generated from the data
              */
@@ -1971,6 +2019,44 @@ export interface components {
              * @default []
              */
             issues?: components["schemas"]["FieldIssue"][];
+        };
+        /**
+         * WhitespaceOpportunity
+         * @description A real customer (after merge) that buys some product families but not one (PRD S1).
+         */
+        WhitespaceOpportunity: {
+            /**
+             * Card Code
+             * @description Golden (merged) customer id
+             */
+            card_code: string;
+            /** Name */
+            name: string;
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Buys
+             * @description Product families (A/B/C) bought in the last 12 months
+             */
+            buys: string[];
+            /**
+             * Missing
+             * @description The repeat family (A test kits or C services) not bought with the highest estimate. Never B: equipment is a one-off capital purchase, not a yearly spend.
+             */
+            missing: string;
+            /**
+             * Est Value Usd
+             * @description Median 12-month confirmed-PO spend on the missing family by comparable customers: same country, already buying it and at least one family this customer buys (at least 3 such customers). An estimate, not a forecast.
+             */
+            est_value_usd: number;
+            /**
+             * Reason
+             * @description One plain sentence
+             */
+            reason: string;
         };
     };
     responses: never;

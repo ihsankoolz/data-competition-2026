@@ -400,6 +400,46 @@ class RecommendedAction(BaseModel):
     evidence: str = Field(description="Which panel/metric this comes from")
 
 
+class DropOffRisk(BaseModel):
+    """A real customer (after merge) whose repeat orders are fading but not yet lost (PRD S1)."""
+
+    card_code: str = Field(description="Golden (merged) customer id")
+    name: str
+    country: CountryCode
+    last_order: str = Field(description="YYYY-MM-DD, latest confirmed PO")
+    value_at_risk_usd: float = Field(
+        ge=0,
+        description="Repeat (Product A + C) confirmed-PO value in the prior 3 months minus the "
+        "last 3 months: the quarterly spend that has gone missing. Listed when the last 3 "
+        "months are at most half the prior 3, the prior 3 were at least US$5,000, the customer "
+        "ordered in at least 3 of the 9 months before, and it is not on the lost list.",
+    )
+    change_pct: float | None = Field(
+        description="Last 3 months vs the 3 before, % change in repeat spend (-100 = stopped)"
+    )
+    reason: str = Field(description="One plain sentence")
+
+
+class WhitespaceOpportunity(BaseModel):
+    """A real customer (after merge) that buys some product families but not one (PRD S1)."""
+
+    card_code: str = Field(description="Golden (merged) customer id")
+    name: str
+    country: CountryCode
+    buys: list[str] = Field(description="Product families (A/B/C) bought in the last 12 months")
+    missing: str = Field(
+        description="The repeat family (A test kits or C services) not bought with the highest "
+        "estimate. Never B: equipment is a one-off capital purchase, not a yearly spend."
+    )
+    est_value_usd: float = Field(
+        ge=0,
+        description="Median 12-month confirmed-PO spend on the missing family by comparable "
+        "customers: same country, already buying it and at least one family this customer "
+        "buys (at least 3 such customers). An estimate, not a forecast.",
+    )
+    reason: str = Field(description="One plain sentence")
+
+
 class PanelCount(BaseModel):
     kind: Literal["confirmed_po", "enquiry", "purchase_request", "mdm_request"]
     label: str
@@ -419,6 +459,18 @@ class RegionalView(BaseModel):
     customer_count: int
     lost_customers: list[LostCustomer]
     panels: list[PanelCount] = Field(description="POs, enquiries, PRs, MDM requests: separate")
+    drop_off_risk: list[DropOffRisk] = Field(
+        default_factory=list,
+        description="After merge: top 10 fading customers by value at risk (country filter "
+        "applies). Empty before merge: a customer split across records looks like it is "
+        "fading when another record is still ordering, so the account is not known yet.",
+    )
+    cross_sell_whitespace: list[WhitespaceOpportunity] = Field(
+        default_factory=list,
+        description="After merge: top 10 cross-sell gaps by estimated value (country filter "
+        "applies; lost and fading customers left out). Empty before merge: each record sees "
+        "only the products bought under it, so the gaps are not real.",
+    )
     actions: list[RecommendedAction] = Field(description="3-5, generated from the data")
     captions: dict[str, Caption] = Field(description="Metric key -> definition")
 
