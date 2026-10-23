@@ -50,6 +50,9 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   await expect(page.getByTestId("kpi-cross-sell-after")).not.toHaveText(
     (await page.getByTestId("kpi-cross-sell-value").textContent()) ?? "",
   );
+  // Account lists (PRD S1) only make sense once duplicates are linked.
+  await expect(page.getByTestId("account-lists-before")).toContainText("Merge duplicates");
+  await expect(page.getByTestId("drop-off-list")).toHaveCount(0);
 
   // After merge: fewer alerts, none of them duplicates, fewer customers.
   await page.getByTestId("view-after").click();
@@ -61,6 +64,13 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   expect(after).toBeLessThan(before);
   await expect(lost.getByTestId("lost-row")).toHaveCount(after);
   await expect(page.getByTestId("kpi-customers-value")).not.toHaveText(customersBefore ?? "");
+  // After merge: both account lists show real accounts with a US$ value.
+  for (const list of ["drop-off-list", "whitespace-list"]) {
+    const rows = page.getByTestId(list).getByTestId("account-row");
+    await expect(rows.first()).toBeVisible();
+    await expect(rows.first()).toContainText("US$");
+  }
+  await expect(page.getByTestId("account-lists-before")).toHaveCount(0);
 
   // The country filter narrows the strip and the heatmap.
   await page.getByTestId("country-VN").click();
