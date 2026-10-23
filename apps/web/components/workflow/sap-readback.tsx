@@ -89,33 +89,41 @@ export function SapReadback({ view }: { view: SapPublishView }) {
         or re-check it by hand.
       </p>
       <div className="overflow-hidden rounded-xl border">
-        <table className="w-full text-sm">
+        {/* Fixed layout: long values wrap inside their own cell instead of widening the table,
+            and "sent" and "saved" keep equal widths so the two values line up for comparison. */}
+        <table className="w-full table-fixed text-sm" data-testid="readback-table">
+          <colgroup>
+            <col className="w-52" />
+            <col />
+            <col />
+            <col className="w-44" />
+          </colgroup>
           <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
             <tr>
               <th className="px-4 py-2 font-medium">SAP field</th>
               <th className="px-4 py-2 font-medium">What we sent</th>
               <th className="px-4 py-2 font-medium">What SAP saved</th>
-              <th className="w-44 px-4 py-2 font-medium">Match</th>
+              <th className="px-4 py-2 font-medium">Match</th>
             </tr>
           </thead>
           <tbody>
             {view.rows.map((r) => (
               <tr
                 key={r.field}
-                className={cn("border-t", !r.match && "bg-destructive/5")}
+                className={cn("border-t align-top", !r.match && "bg-destructive/5")}
                 data-testid="readback-row"
                 data-match={r.match ? "true" : "false"}
               >
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 wrap-anywhere">
                   <span className="font-mono text-xs">{r.field}</span>
                   {GLOSS[r.field] && (
                     <span className="block text-xs text-muted-foreground">{GLOSS[r.field]}</span>
                   )}
                 </td>
-                <td className="px-4 py-2 break-all">
+                <td className="px-4 py-2 wrap-anywhere">
                   <Value value={r.sent} />
                 </td>
-                <td className="px-4 py-2 break-all">
+                <td className="px-4 py-2 wrap-anywhere">
                   <Value value={r.read_back} />
                 </td>
                 <td className="px-4 py-2">
@@ -151,10 +159,10 @@ function Value({ value }: { value: string | null }) {
   if (value === null || value === "") return <Empty />;
   if (!looksMasked(value)) return <>{value}</>;
   return (
-    <span className="inline-flex items-center gap-1.5 tabular-nums" data-testid="masked-value">
-      {value}
+    <span className="tabular-nums" data-testid="masked-value">
+      {value}{" "}
       <Lock
-        className="size-3 text-muted-foreground"
+        className="inline size-3 align-[-0.125em] text-muted-foreground"
         aria-label="Hidden: only Finance sees bank details"
       />
     </span>

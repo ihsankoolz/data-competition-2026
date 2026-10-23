@@ -156,6 +156,34 @@ test("one field differs: shown as a red row and the record is not switched on", 
   await expect(pane.locator('[data-testid="readback-row"][data-match="true"]')).toHaveCount(4);
 });
 
+test("long values wrap inside their cells: no sideways scrolling at 1440 wide", async ({
+  page,
+}) => {
+  const long =
+    "Lot 12, Jalan Tun Razak Medical Precinct, Tower B Level 23 Unit 23-01/23-08, ".repeat(3);
+  const rows: Row[] = [
+    ...ROWS,
+    { field: "BPAddresses[0].Street", sent: long, read_back: long, match: true },
+    {
+      field: "EmailAddress",
+      sent: "x".repeat(120) + "@example.com",
+      read_back: "x".repeat(120) + "@example.com",
+      match: true,
+    },
+  ];
+  await stub(page, { inPublish: view(rows), readback: null });
+  const pane = await publish(page);
+
+  const table = pane.getByTestId("readback-table");
+  await expect(table).toBeVisible();
+  const fits = await table.evaluate((t) => t.scrollWidth <= t.parentElement!.clientWidth);
+  expect(fits).toBe(true);
+  const pageScroll = await page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+  );
+  expect(pageScroll).toBe(true);
+});
+
 test("no read-back in the publish answer: it is fetched from /sap-readback", async ({ page }) => {
   await stub(page, { inPublish: null, readback: view(ROWS) });
   const pane = await publish(page);
