@@ -217,7 +217,14 @@ export function RegionalView() {
                 <Kpi
                   testId="kpi-cross-sell"
                   value={pct(data.cross_sell_pct)}
-                  label="of customers buy 2 or more product lines"
+                  // D-021: the before-merge figure is meant to be low; the after-merge figure
+                  // sits beside it so the gain from the golden record is the thing you read.
+                  after={view === "before" ? pct(pair.after.cross_sell_pct) : undefined}
+                  label={
+                    view === "before"
+                      ? "of customers buy 2 or more product lines, before and after merge"
+                      : `of customers buy 2 or more product lines (${pct(pair.before.cross_sell_pct)} before merge)`
+                  }
                   caption={captionOf(captions, "cross_sell_pct", {
                     title: "Cross-sell penetration",
                     caption: "Share of active customers buying at least 2 of Products A, B and C.",
@@ -233,14 +240,12 @@ export function RegionalView() {
                   })}
                 />
               </dl>
-              {view === "before" && data.cross_sell_pct === 0 && (
+              {view === "before" && pair.after.cross_sell_pct > data.cross_sell_pct && (
                 <p
-                  className="-mt-2 border-l-2 border-warning pl-3 text-xs text-muted-foreground"
+                  className="-mt-2 border-l-2 border-success pl-3 text-xs text-muted-foreground"
                   data-testid="cross-sell-note"
                 >
-                  <span className="font-medium text-foreground">Why cross-sell shows 0%: </span>
-                  in this synthetic data each company keeps its own record of a customer and sells
-                  one product line, so before merging no record buys two. 0% is expected.
+                  {"Before the golden record, you can't see who your cross-sell customers are."}
                 </p>
               )}
               <div className="flex flex-col gap-1">
@@ -315,11 +320,14 @@ function Kpi({
   label,
   caption,
   testId,
+  after,
 }: {
   value: string;
   label: string;
   caption: Schema<"Caption">;
   testId: string;
+  /** The after-merge value, shown large beside the before-merge value. */
+  after?: string;
 }) {
   return (
     <div className="flex flex-col gap-1" data-testid={testId}>
@@ -327,8 +335,21 @@ function Kpi({
         {caption.title}
         <MetricInfo caption={caption} />
       </dt>
-      <dd className="text-2xl font-semibold tabular-nums" data-testid={`${testId}-value`}>
-        {value}
+      <dd className="flex flex-wrap items-baseline gap-x-1.5 text-2xl font-semibold tabular-nums">
+        <span
+          className={cn(after !== undefined && "text-muted-foreground")}
+          data-testid={`${testId}-value`}
+        >
+          {value}
+        </span>
+        {after !== undefined && (
+          <>
+            <span className="text-sm font-normal text-muted-foreground">to</span>
+            <span className="text-success-foreground" data-testid={`${testId}-after`}>
+              {after}
+            </span>
+          </>
+        )}
       </dd>
       <dd className="text-xs text-muted-foreground">{label}</dd>
     </div>
