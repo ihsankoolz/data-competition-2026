@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Public_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 
 import { AppHeader } from "@/components/shell/app-header";
 import { ClockProvider } from "@/components/shell/clock-provider";
@@ -10,14 +10,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
 
-const sans = Public_Sans({
+// Sage theme type pair (D-021): Plus Jakarta Sans for UI text, IBM Plex Mono for codes and IDs.
+// Both ship Vietnamese glyphs (hospital names such as "Chợ Rẫy").
+const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin", "latin-ext", "vietnamese"],
 });
 
-const mono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const mono = IBM_Plex_Mono({
+  variable: "--font-mono",
+  weight: ["400", "500", "600"],
+  subsets: ["latin", "latin-ext", "vietnamese"],
 });
 
 export const metadata: Metadata = {
@@ -54,7 +57,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </div>
             </ClockProvider>
           </PersonaProvider>
-          <Toaster position="bottom-right" />
+          {/* Bottom-right, away from the notifications bell in the top-right header; at most
+              three stacked so a burst of toasts never climbs up to the header. */}
+          <Toaster position="bottom-right" visibleToasts={3} />
         </TooltipProvider>
       </body>
     </html>

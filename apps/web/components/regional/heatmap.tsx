@@ -9,22 +9,26 @@ import { countryName } from "@/lib/format";
 
 type HeatCell = Schema<"HeatCell">;
 
-// One-hue sequential ramp (dataviz reference blue, steps 100-650). Light = small, dark = large.
+// One-hue sequential green ramp on the sage primary hue (~133). Light = small, dark = large.
+// Lightness falls in even steps; chroma peaks mid-ramp so the light end stays calm and the dark
+// end stays deep rather than neon. Same ramp in light and dark mode.
 const RAMP = [
-  "#cde2fb",
-  "#b7d3f6",
-  "#9ec5f4",
-  "#86b6ef",
-  "#6da7ec",
-  "#5598e7",
-  "#3987e5",
-  "#2a78d6",
-  "#256abf",
-  "#1c5cab",
-  "#184f95",
-  "#104281",
+  "oklch(0.95 0.03 133)",
+  "oklch(0.91 0.045 133)",
+  "oklch(0.87 0.06 133)",
+  "oklch(0.83 0.075 133)",
+  "oklch(0.79 0.085 133)",
+  "oklch(0.74 0.095 133)",
+  "oklch(0.69 0.1 133)",
+  "oklch(0.63 0.1 133)",
+  "oklch(0.57 0.095 134)",
+  "oklch(0.51 0.09 134)",
+  "oklch(0.45 0.08 135)",
+  "oklch(0.39 0.07 135)",
 ];
-const DARK_TEXT_FROM = 6; // steps from here on carry white text
+// Steps from here on carry white text: white on L 0.57 is about 4.6:1, on the darkest step about
+// 9:1. Below it, near-black text on L 0.63 is about 7:1.
+const DARK_TEXT_FROM = 8;
 
 const COUNTRIES = ["SG", "MY", "ID", "VN", "TH"] as const;
 const PRODUCTS = ["A", "B", "C"] as const;
