@@ -162,6 +162,8 @@ test("likely duplicate: side by side, submit blocked, link to existing", async (
   await expect(page.getByTestId("submit")).toBeDisabled();
   await expect(page.getByTestId("submit-hint")).toContainText("decide on the likely duplicate");
 
+  // The action is on screen at 1440x900 without scrolling (recorded demo).
+  await expect(panel.getByTestId("link-C00084")).toBeInViewport({ ratio: 1 });
   await panel.getByTestId("link-C00084").click();
   const linked = panel.getByTestId("linked");
   await expect(linked).toContainText("Linked to Bệnh viện Chợ Rẫy (C00084).");
