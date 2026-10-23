@@ -42,7 +42,14 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   await expect(lost.getByTestId("lost-row")).toHaveCount(before);
   await expect(lost.getByTestId("duplicate-marker")).toHaveCount(markers);
   const customersBefore = await page.getByTestId("kpi-customers-value").textContent();
-  await expect(page.getByTestId("cross-sell-note")).toContainText("0% is expected");
+  // Before merge cross-sell is meant to be low; the after-merge figure sits beside it.
+  await expect(page.getByTestId("cross-sell-note")).toHaveText(
+    "Before the golden record, you can't see who your cross-sell customers are.",
+  );
+  await expect(page.getByTestId("kpi-cross-sell-after")).toHaveText(/\d+%/);
+  await expect(page.getByTestId("kpi-cross-sell-after")).not.toHaveText(
+    (await page.getByTestId("kpi-cross-sell-value").textContent()) ?? "",
+  );
 
   // After merge: fewer alerts, none of them duplicates, fewer customers.
   await page.getByTestId("view-after").click();

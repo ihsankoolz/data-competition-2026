@@ -66,5 +66,8 @@ test("DEMO-01 from the email: pre-filled with source quotes, then caught", async
   );
   await expect(page.getByLabel("Tax ID")).toHaveValue("0301234567");
 
-  await expectLikelyChoRay(page);
+  const { candidate } = await expectLikelyChoRay(page);
+  // With the pre-fill note above the form, the link action is still on screen at 1440x900.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(candidate.getByTestId("link-C00084")).toBeInViewport({ ratio: 1 });
 });

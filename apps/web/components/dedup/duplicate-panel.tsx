@@ -499,20 +499,8 @@ function PanelBody({
               {c.verdict === "likely" ? "Likely the same" : "Possibly the same"}
             </Badge>
           </div>
-          <ComparisonTable rows={rowsFor(c, typed, entity, country)} cardCode={c.CardCode} />
-          {c.reasons && c.reasons.length > 0 && (
-            <div className="flex flex-col gap-1">
-              <p className="text-xs text-muted-foreground">Why we think so</p>
-              <ul className="flex flex-col gap-1 text-sm" data-testid="reasons">
-                {c.reasons.map((r) => (
-                  <li key={`${r.layer}-${r.text}`} className="flex items-start gap-2">
-                    <Check className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-                    {r.text}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* The action sits above the evidence so it is on screen at 1440x900 without scrolling;
+              the comparison and reasons below back it up. */}
           <div>
             <Button
               onClick={() => onLink(c.CardCode)}
@@ -527,6 +515,20 @@ function PanelBody({
               Link to existing {c.CardCode}
             </Button>
           </div>
+          <ComparisonTable rows={rowsFor(c, typed, entity, country)} cardCode={c.CardCode} />
+          {c.reasons && c.reasons.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <p className="text-xs text-muted-foreground">Why we think so</p>
+              <ul className="flex flex-col gap-1 text-sm" data-testid="reasons">
+                {c.reasons.map((r) => (
+                  <li key={`${r.layer}-${r.text}`} className="flex items-start gap-2">
+                    <Check className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                    {r.text}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </article>
       ))}
 
