@@ -447,9 +447,10 @@ def _actions(
                 {
                     "title": f"Offer the missing product line to {len(ws)} customers",
                     "detail": (
-                        f"{len(ws)} of {core.customer_count} active customers in {where} buy "
-                        f"some of Products A, B and C but not all. If each bought its missing "
-                        f"line at what similar customers in its country spend, that is about "
+                        f"{len(ws)} of {core.customer_count} active customers in {where} do not "
+                        f"buy test kits (Product A) or services (Product C) that similar "
+                        f"customers buy. If each bought its missing line at what similar "
+                        f"customers in its country spend, that is about "
                         f"{_money(float(ws['est_value'].sum()))} a year. Cross-sell penetration "
                         f"is {core.cross_sell:.0f}%."
                     ),
@@ -605,9 +606,10 @@ CAPTIONS: dict[str, dict[str, str]] = {
     "cross_sell_whitespace": {
         "title": "Cross-sell whitespace",
         "caption": (
-            "Customers who buy some of Products A, B and C but not all. The dollar figure is "
-            "what similar customers in the same country typically spend a year on the missing "
-            "product (the median), so it is an estimate, not a forecast."
+            "Customers missing test kits (Product A) or services (Product C) that similar "
+            "customers buy. The dollar figure is what similar customers in the same country "
+            "typically spend a year on the missing product (the median), so it is an estimate, "
+            "not a forecast. Equipment is left out: it is a one-off purchase."
         ),
     },
     "panels": {
