@@ -29,12 +29,12 @@
 
 ## 4. Target demo storyline (2:30 video)
 
-1. **0:00 — The messy inbox.** Show 60 real-looking emails in mixed wording and languages. One click: each is classified (PO / purchase request / enquiry / follow-up / MDM request) and key fields are extracted with the source quote highlighted.
+1. **0:00 — The messy inbox.** Show 88 real-looking emails in mixed wording and languages. One click: each is classified (PO / purchase request / enquiry / follow-up / MDM request) and key fields are extracted with the source quote highlighted.
 2. **0:25 — Marcus (new BU, Vietnam).** His email asks for a new customer "Benh vien Cho Ray". The interpreter pre-fills the form. The duplicate panel shows "Bệnh viện Chợ Rẫy (SPD, VN), same tax ID". He links to the existing record. The duplicate never reaches an approver.
 3. **0:55 — Amy (item request).** The form requires the per-country registration fields. Quality/Regulatory is auto-routed. Approvers are notified **in parallel**. Amy's status page shows exactly who is pending.
-4. **1:20 — Wei Jie.** Fast-forward the simulated clock to day 2. He gets a reminder. Bank details are masked for everyone except Finance. He approves. The audit log shows who, what, when.
+4. **1:20 — Wei Jie (DEMO-07 vendor, D-021).** Procurement's email asks for a new vendor, Precision Diagnostics Asia, with bank details in the body. The bank details are stripped before the AI reads the email; they are entered in the secure form instead. Fast-forward the simulated clock to day 2: Wei Jie gets a reminder. The bank details are visible only to Finance and masked for everyone else (switch to Daniel to show it). He approves. The audit log shows who, what, when. (Finance is routed on customers and vendors only, so Wei Jie is not on Amy's item.)
 5. **1:40 — Priya.** One click: publish to the SAP B1 mock (`POST /b1s/v2/BusinessPartners`). The read-back matches. No re-keying.
-6. **1:55 — Regional view.** Toggle "before merge" vs "after merge". Fake "lost customers" disappear. Growth by country × product changes. The forecast panel shows Excel average vs our method, including the scenario where the Excel average wins.
+6. **1:55 — Regional view.** Toggle "before merge" vs "after merge". The customer count drops (duplicates collapse into one golden record), fake "lost customer" alerts disappear, and retention (NRR) rises. The heatmap totals do not change: merging fixes who the customer is, not how much was sold. Cross-sell shows 0% before merge next to the after-merge % ("Before the golden record, you can't see who your cross-sell customers are"). After merge, the drop-off risk and cross-sell whitespace lists give USD per account. The forecast panel shows Excel average vs our method, including the scenario where the Excel average wins.
 7. **2:20 — Close.** "Amy's 18 days becomes about 4 (modelled). X of Y 'lost customers' were duplicates. Pilot one BU in 6 weeks; email stops for that BU on day 30."
 
 ## 5. Scope

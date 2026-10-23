@@ -15,7 +15,7 @@ ENV_VARS := LLM_MODE ANTHROPIC_API_KEY LLM_MODEL_FAST LLM_MODEL_JUDGE FIELD_ENCR
 $(foreach v,$(ENV_VARS),$(eval $(v) := $(strip $($(v)))))
 export $(foreach v,$(ENV_VARS),$(if $($(v)),$(v)))
 
-.PHONY: setup data fixtures dev dev-api dev-sap dev-web reset-demo test test-py test-web e2e eval api-types record stop
+.PHONY: setup data fixtures dev dev-api dev-sap dev-web reset-demo test test-py test-web e2e rehearse eval api-types record stop
 
 setup:            ## install Python (uv) and Node deps
 	uv sync
@@ -53,6 +53,9 @@ test-web:
 
 e2e:              ## Playwright suite: starts its own SAP mock, API and web on 8101/8100/3100, then stops them. One spec: make e2e E2E_ARGS=dup-panel
 	cd $(WEB) && "$(NODE)" e2e/run.mjs $(E2E_ARGS)
+
+rehearse:         ## timed 2:30 demo walkthrough + 1440x900 screenshots -> apps/web/test-results/rehearse (not in make e2e)
+	cd $(WEB) && REHEARSE=1 "$(NODE)" e2e/run.mjs walkthrough
 
 eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
 	LLM_MODE=replay uv run python notebooks/eval_dedup.py

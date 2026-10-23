@@ -2,6 +2,34 @@
 
 Sections are added as the demo is rehearsed. The main storyline lives in `docs/PRD.md` (DEMO-01 to DEMO-08); this file holds the walk-through beats that are optional.
 
+Rehearse the main path with `make rehearse`: it walks steps 1–7, prints per-step timings against the 2:30 budget, and saves 1440x900 screenshots to `apps/web/test-results/rehearse/`.
+
+## Beat 1: the messy inbox
+
+**Say:** "88 real-looking emails: mixed wording, languages and scripts. One click sorts them all." (88, not 60: D-021.)
+
+## Beat 4: Wei Jie, Finance (DEMO-07 vendor, D-021)
+
+**Set-up (off camera):** the Precision Diagnostics Asia vendor request, with its bank rows entered in the secure form, is already submitted. `make rehearse` pre-stages it the same way.
+
+**Steps:**
+
+1. In the messy inbox, open **DEMO-07** ("New vendor - Precision Diagnostics Asia") and read it with AI. Point at the line: *"Bank details in this email were removed before the AI read it. They are never sent to the AI, and only Finance can see them."*
+2. Click **+1 day**. The clock shows Day 2.
+3. Switch to **Wei Jie**. The bell shows a reminder. Open it: the vendor request, with the bank details in full.
+4. Switch to **Daniel** (BU head): the same bank details are masked. Switch back to Wei Jie.
+5. Wei Jie approves. Point at the audit log: who, what, when.
+
+**Say:** "The AI never sees bank details, and nothing in an email can change them. Only Finance sees the account number, and the reminder came from the system on day 2, not from someone chasing by email."
+
+**Why not Amy's item:** Finance is routed on customer and vendor requests only. Amy's malaria kit goes to the BU head, Business Support and Quality/Regulatory per country.
+
+## Beat 6: the merge toggle
+
+**Say, while toggling before → after merge:** "Same sales, cleaner customers. The customer count drops from 423 to 319, because duplicates collapse into one golden record. 'Lost customer' alerts drop from 63 to 35: 30 of the 63 were false alarms, the same customer still ordering under another record. Retention (NRR) rises from 80.7% to 91.0%. The heatmap totals don't change: merging fixes *who* the customer is, not how much we sold."
+
+**Then point at cross-sell:** 0% before merge, the after-merge % next to it. "Before the golden record, you can't see who your cross-sell customers are." The drop-off risk and cross-sell whitespace lists (after merge only) give a USD value per account.
+
 ## Optional beat: lapsed licence
 
 **What it shows:** an incomplete or out-of-date submission is stopped at the door, before any approver sees it (the brief's question "how do you stop incomplete submissions before an approver?", D-018 item 3). About 40 seconds.

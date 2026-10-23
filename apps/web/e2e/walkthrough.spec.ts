@@ -1,8 +1,8 @@
 /**
- * TEMPORARY persona walkthrough of the 2:30 demo storyline (PRD section 4, steps 1-7).
- * Not part of the suite: never commit. Records per step: machine time, clicks, keystrokes,
- * a full-page screenshot, console errors and failed API responses. A failing step is logged
- * and the walk carries on, so one bug does not hide the rest.
+ * Timed persona walkthrough of the 2:30 demo storyline (PRD section 4, steps 1-7).
+ * Rehearsal tool: run by `make rehearse` only, never by `make e2e` (D-021). Records per step:
+ * machine time, clicks, keystrokes, 1440x900 screenshots, console errors and failed API
+ * responses. A failing step is logged and the walk carries on, so one bug does not hide the rest.
  */
 import fs from "node:fs";
 
@@ -10,7 +10,7 @@ import { expect, type Locator, type Page, test } from "@playwright/test";
 
 import { actAs, resetClock } from "./workflow-helpers";
 
-const OUT = "C:/Users/ihsan/.claude/jobs/dbc79bcd/tmp/walk";
+const OUT = process.env.REHEARSE_OUT ?? "test-results/rehearse";
 fs.mkdirSync(OUT, { recursive: true });
 
 type Rec = {
@@ -316,6 +316,20 @@ test("persona walkthrough", async ({ page, request }) => {
     "4 Wei Jie",
     page,
     async () => {
+      // D-021: the Finance beat is the DEMO-07 vendor. Bank details are stripped before the AI
+      // reads the email; the vendor request with bank rows is pre-staged above (secure form).
+      await click(page.getByRole("link", { name: "Messy inbox", exact: true }));
+      const demo07 = page.getByTestId("inbox-DEMO-07");
+      await machine(() => expect(page.getByTestId("email-list").locator("li").first()).toBeVisible());
+      if (!(await demo07.isVisible())) await type(page.getByLabel("Search emails"), "Precision");
+      await click(demo07);
+      const pane07 = page.getByTestId("email-pane");
+      const read07 = pane07.getByTestId("read-with-ai");
+      if (await read07.isVisible()) await click(read07);
+      await machine(() =>
+        expect(pane07.getByText(/Bank details in this email were removed/)).toBeVisible(),
+      );
+      await shot(page, "04-0-demo07-bank-stripped", false);
       await click(page.getByRole("button", { name: "+1 day" }));
       await machine(() => expect(page.getByTestId("sim-clock-day")).toContainText("Day 2"));
       note("clock: " + (await txt(page.getByTestId("sim-clock-time"))));
@@ -548,8 +562,27 @@ test("persona walkthrough", async ({ page, request }) => {
     "07",
   );
 
+  // Screens the storyline does not visit, for the theme review (1440x900 viewport).
+  for (const [name, url] of [
+    ["08-approvals", "/approvals"],
+    ["08-requests", "/requests"],
+    ["08-admin", "/admin"],
+  ]) {
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+    await page.screenshot({ path: `${OUT}/${name}.png` });
+  }
+
   fs.writeFileSync(OUT + "/log.json", JSON.stringify(records, null, 2));
   console.log("WALKTHROUGH_LOG_START\n" + JSON.stringify(records, null, 1) + "\nWALKTHROUGH_LOG_END");
+  const total = records.reduce((s, r) => s + r.wallMs, 0);
+  console.log(
+    "REHEARSE_TIMINGS\n" +
+      records
+        .map((r) => `${r.step.padEnd(36)} ${(r.wallMs / 1000).toFixed(1)}s` + (r.failure ? "  FAIL" : ""))
+        .join("\n") +
+      `\nTOTAL machine+scripted ${(total / 1000).toFixed(1)}s vs 150s budget (no narration pauses)`,
+  );
 });
 
 test("cold regional after reset", async ({ request }) => {
