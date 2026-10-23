@@ -33,7 +33,18 @@ test("reset demo asks first, then reports how long it took", async ({ page }) =>
 
   await page.getByTestId("reset-demo").click();
   await page.getByTestId("reset-demo-confirm").click();
-  await expect(page.getByText("Demo reset in 1.2 seconds")).toBeVisible();
+  const toast = page.getByText("Demo reset in 1.2 seconds");
+  await expect(toast).toBeVisible();
+  // The toast never sits on top of the notifications bell in the header.
+  const bell = await page.getByTestId("notifications-bell").boundingBox();
+  const box = await page.locator("[data-sonner-toast]").first().boundingBox();
+  expect(bell && box).toBeTruthy();
+  const overlaps =
+    box!.x < bell!.x + bell!.width &&
+    bell!.x < box!.x + box!.width &&
+    box!.y < bell!.y + bell!.height &&
+    bell!.y < box!.y + box!.height;
+  expect(overlaps).toBe(false);
   await expect(page.getByRole("dialog")).toBeHidden();
   expect(calls).toBe(1);
 });
