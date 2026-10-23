@@ -26,9 +26,9 @@ const RAMP = [
   "oklch(0.45 0.08 135)",
   "oklch(0.39 0.07 135)",
 ];
-// Steps from here on carry white text: white on L 0.57 is about 4.6:1, on the darkest step about
-// 9:1. Below it, near-black text on L 0.63 is about 7:1.
-const DARK_TEXT_FROM = 8;
+// Steps from here on carry white text: white on L 0.51 is above 4.5:1, on the darkest step about
+// 9:1. Below it, near-black text wins (on L 0.57 black is about 4.9:1, white only 4.3:1).
+const DARK_TEXT_FROM = 9;
 
 const COUNTRIES = ["SG", "MY", "ID", "VN", "TH"] as const;
 const PRODUCTS = ["A", "B", "C"] as const;
