@@ -24,3 +24,6 @@ data/e2e.db-*
 .claude/worktrees/
 data/app.db-wal
 data/app.db-shm
+
+# Claude Code personal settings (also in the global ignore; repo goes public)
+.claude/settings.local.json
