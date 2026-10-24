@@ -6,7 +6,11 @@ Rehearse the main path with `make rehearse`: it walks steps 1–7, prints per-st
 
 ## Beat 1: the messy inbox
 
-**Say:** "88 real-looking emails: mixed wording, languages and scripts. One click sorts them all." (88, not 60: D-021.)
+**Steps:** open **DEMO-01** (Marcus's "Benh vien Cho Ray" email) and click **Read this email**. Over about 1.5 seconds each detail appears with its source words lit up in the email, then the category, then what is missing. Then click **Sort all**.
+
+**Say, while it reads:** "Watch the AI read one: every detail it pulls out points at the exact words it came from. Nothing is guessed." Then: "88 real-looking emails: mixed wording, languages and scripts. One click sorts them all." (88, not 60: D-021.)
+
+**If asked about the badge "Replaying a recorded AI response":** the AI's answer for this exact email was recorded earlier, so the live demo behaves the same every time, even without the internet (D-010, D-023). The trace replays that answer; the details still come only from words in the email. Under "reduce motion" settings everything appears at once.
 
 ## Beat 4: Wei Jie, Finance (DEMO-07 vendor, D-021)
 
