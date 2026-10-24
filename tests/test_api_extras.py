@@ -31,7 +31,17 @@ REGIONAL = {
     "period": "Oct 2025 - Sep 2026 (last 12 full months)",
     "country": None,
     "heatmap": [
-        {"country": "VN", "product": "A", "value_usd": 10.0, "growth_pct": None, "growth_12m_pct": None, "customers": 3}
+        {
+            "country": "VN",
+            "product": "A",
+            "value_usd": 10.0,
+            "growth_pct": None,
+            "growth_12m_pct": None,
+            "customers": 3,
+        }
+    ],
+    "country_growth": [
+        {"country": "VN", "value_usd": 10.0, "prior_value_usd": 0.0, "growth_12m_pct": None}
     ],
     "nrr_pct": 101.5,
     "bridge": [{"step": "start", "value_usd": 100.0, "customers": 5}],

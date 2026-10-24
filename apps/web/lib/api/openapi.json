@@ -2288,6 +2288,52 @@
         "title": "CountryBias",
         "description": "D-020 item 1: forecast bias per country, next to how fast that market grew."
       },
+      "CountryGrowth": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "value_usd": {
+            "type": "number",
+            "title": "Value Usd",
+            "description": "Confirmed-PO value in the last 12 full months, in US dollars"
+          },
+          "prior_value_usd": {
+            "type": "number",
+            "title": "Prior Value Usd",
+            "description": "Confirmed-PO value in the 12 months before that, in US dollars"
+          },
+          "growth_12m_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth 12M Pct",
+            "description": "Last 12 full months compared with the 12 before, as a % change (rounded to 0.1); None if the country had no sales in the 12 months before"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "value_usd",
+          "prior_value_usd",
+          "growth_12m_pct"
+        ],
+        "title": "CountryGrowth",
+        "description": "One country's 12-month growth, all products together (the Southeast Asia map, D-024 #5).\nA total, so it is the same before and after merge."
+      },
       "CycleTimeStat": {
         "properties": {
           "process": {
@@ -4074,6 +4120,14 @@
             "type": "array",
             "title": "Heatmap"
           },
+          "country_growth": {
+            "items": {
+              "$ref": "#/components/schemas/CountryGrowth"
+            },
+            "type": "array",
+            "title": "Country Growth",
+            "description": "12-month growth per country, one row for each of the five countries whatever the country filter (it drives the map, which always shows all five)"
+          },
           "nrr_pct": {
             "type": "number",
             "title": "Nrr Pct",
@@ -4170,6 +4224,7 @@
           "view",
           "period",
           "heatmap",
+          "country_growth",
           "nrr_pct",
           "bridge",
           "cross_sell_pct",

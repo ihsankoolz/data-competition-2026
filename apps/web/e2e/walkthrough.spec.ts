@@ -574,6 +574,13 @@ test("persona walkthrough", async ({ page, request }) => {
       note("lost-count (after): " + (await txt(page.getByTestId("lost-count"))));
       await shot(page, "06b-regional-after");
       await shot(page, "06b-regional-after-viewport", false);
+      // Stretch S2: the Southeast Asia map beside the heatmap, scrolled just far enough to show
+      // all of it (the merge strip's foot stays in view).
+      const map = page.getByTestId("sea-map");
+      await machine(() => expect(map).toHaveAttribute("data-drawn", "true"));
+      note("map: " + (await map.getAttribute("aria-label")));
+      await page.getByTestId("sea-map-panel").scrollIntoViewIfNeeded();
+      await shot(page, "06c-regional-map", false);
       const fp = page.getByTestId("forecast-panel");
       await fp.scrollIntoViewIfNeeded();
       cur.clicks += 1;
