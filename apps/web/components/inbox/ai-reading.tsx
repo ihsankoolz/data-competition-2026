@@ -185,14 +185,31 @@ export function TraceBar({
 
 const ENTER = "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300";
 
+/** The live line under the reading while it fills in. A replay must not sound like a live call. */
+export function traceStatusText(source: TraceSource | null): string {
+  switch (source) {
+    case "replay":
+      return "Showing what the AI read…";
+    case "keyword_fallback":
+      return "The keyword rules are sorting this email…";
+    case "live":
+      return "The AI is reading this email…";
+    default:
+      return "Opening the AI's reading…";
+  }
+}
+
 export function Reading({
   view,
+  source,
   streaming,
   focusKey,
   onFocusKey,
   onCreate,
 }: {
   view: ReadView;
+  /** Where the answer comes from; only changes the wording of the status line. */
+  source: TraceSource | null;
   /** True while the trace is still arriving: unrevealed parts show placeholders. */
   streaming: boolean;
   focusKey: string | null;
@@ -217,9 +234,9 @@ export function Reading({
       and only Finance can see them.
     </p>
   ) : null;
-  // While streaming the heading shows as soon as anything for it arrives, so it never jumps in
-  // above an already visible bank notice.
-  const showDetails = fields.length > 0 || (streaming && view.bankStripped);
+  // The heading shows as soon as anything for it arrives, so it never jumps in above an already
+  // visible bank notice, and it stays when bank details were the only thing found.
+  const showDetails = fields.length > 0 || view.bankStripped;
 
   return (
     <>
@@ -290,12 +307,15 @@ export function Reading({
         </div>
       )}
 
-      {!showDetails && bankNotice}
-
       {showDetails && (
         <div className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold">Details found</h3>
           {bankNotice}
+          {!streaming && fields.length === 0 && (
+            <p className="text-sm text-muted-foreground" data-testid="no-other-details">
+              No other details were found in this email.
+            </p>
+          )}
           <ul className="flex flex-col gap-1" data-testid="extracted-fields">
             {fields.map((f) => (
               <li key={f.key} className={enter}>
@@ -316,7 +336,7 @@ export function Reading({
               </li>
             ))}
           </ul>
-          {!streaming && (
+          {!streaming && fields.length > 0 && (
             <p className="text-xs text-muted-foreground">
               Point at a detail to see the words it came from, highlighted in the email.
             </p>
@@ -377,8 +397,8 @@ export function Reading({
           role="status"
           data-testid="trace-status"
         >
-          <Loader2 className="size-4 animate-spin" />
-          The AI is reading this email…
+          <Loader2 className="size-4 motion-safe:animate-spin" />
+          {traceStatusText(source)}
         </p>
       ) : (
         verdict?.category === "mdm_request" && (

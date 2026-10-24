@@ -8,10 +8,11 @@
  * left out entirely under reduced motion.
  */
 import { Check, Database, FileCheck2, Mail, Pause, Sparkles, Users, X } from "lucide-react";
-import { type RefObject, useRef, useSyncExternalStore } from "react";
+import { type RefObject, useRef } from "react";
 
 import { AnimatedBeam } from "@/components/ui/animated-beam";
 import type { Schema } from "@/lib/api/client";
+import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
 type RequestDetail = Schema<"RequestDetail">;
@@ -33,23 +34,6 @@ const STATE_WORD: Record<NodeState, string> = {
 };
 
 const ICON = { email: Mail, ai: Sparkles, golden: FileCheck2, approvals: Users, sap: Database };
-
-const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
-
-function subscribeReduced(onChange: () => void) {
-  const mq = window.matchMedia(REDUCED_QUERY);
-  mq.addEventListener("change", onChange);
-  return () => mq.removeEventListener("change", onChange);
-}
-
-/** The visitor's reduced-motion setting (our own: motion's hook logs a dev warning). */
-function usePrefersReducedMotion(): boolean {
-  return useSyncExternalStore(
-    subscribeReduced,
-    () => window.matchMedia(REDUCED_QUERY).matches,
-    () => false,
-  );
-}
 
 function count(n: number, one: string, many: string) {
   return `${n} ${n === 1 ? one : many}`;
@@ -117,7 +101,8 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
       state: "paused",
       caption: `${yes} of ${tasks.length} approved, paused for a question`,
     });
-  else Object.assign(approvals, { state: "current", caption: `${yes} of ${tasks.length} approved` });
+  else
+    Object.assign(approvals, { state: "current", caption: `${yes} of ${tasks.length} approved` });
 
   const code = d.sap_publish?.sap_code;
   const sap: PipelineNode = { id: "sap", label: "In SAP", state: "waiting", caption: "Not yet" };

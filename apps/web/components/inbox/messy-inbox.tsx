@@ -31,6 +31,7 @@ import {
 } from "@/lib/emails";
 import { formatSgt } from "@/lib/format";
 import { interpretWithTrace, type TraceResult, type TraceSource } from "@/lib/interpret-stream";
+import { prefersReducedMotion, usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
 type EmailSummary = Schema<"EmailSummary">;
@@ -150,9 +151,10 @@ export function MessyInbox() {
         </Button>
       </header>
 
-      {readCount > 0 && (
+      {/* Always one chip-row tall, so nothing below moves when the first read lands. */}
+      {readCount > 0 ? (
         <div
-          className="flex flex-wrap items-center gap-2"
+          className="flex min-h-8 flex-wrap items-center gap-2"
           role="radiogroup"
           aria-label="Show emails of type"
           data-testid="category-filter"
@@ -174,6 +176,13 @@ export function MessyInbox() {
             />
           ))}
         </div>
+      ) : (
+        <p
+          className="flex min-h-8 items-center text-sm text-muted-foreground"
+          data-testid="category-filter-hint"
+        >
+          Once the AI has read some emails, you can show one type at a time here.
+        </p>
       )}
 
       {readError && (
@@ -198,7 +207,7 @@ export function MessyInbox() {
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search emails"
             />
-            <div className="h-[calc(100dvh-20rem)] min-h-96 overflow-y-auto rounded-xl border bg-card">
+            <div className="h-[calc(100dvh-21.5rem)] min-h-96 overflow-y-auto rounded-xl border bg-card">
               {emails === null ? (
                 <div className="flex flex-col gap-2 p-2">
                   {Array.from({ length: 8 }, (_, i) => (
@@ -342,10 +351,6 @@ function EmailRow({
 /** How long a newly found quote stays in the stronger colour (D-023 #3). */
 const FLASH_MS = 600;
 
-function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 function EmailPane({
   emailId,
   read,
@@ -371,7 +376,10 @@ function EmailPane({
   const [tracing, setTracing] = useState(false);
   const [flashing, setFlashing] = useState<ReadonlySet<string>>(new Set());
   const [revealed, setRevealed] = useState<{ key: string; n: number } | null>(null);
+  const reduced = usePrefersReducedMotion();
   const bodyRef = useRef<HTMLDivElement>(null);
+  // Where keyboard focus goes when a read starts: the button that started it disappears.
+  const readingRef = useRef<HTMLElement>(null);
   const controller = useRef<AbortController | null>(null);
   const timers = useRef<number[]>([]);
 
@@ -400,8 +408,8 @@ function EmailPane({
     if (!revealed) return;
     bodyRef.current
       ?.querySelector(`[data-quote="${CSS.escape(revealed.key)}"]`)
-      ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  }, [revealed]);
+      ?.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
+  }, [revealed, reduced]);
 
   function flash(key: string) {
     setFlashing((s) => new Set(s).add(key));
@@ -420,19 +428,23 @@ function EmailPane({
     controller.current?.abort();
     const ctrl = new AbortController();
     controller.current = ctrl;
-    const reduced = prefersReducedMotion();
+    const instant = prefersReducedMotion();
     onReadError(null);
     setFocusKey(null);
     setTracing(true);
+    readingRef.current?.focus({ preventScroll: true });
     // Reduced motion: no step-by-step phase, the result shows all at once.
-    if (!reduced) setTrace({ view: EMPTY_VIEW, source: null });
+    // "Watch again" already knows where the answer comes from, so the status line says so at once.
+    if (!instant) setTrace({ view: EMPTY_VIEW, source });
     try {
       const result = await interpretWithTrace(emailId, {
         signal: ctrl.signal,
-        stepMs: reduced ? 0 : undefined,
-        onStep: reduced
+        stepMs: instant ? 0 : undefined,
+        onStep: instant
           ? undefined
           : (step) => {
+              // A step from a read that was stopped (another email, Watch again) is dropped.
+              if (ctrl.signal.aborted || controller.current !== ctrl) return;
               if (step.kind === "start") setTrace({ view: EMPTY_VIEW, source: step.source });
               else setTrace((t) => t && { ...t, view: applyStep(t.view, step) });
               if (step.kind === "field") flash(step.field.key);
@@ -463,7 +475,7 @@ function EmailPane({
     setFocusKey(key);
     bodyRef.current
       ?.querySelector(`[data-quote="${CSS.escape(key)}"]`)
-      ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      ?.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
   };
 
   return (
@@ -499,7 +511,7 @@ function EmailPane({
                 data-quote={s.key}
                 data-testid="quote-highlight"
                 className={cn(
-                  "rounded-sm px-0.5 text-foreground transition-colors duration-500",
+                  "rounded-sm px-0.5 text-foreground motion-safe:transition-colors motion-safe:duration-500",
                   flashing.has(s.key)
                     ? "bg-warning/75"
                     : focusKey === s.key
@@ -517,7 +529,9 @@ function EmailPane({
       </div>
 
       <aside
-        className="flex flex-col gap-4"
+        ref={readingRef}
+        tabIndex={-1}
+        className="flex flex-col gap-4 outline-none"
         aria-label="What the AI read"
         aria-busy={streaming || undefined}
         data-testid="ai-reading"
@@ -551,6 +565,7 @@ function EmailPane({
             />
             <Reading
               view={view}
+              source={trace ? trace.source : source}
               streaming={streaming}
               focusKey={focusKey}
               onFocusKey={showQuote}
