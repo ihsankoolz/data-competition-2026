@@ -96,6 +96,26 @@ def test_revenue_is_confirmed_pos_only():
     assert panels["mdm_request"]["value_usd"] is None
 
 
+def test_heatmap_growth_is_12_months_vs_the_12_before():
+    """D-022 #3: the headline growth is the stated 12-month period vs the 12 months before,
+    computed here independently from orders.csv; the 3-month change stays a separate field."""
+    out = regional_view(FIX, "after")
+    o = pd.read_csv(FIX / "orders.csv")
+    o["value"] = o["qty"] * o["unit_price_usd"]
+    o["product"] = o["item_code"].str[0]
+    now = o[(o["doc_date"] >= "2025-10-01") & (o["doc_date"] <= "2026-09-30")]
+    prior = o[(o["doc_date"] >= "2024-10-01") & (o["doc_date"] <= "2025-09-30")]
+    for cell in out["heatmap"]:
+        sel = lambda d: d[(d["country"] == cell["country"]) & (d["product"] == cell["product"])]
+        expect = 100 * (sel(now)["value"].sum() / sel(prior)["value"].sum() - 1)
+        assert cell["growth_12m_pct"] == pytest.approx(expect, abs=0.06), cell
+    assert {"growth_12m_pct", "growth_pct", "nrr_pct", "bridge", "product_b_note"} <= set(
+        out["captions"]
+    )
+    assert "12 months" in out["captions"]["growth_12m_pct"]["caption"]
+    assert "3 months" in out["captions"]["growth_pct"]["caption"]
+
+
 @pytest.mark.parametrize("view", ["before", "after"])
 def test_bridge_adds_up_and_nrr_matches(view):
     out = regional_view(FIX, view)

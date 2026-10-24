@@ -1196,6 +1196,11 @@ export interface components {
              */
             growth_pct: number | null;
             /**
+             * Growth 12M Pct
+             * @description Headline growth (D-022): last 12 full months vs the 12 before, % change; None if the prior 12 months had no sales
+             */
+            growth_12m_pct: number | null;
+            /**
              * Customers
              * @description Customer count (records before merge, golden after)
              */

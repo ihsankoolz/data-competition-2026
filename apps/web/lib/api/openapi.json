@@ -2952,6 +2952,18 @@
             "title": "Growth Pct",
             "description": "T3 vs P3, % change; None if P3 = 0"
           },
+          "growth_12m_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth 12M Pct",
+            "description": "Headline growth (D-022): last 12 full months vs the 12 before, % change; None if the prior 12 months had no sales"
+          },
           "customers": {
             "type": "integer",
             "title": "Customers",
@@ -2964,6 +2976,7 @@
           "product",
           "value_usd",
           "growth_pct",
+          "growth_12m_pct",
           "customers"
         ],
         "title": "HeatCell"

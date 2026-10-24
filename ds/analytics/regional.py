@@ -9,6 +9,7 @@ Definitions (D-009), with the stated period = the last 12 full months in the dat
 - revenue = confirmed-PO lines (orders.csv) qty x unit_price_usd. Enquiries, purchase requests
   and MDM requests are counted in separate panels and never added to revenue.
 - T3 = the last 3 months of the period (Jul - Sep 2026), P3 = the 3 months before (Apr - Jun).
+- heatmap growth (headline, D-022 #3) = the 12-month period vs the 12 months before it.
 - NRR = T3 revenue from customers active in P3 / P3 revenue.
 - bridge: start (P3) + new + expansion - contraction - lost = end (T3).
 - cross-sell penetration = % of customers active in the period buying >= 2 of A/B/C in it.
@@ -235,10 +236,13 @@ def _artefacts(f: _Frames, country: str | None) -> set[str]:
 def _heatmap(f: _Frames, core: _Core, key: str) -> list[dict[str, Any]]:
     t3, p3 = _windows(f)
     o = core.orders12
+    prior12 = [m - pd.DateOffset(months=12) for m in f.months]
+    po = f.orders[f.orders["month"].isin(prior12)]
     cells = []
     for c in COUNTRIES:
         for p in PRODUCTS:
             g = o[(o["country"] == c) & (o["family"] == p)]
+            prior = po.loc[(po["country"] == c) & (po["family"] == p), "value"]
             if g.empty and c not in set(o["country"]):
                 continue
             cells.append(
@@ -250,6 +254,7 @@ def _heatmap(f: _Frames, core: _Core, key: str) -> list[dict[str, Any]]:
                         float(g.loc[g["month"].isin(t3), "value"].sum()),
                         float(g.loc[g["month"].isin(p3), "value"].sum()),
                     ),
+                    "growth_12m_pct": _growth(float(g["value"].sum()), float(prior.sum())),
                     "customers": int(g[key].nunique()),
                 }
             )
@@ -454,9 +459,23 @@ CAPTIONS: dict[str, dict[str, str]] = {
         "title": "Sales by country and product",
         "caption": "Value of confirmed POs in the last 12 months, in US dollars.",
     },
+    "growth_12m_pct": {
+        "title": "Growth (12 months)",
+        "caption": (
+            "Sales in the last 12 months compared with the 12 months before, as a % change. "
+            "This is our main growth measure."
+        ),
+    },
     "growth_pct": {
-        "title": "Growth",
+        "title": "Short-term change (3 months)",
         "caption": "Last 3 months compared with the 3 months before, as a % change.",
+    },
+    "product_b_note": {
+        "title": "Product B is lumpy",
+        "caption": (
+            "Equipment sells in a few large orders, so its growth swings from quarter to quarter. "
+            "Plan it from the enquiry pipeline, not from past growth."
+        ),
     },
     "nrr_pct": {
         "title": "Net revenue retention (NRR)",

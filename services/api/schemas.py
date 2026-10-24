@@ -370,6 +370,10 @@ class HeatCell(BaseModel):
     product: ProductFamily
     value_usd: float = Field(description="Confirmed-PO value, last 12 full months")
     growth_pct: float | None = Field(description="T3 vs P3, % change; None if P3 = 0")
+    growth_12m_pct: float | None = Field(
+        description="Headline growth (D-022): last 12 full months vs the 12 before, % change; "
+        "None if the prior 12 months had no sales"
+    )
     customers: int = Field(description="Customer count (records before merge, golden after)")
 
 
