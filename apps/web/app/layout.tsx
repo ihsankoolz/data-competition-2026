@@ -8,6 +8,7 @@ import { SideNav } from "@/components/shell/side-nav";
 import { ToastRouteGuard } from "@/components/shell/toast-route-guard";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { THEME_PREVIEW_SCRIPT, THEME_VARIANT, variantClass } from "@/lib/theme";
 import { TOAST_DURATION_MS } from "@/lib/toasts";
 
 import "./globals.css";
@@ -36,7 +37,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable} h-full antialiased`}>
+    // The variant comes from one constant (lib/theme.ts). suppressHydrationWarning: the preview
+    // script may change these two attributes before React hydrates.
+    <html
+      lang="en"
+      data-variant={THEME_VARIANT}
+      className={`${sans.variable} ${mono.variable} ${variantClass(THEME_VARIANT)} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_PREVIEW_SCRIPT }} />
+      </head>
       <body className="min-h-full">
         <TooltipProvider delayDuration={150}>
           <PersonaProvider>

@@ -18,6 +18,7 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-sidebar-muted-foreground: var(--sidebar-muted-foreground);
   --color-viz-accent: var(--viz-accent);
   --color-viz-excel: var(--viz-excel);
   --color-viz-loss: var(--viz-loss);
@@ -129,7 +130,7 @@
   --tracking-normal: 0em;
   /* Data colours for the charts, derived from the theme so every variant follows (D-022 #5).
      Green for "our method" and gains; grey for the Excel baseline and totals; red only for
-     losses. Set once here; .dark only changes the tokens these point at. */
+     losses. Set once here: the variant blocks below only change the tokens these point at. */
   --viz-accent: var(--success);
   --viz-excel: var(--muted-foreground);
   --viz-loss: var(--destructive);
@@ -137,8 +138,43 @@
   --viz-ink: var(--foreground);
   --viz-grid: var(--border);
   --viz-axis: var(--muted-foreground);
+  /* Section labels and resting icons in the sidebar (B's sidebar is dark). */
+  --sidebar-muted-foreground: var(--muted-foreground);
 }
 
+/* Variant B (D-022 #5): light, lightly sage-tinted page, white cards, a dark olive sidebar with
+   light text, and the theme's darker olive (--accent, L 0.44) on primary buttons and active
+   states. WCAG contrast: body text on page 17.4:1, on cards 18.8:1; muted text on page 5.5:1,
+   on cards 6.0:1; sidebar text 11.2:1, inactive links 7.1:1, section labels 6.3:1; active link
+   7.5:1; button text on olive 7.5:1. */
+:root[data-variant="b"] {
+  --background: oklch(0.972 0.009 130);
+  --foreground: oklch(0.18 0.01 130);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.01 130);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.01 130);
+  --primary: oklch(0.4429 0.0444 134.5073);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.94 0.014 130);
+  --secondary-foreground: oklch(0.22 0.02 132);
+  --muted: oklch(0.945 0.011 130);
+  --muted-foreground: oklch(0.5 0.016 130);
+  --border: oklch(0.9 0.014 130);
+  --input: oklch(0.88 0.014 130);
+  --ring: oklch(0.4429 0.0444 134.5073);
+  --sidebar: oklch(0.32 0.034 134);
+  --sidebar-foreground: oklch(0.96 0.01 125);
+  --sidebar-muted-foreground: oklch(0.78 0.03 128);
+  --sidebar-primary: oklch(0.88 0.06 130);
+  --sidebar-primary-foreground: oklch(0.2 0.02 134);
+  --sidebar-accent: oklch(0.4429 0.0444 134.5073);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.27 0.03 134);
+  --sidebar-ring: oklch(0.783 0.0384 132.737);
+}
+
+/* Variant C is the theme file's dark mode: the `.dark` block below (set with data-variant="c"). */
 .dark {
   --background: oklch(0.1173 0.009 73.4751);
   --foreground: oklch(0.9796 0.0017 67.8026);

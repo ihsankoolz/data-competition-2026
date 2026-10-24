@@ -209,7 +209,7 @@ export function OpsImpactCard() {
 
   return (
     <div className="flex flex-col gap-10" data-testid="ops-card">
-      <section className="flex flex-col gap-6 rounded-xl border px-6 py-5">
+      <section className="flex flex-col gap-6 rounded-xl border bg-card px-6 py-5">
         <div className="flex flex-col gap-2">
           <ModelledTag />
           <p className="max-w-3xl text-sm text-muted-foreground">{caption}</p>

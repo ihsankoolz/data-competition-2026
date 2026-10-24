@@ -197,7 +197,7 @@ export function MessyInbox() {
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search emails"
             />
-            <div className="h-[calc(100dvh-20rem)] min-h-96 overflow-y-auto rounded-xl border">
+            <div className="h-[calc(100dvh-20rem)] min-h-96 overflow-y-auto rounded-xl border bg-card">
               {emails === null ? (
                 <div className="flex flex-col gap-2 p-2">
                   {Array.from({ length: 8 }, (_, i) => (
@@ -393,7 +393,7 @@ function EmailPane({
 
   return (
     <section
-      className="grid grid-cols-[minmax(0,1fr)_minmax(0,22rem)] items-start gap-6 rounded-xl border p-6"
+      className="grid grid-cols-[minmax(0,1fr)_minmax(0,22rem)] items-start gap-6 rounded-xl border bg-card p-6"
       aria-label={email.subject}
       data-testid="email-pane"
     >

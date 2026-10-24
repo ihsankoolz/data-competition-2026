@@ -88,7 +88,7 @@ export function SapReadback({ view }: { view: SapPublishView }) {
         actually saved when we read the record back. &ldquo;Same&rdquo; means nobody has to re-type
         or re-check it by hand.
       </p>
-      <div className="overflow-hidden rounded-xl border">
+      <div className="overflow-hidden rounded-xl border bg-card">
         {/* Fixed layout: long values wrap inside their own cell instead of widening the table,
             and "sent" and "saved" keep equal widths so the two values line up for comparison. */}
         <table className="w-full table-fixed text-sm" data-testid="readback-table">

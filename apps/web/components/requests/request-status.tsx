@@ -401,7 +401,7 @@ function StageFlow({ stages, qrReason }: { stages: Stage[]; qrReason: string | n
           )}
           <div
             className={cn(
-              "flex min-w-0 flex-col gap-3 rounded-xl border p-4",
+              "flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4",
               s.tasks.length > 1 ? "flex-[3]" : "flex-1",
               s.status === "waiting" && "border-dashed bg-muted/20",
               s.status === "done" && "border-success/30",

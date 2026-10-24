@@ -72,7 +72,7 @@ export function MyRequests() {
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border">
+        <div className="overflow-hidden rounded-xl border bg-card">
           <table className="w-full text-sm" data-testid="my-requests">
             <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
               <tr>
