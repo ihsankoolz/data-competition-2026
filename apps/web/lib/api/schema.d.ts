@@ -833,6 +833,33 @@ export interface components {
              */
             scores: components["schemas"]["ForecastScore"][];
         };
+        /**
+         * CountryGrowth
+         * @description One country's 12-month growth, all products together (the Southeast Asia map, D-024 #5).
+         *     A total, so it is the same before and after merge.
+         */
+        CountryGrowth: {
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Value Usd
+             * @description Confirmed-PO value in the last 12 full months, in US dollars
+             */
+            value_usd: number;
+            /**
+             * Prior Value Usd
+             * @description Confirmed-PO value in the 12 months before that, in US dollars
+             */
+            prior_value_usd: number;
+            /**
+             * Growth 12M Pct
+             * @description Last 12 full months compared with the 12 before, as a % change (rounded to 0.1); None if the country had no sales in the 12 months before
+             */
+            growth_12m_pct: number | null;
+        };
         /** CycleTimeStat */
         CycleTimeStat: {
             /**
@@ -1697,6 +1724,11 @@ export interface components {
             country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
             /** Heatmap */
             heatmap: components["schemas"]["HeatCell"][];
+            /**
+             * Country Growth
+             * @description 12-month growth per country, one row for each of the five countries whatever the country filter (it drives the map, which always shows all five)
+             */
+            country_growth: components["schemas"]["CountryGrowth"][];
             /**
              * Nrr Pct
              * @description T3 revenue from customers active in P3 / P3 revenue

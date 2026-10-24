@@ -249,11 +249,35 @@ def _artefacts(f: _Frames, country: str | None) -> set[str]:
     return {k for k in before["key"] if f.golden.get(k, k) not in after_lost}
 
 
+def _prior12(f: _Frames) -> pd.DataFrame:
+    """Confirmed-PO lines in the 12 months before the stated period (12-month growth base)."""
+    prior12 = [m - pd.DateOffset(months=12) for m in f.months]
+    return f.orders[f.orders["month"].isin(prior12)]
+
+
+def _country_growth(f: _Frames) -> list[dict[str, Any]]:
+    """-> list[CountryGrowth]: all five countries whatever the filter, all products together.
+    Same windows as the heatmap's growth_12m_pct; a total, so the view does not matter."""
+    now = f.orders[f.orders["month"].isin(f.months)].groupby("country")["value"].sum()
+    prior = _prior12(f).groupby("country")["value"].sum()
+    rows = []
+    for c in COUNTRIES:
+        v, p = float(now.get(c, 0.0)), float(prior.get(c, 0.0))
+        rows.append(
+            {
+                "country": c,
+                "value_usd": round(v, 2),
+                "prior_value_usd": round(p, 2),
+                "growth_12m_pct": _growth(v, p),
+            }
+        )
+    return rows
+
+
 def _heatmap(f: _Frames, core: _Core, key: str) -> list[dict[str, Any]]:
     t3, p3 = _windows(f)
     o = core.orders12
-    prior12 = [m - pd.DateOffset(months=12) for m in f.months]
-    po = f.orders[f.orders["month"].isin(prior12)]
+    po = _prior12(f)
     cells = []
     for c in COUNTRIES:
         for p in PRODUCTS:
@@ -807,6 +831,7 @@ def regional_view(data_dir: Path, view: View, country: str | None = None) -> dic
         "period": period_label(f.months),
         "country": country,
         "heatmap": heat,
+        "country_growth": _country_growth(f),
         "nrr_pct": core.nrr,
         "bridge": copy.deepcopy(core.bridge),
         "cross_sell_pct": core.cross_sell,

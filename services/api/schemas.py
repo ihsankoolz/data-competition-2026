@@ -453,6 +453,23 @@ class HeatCell(BaseModel):
     customers: int = Field(description="Customer count (records before merge, golden after)")
 
 
+class CountryGrowth(BaseModel):
+    """One country's 12-month growth, all products together (the Southeast Asia map, D-024 #5).
+    A total, so it is the same before and after merge."""
+
+    country: CountryCode
+    value_usd: float = Field(
+        description="Confirmed-PO value in the last 12 full months, in US dollars"
+    )
+    prior_value_usd: float = Field(
+        description="Confirmed-PO value in the 12 months before that, in US dollars"
+    )
+    growth_12m_pct: float | None = Field(
+        description="Last 12 full months compared with the 12 before, as a % change (rounded to "
+        "0.1); None if the country had no sales in the 12 months before"
+    )
+
+
 class BridgeStep(BaseModel):
     step: Literal["start", "new", "expansion", "contraction", "lost", "end"]
     value_usd: float = Field(description="start/end = P3/T3 revenue; others signed deltas")
@@ -555,6 +572,10 @@ class RegionalView(BaseModel):
     period: str = Field(description="e.g. 'Oct 2025 - Sep 2026 (last 12 full months)'")
     country: CountryCode | None = Field(default=None, description="Filter; None = all five")
     heatmap: list[HeatCell]
+    country_growth: list[CountryGrowth] = Field(
+        description="12-month growth per country, one row for each of the five countries "
+        "whatever the country filter (it drives the map, which always shows all five)"
+    )
     nrr_pct: float = Field(description="T3 revenue from customers active in P3 / P3 revenue")
     bridge: list[BridgeStep]
     cross_sell_pct: float = Field(description="% of customers active in 12 months buying >= 2")

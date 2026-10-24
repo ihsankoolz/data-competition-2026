@@ -116,6 +116,33 @@ def test_heatmap_growth_is_12_months_vs_the_12_before():
     assert "3 months" in out["captions"]["growth_pct"]["caption"]
 
 
+def test_country_growth_is_12_months_vs_the_12_before_for_all_five():
+    """D-024 #5 (the map): one row per country, all products, computed here independently from
+    orders.csv; all five whatever the country filter; a total, so identical before and after
+    merge; Vietnam matches the country total in docs/results.md (+45.9%, demo scenario)."""
+    o = pd.read_csv(FIX / "orders.csv")
+    o["value"] = o["qty"] * o["unit_price_usd"]
+    now = o[(o["doc_date"] >= "2025-10-01") & (o["doc_date"] <= "2026-09-30")]
+    prior = o[(o["doc_date"] >= "2024-10-01") & (o["doc_date"] <= "2025-09-30")]
+    after = regional_view(FIX, "after")["country_growth"]
+    assert [r["country"] for r in after] == ["SG", "MY", "ID", "VN", "TH"]
+    for r in after:
+        v = now.loc[now["country"] == r["country"], "value"].sum()
+        p = prior.loc[prior["country"] == r["country"], "value"].sum()
+        assert r["value_usd"] == pytest.approx(v, abs=0.01), r
+        assert r["prior_value_usd"] == pytest.approx(p, abs=0.01), r
+        assert r["growth_12m_pct"] == pytest.approx(100 * (v / p - 1), abs=0.05), r
+    vn = next(r for r in after if r["country"] == "VN")
+    assert vn["growth_12m_pct"] == pytest.approx(45.9, abs=0.05)
+    assert regional_view(FIX, "before")["country_growth"] == after
+    assert regional_view(FIX, "after", "VN")["country_growth"] == after
+    assert regional_view(FIX, "before", "SG")["country_growth"] == after
+    # the heatmap's (rounded) cells sum to the same 12-month value per country
+    for r in after:
+        cells = [c for c in regional_view(FIX, "after")["heatmap"] if c["country"] == r["country"]]
+        assert sum(c["value_usd"] for c in cells) == pytest.approx(r["value_usd"], abs=0.05)
+
+
 @pytest.mark.parametrize("view", ["before", "after"])
 def test_bridge_adds_up_and_nrr_matches(view):
     out = regional_view(FIX, view)
