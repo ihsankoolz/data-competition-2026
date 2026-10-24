@@ -504,6 +504,27 @@ test("persona walkthrough", async ({ page, request }) => {
       note("sap active: " + (await txt(pane.getByTestId("sap-active"))));
       await shot(page, "05c-readback");
       await shot(page, "05c-readback-viewport", false);
+      // The item's journey once it is in SAP: the pipeline beam lit end to end (D-023 #4).
+      await machine(() => page.goto("/requests/" + itemId));
+      const beam = page.getByTestId("pipeline-beam");
+      await machine(() =>
+        expect(beam.locator('[data-testid="beam-node"][data-node="sap"]')).toHaveAttribute(
+          "data-state",
+          "done",
+        ),
+      );
+      note(
+        "beam: " +
+          (
+            await beam
+              .locator('[data-testid="beam-node"]')
+              .evaluateAll((els) =>
+                els.map((e) => e.getAttribute("data-node") + "=" + e.getAttribute("data-state")),
+              )
+          ).join(", "),
+      );
+      await beam.scrollIntoViewIfNeeded();
+      await shot(page, "05x-status-beam", false);
     },
     "05",
   );
