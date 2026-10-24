@@ -110,8 +110,8 @@ export function SeaMap({
         if (!r.ok) throw new Error(`map shapes: HTTP ${r.status}`);
         return r.json() as Promise<GeoJson>;
       }),
-    ]).then(
-      ([echarts, shapes]) => {
+    ])
+      .then(([echarts, shapes]) => {
         if (disposed) return;
         echarts.registerMap(MAP, shapes);
         const c = echarts.init(el, null, { renderer: "svg" });
@@ -133,12 +133,16 @@ export function SeaMap({
         observer = new ResizeObserver(() => c.resize());
         observer.observe(el);
         setStatus("ready");
-      },
-      () => {
-        // A plain message replaces the map; the country buttons still filter the page.
-        if (!disposed) setStatus("error");
-      },
-    );
+      })
+      .catch(() => {
+        // Load or draw failed (missing shapes, bad GeoJSON, renderer error): a plain message
+        // replaces the map; the country buttons still filter the page.
+        if (disposed) return;
+        observer?.disconnect();
+        chart.current?.dispose();
+        chart.current = null;
+        setStatus("error");
+      });
     return () => {
       disposed = true;
       observer?.disconnect();
@@ -317,6 +321,10 @@ export function SeaMap({
           <span>Growing</span>
           <span className="ml-auto">Each shade is 10 percentage points</span>
         </div>
+        <p>
+          Colour shows growth, not size. Grey means within 2% either way, or no sales the year
+          before to compare with.
+        </p>
         <p data-testid="sea-map-hint">
           Click a country to show only that country; click it again for all five.
         </p>
