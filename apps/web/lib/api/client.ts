@@ -99,7 +99,8 @@ function baseUrl(): string {
   return process.env.API_ORIGIN ?? "http://localhost:8000";
 }
 
-function buildUrl(
+/** The full URL for an API path template, e.g. `/emails/{email_id}`. */
+export function buildUrl(
   template: string,
   path?: Record<string, unknown>,
   query?: Record<string, unknown>,
@@ -142,6 +143,14 @@ function describeDetail(detail: unknown, status: number): string {
 
 const OFFLINE_MESSAGE = "Can't reach the demo server.";
 
+/** The headers every call sends; `X-Acting-User` is the header switcher's persona. */
+export function baseHeaders(actingUser?: string | null): Record<string, string> {
+  const headers: Record<string, string> = { Accept: "application/json" };
+  const who = actingUser === undefined ? getActingUserId() : actingUser;
+  if (who) headers["X-Acting-User"] = who;
+  return headers;
+}
+
 async function request(
   method: HttpMethod,
   pathTemplate: string,
@@ -154,9 +163,7 @@ async function request(
   } = {},
 ): Promise<unknown> {
   const url = buildUrl(pathTemplate, options.path, options.query);
-  const headers: Record<string, string> = { Accept: "application/json" };
-  const actingUser = options.actingUser === undefined ? getActingUserId() : options.actingUser;
-  if (actingUser) headers["X-Acting-User"] = actingUser;
+  const headers = baseHeaders(options.actingUser);
   if (options.body !== undefined) headers["Content-Type"] = "application/json";
 
   let res: Response;

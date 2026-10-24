@@ -326,7 +326,7 @@
           "emails"
         ],
         "summary": "Interpret Stream",
-        "description": "Live AI trace (Stretch S1, D-023). Contract stub: backend-engineer implements.",
+        "description": "Live AI trace (Stretch S1, D-023): replays a finished Interpretation step by step.\n\nThe steps come only from the already bank-stripped Interpretation (rule 5). No new LLM call\nis made here beyond what POST /interpret does (rules 7 and 8).",
         "operationId": "streamInterpretEmail",
         "parameters": [
           {

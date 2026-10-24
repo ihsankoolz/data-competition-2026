@@ -123,25 +123,37 @@ test("persona walkthrough", async ({ page, request }) => {
       );
       note("emails listed: " + (await page.getByTestId("email-list").locator("li").count()));
       await shot(page, "01a-inbox-raw");
-      await click(page.getByTestId("sort-all"));
-      const t = Date.now();
-      await machine(() =>
-        expect(page.getByTestId("sort-all")).toHaveText(/All emails sorted/, { timeout: 60_000 }),
-      );
-      note("sort-all machine seconds: " + ((Date.now() - t) / 1000).toFixed(1));
-      await shot(page, "01b-inbox-sorted");
       const demo01 = page.getByTestId("inbox-DEMO-01");
       const visible = await demo01.isVisible();
       note("DEMO-01 visible without search: " + visible);
       if (!visible) await type(page.getByLabel("Search emails"), "Cho Ray");
       await click(demo01);
       const pane = page.getByTestId("email-pane");
-      const read = pane.getByTestId("read-with-ai");
-      if (await read.isVisible()) await click(read);
+      const reading = pane.getByTestId("ai-reading");
+      await machine(() => expect(pane.getByTestId("read-with-ai")).toBeVisible());
+      // The live AI trace (D-023 #3): details appear one by one, their words lit in the email.
+      await click(pane.getByTestId("read-with-ai"));
+      const tRead = Date.now();
       await machine(() =>
-        expect(pane.getByTestId("ai-reading").getByTestId("category-chip")).toBeVisible(),
+        page.waitForFunction(
+          () =>
+            document
+              .querySelector('[data-testid="ai-reading"]')
+              ?.getAttribute("data-trace-state") === "streaming" &&
+            document.querySelectorAll('[data-testid="extracted-fields"] > li').length >= 3,
+        ),
       );
-      note("chip: " + (await txt(pane.getByTestId("ai-reading").getByTestId("category-chip"))));
+      await shot(page, "01b-inbox-trace-mid", false);
+      note(
+        "mid-trace: " +
+          (await reading.getByTestId("extracted-fields").locator("li").count()) +
+          " details shown, still streaming: " +
+          ((await reading.getAttribute("data-trace-state")) === "streaming"),
+      );
+      await machine(() => expect(reading).toHaveAttribute("data-trace-state", "done"));
+      note("trace seconds (click to done): " + ((Date.now() - tRead) / 1000).toFixed(1));
+      note("replay badge: " + (await reading.getByTestId("replay-badge").isVisible()));
+      note("chip: " + (await txt(reading.getByTestId("category-chip"))));
       note("confidence: " + (await txt(pane.getByTestId("confidence"))));
       note(
         "highlights: " +
@@ -149,6 +161,13 @@ test("persona walkthrough", async ({ page, request }) => {
       );
       await shot(page, "01c-email-read");
       await shot(page, "01c-email-read-viewport", false);
+      await click(page.getByTestId("sort-all"));
+      const t = Date.now();
+      await machine(() =>
+        expect(page.getByTestId("sort-all")).toHaveText(/All emails sorted/, { timeout: 60_000 }),
+      );
+      note("sort-all machine seconds: " + ((Date.now() - t) / 1000).toFixed(1));
+      await shot(page, "01d-inbox-sorted");
     },
     "01",
   );
@@ -227,7 +246,13 @@ test("persona walkthrough", async ({ page, request }) => {
       s = (await request.post("/api/requests/" + vendorId + "/submit", { headers: h })).status();
     }
     console.log(
-      "prestage vendor: create " + v.status() + " id=" + vendorId + " submit " + s + " " +
+      "prestage vendor: create " +
+        v.status() +
+        " id=" +
+        vendorId +
+        " submit " +
+        s +
+        " " +
         (vendorId ? "" : JSON.stringify(vj).slice(0, 300)),
     );
   }
@@ -300,7 +325,9 @@ test("persona walkthrough", async ({ page, request }) => {
               .getByTestId("stage-1")
               .locator('[data-testid="task"]')
               .evaluateAll((els) =>
-                els.map((e) => e.getAttribute("data-assignee") + ":" + e.getAttribute("data-status")),
+                els.map(
+                  (e) => e.getAttribute("data-assignee") + ":" + e.getAttribute("data-status"),
+                ),
               )
           ).join(", "),
       );
@@ -320,7 +347,9 @@ test("persona walkthrough", async ({ page, request }) => {
       // reads the email; the vendor request with bank rows is pre-staged above (secure form).
       await click(page.getByRole("link", { name: "Messy inbox", exact: true }));
       const demo07 = page.getByTestId("inbox-DEMO-07");
-      await machine(() => expect(page.getByTestId("email-list").locator("li").first()).toBeVisible());
+      await machine(() =>
+        expect(page.getByTestId("email-list").locator("li").first()).toBeVisible(),
+      );
       if (!(await demo07.isVisible())) await type(page.getByLabel("Search emails"), "Precision");
       await click(demo07);
       const pane07 = page.getByTestId("email-pane");
@@ -328,6 +357,9 @@ test("persona walkthrough", async ({ page, request }) => {
       if (await read07.isVisible()) await click(read07);
       await machine(() =>
         expect(pane07.getByText(/Bank details in this email were removed/)).toBeVisible(),
+      );
+      await machine(() =>
+        expect(pane07.getByTestId("ai-reading")).toHaveAttribute("data-trace-state", "done"),
       );
       await shot(page, "04-0-demo07-bank-stripped", false);
       await click(page.getByRole("button", { name: "+1 day" }));
@@ -472,6 +504,27 @@ test("persona walkthrough", async ({ page, request }) => {
       note("sap active: " + (await txt(pane.getByTestId("sap-active"))));
       await shot(page, "05c-readback");
       await shot(page, "05c-readback-viewport", false);
+      // The item's journey once it is in SAP: the pipeline beam lit end to end (D-023 #4).
+      await machine(() => page.goto("/requests/" + itemId));
+      const beam = page.getByTestId("pipeline-beam");
+      await machine(() =>
+        expect(beam.locator('[data-testid="beam-node"][data-node="sap"]')).toHaveAttribute(
+          "data-state",
+          "done",
+        ),
+      );
+      note(
+        "beam: " +
+          (
+            await beam
+              .locator('[data-testid="beam-node"]')
+              .evaluateAll((els) =>
+                els.map((e) => e.getAttribute("data-node") + "=" + e.getAttribute("data-state")),
+              )
+          ).join(", "),
+      );
+      await beam.scrollIntoViewIfNeeded();
+      await shot(page, "05x-status-beam", false);
     },
     "05",
   );
@@ -488,14 +541,25 @@ test("persona walkthrough", async ({ page, request }) => {
         const r = await page.request.get("/api/analytics/regional?view=before", {
           headers: { "X-Acting-User": "daniel" },
         });
-        note("API regional call " + i + ": " + r.status() + " in " + ((Date.now() - ta) / 1000).toFixed(1) + "s");
+        note(
+          "API regional call " +
+            i +
+            ": " +
+            r.status() +
+            " in " +
+            ((Date.now() - ta) / 1000).toFixed(1) +
+            "s",
+        );
       }
       const tReg = Date.now();
       await machine(() => expect(page.getByTestId("period")).toBeVisible());
       await machine(() =>
         expect(page.getByTestId("heat-cell").first()).toBeVisible({ timeout: 60_000 }),
       );
-      note("regional first load seconds (click to heatmap): " + ((Date.now() - tReg) / 1000).toFixed(1));
+      note(
+        "regional first load seconds (click to heatmap): " +
+          ((Date.now() - tReg) / 1000).toFixed(1),
+      );
       note("period: " + (await txt(page.getByTestId("period"))));
       note("headline: " + (await txt(page.getByTestId("merge-headline"))));
       note("customers (before): " + (await txt(page.getByTestId("kpi-customers-value"))));
@@ -574,12 +638,17 @@ test("persona walkthrough", async ({ page, request }) => {
   }
 
   fs.writeFileSync(OUT + "/log.json", JSON.stringify(records, null, 2));
-  console.log("WALKTHROUGH_LOG_START\n" + JSON.stringify(records, null, 1) + "\nWALKTHROUGH_LOG_END");
+  console.log(
+    "WALKTHROUGH_LOG_START\n" + JSON.stringify(records, null, 1) + "\nWALKTHROUGH_LOG_END",
+  );
   const total = records.reduce((s, r) => s + r.wallMs, 0);
   console.log(
     "REHEARSE_TIMINGS\n" +
       records
-        .map((r) => `${r.step.padEnd(36)} ${(r.wallMs / 1000).toFixed(1)}s` + (r.failure ? "  FAIL" : ""))
+        .map(
+          (r) =>
+            `${r.step.padEnd(36)} ${(r.wallMs / 1000).toFixed(1)}s` + (r.failure ? "  FAIL" : ""),
+        )
         .join("\n") +
       `\nTOTAL machine+scripted ${(total / 1000).toFixed(1)}s vs 150s budget (no narration pauses)`,
   );
@@ -589,7 +658,9 @@ test("cold regional after reset", async ({ request }) => {
   const h = { "X-Acting-User": "daniel" };
   const t0 = Date.now();
   const rs = await request.post("/api/admin/reset-demo", { headers: h });
-  console.log("COLD reset-demo " + rs.status() + " in " + ((Date.now() - t0) / 1000).toFixed(1) + "s");
+  console.log(
+    "COLD reset-demo " + rs.status() + " in " + ((Date.now() - t0) / 1000).toFixed(1) + "s",
+  );
   for (const [name, url] of [
     ["regional before", "/api/analytics/regional?view=before"],
     ["regional before again", "/api/analytics/regional?view=before"],
@@ -599,6 +670,8 @@ test("cold regional after reset", async ({ request }) => {
   ]) {
     const t = Date.now();
     const r = await request.get(url, { headers: h });
-    console.log("COLD " + name + " " + r.status() + " in " + ((Date.now() - t) / 1000).toFixed(1) + "s");
+    console.log(
+      "COLD " + name + " " + r.status() + " in " + ((Date.now() - t) / 1000).toFixed(1) + "s",
+    );
   }
 });

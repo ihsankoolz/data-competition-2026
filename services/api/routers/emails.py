@@ -1,16 +1,33 @@
 """Messy inbox (M2). Owner: backend-engineer (wiring); ds.interpreter does the reading."""
 
+import asyncio
+from collections.abc import AsyncIterator
+
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 
 from ds.interpreter.api import interpret_email
 from ds.interpreter.bank import strip_bank_details
+from ds.interpreter.llm import llm_mode
 from ds.interpreter.schemas import Interpretation
 from services.api.db import models as m
 from services.api.db.session import session_scope
 from services.api.deps import CurrentUser
-from services.api.schemas import EmailDetail, EmailSummary, InterpretStep
+from services.api.schemas import (
+    EmailDetail,
+    EmailSummary,
+    InterpretStep,
+    TraceBankStripped,
+    TraceCategory,
+    TraceDone,
+    TraceField,
+    TraceInjection,
+    TraceLine,
+    TraceMissing,
+    TraceStart,
+)
 
 router = APIRouter(tags=["emails"])
 
@@ -58,17 +75,22 @@ def get_email(email_id: str, actor: CurrentUser) -> EmailDetail:
         )
 
 
-@router.post(
-    "/emails/{email_id}/interpret", response_model=Interpretation, operation_id="interpretEmail"
-)
-def interpret(email_id: str, actor: CurrentUser) -> Interpretation:
-    """Classify and extract (ds.interpreter.api.interpret_email). Works offline in replay mode."""
+def _interpret_email_by_id(email_id: str) -> Interpretation:
+    """One code path for POST /interpret and the live trace. 404 if the email is unknown."""
     with session_scope() as session:
         e = session.get(m.Email, email_id)
         if e is None:
             raise HTTPException(404, f"There is no email {email_id}.")
         subject, body, sender = e.subject, e.body, e.from_address
     return interpret_email(email_id, subject, body, sender)
+
+
+@router.post(
+    "/emails/{email_id}/interpret", response_model=Interpretation, operation_id="interpretEmail"
+)
+def interpret(email_id: str, actor: CurrentUser) -> Interpretation:
+    """Classify and extract (ds.interpreter.api.interpret_email). Works offline in replay mode."""
+    return _interpret_email_by_id(email_id)
 
 
 @router.post(
@@ -85,7 +107,7 @@ def interpret(email_id: str, actor: CurrentUser) -> Interpretation:
         }
     },
 )
-def interpret_stream(
+async def interpret_stream(
     email_id: str,
     actor: CurrentUser,
     step_ms: int | None = Query(
@@ -96,5 +118,68 @@ def interpret_stream(
         "0 = all at once (reduced motion, tests)",
     ),
 ):
-    """Live AI trace (Stretch S1, D-023). Contract stub: backend-engineer implements."""
-    raise HTTPException(501, "The live AI trace is not built yet.")
+    """Live AI trace (Stretch S1, D-023): replays a finished Interpretation step by step.
+
+    The steps come only from the already bank-stripped Interpretation (rule 5). No new LLM call
+    is made here beyond what POST /interpret does (rules 7 and 8).
+    """
+    interp = await run_in_threadpool(_interpret_email_by_id, email_id)  # 404 before the stream
+    steps = _trace_steps(interp)
+    middle = len(steps) - 1  # steps between start and done (each is preceded by a pause)
+    default_ms = max(80, min(350, round(1500 / max(middle, 1))))
+    pause_ms = step_ms if step_ms is not None else default_ms
+    if interp.method == "keyword_fallback":
+        source = "keyword_fallback"
+    else:
+        source = "replay" if llm_mode() == "replay" else "live"
+    start = TraceStart(email_id=email_id, source=source, total_steps=len(steps), step_ms=pause_ms)
+
+    # A client that goes away cancels this generator (Starlette), so no disconnect polling here.
+    async def events() -> AsyncIterator[str]:
+        yield _sse(start)
+        for i, step in enumerate(steps):
+            # Pause before each step except `done`, which follows the last one straight away.
+            if pause_ms and i < len(steps) - 1:
+                await asyncio.sleep(pause_ms / 1000)
+            yield _sse(step)
+
+    return StreamingResponse(
+        events(),
+        media_type="text/event-stream",
+        # no-transform: proxies (Next's gzip on the /api rewrite) must pass events through as they
+        # come, not hold the stream until it ends.
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
+    )
+
+
+def _sse(step) -> str:
+    return "event: step\ndata: " + step.model_dump_json() + "\n\n"
+
+
+def _trace_steps(interp: Interpretation) -> list:
+    """The steps after `start`, in contract order, ending with `done`."""
+    steps: list = []
+    if interp.bank_details_stripped:
+        steps.append(TraceBankStripped())
+    steps += [TraceField(index=i, field=f) for i, f in enumerate(interp.fields)]
+    steps += [TraceLine(index=i, line=ln) for i, ln in enumerate(interp.lines)]
+    steps.append(
+        TraceCategory(
+            category=interp.category,
+            confidence=interp.confidence,
+            domain=interp.domain,
+            needs_review=interp.needs_review,
+            method=interp.method,
+        )
+    )
+    if interp.missing_fields or interp.questions_for_requester:
+        steps.append(
+            TraceMissing(
+                missing_fields=interp.missing_fields,
+                questions_for_requester=interp.questions_for_requester,
+            )
+        )
+    if interp.injection_suspected:
+        steps.append(TraceInjection())
+    steps.append(TraceDone(interpretation=interp))
+    return steps

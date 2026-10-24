@@ -141,7 +141,10 @@ export interface paths {
         put?: never;
         /**
          * Interpret Stream
-         * @description Live AI trace (Stretch S1, D-023). Contract stub: backend-engineer implements.
+         * @description Live AI trace (Stretch S1, D-023): replays a finished Interpretation step by step.
+         *
+         *     The steps come only from the already bank-stripped Interpretation (rule 5). No new LLM call
+         *     is made here beyond what POST /interpret does (rules 7 and 8).
          */
         post: operations["streamInterpretEmail"];
         delete?: never;
