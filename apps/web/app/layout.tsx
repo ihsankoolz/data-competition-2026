@@ -5,8 +5,10 @@ import { AppHeader } from "@/components/shell/app-header";
 import { ClockProvider } from "@/components/shell/clock-provider";
 import { PersonaProvider } from "@/components/shell/persona-provider";
 import { SideNav } from "@/components/shell/side-nav";
+import { ToastRouteGuard } from "@/components/shell/toast-route-guard";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { TOAST_DURATION_MS } from "@/lib/toasts";
 
 import "./globals.css";
 
@@ -42,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <div className="grid min-h-dvh grid-cols-[15rem_minmax(0,1fr)] grid-rows-[auto_1fr]">
                 <AppHeader />
                 {/* The column runs the full page height; the nav inside it stays in view. */}
-                <aside className="border-r bg-sidebar">
+                <aside className="border-r bg-sidebar" data-testid="sidebar">
                   <div className="sticky top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto">
                     <SideNav />
                   </div>
@@ -57,9 +59,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </div>
             </ClockProvider>
           </PersonaProvider>
-          {/* Bottom-right, away from the notifications bell in the top-right header; at most
-              three stacked so a burst of toasts never climbs up to the header. */}
-          <Toaster position="bottom-right" visibleToasts={3} />
+          {/* Bottom-left, inside the sidebar column (15rem wide, empty below the nav): a toast
+              never covers page content such as the revenue bridge or a request's history, nor
+              the notifications bell. About 3 s each, cleared on page change (D-022 #5). */}
+          <Toaster
+            position="bottom-left"
+            visibleToasts={3}
+            duration={TOAST_DURATION_MS}
+            offset={{ left: 12, bottom: 16 }}
+            width="calc(15rem - 24px)"
+          />
+          <ToastRouteGuard />
         </TooltipProvider>
       </body>
     </html>

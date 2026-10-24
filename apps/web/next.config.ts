@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   // Playwright runs its own dev server with a separate build folder (see playwright.config.ts).
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
   cacheComponents: true,
+  // The "N" dev badge would show in the demo video (D-022 #5). Errors still show their overlay.
+  devIndicators: false,
   partialPrefetching: true,
   turbopack: {
     rules: {
