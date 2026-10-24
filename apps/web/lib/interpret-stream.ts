@@ -115,8 +115,9 @@ async function* readSteps(
 export const STALL_MS = 10_000;
 
 /**
- * The stall limit in use. End-to-end tests shorten it with
+ * The stall limit in use. Test-only hook: end-to-end tests shorten it with
  * `window.__traceStallMs` (set in an init script) so they need not wait 10 s.
+ * The app never sets it.
  */
 function stallLimitMs(): number {
   const override = (globalThis as { __traceStallMs?: unknown }).__traceStallMs;
@@ -145,6 +146,7 @@ export async function interpretWithTrace(
     onStep?: (step: InterpretStep) => void;
   },
 ): Promise<TraceResult> {
+  opts.signal.throwIfAborted();
   // The stream has its own controller, so a stall can stop it without stopping the fallback.
   const stream = new AbortController();
   const stopStream = () => stream.abort();

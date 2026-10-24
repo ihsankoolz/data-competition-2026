@@ -174,7 +174,10 @@ test("a last step without its closing blank line still finishes the read", async
   expect(consoleErrors).toEqual([]);
 });
 
-test("switching email mid-trace: nothing from the first email shows on the second", async ({
+// Guard, not a regression test for the queued-step drop: the email pane is keyed by email and
+// remounts on switch, so late steps would land on an unmounted pane either way. It checks that the
+// old stream request is aborted and the new email starts from a clean slate.
+test("switching email mid-trace: old stream aborted, second email starts clean", async ({
   page,
 }) => {
   await openAs(page, "marcus", "/inbox");
@@ -257,7 +260,7 @@ test("bank details as the only thing found: the heading stays and says what is t
   expect(consoleErrors).toEqual([]);
 });
 
-test("reduced motion: no fading highlights and no smooth scrolling", async ({ page }) => {
+test("reduced motion: no smooth scrolling", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {
     const w = window as unknown as { __scrolls: unknown[] };
@@ -275,12 +278,8 @@ test("reduced motion: no fading highlights and no smooth scrolling", async ({ pa
   );
   expect(scrolls.length).toBeGreaterThan(0);
   expect(scrolls.every((a) => a.behavior !== "smooth")).toBe(true);
-  const duration = await pane
-    .getByTestId("quote-highlight")
-    .first()
-    .evaluate((el) => getComputedStyle(el).transitionDuration);
-  // The global reduced-motion rule shortens every transition to next to nothing.
-  expect(parseFloat(duration)).toBeLessThan(0.01);
+  // No transition-duration check: the global reduced-motion rule in globals.css already
+  // forces every transition to ~0, so it could not fail if the motion-safe fade were removed.
   expect(consoleErrors).toEqual([]);
 });
 

@@ -531,7 +531,7 @@ function EmailPane({
       <aside
         ref={readingRef}
         tabIndex={-1}
-        className="flex flex-col gap-4 outline-none"
+        className="flex flex-col gap-4 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         aria-label="What the AI read"
         aria-busy={streaming || undefined}
         data-testid="ai-reading"
