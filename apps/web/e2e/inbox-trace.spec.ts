@@ -118,7 +118,10 @@ test("DEMO-01: details appear one by one with their words lit up, then the type"
   expect(spread).toBeGreaterThan(800);
 
   const reading = pane.getByTestId("ai-reading");
-  await expect(reading.getByTestId("category-chip")).toHaveAttribute("data-category", "mdm_request");
+  await expect(reading.getByTestId("category-chip")).toHaveAttribute(
+    "data-category",
+    "mdm_request",
+  );
   await expect(reading.getByTestId("confidence")).toContainText("% sure");
   await expect(pane.getByTestId("email-body").getByTestId("quote-highlight").first()).toBeVisible();
   // The finished read is stored like any other: the list row shows its type too.
