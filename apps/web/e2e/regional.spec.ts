@@ -70,6 +70,18 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
     await expect(rows.first()).toBeVisible();
     await expect(rows.first()).toContainText("US$");
   }
+  // Drop-off is year over year; whitespace rows on under 10 similar customers are marked and
+  // left out of the total (D-022 #4).
+  await expect(page.getByTestId("drop-off-list").getByTestId("account-row").first()).toContainText(
+    "same quarter last year",
+  );
+  await expect(page.getByTestId("drop-off-list-total")).toContainText("same 3 months last year");
+  await expect(
+    page.getByTestId("whitespace-list").getByTestId("low-confidence-marker").first(),
+  ).toHaveText("Low confidence (fewer than 10 similar customers)");
+  await expect(page.getByTestId("whitespace-list-total")).toContainText(
+    /Total excludes \d+ low-confidence rows?/,
+  );
   await expect(page.getByTestId("account-lists-before")).toHaveCount(0);
 
   // The country filter narrows the strip and the heatmap.

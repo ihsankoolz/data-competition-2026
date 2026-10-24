@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 
 import { SectionHeading } from "@/components/analytics/metric-info";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { captionOf, usdFull, usdShort } from "@/lib/analytics";
 import type { Schema } from "@/lib/api/client";
 import { countryName } from "@/lib/format";
@@ -31,11 +33,13 @@ export function AccountLists({ data }: { data: View }) {
         testId="drop-off-list"
         caption={captionOf(captions, "drop_off_risk", {
           title: "At risk of dropping off",
-          caption: "Regular customers whose repeat orders halved in the last 3 months.",
+          caption:
+            "Regular customers who spent half or less in the last 3 months than in the same 3 months last year.",
         })}
-        note="US$ = how much less they ordered in the last 3 months than in the 3 before."
+        note="US$ = how much less they ordered in the last 3 months than in the same 3 months last year."
+        total={data.drop_off_total?.caption}
         valueHeader="Ordered less"
-        empty="No regular customer has cut their orders by half or more."
+        empty="No regular customer has cut their orders by half or more against the same quarter last year."
         rows={(data.drop_off_risk ?? []).map((r) => ({
           key: r.card_code,
           name: r.name,
@@ -52,6 +56,7 @@ export function AccountLists({ data }: { data: View }) {
           caption: "Customers missing test kits or services that similar customers buy.",
         })}
         note="US$ = what similar customers in the same country typically spend a year on the missing product. An estimate."
+        total={data.whitespace_total?.caption}
         valueHeader="Est. a year"
         empty="Every active customer already buys the products similar customers buy."
         rows={(data.cross_sell_whitespace ?? []).map((r) => ({
@@ -60,19 +65,29 @@ export function AccountLists({ data }: { data: View }) {
           country: r.country,
           value: r.est_value_usd,
           reason: r.reason,
+          lowConfidence: r.low_confidence,
         }))}
       />
     </div>
   );
 }
 
-type Row = { key: string; name: string; country: string; value: number; reason: string };
+type Row = {
+  key: string;
+  name: string;
+  country: string;
+  value: number;
+  reason: string;
+  /** Whitespace only: under 10 comparable customers, left out of the US$ total. */
+  lowConfidence?: boolean;
+};
 
 function AccountTable({
   id,
   testId,
   caption,
   note,
+  total,
   valueHeader,
   empty,
   rows,
@@ -81,6 +96,7 @@ function AccountTable({
   testId: string;
   caption: Schema<"Caption">;
   note: ReactNode;
+  total?: string;
   valueHeader: string;
   empty: string;
   rows: Row[];
@@ -107,14 +123,26 @@ function AccountTable({
                 <td className="px-3 py-2.5">
                   <div className="flex flex-col gap-0.5">
                     <span className="font-medium">{r.name}</span>
+                    {r.lowConfidence && (
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground"
+                        data-testid="low-confidence-marker"
+                      >
+                        Low confidence (fewer than 10 similar customers)
+                      </Badge>
+                    )}
                     <span className="text-xs text-muted-foreground">
                       {countryName(r.country)}. {r.reason}
                     </span>
                   </div>
                 </td>
                 <td
-                  className="px-3 py-2.5 text-right font-semibold whitespace-nowrap tabular-nums"
-                  title={usdFull(r.value)}
+                  className={cn(
+                    "px-3 py-2.5 text-right font-semibold whitespace-nowrap tabular-nums",
+                    r.lowConfidence && "text-muted-foreground",
+                  )}
+                  title={usdFull(r.value) + (r.lowConfidence ? " (not counted in the total)" : "")}
                 >
                   {usdShort(r.value)}
                 </td>
@@ -130,6 +158,11 @@ function AccountTable({
           </tbody>
         </table>
       </div>
+      {total && (
+        <p className="text-xs text-muted-foreground" data-testid={`${testId}-total`}>
+          {total}
+        </p>
+      )}
     </section>
   );
 }
