@@ -7,21 +7,9 @@
  * A MutationObserver in the page samples the panel on every change, so the assertions are about
  * what the browser really showed and when, not about how fast Playwright happened to poll.
  */
-import { expect, type Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-import { openAs } from "./workflow-helpers";
-
-type Sample = {
-  t: number;
-  state: string | null;
-  fields: number;
-  highlights: number;
-  status: boolean;
-  chip: boolean;
-  injection: boolean;
-  bank: boolean;
-  missing: boolean;
-};
+import { openEmail, record, samples, waitDone } from "./trace-helpers";
 
 const REPLAY_HELP =
   "This answer was recorded from the AI earlier, for this exact email. Replaying it makes the " +
@@ -38,58 +26,14 @@ test.beforeEach(({ page }) => {
   page.on("pageerror", (e) => consoleErrors.push("pageerror: " + e.message));
 });
 
-async function openEmail(page: Page, user: string, search: string, id: string, subject: string) {
-  await openAs(page, user, "/inbox");
-  await page.getByLabel("Search emails").fill(search);
-  await page.getByTestId(`inbox-${id}`).click();
-  const pane = page.getByTestId("email-pane");
-  await expect(pane).toContainText(subject);
-  return pane;
-}
-
-/** Starts sampling the email pane on every DOM change. */
-async function record(page: Page) {
-  await page.evaluate(() => {
-    const pane = document.querySelector('[data-testid="email-pane"]')!;
-    const w = window as unknown as { __samples: unknown[] };
-    w.__samples = [];
-    const take = () => {
-      const aside = pane.querySelector('[data-testid="ai-reading"]');
-      w.__samples.push({
-        t: performance.now(),
-        state: aside?.getAttribute("data-trace-state") ?? null,
-        fields: pane.querySelectorAll('[data-testid="extracted-fields"] > li').length,
-        highlights: pane.querySelectorAll('[data-testid="quote-highlight"]').length,
-        status: !!pane.querySelector('[data-testid="trace-status"]'),
-        chip: !!aside?.querySelector('[data-testid="category-chip"]'),
-        injection: !!pane.querySelector('[data-testid="injection-warning"]'),
-        bank: !!pane.querySelector('[data-testid="bank-stripped"]'),
-        missing: !!pane.querySelector('[data-testid="missing-fields"]'),
-      });
-    };
-    new MutationObserver(take).observe(pane, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      characterData: true,
-    });
-  });
-}
-
-const samples = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __samples: Sample[] }).__samples);
-
-async function waitDone(page: Page) {
-  await expect(page.getByTestId("ai-reading")).toHaveAttribute("data-trace-state", "done");
-}
-
 test("DEMO-01: details appear one by one with their words lit up, then the type", async ({
   page,
 }) => {
   const pane = await openEmail(page, "marcus", "Cho Ray", "DEMO-01", "Benh vien Cho Ray");
   await record(page);
   await pane.getByTestId("read-with-ai").click();
-  await expect(pane.getByTestId("trace-status")).toHaveText("The AI is reading this email…");
+  // A recorded replay must not sound like a live AI call.
+  await expect(pane.getByTestId("trace-status")).toHaveText("Showing what the AI read…");
   await expect(pane.getByTestId("ai-reading")).toHaveAttribute("aria-busy", "true");
   await waitDone(page);
   await expect(pane.getByTestId("ai-reading")).not.toHaveAttribute("aria-busy", "true");
