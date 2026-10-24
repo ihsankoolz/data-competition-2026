@@ -3,7 +3,7 @@
 import asyncio
 from collections.abc import AsyncIterator
 
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
@@ -109,7 +109,6 @@ def interpret(email_id: str, actor: CurrentUser) -> Interpretation:
 )
 async def interpret_stream(
     email_id: str,
-    request: Request,
     actor: CurrentUser,
     step_ms: int | None = Query(
         default=None,
@@ -135,14 +134,13 @@ async def interpret_stream(
         source = "replay" if llm_mode() == "replay" else "live"
     start = TraceStart(email_id=email_id, source=source, total_steps=len(steps), step_ms=pause_ms)
 
+    # A client that goes away cancels this generator (Starlette), so no disconnect polling here.
     async def events() -> AsyncIterator[str]:
         yield _sse(start)
         for i, step in enumerate(steps):
             # Pause before each step except `done`, which follows the last one straight away.
             if pause_ms and i < len(steps) - 1:
                 await asyncio.sleep(pause_ms / 1000)
-            if await request.is_disconnected():
-                return
             yield _sse(step)
 
     return StreamingResponse(

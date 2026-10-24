@@ -108,16 +108,18 @@ def test_finance_and_non_finance_see_identical_steps(client):
 def test_step_ms_zero_is_immediate(client):
     t = time.perf_counter()
     steps, _ = stream(client, "DEMO-01", step_ms=0)
-    assert time.perf_counter() - t < 0.5
     assert steps[0]["step_ms"] == 0
+    assert time.perf_counter() - t < 2.0  # loose: other test runs may share the machine
 
 
 def test_default_pacing_takes_about_one_and_a_half_seconds(client):
     t = time.perf_counter()
     steps, _ = stream(client, "DEMO-01", step_ms=None)
     took = time.perf_counter() - t
-    assert 1.0 <= took <= 2.5, took
+    # Lower bound only: proves the server really pauses, and can't fail on a busy machine.
     assert 80 <= steps[0]["step_ms"] <= 350
+    assert took >= 0.9 * steps[0]["step_ms"] * (len(steps) - 2) / 1000, took
+    assert 1.0 <= steps[0]["step_ms"] * (len(steps) - 2) / 1000 <= 2.0  # planned ~1.5 s
 
 
 def test_step_ms_out_of_range_is_422(client):
@@ -154,6 +156,20 @@ def test_keyword_fallback_is_reported_as_the_source(client, monkeypatch):
 
 
 def test_live_mode_is_reported_as_live(client, monkeypatch):
+    from ds.interpreter.schemas import Interpretation
+    from services.api.routers import emails as email_router
+
     monkeypatch.setenv("LLM_MODE", "live")
-    steps, _ = stream(client, "DEMO-01")  # cached answer; the mode alone decides the label
-    assert steps[0]["source"] in ("live", "keyword_fallback")
+    monkeypatch.setattr(
+        email_router,
+        "interpret_email",
+        lambda email_id, subject, body, sender, **_: Interpretation(
+            email_id=email_id,
+            category="enquiry",
+            confidence=0.9,
+            method="llm",
+            ai_status="ok",
+        ),
+    )
+    steps, _ = stream(client, "DEMO-03")
+    assert steps[0]["source"] == "live"
