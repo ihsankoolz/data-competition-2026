@@ -1,6 +1,7 @@
 """Messy inbox (M2). Owner: backend-engineer (wiring); ds.interpreter does the reading."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 
 from ds.interpreter.api import interpret_email
@@ -9,7 +10,7 @@ from ds.interpreter.schemas import Interpretation
 from services.api.db import models as m
 from services.api.db.session import session_scope
 from services.api.deps import CurrentUser
-from services.api.schemas import EmailDetail, EmailSummary
+from services.api.schemas import EmailDetail, EmailSummary, InterpretStep
 
 router = APIRouter(tags=["emails"])
 
@@ -68,3 +69,32 @@ def interpret(email_id: str, actor: CurrentUser) -> Interpretation:
             raise HTTPException(404, f"There is no email {email_id}.")
         subject, body, sender = e.subject, e.body, e.from_address
     return interpret_email(email_id, subject, body, sender)
+
+
+@router.post(
+    "/emails/{email_id}/interpret/stream",
+    operation_id="streamInterpretEmail",
+    response_class=StreamingResponse,
+    # `model` puts the step types into the OpenAPI components, so the web client gets them typed.
+    # The body is really text/event-stream: `event: step`, `data:` one InterpretStep as JSON.
+    responses={
+        200: {
+            "model": InterpretStep,
+            "description": "Server-sent events, one InterpretStep per `event: step` (D-023). "
+            "Replays the same Interpretation POST /emails/{id}/interpret returns.",
+        }
+    },
+)
+def interpret_stream(
+    email_id: str,
+    actor: CurrentUser,
+    step_ms: int | None = Query(
+        default=None,
+        ge=0,
+        le=500,
+        description="Pause between steps. Default: about 1.5 s for the whole trace. "
+        "0 = all at once (reduced motion, tests)",
+    ),
+):
+    """Live AI trace (Stretch S1, D-023). Contract stub: backend-engineer implements."""
+    raise HTTPException(501, "The live AI trace is not built yet.")

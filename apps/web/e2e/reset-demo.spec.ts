@@ -25,9 +25,9 @@ test("reset demo asks first, then reports how long it took", async ({ page }) =>
 
   await page.goto("/requests/new");
   // A theme preview left in this browser (lib/theme.ts) is cleared by the reset.
-  await page.evaluate(() => window.localStorage.setItem("lives-mdm.theme-variant", "b"));
+  await page.evaluate(() => window.localStorage.setItem("lives-mdm.theme-variant", "a"));
   await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-variant", "b");
+  await expect(page.locator("html")).toHaveAttribute("data-variant", "a");
   await page.getByTestId("reset-demo").click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toContainText("Reset the demo?");

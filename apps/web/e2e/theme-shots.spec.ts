@@ -1,11 +1,11 @@
 /**
- * Theme variant screenshots (D-022 #5): A (sage, the default), B (light with a dark olive
- * sidebar) and C (dark). Not a test of behaviour: `make theme-shots` runs it with
+ * Theme variant screenshots (D-022 #5, D-023): A (sage, the fallback) and B (light with a dark
+ * olive sidebar, the default). Not a test of behaviour: `make theme-shots` runs it with
  * THEME_SHOTS=1; `make e2e` skips it (see playwright.config.ts).
  *
  * Each variant is applied the way a presenter would preview it: the stored override in
  * localStorage (lib/theme.ts), set by an init script before the page loads. 1440x900 shots go
- * to apps/web/screenshots/themes/{a,b,c}/ (gitignored; Playwright wipes test-results).
+ * to apps/web/screenshots/themes/{a,b}/ (gitignored; Playwright wipes test-results).
  */
 import path from "node:path";
 
@@ -13,7 +13,7 @@ import { expect, type Page, test } from "@playwright/test";
 
 import { approveAs, submittedCustomer } from "./workflow-helpers";
 
-const VARIANTS = ["a", "b", "c"] as const;
+const VARIANTS = ["a", "b"] as const;
 const OUT = path.join(__dirname, "..", "screenshots", "themes");
 
 /** Load `url` as `user`. Init scripts run in order on every load, so the last user set wins. */

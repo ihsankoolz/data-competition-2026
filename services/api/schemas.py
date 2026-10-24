@@ -1,9 +1,11 @@
 """API contract. Every request and response body is a Pydantic v2 model."""
 
 from datetime import datetime
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field
+
+from ds.interpreter.schemas import Category, Interpretation, MdmDomain, OrderLine, QuotedValue
 
 
 class Health(BaseModel):
@@ -102,6 +104,80 @@ class EmailDetail(EmailSummary):
     body: str = Field(description="Bank details are masked unless the acting user is Finance")
     attachments: list[str] = []
     thread_id: str | None = None
+
+
+# ---------------------------------------------------------------- live AI trace (Stretch S1, D-023)
+#
+# POST /emails/{email_id}/interpret/stream answers `text/event-stream`: one `event: step` per
+# InterpretStep, `data:` = the step as JSON. The steps REPLAY a finished Interpretation (the same
+# one POST /emails/{id}/interpret returns), paced so the trace takes about 1.5 s. No step ever
+# holds bank details: they come from the already-stripped Interpretation (rule 5).
+#
+# Order: start, [bank_stripped], field x n, line x m, category, [missing], [injection], done.
+
+
+class TraceStart(BaseModel):
+    kind: Literal["start"] = "start"
+    email_id: str
+    source: Literal["replay", "live", "keyword_fallback"] = Field(
+        description="replay = a recorded AI answer (LLM_MODE=replay); live = answered just now; "
+        "keyword_fallback = AI offline, keyword rules' guess"
+    )
+    total_steps: int = Field(description="Steps after this one, `done` included")
+    step_ms: int = Field(description="Pause between steps the server is using")
+
+
+class TraceBankStripped(BaseModel):
+    kind: Literal["bank_stripped"] = "bank_stripped"
+
+
+class TraceField(BaseModel):
+    kind: Literal["field"] = "field"
+    index: int
+    field: QuotedValue
+
+
+class TraceLine(BaseModel):
+    kind: Literal["line"] = "line"
+    index: int = Field(description="Matches the `line-{index}` highlight key the inbox uses")
+    line: OrderLine
+
+
+class TraceCategory(BaseModel):
+    kind: Literal["category"] = "category"
+    category: Category
+    confidence: float
+    domain: MdmDomain | None = None
+    needs_review: bool
+    method: Literal["llm", "keyword_fallback"]
+
+
+class TraceMissing(BaseModel):
+    kind: Literal["missing"] = "missing"
+    missing_fields: list[str]
+    questions_for_requester: list[str]
+
+
+class TraceInjection(BaseModel):
+    kind: Literal["injection"] = "injection"
+
+
+class TraceDone(BaseModel):
+    kind: Literal["done"] = "done"
+    interpretation: Interpretation
+
+
+InterpretStep = Annotated[
+    TraceStart
+    | TraceBankStripped
+    | TraceField
+    | TraceLine
+    | TraceCategory
+    | TraceMissing
+    | TraceInjection
+    | TraceDone,
+    Field(discriminator="kind"),
+]
 
 
 # ---------------------------------------------------------------- duplicate check (M4)

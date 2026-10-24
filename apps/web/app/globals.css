@@ -176,7 +176,7 @@
   --sidebar-ring: oklch(0.783 0.0384 132.737);
 }
 
-/* Variant C is the theme file's dark mode: the `.dark` block below (set with data-variant="c"). */
+/* The theme file's dark mode (shadcn `.dark`). Not used by the app (D-023 dropped variant C). */
 .dark {
   --background: oklch(0.1173 0.009 73.4751);
   --foreground: oklch(0.9796 0.0017 67.8026);

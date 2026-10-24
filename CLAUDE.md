@@ -33,7 +33,7 @@ docs/                PRD, decisions, data spec, demo script, progress log
 - `make test` — all Python and web tests
 - `make e2e` — Playwright suite; starts its own SAP mock, API and web on 8101/8100/3100 and stops them (`make e2e E2E_ARGS=dup-panel` for one spec)
 - `make rehearse` — timed demo walkthrough with 1440x900 screenshots (not in `make e2e`)
-- `make theme-shots` — 1440x900 screenshots of theme variants A/B/C into `apps/web/screenshots/themes/` (not in `make e2e`; the active variant is `THEME_VARIANT` in `apps/web/lib/theme.ts`)
+- `make theme-shots` — 1440x900 screenshots of theme variants A/B (B is the default, D-023) into `apps/web/screenshots/themes/` (not in `make e2e`; the active variant is `THEME_VARIANT` in `apps/web/lib/theme.ts`)
 - `make eval` — dedup, classifier and forecast evaluations; writes `docs/results.md`
 
 ## Stack rules

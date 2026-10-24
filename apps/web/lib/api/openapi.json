@@ -320,6 +320,126 @@
         }
       }
     },
+    "/emails/{email_id}/interpret/stream": {
+      "post": {
+        "tags": [
+          "emails"
+        ],
+        "summary": "Interpret Stream",
+        "description": "Live AI trace (Stretch S1, D-023). Contract stub: backend-engineer implements.",
+        "operationId": "streamInterpretEmail",
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Email Id"
+            }
+          },
+          {
+            "name": "step_ms",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 500,
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Pause between steps. Default: about 1.5 s for the whole trace. 0 = all at once (reduced motion, tests)",
+              "title": "Step Ms"
+            },
+            "description": "Pause between steps. Default: about 1.5 s for the whole trace. 0 = all at once (reduced motion, tests)"
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Server-sent events, one InterpretStep per `event: step` (D-023). Replays the same Interpretation POST /emails/{id}/interpret returns.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/TraceStart"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TraceBankStripped"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TraceField"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TraceLine"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TraceCategory"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TraceMissing"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TraceInjection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TraceDone"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "kind",
+                    "mapping": {
+                      "start": "#/components/schemas/TraceStart",
+                      "bank_stripped": "#/components/schemas/TraceBankStripped",
+                      "field": "#/components/schemas/TraceField",
+                      "line": "#/components/schemas/TraceLine",
+                      "category": "#/components/schemas/TraceCategory",
+                      "missing": "#/components/schemas/TraceMissing",
+                      "injection": "#/components/schemas/TraceInjection",
+                      "done": "#/components/schemas/TraceDone"
+                    }
+                  },
+                  "title": "Response 200 Streaminterpretemail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dedup/check": {
       "post": {
         "tags": [
@@ -4671,6 +4791,229 @@
           "tasks"
         ],
         "title": "Stage"
+      },
+      "TraceBankStripped": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "bank_stripped",
+            "title": "Kind",
+            "default": "bank_stripped"
+          }
+        },
+        "type": "object",
+        "title": "TraceBankStripped"
+      },
+      "TraceCategory": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "category",
+            "title": "Kind",
+            "default": "category"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "purchase_order",
+              "purchase_request",
+              "enquiry",
+              "follow_up",
+              "mdm_request"
+            ],
+            "title": "Category"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "customer",
+                  "vendor",
+                  "item",
+                  "cost_center"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "needs_review": {
+            "type": "boolean",
+            "title": "Needs Review"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "llm",
+              "keyword_fallback"
+            ],
+            "title": "Method"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "confidence",
+          "needs_review",
+          "method"
+        ],
+        "title": "TraceCategory"
+      },
+      "TraceDone": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "done",
+            "title": "Kind",
+            "default": "done"
+          },
+          "interpretation": {
+            "$ref": "#/components/schemas/Interpretation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "interpretation"
+        ],
+        "title": "TraceDone"
+      },
+      "TraceField": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "field",
+            "title": "Kind",
+            "default": "field"
+          },
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "field": {
+            "$ref": "#/components/schemas/QuotedValue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "index",
+          "field"
+        ],
+        "title": "TraceField"
+      },
+      "TraceInjection": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "injection",
+            "title": "Kind",
+            "default": "injection"
+          }
+        },
+        "type": "object",
+        "title": "TraceInjection"
+      },
+      "TraceLine": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "line",
+            "title": "Kind",
+            "default": "line"
+          },
+          "index": {
+            "type": "integer",
+            "title": "Index",
+            "description": "Matches the `line-{index}` highlight key the inbox uses"
+          },
+          "line": {
+            "$ref": "#/components/schemas/OrderLine"
+          }
+        },
+        "type": "object",
+        "required": [
+          "index",
+          "line"
+        ],
+        "title": "TraceLine"
+      },
+      "TraceMissing": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "missing",
+            "title": "Kind",
+            "default": "missing"
+          },
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Fields"
+          },
+          "questions_for_requester": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Questions For Requester"
+          }
+        },
+        "type": "object",
+        "required": [
+          "missing_fields",
+          "questions_for_requester"
+        ],
+        "title": "TraceMissing"
+      },
+      "TraceStart": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "start",
+            "title": "Kind",
+            "default": "start"
+          },
+          "email_id": {
+            "type": "string",
+            "title": "Email Id"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "replay",
+              "live",
+              "keyword_fallback"
+            ],
+            "title": "Source",
+            "description": "replay = a recorded AI answer (LLM_MODE=replay); live = answered just now; keyword_fallback = AI offline, keyword rules' guess"
+          },
+          "total_steps": {
+            "type": "integer",
+            "title": "Total Steps",
+            "description": "Steps after this one, `done` included"
+          },
+          "step_ms": {
+            "type": "integer",
+            "title": "Step Ms",
+            "description": "Pause between steps the server is using"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email_id",
+          "source",
+          "total_steps",
+          "step_ms"
+        ],
+        "title": "TraceStart"
       },
       "ValidationBlocked": {
         "properties": {

@@ -130,6 +130,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/emails/{email_id}/interpret/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Interpret Stream
+         * @description Live AI trace (Stretch S1, D-023). Contract stub: backend-engineer implements.
+         */
+        post: operations["streamInterpretEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/dedup/check": {
         parameters: {
             query?: never;
@@ -2017,6 +2037,118 @@ export interface components {
             /** Tasks */
             tasks: components["schemas"]["ApprovalTask"][];
         };
+        /** TraceBankStripped */
+        TraceBankStripped: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "bank_stripped";
+        };
+        /** TraceCategory */
+        TraceCategory: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "category";
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "purchase_order" | "purchase_request" | "enquiry" | "follow_up" | "mdm_request";
+            /** Confidence */
+            confidence: number;
+            /** Domain */
+            domain?: ("customer" | "vendor" | "item" | "cost_center") | null;
+            /** Needs Review */
+            needs_review: boolean;
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "llm" | "keyword_fallback";
+        };
+        /** TraceDone */
+        TraceDone: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "done";
+            interpretation: components["schemas"]["Interpretation"];
+        };
+        /** TraceField */
+        TraceField: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "field";
+            /** Index */
+            index: number;
+            field: components["schemas"]["QuotedValue"];
+        };
+        /** TraceInjection */
+        TraceInjection: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "injection";
+        };
+        /** TraceLine */
+        TraceLine: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "line";
+            /**
+             * Index
+             * @description Matches the `line-{index}` highlight key the inbox uses
+             */
+            index: number;
+            line: components["schemas"]["OrderLine"];
+        };
+        /** TraceMissing */
+        TraceMissing: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "missing";
+            /** Missing Fields */
+            missing_fields: string[];
+            /** Questions For Requester */
+            questions_for_requester: string[];
+        };
+        /** TraceStart */
+        TraceStart: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "start";
+            /** Email Id */
+            email_id: string;
+            /**
+             * Source
+             * @description replay = a recorded AI answer (LLM_MODE=replay); live = answered just now; keyword_fallback = AI offline, keyword rules' guess
+             * @enum {string}
+             */
+            source: "replay" | "live" | "keyword_fallback";
+            /**
+             * Total Steps
+             * @description Steps after this one, `done` included
+             */
+            total_steps: number;
+            /**
+             * Step Ms
+             * @description Pause between steps the server is using
+             */
+            step_ms: number;
+        };
         /**
          * ValidationBlocked
          * @description The 422 body of POST /requests/{req_id}/submit when validation fails. `detail` stays a
@@ -2305,6 +2437,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Interpretation"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    streamInterpretEmail: {
+        parameters: {
+            query?: {
+                /** @description Pause between steps. Default: about 1.5 s for the whole trace. 0 = all at once (reduced motion, tests) */
+                step_ms?: number | null;
+            };
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path: {
+                email_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Server-sent events, one InterpretStep per `event: step` (D-023). Replays the same Interpretation POST /emails/{id}/interpret returns. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TraceStart"] | components["schemas"]["TraceBankStripped"] | components["schemas"]["TraceField"] | components["schemas"]["TraceLine"] | components["schemas"]["TraceCategory"] | components["schemas"]["TraceMissing"] | components["schemas"]["TraceInjection"] | components["schemas"]["TraceDone"];
                 };
             };
             /** @description Validation Error */

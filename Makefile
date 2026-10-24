@@ -57,7 +57,7 @@ e2e:              ## Playwright suite: starts its own SAP mock, API and web on 8
 rehearse:         ## timed 2:30 demo walkthrough + 1440x900 screenshots -> apps/web/test-results/rehearse (not in make e2e)
 	cd $(WEB) && REHEARSE=1 "$(NODE)" e2e/run.mjs walkthrough
 
-theme-shots:      ## 1440x900 screenshots of theme variants A/B/C -> apps/web/screenshots/themes (not in make e2e)
+theme-shots:      ## 1440x900 screenshots of theme variants A/B -> apps/web/screenshots/themes (not in make e2e)
 	cd $(WEB) && THEME_SHOTS=1 "$(NODE)" e2e/run.mjs theme-shots
 
 eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)

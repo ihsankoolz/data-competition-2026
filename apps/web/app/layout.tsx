@@ -8,7 +8,7 @@ import { SideNav } from "@/components/shell/side-nav";
 import { ToastRouteGuard } from "@/components/shell/toast-route-guard";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { THEME_PREVIEW_SCRIPT, THEME_VARIANT, variantClass } from "@/lib/theme";
+import { THEME_PREVIEW_SCRIPT, THEME_VARIANT } from "@/lib/theme";
 import { TOAST_DURATION_MS } from "@/lib/toasts";
 
 import "./globals.css";
@@ -42,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-variant={THEME_VARIANT}
-      className={`${sans.variable} ${mono.variable} ${variantClass(THEME_VARIANT)} h-full antialiased`}
+      className={`${sans.variable} ${mono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
