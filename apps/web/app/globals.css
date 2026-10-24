@@ -127,25 +127,19 @@
   /* The file's -0.025em closed up word spaces in Plus Jakarta Sans at small sizes ("Newrequest");
      0 keeps body text readable and leaves tracking-tight at Tailwind's -0.025em for headings. */
   --tracking-normal: 0em;
-  /* Data colours for the regional view (validated dataviz reference palette). One accent hue
-     (blue) for "our method" and gains; orange only for the Excel line; red only for losses. */
-  --viz-accent: #2a78d6;
-  --viz-excel: #eb6834;
-  --viz-loss: #e34948;
-  --viz-neutral: #a3a29b;
-  --viz-ink: #0b0b0b;
-  --viz-grid: #e1e0d9;
-  --viz-axis: #898781;
+  /* Data colours for the charts, derived from the theme so every variant follows (D-022 #5).
+     Green for "our method" and gains; grey for the Excel baseline and totals; red only for
+     losses. Set once here; .dark only changes the tokens these point at. */
+  --viz-accent: var(--success);
+  --viz-excel: var(--muted-foreground);
+  --viz-loss: var(--destructive);
+  --viz-neutral: var(--muted-foreground);
+  --viz-ink: var(--foreground);
+  --viz-grid: var(--border);
+  --viz-axis: var(--muted-foreground);
 }
 
 .dark {
-  --viz-accent: #3987e5;
-  --viz-excel: #d95926;
-  --viz-loss: #e66767;
-  --viz-neutral: #6b6a64;
-  --viz-ink: #f0efec;
-  --viz-grid: #2c2c2a;
-  --viz-axis: #898781;
   --background: oklch(0.1173 0.009 73.4751);
   --foreground: oklch(0.9796 0.0017 67.8026);
   --card: oklch(0.1609 0.0115 80.9823);

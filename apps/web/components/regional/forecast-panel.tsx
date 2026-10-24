@@ -242,7 +242,7 @@ export function ForecastPanel({ summary }: { summary: Summary }) {
               />
             </LineChart>
             <p className="text-xs text-muted-foreground">
-              Dashed and blue lines start where the test starts: each month we pretended it was that
+              The grey dashed and green lines start where the test starts: each month we pretended it was that
               month, let both methods plan the next 3 months, then checked against what was really
               ordered.
             </p>
