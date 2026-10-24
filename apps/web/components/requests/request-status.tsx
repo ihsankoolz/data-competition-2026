@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SlaBadge, StateBadge } from "@/components/workflow/badges";
 import { DecisionActions } from "@/components/workflow/decision-actions";
+import { PipelineBeam } from "@/components/requests/pipeline-beam";
 import { ResubmitForm } from "@/components/requests/resubmit-form";
 import { RequestFields } from "@/components/workflow/request-fields";
 import { ReadbackUnavailable, SapReadback } from "@/components/workflow/sap-readback";
@@ -180,6 +181,8 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
           </span>
         </div>
       </header>
+
+      <PipelineBeam detail={detail} />
 
       {detail.state === "LINKED_TO_EXISTING" && (
         <div className="flex items-start gap-3 rounded-xl border border-success/40 bg-success/8 p-4">
