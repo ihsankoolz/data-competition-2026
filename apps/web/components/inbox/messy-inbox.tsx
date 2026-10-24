@@ -1,18 +1,19 @@
 "use client";
 
-import {
-  CloudOff,
-  FilePlus2,
-  Loader2,
-  Paperclip,
-  ShieldAlert,
-  ShieldCheck,
-  Sparkles,
-  UserRoundSearch,
-} from "lucide-react";
+import { Loader2, Paperclip, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import {
+  applyStep,
+  CategoryChip,
+  EMPTY_VIEW,
+  quotesOf,
+  type ReadView,
+  Reading,
+  TraceBar,
+  viewOf,
+} from "@/components/inbox/ai-reading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,14 +25,12 @@ import {
   CATEGORIES,
   CATEGORY_HELP,
   CATEGORY_TEXT,
-  CATEGORY_WITH_ARTICLE,
   type Category,
   highlight,
   type Interpretation,
-  keyLabel,
-  valueText,
 } from "@/lib/emails";
 import { formatSgt } from "@/lib/format";
+import { interpretWithTrace, type TraceResult, type TraceSource } from "@/lib/interpret-stream";
 import { cn } from "@/lib/utils";
 
 type EmailSummary = Schema<"EmailSummary">;
@@ -53,6 +52,8 @@ export function MessyInbox() {
   const [attempt, setAttempt] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [reads, setReads] = useState<Record<string, Interpretation>>({});
+  // Where each traced read came from (a recorded replay, live, or the keyword rules).
+  const [sources, setSources] = useState<Record<string, TraceSource>>({});
   const [reading, setReading] = useState<Set<string>>(new Set());
   const [readError, setReadError] = useState<string | null>(null);
   const [sortingAll, setSortingAll] = useState(false);
@@ -227,8 +228,13 @@ export function MessyInbox() {
               key={activeId}
               emailId={activeId}
               read={reads[activeId]}
+              source={sources[activeId] ?? null}
               busy={reading.has(activeId)}
-              onRead={() => void readOne(activeId)}
+              onTraced={({ interpretation, source }) => {
+                setReads((r) => ({ ...r, [activeId]: interpretation }));
+                if (source) setSources((m) => ({ ...m, [activeId]: source }));
+              }}
+              onReadError={setReadError}
               onCreate={() => router.push(`/requests/new?email=${encodeURIComponent(activeId)}`)}
             />
           ) : (
@@ -276,19 +282,6 @@ function FilterChip({
       <TooltipTrigger asChild>{chip}</TooltipTrigger>
       <TooltipContent className="max-w-64">{help}</TooltipContent>
     </Tooltip>
-  );
-}
-
-function CategoryChip({ category }: { category: Category }) {
-  return (
-    <Badge
-      variant="secondary"
-      className={cn(category === "mdm_request" && "bg-foreground text-background")}
-      data-testid="category-chip"
-      data-category={category}
-    >
-      {CATEGORY_TEXT[category]}
-    </Badge>
   );
 }
 
@@ -346,23 +339,41 @@ function EmailRow({
   );
 }
 
+/** How long a newly found quote stays in the stronger colour (D-023 #3). */
+const FLASH_MS = 600;
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function EmailPane({
   emailId,
   read,
+  source,
   busy,
-  onRead,
+  onTraced,
+  onReadError,
   onCreate,
 }: {
   emailId: string;
   read?: Interpretation;
+  source: TraceSource | null;
   busy: boolean;
-  onRead: () => void;
+  onTraced: (result: TraceResult) => void;
+  onReadError: (message: string | null) => void;
   onCreate: () => void;
 }) {
   const [email, setEmail] = useState<EmailDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
+  // The live trace: the view being filled in step by step, null when none is running.
+  const [trace, setTrace] = useState<{ view: ReadView; source: TraceSource | null } | null>(null);
+  const [tracing, setTracing] = useState(false);
+  const [flashing, setFlashing] = useState<ReadonlySet<string>>(new Set());
+  const [revealed, setRevealed] = useState<{ key: string; n: number } | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const controller = useRef<AbortController | null>(null);
+  const timers = useRef<number[]>([]);
 
   useEffect(() => {
     let current = true;
@@ -375,14 +386,78 @@ function EmailPane({
     };
   }, [emailId]);
 
+  // Leaving the email (or the page) stops its trace.
+  useEffect(() => {
+    const pending = timers.current;
+    return () => {
+      controller.current?.abort();
+      pending.forEach((t) => window.clearTimeout(t));
+    };
+  }, []);
+
+  // Bring each newly found quote into view once it is on screen.
+  useEffect(() => {
+    if (!revealed) return;
+    bodyRef.current
+      ?.querySelector(`[data-quote="${CSS.escape(revealed.key)}"]`)
+      ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [revealed]);
+
+  function flash(key: string) {
+    setFlashing((s) => new Set(s).add(key));
+    setRevealed((r) => ({ key, n: (r?.n ?? 0) + 1 }));
+    const t = window.setTimeout(() => {
+      setFlashing((s) => {
+        const next = new Set(s);
+        next.delete(key);
+        return next;
+      });
+    }, FLASH_MS);
+    timers.current.push(t);
+  }
+
+  async function runTrace() {
+    controller.current?.abort();
+    const ctrl = new AbortController();
+    controller.current = ctrl;
+    const reduced = prefersReducedMotion();
+    onReadError(null);
+    setFocusKey(null);
+    setTracing(true);
+    // Reduced motion: no step-by-step phase, the result shows all at once.
+    if (!reduced) setTrace({ view: EMPTY_VIEW, source: null });
+    try {
+      const result = await interpretWithTrace(emailId, {
+        signal: ctrl.signal,
+        stepMs: reduced ? 0 : undefined,
+        onStep: reduced
+          ? undefined
+          : (step) => {
+              if (step.kind === "start") setTrace({ view: EMPTY_VIEW, source: step.source });
+              else setTrace((t) => t && { ...t, view: applyStep(t.view, step) });
+              if (step.kind === "field") flash(step.field.key);
+              if (step.kind === "line") flash(`line-${step.index}`);
+            },
+      });
+      if (!ctrl.signal.aborted) onTraced(result);
+    } catch (e) {
+      if (ctrl.signal.aborted) return;
+      onReadError(explain(e, "Reading the email"));
+    } finally {
+      if (controller.current === ctrl) {
+        controller.current = null;
+        setTrace(null);
+        setTracing(false);
+      }
+    }
+  }
+
   if (error) return <p className="text-sm text-muted-foreground">{error}</p>;
   if (!email) return <Skeleton className="h-[32rem] w-full" />;
 
-  const quotes = [
-    ...(read?.fields ?? []).map((f) => ({ key: f.key, quote: f.source_quote })),
-    ...(read?.lines ?? []).map((l, i) => ({ key: `line-${i}`, quote: l.source_quote })),
-  ];
-  const segments = highlight(email.body, quotes);
+  const streaming = trace !== null;
+  const view = trace?.view ?? (read ? viewOf(read) : null);
+  const segments = highlight(email.body, view ? quotesOf(view) : []);
 
   const showQuote = (key: string) => {
     setFocusKey(key);
@@ -424,8 +499,12 @@ function EmailPane({
                 data-quote={s.key}
                 data-testid="quote-highlight"
                 className={cn(
-                  "rounded-sm px-0.5 text-foreground transition-colors",
-                  focusKey === s.key ? "bg-warning/60" : "bg-warning/25",
+                  "rounded-sm px-0.5 text-foreground transition-colors duration-500",
+                  flashing.has(s.key)
+                    ? "bg-warning/75"
+                    : focusKey === s.key
+                      ? "bg-warning/60"
+                      : "bg-warning/25",
                 )}
               >
                 {s.text}
@@ -437,205 +516,49 @@ function EmailPane({
         </div>
       </div>
 
-      <aside className="flex flex-col gap-4" aria-label="What the AI read" data-testid="ai-reading">
-        {!read ? (
+      <aside
+        className="flex flex-col gap-4"
+        aria-label="What the AI read"
+        aria-busy={streaming || undefined}
+        data-testid="ai-reading"
+        data-trace-state={streaming ? "streaming" : view ? "done" : undefined}
+      >
+        {!view ? (
           <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed p-4">
             <p className="text-sm text-muted-foreground">
               Let the AI sort this email and pull out the key details. It cannot act on anything it
               reads; it only suggests.
             </p>
-            <Button onClick={onRead} disabled={busy} data-testid="read-with-ai">
-              {busy ? (
+            <Button
+              onClick={() => void runTrace()}
+              disabled={busy || tracing}
+              data-testid="read-with-ai"
+            >
+              {busy || tracing ? (
                 <Loader2 className="animate-spin" data-icon="inline-start" />
               ) : (
                 <Sparkles data-icon="inline-start" />
               )}
-              Read with AI
+              Read this email
             </Button>
           </div>
         ) : (
-          <Reading read={read} focusKey={focusKey} onFocusKey={showQuote} onCreate={onCreate} />
+          <>
+            <TraceBar
+              source={trace ? trace.source : source}
+              streaming={tracing}
+              onReplay={() => void runTrace()}
+            />
+            <Reading
+              view={view}
+              streaming={streaming}
+              focusKey={focusKey}
+              onFocusKey={showQuote}
+              onCreate={onCreate}
+            />
+          </>
         )}
       </aside>
     </section>
-  );
-}
-
-function Reading({
-  read,
-  focusKey,
-  onFocusKey,
-  onCreate,
-}: {
-  read: Interpretation;
-  focusKey: string | null;
-  onFocusKey: (key: string) => void;
-  onCreate: () => void;
-}) {
-  const pct = Math.round(read.confidence * 100);
-  const fields = read.fields ?? [];
-  const lines = read.lines ?? [];
-  const missing = read.missing_fields ?? [];
-  const questions = read.questions_for_requester ?? [];
-  // Shown right under "Details found", so it is on screen without scrolling (D-021 beat 4).
-  const bankNotice = read.bank_details_stripped ? (
-    <p
-      className="flex items-start gap-1.5 rounded-md bg-success/10 px-2 py-1.5 text-xs text-foreground"
-      data-testid="bank-stripped"
-    >
-      <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-success" />
-      Bank details in this email were removed before the AI read it. They are never sent to the
-      AI, and only Finance can see them.
-    </p>
-  ) : null;
-
-  return (
-    <>
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <CategoryChip category={read.category} />
-          {read.method === "keyword_fallback" && (
-            <Badge variant="outline" data-testid="ai-offline">
-              <CloudOff data-icon="inline-start" />
-              AI offline
-            </Badge>
-          )}
-          {read.needs_review && (
-            <Badge
-              variant="secondary"
-              className="bg-warning/15 text-warning-foreground"
-              data-testid="needs-review"
-            >
-              <UserRoundSearch data-icon="inline-start" />
-              Needs human review
-            </Badge>
-          )}
-        </div>
-        <p className="text-sm" data-testid="confidence">
-          {read.method === "keyword_fallback" ? "The keyword rules are" : "The AI is"} {pct}% sure
-          this is {CATEGORY_WITH_ARTICLE[read.category]}.
-          <span className="text-muted-foreground">
-            {" "}
-            {read.injection_suspected
-              ? "The email seems to give the AI orders, so a person sorts it."
-              : read.needs_review
-                ? "That is below 60%, so a person sorts it."
-                : CATEGORY_HELP[read.category]}
-          </span>
-        </p>
-        {read.method === "keyword_fallback" && (
-          <p className="text-xs text-muted-foreground">
-            {read.ai_message ?? "AI offline: showing the keyword rules' best guess"}.
-          </p>
-        )}
-      </div>
-
-      {read.injection_suspected && (
-        <div
-          className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm"
-          data-testid="injection-warning"
-          role="alert"
-        >
-          <ShieldAlert className="mt-0.5 size-4 shrink-0 text-destructive" />
-          <p>
-            <span className="font-medium">Possible hidden instructions.</span> This email seems to
-            give orders to the AI. They were ignored: an email can never change approvers, bank
-            details or credit terms. A person should check it.
-          </p>
-        </div>
-      )}
-
-      {fields.length === 0 && bankNotice}
-
-      {fields.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-semibold">Details found</h3>
-          {bankNotice}
-          <ul className="flex flex-col gap-1" data-testid="extracted-fields">
-            {fields.map((f) => (
-              <li key={f.key}>
-                <button
-                  type="button"
-                  onMouseEnter={() => onFocusKey(f.key)}
-                  onFocus={() => onFocusKey(f.key)}
-                  onClick={() => onFocusKey(f.key)}
-                  className={cn(
-                    "flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                    focusKey === f.key ? "bg-warning/20" : "hover:bg-muted",
-                  )}
-                  data-testid={`extracted-${f.key}`}
-                >
-                  <span className="text-xs text-muted-foreground">{keyLabel(f.key)}</span>
-                  <span className="text-sm font-medium break-words">{valueText(f.value)}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="text-xs text-muted-foreground">
-            Point at a detail to see the words it came from, highlighted in the email.
-          </p>
-        </div>
-      )}
-
-      {lines.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-semibold">Products and quantities</h3>
-          <ul className="flex flex-col gap-1 text-sm" data-testid="order-lines">
-            {lines.map((l, i) => (
-              <li key={i}>
-                <button
-                  type="button"
-                  onMouseEnter={() => onFocusKey(`line-${i}`)}
-                  onFocus={() => onFocusKey(`line-${i}`)}
-                  className={cn(
-                    "flex w-full items-baseline justify-between gap-3 rounded-md px-2 py-1 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                    focusKey === `line-${i}` ? "bg-warning/20" : "hover:bg-muted",
-                  )}
-                >
-                  <span>
-                    {l.product_text ?? l.item_code}
-                    {l.item_code && l.product_text && (
-                      <span className="ml-1.5 text-xs text-muted-foreground">{l.item_code}</span>
-                    )}
-                  </span>
-                  <span className="tabular-nums">{l.qty ?? "?"}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {(missing.length > 0 || questions.length > 0) && (
-        <div className="flex flex-col gap-2" data-testid="missing-fields">
-          <h3 className="text-sm font-semibold">Missing from the email</h3>
-          {questions.length > 0 ? (
-            <ul className="flex list-disc flex-col gap-1 pl-5 text-sm">
-              {questions.map((q) => (
-                <li key={q}>{q}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm">{missing.map(keyLabel).join(", ")}</p>
-          )}
-          <p className="text-xs text-muted-foreground">
-            The form asks the requestor for these before anything reaches an approver.
-          </p>
-        </div>
-      )}
-
-      {read.category === "mdm_request" && (
-        <div className="flex flex-col gap-2 border-t pt-4">
-          <Button onClick={onCreate} data-testid="create-request">
-            <FilePlus2 data-icon="inline-start" />
-            Create request from this email
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Opens the request form filled in with these details, each one showing where it came
-            from. Nothing is submitted until you check it.
-          </p>
-        </div>
-      )}
-    </>
   );
 }
