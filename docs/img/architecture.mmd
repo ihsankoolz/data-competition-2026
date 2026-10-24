@@ -1,0 +1,49 @@
+flowchart TB
+    subgraph DOOR["1 · Front door: requests come in the way people already work"]
+        direction LR
+        EMAIL["Outlook email<br/>keep emailing if you like"]
+        FORM["Request form<br/>prototype: web app<br/>production: Teams tab"]
+    end
+
+    RULES[["Rule tables the MDM team edits<br/>who approves, which fields are required<br/>prototype: config files<br/>production: SharePoint list"]]
+    LLM(["Claude API<br/>reads emails, second opinion on duplicates<br/>demo: recorded answers, no internet"])
+
+    subgraph BRAIN["2 · MDM brain: one small hosted service (FastAPI)"]
+        direction LR
+        INT["Email reader (AI)<br/>bank details removed first;<br/>no tools, answer checked"]
+        CHECK["Field checks<br/>required fields, tax IDs,<br/>licence expiry dates"]
+        DUP["Duplicate check<br/>rules first, AI only<br/>when the rules are unsure"]
+        WF["Approvals engine<br/>approvers in parallel,<br/>reminders on a clock"]
+        PUB["SAP publisher<br/>create inactive, read back,<br/>then activate"]
+        INT -->|pre-filled request| CHECK --> DUP -->|one golden record| WF -->|all approved| PUB
+    end
+
+    subgraph B1["3 · SAP Business One: one shared database for SPD, QTS and QTG"]
+        direction LR
+        SL["Service Layer /b1s/v2<br/>signed in as an integration user<br/>prototype: Service Layer mock"]
+        DB[("BusinessPartners · Items ·<br/>ProfitCenters (Cost Centers)")]
+        SL --> DB
+    end
+
+    NOTE["Notifications<br/>prototype: in-app bell<br/>production: Power Automate<br/>to Teams and Outlook"]
+    AUD[("Audit log<br/>every change and SAP call,<br/>append-only, hash-chained")]
+    RV["4 · Regional sales view<br/>golden IDs, confirmed POs only"]
+
+    DOOR ==> BRAIN
+    RULES -.-> BRAIN
+    LLM <-.-> BRAIN
+    BRAIN ==>|"Login, POST, GET, PATCH, Logout"| B1
+    BRAIN --> NOTE
+    BRAIN -.-> AUD
+    B1 ==>|orders and customers, by golden ID| RV
+
+    classDef prod fill:#f8f9f4,stroke:#6b7a4b,stroke-width:1px,stroke-dasharray:5 3,color:#2f3524
+    classDef core fill:#ffffff,stroke:#4a5a2f,stroke-width:1.5px,color:#1f2418
+    classDef ai fill:#f4f0fa,stroke:#6a4c93,stroke-width:1.5px,color:#2b1f3c
+    classDef sap fill:#eef3f8,stroke:#2f5d8a,stroke-width:1.5px,color:#1b2b3c
+    classDef out fill:#e9f2e1,stroke:#3f6b2a,stroke-width:2px,color:#1d3312
+    class EMAIL,FORM,RULES,NOTE prod
+    class CHECK,DUP,WF,PUB,AUD core
+    class INT,LLM ai
+    class SL,DB sap
+    class RV out

@@ -254,3 +254,13 @@ Decisions:
 4. **Pipeline beam (Stretch S1)** on the status page: Magic UI `animated-beam` (shadcn CLI, needs `motion`, both in D-013): Email -> Read by AI -> Golden record -> Approvals -> In SAP, each node lit from the request's real state (derived in the browser from `RequestDetail`; no API change). One sweep per state change, at most 400 ms; no looping; none under reduced motion.
 5. **Southeast Asia map (Stretch S2, only if time allows):** no `react-simple-maps` (React 19 peer risk). ECharts `registerMap` with a small committed GeoJSON of SG/MY/ID/VN/TH trimmed from Natural Earth (public domain; source noted in the README). Singapore gets a dot marker so it is visible and clickable. Coloured by 12-month growth; clicking a country filters the regional view.
 6. **Map library (24 Oct, Ihsan):** add `echarts` (already allowed by D-013) for the S2 map; the regional page is the only place it loads.
+
+## D-024 Session 9 decisions (25 Oct, Ihsan + orchestrator)
+
+1. **Order of work:** merge the live AI trace (`s1-trace`, after the frontend QA notes), then the Southeast Asia map (Stretch S2) on `/regional`. The judge-ready README is written in parallel.
+2. **README is for non-technical judges first, engineers second.** Every headline number links to `docs/results.md` and carries an honest one-line caption (synthetic data, modelled not measured, the forecast ties the Excel average at country level).
+3. **Diagrams:** Mermaid in the README (GitHub renders it), sources in `docs/img/*.mmd`, PNGs rendered with mermaid-cli (`mmdc`, D-013) for slides and video. D2 was not used: it is not installed and Mermaid covers both diagrams. The architecture diagram shows the prototype and the production path: a Teams/Outlook front door, one small hosted "MDM brain" service, rule tables in SharePoint, Power Automate notifications, and the SAP B1 Service Layer behind an integration user. Every Mermaid block is rendered locally to check its syntax; nothing is pushed.
+4. **README screenshots** (1440x900) are copied from the final `make rehearse` run into `docs/img/` and committed. `apps/web/test-results/` stays out of git.
+5. **Map growth is computed in the browser** from the heatmap cells: a country's 12-month growth = sum of last-12-month value / sum of prior-12-month value (`value_usd / (1 + growth_12m_pct/100)`) - 1. No contract change, unless `growth_12m_pct` turns out to be rounded, in which case an API field is added instead.
+6. **Licence:** MIT, "Copyright (c) 2026 Ihsan Alfian". Data sources: Natural Earth (public domain) for the map shapes.
+7. **Branch hygiene:** worktrees and branches are removed only when fully merged (`git branch -d`). `d022-hospital-names` was deleted (no diff against main).
