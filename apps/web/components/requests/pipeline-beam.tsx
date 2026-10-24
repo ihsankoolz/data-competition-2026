@@ -7,9 +7,8 @@
  * 400 ms) when the page opens and again only when that segment changes; it never loops and is
  * left out entirely under reduced motion.
  */
-import { Check, Database, FileCheck2, Mail, Sparkles, Users, X } from "lucide-react";
-import { useReducedMotion } from "motion/react";
-import { type RefObject, useRef } from "react";
+import { Check, Database, FileCheck2, Mail, Pause, Sparkles, Users, X } from "lucide-react";
+import { type RefObject, useRef, useSyncExternalStore } from "react";
 
 import { AnimatedBeam } from "@/components/ui/animated-beam";
 import type { Schema } from "@/lib/api/client";
@@ -17,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 type RequestDetail = Schema<"RequestDetail">;
 
-export type NodeState = "done" | "current" | "waiting" | "skipped" | "rejected";
+export type NodeState = "done" | "current" | "paused" | "waiting" | "skipped" | "rejected";
 type NodeId = "email" | "ai" | "golden" | "approvals" | "sap";
 type PipelineNode = { id: NodeId; label: string; state: NodeState; caption: string };
 
@@ -27,12 +26,30 @@ export const BEAM_MS = 350;
 const STATE_WORD: Record<NodeState, string> = {
   done: "Done",
   current: "Happening now",
+  paused: "Paused",
   waiting: "Not started",
   skipped: "Not needed",
   rejected: "Stopped",
 };
 
 const ICON = { email: Mail, ai: Sparkles, golden: FileCheck2, approvals: Users, sap: Database };
+
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeReduced(onChange: () => void) {
+  const mq = window.matchMedia(REDUCED_QUERY);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
+
+/** The visitor's reduced-motion setting (our own: motion's hook logs a dev warning). */
+function usePrefersReducedMotion(): boolean {
+  return useSyncExternalStore(
+    subscribeReduced,
+    () => window.matchMedia(REDUCED_QUERY).matches,
+    () => false,
+  );
+}
 
 function count(n: number, one: string, many: string) {
   return `${n} ${n === 1 ? one : many}`;
@@ -60,15 +77,22 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
           ? `${count(quotes, "detail", "details")} pre-filled`
           : "Nothing to pre-fill",
       }
-    : { id: "ai", label: "Read by AI", state: "skipped", caption: "Not needed" };
+    : { id: "ai", label: "Read by AI", state: "skipped", caption: "No email to read" };
 
+  // The duplicate check runs for customers and vendors only (the API's submit path).
   const golden: PipelineNode = { id: "golden", label: "Golden record", state: "done", caption: "" };
-  if (draft) Object.assign(golden, { state: "current", caption: "Checking for duplicates" });
+  if (d.domain === "item" || d.domain === "cost_center")
+    Object.assign(golden, {
+      state: "skipped",
+      caption: `No duplicate check for ${d.domain === "item" ? "items" : "cost centers"}`,
+    });
+  else if (draft) Object.assign(golden, { state: "current", caption: "Not checked yet" });
   else if (linked)
     golden.caption = `Linked to ${d.linked_card_name ?? d.linked_card_code ?? "an existing record"}`;
   else if (d.dedup_decision?.action === "not_duplicate")
     golden.caption = "New record, checked by a person";
-  else golden.caption = "No duplicate found";
+  // A "possible" match never blocks submit and leaves no record, so don't claim "none found".
+  else golden.caption = "Nothing needed a decision";
 
   // The publish step is a task too (the MDM analyst's); it belongs to "In SAP", not here.
   const tasks = (d.stages ?? [])
@@ -87,20 +111,20 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
     const by = tasks.find((t) => t.status === "rejected")?.assignee_name;
     Object.assign(approvals, { state: "rejected", caption: by ? `Rejected by ${by}` : "Rejected" });
   } else if (approved) Object.assign(approvals, { state: "done", caption: "All approved" });
-  else {
-    approvals.state = "current";
-    approvals.caption =
-      s === "INFO_REQUESTED"
-        ? `${yes} of ${tasks.length} approved, question open`
-        : `${yes} of ${tasks.length} approved`;
-  }
+  else if (s === "INFO_REQUESTED")
+    // The ball is with the requestor: the approvals wait for an answer, nothing is moving.
+    Object.assign(approvals, {
+      state: "paused",
+      caption: `${yes} of ${tasks.length} approved, paused for a question`,
+    });
+  else Object.assign(approvals, { state: "current", caption: `${yes} of ${tasks.length} approved` });
 
   const code = d.sap_publish?.sap_code;
   const sap: PipelineNode = { id: "sap", label: "In SAP", state: "waiting", caption: "Not yet" };
   if (s === "ACTIVE")
     Object.assign(sap, { state: "done", caption: code ? `Live in SAP as ${code}` : "Live in SAP" });
   else if (s === "PUBLISHED_INACTIVE")
-    Object.assign(sap, { state: "current", caption: "Checking the read-back" });
+    Object.assign(sap, { state: "current", caption: "Sent to SAP, confirming it saved" });
   else if (s === "APPROVED")
     Object.assign(sap, { state: "current", caption: "Ready, waiting to be published" });
   else if (linked)
@@ -113,12 +137,13 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
   return [email, ai, golden, approvals, sap];
 }
 
-type SegmentKind = "lit" | "flow" | "skip" | "stopped" | "dim";
+type SegmentKind = "lit" | "flow" | "paused" | "skip" | "stopped" | "dim";
 
 /** What the line between two neighbouring steps looks like. */
 function segmentKind(a: NodeState, b: NodeState): SegmentKind {
   if (a === "done" && b === "done") return "lit";
   if (a === "done" && b === "current") return "flow";
+  if (a === "done" && b === "paused") return "paused";
   if (a === "done" && b === "rejected") return "stopped";
   if (a === "skipped" || b === "skipped") return "skip";
   return "dim";
@@ -127,6 +152,7 @@ function segmentKind(a: NodeState, b: NodeState): SegmentKind {
 const LINE_CLASS: Record<SegmentKind, string> = {
   lit: "border-primary",
   flow: "border-primary/35",
+  paused: "border-dashed border-warning",
   stopped: "border-destructive/50",
   skip: "border-dashed border-border",
   dim: "border-border",
@@ -134,7 +160,7 @@ const LINE_CLASS: Record<SegmentKind, string> = {
 
 export function PipelineBeam({ detail }: { detail: RequestDetail }) {
   const nodes = pipelineNodes(detail);
-  const reduced = useReducedMotion() ?? false;
+  const reduced = usePrefersReducedMotion();
   const r0 = useRef<HTMLDivElement>(null);
   const r1 = useRef<HTMLDivElement>(null);
   const r2 = useRef<HTMLDivElement>(null);
@@ -220,6 +246,7 @@ function Segment({
 const DISC_CLASS: Record<NodeState, string> = {
   done: "border-primary bg-primary text-primary-foreground",
   current: "border-primary bg-card text-primary ring-4 ring-primary/15",
+  paused: "border-warning bg-card text-warning-foreground",
   waiting: "border-border bg-muted text-muted-foreground",
   skipped: "border-dashed border-muted-foreground/40 bg-card text-muted-foreground/70",
   rejected: "border-destructive bg-destructive text-destructive-foreground",
@@ -232,7 +259,7 @@ function PipelineStep({
   node: PipelineNode;
   discRef: RefObject<HTMLDivElement | null>;
 }) {
-  const Icon = n.state === "rejected" ? X : ICON[n.id];
+  const Icon = n.state === "rejected" ? X : n.state === "paused" ? Pause : ICON[n.id];
   const quiet = n.state === "waiting" || n.state === "skipped";
   return (
     <li
@@ -265,6 +292,7 @@ function PipelineStep({
             "w-full truncate text-xs leading-tight text-muted-foreground",
             n.state === "rejected" && "text-destructive",
             n.state === "current" && "text-foreground",
+            n.state === "paused" && "text-warning-foreground",
           )}
           title={n.caption}
           data-testid="beam-caption"
