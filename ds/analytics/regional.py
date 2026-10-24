@@ -33,7 +33,7 @@ import pandas as pd
 
 from ds.analytics import accounts
 from ds.analytics.golden import golden_clusters
-from ds.forecasting.bias import MIN_FAST_GROWTH
+from ds.forecasting import bias
 
 View = Literal["before", "after"]
 
@@ -337,6 +337,21 @@ def _country_bias(data_dir: Path) -> list[dict[str, Any]]:
     return [r for r in run.get("bias_by_country") or [] if r.get("product") is None]
 
 
+@lru_cache(maxsize=8)
+def _unit_growth_cached(data_dir_key: str) -> bias.Growth:
+    return bias.growth(Path(data_dir_key))
+
+
+def _unit_growth(data_dir: Path) -> bias.Growth:
+    """The backtest's growth basis: confirmed-PO units, last 12 months vs the 12 before."""
+    return _unit_growth_cached(str(Path(data_dir).resolve()))
+
+
+def _n(n: int, word: str) -> str:
+    """'1 customer' / '26 customers'."""
+    return f"{n} {word}" if n == 1 else f"{n} {word}s"
+
+
 def _bias(row: dict[str, Any], method: str) -> float | None:
     return next((x["bias_pct"] for x in row["scores"] if x["method"] == method), None)
 
@@ -353,10 +368,9 @@ def _low_note(ws: pd.DataFrame) -> str:
     n = int(ws["low_confidence"].astype(bool).sum()) if len(ws) else 0
     if not n:
         return ""
-    who = "customer" if n == 1 else "customers"
     return (
-        f" (not counting the {n} {who} with fewer than {accounts.WS_CONFIDENT_PEERS} similar "
-        f"customers to compare)"
+        f" (not counting the {_n(n, 'customer')} with fewer than "
+        f"{accounts.WS_CONFIDENT_PEERS} similar customers to compare)"
     )
 
 
@@ -407,13 +421,15 @@ def _actions(
     # 2. Lost customers to call.
     lost = core.lost
     if len(lost):
-        noun = "customer records" if view == "before" else "customers"
+        n = len(lost)
+        noun = _n(n, "customer record" if view == "before" else "customer")
+        have, they = ("has", "It") if n == 1 else ("have", "They")
         out.append(
             {
-                "title": f"Call the {len(lost)} {noun} that have gone quiet",
+                "title": f"Call the {noun} that {have} gone quiet",
                 "detail": (
-                    f"{len(lost)} {noun} in {where} have not ordered for longer than usual "
-                    f"(over 90 days, or twice their normal gap). They bought "
+                    f"{noun} in {where} {have} not ordered for longer than usual "
+                    f"(over 90 days, or twice their normal gap). {they} bought "
                     f"{_money(float(lost['value_12m'].sum()))} in the last 12 months."
                 ),
                 "evidence": "Lost-customer alerts",
@@ -442,14 +458,16 @@ def _actions(
     # Before merge a customer split across records looks fading or narrow when it is not.
     if view == "after":
         drop = core.drop_off
-        if len(drop):
+        nd = len(drop)
+        are, they = ("is", "It") if nd == 1 else ("are", "Together they")
+        if nd:
             out.append(
                 {
-                    "title": f"Check in with the {len(drop)} customers whose orders are fading",
+                    "title": f"Check in with the {_n(nd, 'customer')} whose orders {are} fading",
                     "detail": (
-                        f"{len(drop)} regular customers in {where} spent half or less on test "
+                        f"{_n(nd, 'regular customer')} in {where} spent half or less on test "
                         f"kits and services in the last 3 months than in the same 3 months last "
-                        f"year, but are not yet on the lost list. Together they ordered "
+                        f"year, but {are} not yet on the lost list. {they} ordered "
                         f"{_money(float(drop['value_at_risk'].sum()))} less than a year earlier."
                     ),
                     "evidence": "At risk of dropping off list",
@@ -459,29 +477,34 @@ def _actions(
         if len(ws):
             out.append(
                 {
-                    "title": f"Offer the missing product line to {len(ws)} customers",
+                    "title": f"Offer the missing product line to {_n(len(ws), 'customer')}",
                     "detail": (
-                        f"{len(ws)} of {core.customer_count} active customers in {where} do not "
-                        f"buy test kits (Product A) or services (Product C) that similar "
-                        f"customers buy. If each bought its missing line at what similar "
-                        f"customers in its country spend, that is about "
+                        f"{len(ws)} of {core.customer_count} active customers in {where} "
+                        f"{'does' if len(ws) == 1 else 'do'} not buy test kits (Product A) or "
+                        f"services (Product C) that similar customers buy. If each bought its "
+                        f"missing line at the typical spend of similar customers in the same "
+                        f"country, that is about "
                         f"{_money(accounts.whitespace_total(ws))} a year"
                         + _low_note(ws)
                         + f". Cross-sell penetration is {core.cross_sell:.0f}%."
                     ),
-                    "evidence": "Cross-sell whitespace list; cross-sell penetration",
+                    "evidence": "Cross-sell gaps list; cross-sell penetration",
                 }
             )
 
     # 5. Growth adjustment for markets flagged as growing (D-021 #3): in the backtest the Excel
     # average lags a rising market. Read from the precomputed backtest, never hard-coded.
+    # "Flagged as growing" is the backtest's own definition (bias.fast_growing: unit growth of
+    # at least 10% AND above the region), so this action and the forecast note name the same
+    # markets. Growth here is in units ordered, like the backtest, not US$ value.
+    fast = set(bias.fast_growing(_unit_growth(data_dir)))
     flagged = sorted(
         (
             r
             for r in _country_bias(data_dir)
             if (country is None or r["country"] == country)
+            and r["country"] in fast
             and r.get("growth_pct") is not None
-            and r["growth_pct"] >= MIN_FAST_GROWTH
             and _bias(r, "excel_6m") is not None
         ),
         key=lambda r: -r["growth_pct"],
@@ -501,8 +524,8 @@ def _actions(
             {
                 "title": "Add an explicit growth adjustment for markets flagged as growing",
                 "detail": (
-                    f"{name}'s confirmed orders grew {top['growth_pct']:.0f}% last year, and in "
-                    f"the forecast backtest the 6-month Excel average planned {name} "
+                    f"{name}'s order volume (units) grew {top['growth_pct']:.0f}% last year, "
+                    f"and in the forecast backtest the 6-month Excel average planned {name} "
                     f"{_plan_words(_bias(top, 'excel_6m') or 0.0)}: an average of past months "
                     f"trails a rising market.{ours_txt} Planners should add a stated, reviewed "
                     f"uplift for {name}{also}."
@@ -621,14 +644,14 @@ CAPTIONS: dict[str, dict[str, str]] = {
         ),
     },
     "cross_sell_whitespace": {
-        "title": "Cross-sell whitespace",
+        "title": "Cross-sell gaps",
         "caption": (
             "Customers missing test kits (Product A) or services (Product C) that similar "
-            "customers buy. The dollar figure is what similar customers in the same country "
-            "typically spend a year on the missing product (the median), so it is an estimate, "
-            "not a forecast. Equipment is left out: it is a one-off purchase. Rows based on "
-            "fewer than 10 similar customers are marked low confidence and left out of the "
-            "total."
+            "customers buy (often called cross-sell whitespace). The dollar figure is the "
+            "typical yearly spend of similar customers in the same country on the missing "
+            "product (their median), so it is an estimate, not a forecast. Equipment is left "
+            "out: it is a one-off purchase. Rows based on fewer than 10 similar customers are "
+            "marked low confidence, listed last and left out of the total."
         ),
     },
     "panels": {
@@ -653,27 +676,50 @@ CAPTIONS: dict[str, dict[str, str]] = {
 
 
 # --------------------------------------------------------------------------------------------
-def _shown(shown: int, n: int, what: str) -> str:
-    return f"All {n} {what} shown." if shown == n else f"Top {shown} of {n} {what} shown."
+def _shown(shown: int, n: int, word: str) -> str:
+    """'Top 10 of 26 fading customers shown.' / 'All 3 ...' / '1 fading customer shown.'"""
+    if n == 1:
+        return f"1 {word} shown."
+    return f"All {_n(n, word)} shown." if shown == n else f"Top {shown} of {_n(n, word)} shown."
+
+
+def _ws_shown(shown: int, conf: int, low: int) -> str:
+    """Whitespace rows are listed confident first: 'Top 10 of 190 confident rows shown; 7
+    low-confidence rows listed after them.'"""
+    if conf == 0:
+        head = "No confident rows"
+    elif shown >= conf:
+        head = "1 confident row shown" if conf == 1 else f"All {conf} confident rows shown"
+    else:
+        head = f"Top {shown} of {_n(conf, 'confident row')} shown"
+    if not low:
+        return head + "."
+    k = max(0, shown - conf)  # low-confidence rows among those shown
+    if k == 0:
+        return f"{head}; {_n(low, 'low-confidence row')} listed after them."
+    if k == low:
+        return f"{head}, then the {_n(low, 'low-confidence row')}."
+    return f"{head}, then {k} of the {_n(low, 'low-confidence row')}."
 
 
 def _drop_total(drop: pd.DataFrame, unscored: int) -> dict[str, Any]:
     n, total = len(drop), round(float(drop["value_at_risk"].sum()), 2) if len(drop) else 0.0
     shown = min(n, TOP_ACCOUNTS)
-    who, them = ("customer", "it is") if unscored == 1 else ("customers", "they are")
+    them = "it is" if unscored == 1 else "they are"
     return {
         "customers": n,
         "shown": shown,
         "total_usd": total,
         "low_confidence": 0,
         "caption": (
-            f"{_shown(shown, n, 'fading customers')} Together they ordered {_money(total)} less "
-            f"than in the same 3 months last year."
+            f"{_shown(shown, n, 'fading customer')} {'It' if n == 1 else 'Together they'} "
+            f"ordered {_money(total)} less than in the same 3 months last year."
             if n
             else "No fading customers."
         )
         + (
-            f" {unscored} regular {who} with no orders in that quarter last year could not be "
+            f" {_n(unscored, 'regular customer')} with no orders in that quarter last year "
+            f"could not be "
             f"compared, so {them} not listed."
             if unscored
             else ""
@@ -686,8 +732,9 @@ def _ws_total(ws: pd.DataFrame) -> dict[str, Any]:
     low = int(ws["low_confidence"].astype(bool).sum()) if n else 0
     total = accounts.whitespace_total(ws)
     shown = min(n, TOP_ACCOUNTS)
+    conf = n - low
     excl = (
-        f" Total excludes {low} low-confidence {'row' if low == 1 else 'rows'} (fewer than "
+        f" Total excludes the {_n(low, 'low-confidence row')} (fewer than "
         f"{accounts.WS_CONFIDENT_PEERS} similar customers)."
         if low
         else ""
@@ -698,9 +745,9 @@ def _ws_total(ws: pd.DataFrame) -> dict[str, Any]:
         "total_usd": total,
         "low_confidence": low,
         "caption": (
-            f"{_shown(shown, n, 'customers with a gap')} The {n - low} confident "
-            f"{'row adds' if n - low == 1 else 'rows add'} up to about {_money(total)} a "
-            f"year.{excl}"
+            f"{_ws_shown(shown, conf, low)} The {_n(conf, 'confident row')} "
+            f"{'adds' if conf == 1 else 'add'} up to about {_money(total)} a year, at the "
+            f"typical spend of similar customers in the same country.{excl}"
             if n
             else "No cross-sell gaps."
         ),

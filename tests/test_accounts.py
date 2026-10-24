@@ -36,8 +36,14 @@ def test_lists_after_merge_are_sorted_non_negative_and_capped(country):
     m = _view("after", country)
     assert 0 < len(m.drop_off_risk) <= 10 and 0 < len(m.cross_sell_whitespace) <= 10
     risk = [r.value_at_risk_usd for r in m.drop_off_risk]
+    assert risk == sorted(risk, reverse=True)
+    # whitespace: confident rows first, then by estimate (descending) within each group
+    flags = [r.low_confidence for r in m.cross_sell_whitespace]
+    assert flags == sorted(flags)
+    for low in (False, True):
+        est = [r.est_value_usd for r in m.cross_sell_whitespace if r.low_confidence is low]
+        assert est == sorted(est, reverse=True)
     est = [r.est_value_usd for r in m.cross_sell_whitespace]
-    assert risk == sorted(risk, reverse=True) and est == sorted(est, reverse=True)
     assert all(v > 0 for v in risk + est)
     assert all(r.change_pct is not None and r.change_pct <= -50.0 for r in m.drop_off_risk)
     assert all(r.card_code.startswith("G-") for r in m.drop_off_risk + m.cross_sell_whitespace)
@@ -168,7 +174,12 @@ def test_whitespace_view_total_and_marks(country):
     assert t.low_confidence == len(low)
     assert t.total_usd == pytest.approx(ws.loc[~ws["low_confidence"], "est_value"].sum())
     assert t.total_usd < ws["est_value"].sum()
-    assert f"Total excludes {len(low)} low-confidence" in t.caption
+    assert f"Total excludes the {len(low)} low-confidence" in t.caption
+    assert f"{len(low)} low-confidence rows listed after them" in t.caption
+    assert f"{len(ws) - len(low)} confident rows" in t.caption
+    # confident rows come first in the full list, so the top 10 holds no low-confidence row here
+    flags = list(ws["low_confidence"].astype(bool))
+    assert flags == sorted(flags)
     for r in m.cross_sell_whitespace:
         assert r.low_confidence is (r.comparable_customers < 10)
         assert r.comparable_customers >= 3
@@ -233,3 +244,47 @@ def test_api_after_merge_returns_both_lists(client):
     before = client.get("/analytics/regional?view=before", headers={"X-Acting-User": "priya"})
     assert before.json()["drop_off_risk"] == [] and before.json()["cross_sell_whitespace"] == []
     assert before.json()["whitespace_total"] is None
+
+
+def test_whitespace_reason_names_product_types_and_says_typically():
+    ws = accounts.whitespace(_peer_frame(12, 0), "k", [], ["A", "B", "C"])
+    r = ws[ws["key"] == "target"].iloc[0]
+    reason = accounts.whitespace_reason(r, "Vietnam")
+    assert reason == (
+        "Buys equipment but not test kits; 12 similar customers in Vietnam typically spend "
+        "US$30k a year on test kits."
+    )
+    assert "Product" not in reason and "median" not in reason
+
+
+@pytest.mark.parametrize(("country", "gets_it"), [("VN", True), ("SG", False), (None, True)])
+def test_growth_adjustment_action_only_for_fast_growing_markets(country, gets_it):
+    """Same definition as the backtest note (bias.fast_growing: >= 10% unit growth AND above
+    the region): Vietnam qualifies, Singapore (shrinking) does not."""
+    from ds.forecasting import bias
+
+    fast = bias.fast_growing(bias.growth(FIX))
+    assert fast == ["VN"]
+    acts = [a for a in _view("after", country).actions if "growth adjustment" in a.title]
+    assert bool(acts) is gets_it
+    if gets_it:
+        assert "order volume (units) grew" in acts[0].detail
+
+
+def test_plurals_say_1_customer():
+    from ds.analytics import regional as rg
+
+    assert rg._n(1, "customer") == "1 customer" and rg._n(2, "customer") == "2 customers"
+    assert rg._shown(1, 1, "fading customer") == "1 fading customer shown."
+    assert rg._shown(3, 3, "fading customer") == "All 3 fading customers shown."
+    assert rg._ws_shown(10, 190, 7) == (
+        "Top 10 of 190 confident rows shown; 7 low-confidence rows listed after them."
+    )
+    assert rg._ws_shown(3, 1, 2) == "1 confident row shown, then the 2 low-confidence rows."
+    assert (
+        rg._ws_shown(3, 2, 5) == "All 2 confident rows shown, then 1 of the 5 low-confidence rows."
+    )
+    one = pd.DataFrame({"key": ["G-1"], "value_at_risk": [1_000.0], "low_confidence": [False]})
+    cap = rg._drop_total(one, 1)["caption"]
+    assert cap.startswith("1 fading customer shown. It ordered")
+    assert "1 regular customer with no orders" in cap and "so it is not listed" in cap

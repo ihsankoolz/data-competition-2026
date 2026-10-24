@@ -1702,7 +1702,7 @@ export interface components {
             drop_off_risk?: components["schemas"]["DropOffRisk"][];
             /**
              * Cross Sell Whitespace
-             * @description After merge: top 10 cross-sell gaps by estimated value (country filter applies; lost and fading customers left out). Empty before merge: each record sees only the products bought under it, so the gaps are not real.
+             * @description After merge: top 10 cross-sell gaps, confident rows first, then by estimated value (country filter applies; lost and fading customers left out). Empty before merge: each record sees only the products bought under it, so the gaps are not real.
              */
             cross_sell_whitespace?: components["schemas"]["WhitespaceOpportunity"][];
             /** @description After merge: totals over every fading customer. None before. */

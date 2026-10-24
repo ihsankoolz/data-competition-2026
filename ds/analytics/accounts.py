@@ -34,7 +34,7 @@ Cross-sell whitespace
   (marked) but left out of the US$ total (D-022 #4). A median of a handful of customers can be
   one big hospital's spend.
 - One row per customer: the missing family with the highest estimate, preferring one backed by
-  enough comparable customers over a low-confidence one.
+  enough comparable customers over a low-confidence one. Listed confident rows first.
 - Customers on the lost or drop-off lists are left out (win them back first).
 """
 
@@ -153,8 +153,8 @@ def whitespace(
     orders12: pd.DataFrame, key: str, exclude: Iterable[str], families: Iterable[str]
 ) -> pd.DataFrame:
     """-> one row per customer with a cross-sell gap: key, country, buys (sorted list),
-    missing, est_value, peers, low_confidence, own_12m; sorted by est_value desc, own_12m desc,
-    key."""
+    missing, est_value, peers, low_confidence, own_12m; confident rows first, then est_value
+    desc, own_12m desc, key (the estimate is a country median, so ties are common)."""
     cols = ["key", "country", "buys", "missing", "est_value", "peers", "low_confidence", "own_12m"]
     fams = sorted(families)
     targets = [p for p in fams if p in WS_TARGETS]
@@ -199,7 +199,7 @@ def whitespace(
         )
     out = pd.DataFrame(rows, columns=cols)
     return out.sort_values(
-        ["est_value", "own_12m", "key"], ascending=[False, False, True]
+        ["low_confidence", "est_value", "own_12m", "key"], ascending=[True, False, False, True]
     ).reset_index(drop=True)
 
 
@@ -211,9 +211,11 @@ def whitespace_total(ws: pd.DataFrame) -> float:
 
 
 def whitespace_reason(r: Any, country_name: str) -> str:
-    bought = " and ".join(f"Product {p}" for p in r.buys)
+    """'Buys equipment and services but not test kits; 17 similar customers in Vietnam
+    typically spend US$38k a year on test kits.'"""
+    bought = " and ".join(FAMILY_WORDS[p] for p in r.buys)
+    missing = FAMILY_WORDS[r.missing]
     return (
-        f"Buys {bought} but no Product {r.missing} ({FAMILY_WORDS[r.missing]}); "
-        f"{r.peers} similar customers in {country_name} spend a median {_usd(r.est_value)} a "
-        f"year on it."
+        f"Buys {bought} but not {missing}; {r.peers} similar customers in {country_name} "
+        f"typically spend {_usd(r.est_value)} a year on {missing}."
     )

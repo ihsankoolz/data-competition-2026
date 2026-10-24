@@ -493,8 +493,9 @@ class RegionalView(BaseModel):
     )
     cross_sell_whitespace: list[WhitespaceOpportunity] = Field(
         default_factory=list,
-        description="After merge: top 10 cross-sell gaps by estimated value (country filter "
-        "applies; lost and fading customers left out). Empty before merge: each record sees "
+        description="After merge: top 10 cross-sell gaps, confident rows first, then by estimated "
+        "value (country filter applies; lost "
+        "and fading customers left out). Empty before merge: each record sees "
         "only the products bought under it, so the gaps are not real.",
     )
     drop_off_total: AccountListTotal | None = Field(

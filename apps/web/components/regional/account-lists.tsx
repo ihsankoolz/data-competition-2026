@@ -52,10 +52,11 @@ export function AccountLists({ data }: { data: View }) {
         id="whitespace-title"
         testId="whitespace-list"
         caption={captionOf(captions, "cross_sell_whitespace", {
-          title: "Cross-sell whitespace",
-          caption: "Customers missing test kits or services that similar customers buy.",
+          title: "Cross-sell gaps",
+          caption:
+            "Customers missing test kits or services that similar customers buy (often called cross-sell whitespace).",
         })}
-        note="US$ = what similar customers in the same country typically spend a year on the missing product. An estimate."
+        note="US$ = typical yearly spend of similar customers in the same country on the missing product. An estimate."
         total={data.whitespace_total?.caption}
         valueHeader="Est. a year"
         empty="Every active customer already buys the products similar customers buy."
