@@ -50,6 +50,9 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   await expect(page.getByTestId("kpi-cross-sell-after")).not.toHaveText(
     (await page.getByTestId("kpi-cross-sell-value").textContent()) ?? "",
   );
+  // Account lists (PRD S1) only make sense once duplicates are linked.
+  await expect(page.getByTestId("account-lists-before")).toContainText("Merge duplicates");
+  await expect(page.getByTestId("drop-off-list")).toHaveCount(0);
 
   // After merge: fewer alerts, none of them duplicates, fewer customers.
   await page.getByTestId("view-after").click();
@@ -61,6 +64,33 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   expect(after).toBeLessThan(before);
   await expect(lost.getByTestId("lost-row")).toHaveCount(after);
   await expect(page.getByTestId("kpi-customers-value")).not.toHaveText(customersBefore ?? "");
+  // After merge: both account lists show real accounts with a US$ value.
+  for (const list of ["drop-off-list", "whitespace-list"]) {
+    const rows = page.getByTestId(list).getByTestId("account-row");
+    await expect(rows.first()).toBeVisible();
+    await expect(rows.first()).toContainText("US$");
+  }
+  // Drop-off is year over year; whitespace rows on under 10 similar customers are marked and
+  // left out of the total (D-022 #4).
+  await expect(page.getByTestId("drop-off-list").getByTestId("account-row").first()).toContainText(
+    "same quarter last year",
+  );
+  await expect(page.getByTestId("drop-off-list-total")).toContainText("same 3 months last year");
+  // Confident rows come first, so the top 10 here has no low-confidence row; the total says
+  // how many are listed after them and left out (the marker itself: see the next test).
+  await expect(page.getByTestId("whitespace-list").getByRole("heading")).toContainText(
+    "Cross-sell gaps",
+  );
+  await expect(
+    page.getByTestId("whitespace-list").getByTestId("account-row").first(),
+  ).toContainText("typically spend");
+  await expect(page.getByTestId("whitespace-list-total")).toContainText(
+    /\d+ low-confidence rows? listed after them/,
+  );
+  await expect(page.getByTestId("whitespace-list-total")).toContainText(
+    /Total excludes the \d+ low-confidence rows?/,
+  );
+  await expect(page.getByTestId("account-lists-before")).toHaveCount(0);
 
   // The country filter narrows the strip and the heatmap.
   await page.getByTestId("country-VN").click();
@@ -71,6 +101,33 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   await expect(page.getByTestId("panel-mdm_request")).toContainText("never counted as demand");
   await expect(page.getByTestId("actions").locator("li")).not.toHaveCount(0);
 
+  expect(errors).toEqual([]);
+});
+
+test("cross-sell gaps: a low-confidence row is marked and greyed", async ({ page }) => {
+  const errors = watchConsole(page);
+  const isAfter = (u: URL) =>
+    u.pathname.endsWith("/analytics/regional") && u.searchParams.get("view") === "after";
+  await page.route(isAfter, async (route) => {
+    const res = await route.fetch();
+    const body = (await res.json()) as {
+      cross_sell_whitespace: { low_confidence: boolean; comparable_customers: number }[];
+    };
+    const last = body.cross_sell_whitespace.at(-1);
+    if (last) {
+      last.low_confidence = true;
+      last.comparable_customers = 4;
+    }
+    await route.fulfill({ response: res, json: body });
+  });
+  await openAs(page, "daniel", "/regional");
+  await page.getByTestId("view-after").click();
+  const list = page.getByTestId("whitespace-list");
+  await expect(list.getByTestId("low-confidence-marker")).toHaveCount(1);
+  await expect(list.getByTestId("low-confidence-marker")).toHaveText(
+    "Low confidence (fewer than 10 similar customers)",
+  );
+  await expect(list.getByTestId("account-row").last()).toContainText("Low confidence");
   expect(errors).toEqual([]);
 });
 
