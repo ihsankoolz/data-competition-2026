@@ -2,7 +2,7 @@
 
 Sections are added as the demo is rehearsed. The main storyline lives in `docs/PRD.md` (DEMO-01 to DEMO-08); this file holds the walk-through beats that are optional.
 
-Rehearse the main path with `make rehearse`: it walks steps 1–7, prints per-step timings against the 2:30 budget, and saves 1440x900 screenshots to `apps/web/test-results/rehearse/`.
+Rehearse the main path with `make rehearse`: it walks steps 1–7, prints per-step timings against the 2:30 budget, and saves 1440x900 screenshots to `apps/web/test-results/rehearse/`. Press **Reset demo** before recording: it also clears any theme preview stored in the browser (`lives-mdm.theme-variant`), so the app shows the chosen theme (`THEME_VARIANT` in `apps/web/lib/theme.ts`).
 
 ## Beat 1: the messy inbox
 

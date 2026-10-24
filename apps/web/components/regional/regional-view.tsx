@@ -340,7 +340,11 @@ function Kpi({
         </span>
         {after !== undefined && (
           <>
-            <span className="text-lg font-normal text-muted-foreground" aria-label="becomes">
+            <span
+              className="text-lg font-normal text-muted-foreground"
+              role="img"
+              aria-label="becomes"
+            >
               →
             </span>
             <span className="text-success-foreground" data-testid={`${testId}-after`}>

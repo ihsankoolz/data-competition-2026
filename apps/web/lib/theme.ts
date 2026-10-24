@@ -7,7 +7,7 @@
  *   c  Dark, from the tweakcn theme file (also sets the `dark` class)
  *
  * To switch the whole app, change THEME_VARIANT. For a one-off preview in one browser:
- * localStorage.setItem("lives-mdm.theme-variant", "b") and reload (remove the key to go back).
+ * localStorage.setItem("lives-mdm.theme-variant", "b") and reload. "Reset demo" clears it.
  */
 export type ThemeVariant = "a" | "b" | "c";
 
@@ -18,6 +18,21 @@ export const THEME_VARIANT_STORAGE_KEY = "lives-mdm.theme-variant";
 /** Class names <html> needs for a variant (C reuses the `.dark` block). */
 export function variantClass(v: ThemeVariant): string {
   return v === "c" ? "dark" : "";
+}
+
+/**
+ * Drops any stored preview and puts <html> back on THEME_VARIANT at once, so a preview left
+ * in this browser cannot slip into a recording. Called by "Reset demo".
+ */
+export function clearThemePreview(): void {
+  try {
+    window.localStorage.removeItem(THEME_VARIANT_STORAGE_KEY);
+  } catch {
+    // Storage blocked (private window): nothing stored, nothing to clear.
+  }
+  const html = document.documentElement;
+  html.dataset.variant = THEME_VARIANT;
+  html.classList.toggle("dark", THEME_VARIANT === "c");
 }
 
 /**
