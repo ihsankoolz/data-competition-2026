@@ -1,6 +1,6 @@
 {
-  "cache_key": "cad7ef282025269fcb18e921268db6841f98944ee585b8e0f1ad77c4e90af1cb",
-  "input": "<email>\nFrom domain: phkl.my.example\nSubject: New PO PR20260031\n\nPO PR20260031\n\n- 5 kits HbA1c Reagent Kit\n\nShip to Pantai Hospital Kuala Lumpur. Thanks.\nZainal Wong\n</email>",
+  "cache_key": "f3bf60047fa349b5e0c98d6646047813eef90b77b5463e51fbf1249a88c48e40",
+  "input": "<email>\nFrom domain: shkl.my.example\nSubject: New PO PR20260031\n\nPO PR20260031\n\n- 5 kits HbA1c Reagent Kit\n\nShip to Seroja Hospital Kuala Lumpur. Thanks.\nZainal Wong\n</email>",
   "model": "claude-haiku-5-5",
   "output": {
     "category": "purchase_order",
@@ -9,8 +9,8 @@
     "fields": [
       {
         "key": "customer_name",
-        "source_quote": "Ship to Pantai Hospital Kuala Lumpur",
-        "value": "Pantai Hospital Kuala Lumpur"
+        "source_quote": "Seroja Hospital Kuala Lumpur",
+        "value": "Seroja Hospital Kuala Lumpur"
       },
       {
         "key": "po_number",
@@ -29,7 +29,7 @@
     ]
   },
   "prompt_version": "interpreter_v2",
-  "recorded_at": "2026-10-22T08:58:01+00:00",
+  "recorded_at": "2026-10-24T07:00:40+00:00",
   "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
   "task": "interpreter"
 }

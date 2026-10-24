@@ -103,7 +103,7 @@ def test_expected_files(out):
 # sha256 of the v1 (§1-5) master for seed 42 / seasonal_trend. The duplicate-check evaluation
 # depends on these files: v2 tables must use new RNG streams and never shift them.
 PINNED_SHA256 = {
-    "bp_records.csv": "1965c844745d959d942e05990e93d1d51a1fb04f059d023241ca544635268b59",
+    "bp_records.csv": "7154c463a28181fc050c5ba980ecefe48f33162a2eb65871ebb9592ebeb633e4",
     "ground_truth/bp_golden_map.csv": (
         "c1a98f4decbea576693f8123b539f7f73fbbc353c7dfbf882d70f2310cb50918"
     ),

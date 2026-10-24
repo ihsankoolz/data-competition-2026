@@ -16,7 +16,7 @@ name:
   qualifier_weight: 0.35  # words after " - " or inside trailing brackets ("- Lab Dept", "(Ipoh)")
   city_token_weight: 0.5  # words that are just the record's city
   acronym_score: 0.93     # one name is the initials / known alias of the other
-  number_mismatch_penalty: 0.25  # "Phyathai 1" vs "Phyathai 2"
+  number_mismatch_penalty: 0.25  # "Phiman 1" vs "Phiman 2"
 
 evidence:
   tax_exact_floor: 0.97   # same valid tax ID, same country, same CardType

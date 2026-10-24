@@ -61,7 +61,7 @@ Organisers confirmed: no dataset is provided; synthetic data is fine "as long as
 
 - `customer_vendor_pair`: same legal entity as `cCustomer` and `cSupplier` (e.g. "BioMed Lab Supplies Pte Ltd"). ~10 pairs.
 - `same_group_other_country`: "Sentosa Specialist Hospital" SG vs "Sentosa Specialist Hospital Kuala Lumpur" MY.
-- `similar_name_different_site`: "Mount Elizabeth Hospital" vs "Mount Elizabeth Novena Hospital"; "RS Siloam Kebon Jeruk" vs "RS Siloam Lippo Village". ~15 pairs.
+- `similar_name_different_site`: "Mount Serene Hospital" vs "Mount Serene Novena Hospital"; "RS Cendrawasih Kebon Jeruk" vs "RS Cendrawasih Karawaci". ~15 pairs.
 
 ### 4.3 Migration events (the "fake lost customer" trap)
 

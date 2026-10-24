@@ -1,0 +1,17 @@
+{
+  "cache_key": "dcaf0567e84548399337a69006af6228f10de8b15cc6a29abf77cb6df45d0189",
+  "input": "{\"candidates\": [{\"card_code\": \"C00535\", \"city\": \"BKK\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Siam Hospital Co., Ltd. (Bangkok)\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Bangkok 10700\", \"country\": \"TH\", \"email_domain\": \"siamhospital.th.example\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Siam Hospital Co., Ltd.\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names are essentially identical: 'Siam Hospital Co., Ltd.' vs 'Siam Hospital Co., Ltd. (Bangkok)', with the bracket only giving the location.",
+      "Both are in Thailand and the city matches (BKK is Bangkok), so there is no sign of a different site or branch.",
+      "Neither record has a tax ID, so nothing conflicts; the different entity codes just reflect the shared multi-company database."
+    ],
+    "selected_card_code": "C00535"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:07:07+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

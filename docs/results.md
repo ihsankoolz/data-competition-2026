@@ -16,22 +16,22 @@ Data: seed 42: 571 customer records, 60 vendors, 280 true duplicate pairs. Seed 
 | Threshold | Seed | Precision | Recall | F1 | Flagged correctly | Wrong flags | Missed |
 |---|---|---|---|---|---|---|---|
 | Likely (score >= 0.92 or same tax ID) | 42 (dev) | 100.0% | 98.9% | 99.5% | 277 | 0 | 3 |
-| Likely (score >= 0.92 or same tax ID) | 7 (held-out) | 99.2% | 97.4% | 98.3% | 262 | 2 | 7 |
-| Possible (score >= 0.70) | 42 (dev) | 98.6% | 100.0% | 99.3% | 280 | 4 | 0 |
-| Possible (score >= 0.70) | 7 (held-out) | 94.3% | 99.3% | 96.7% | 267 | 16 | 2 |
+| Likely (score >= 0.92 or same tax ID) | 7 (held-out) | 99.2% | 97.0% | 98.1% | 261 | 2 | 8 |
+| Possible (score >= 0.70) | 42 (dev) | 98.2% | 100.0% | 99.1% | 280 | 5 | 0 |
+| Possible (score >= 0.70) | 7 (held-out) | 94.7% | 99.3% | 96.9% | 267 | 15 | 2 |
 | Tax ID alone (baseline) | 42 (dev) | 100.0% | 77.5% | 87.3% | 217 | 0 | 63 |
 | Tax ID alone (baseline) | 7 (held-out) | 100.0% | 69.9% | 82.3% | 188 | 0 | 81 |
 
 *Precision* = of the pairs we flag, how many are real duplicates. *Recall* = of the real duplicates, how many we flag. *F1* balances the two.
 
-> **For judges:** on unseen data the check blocks 97.4% of real duplicates outright and warns on 99.3%; when it blocks, it is right 99.2% of the time. Matching on tax ID alone would catch only 69.9%.
+> **For judges:** on unseen data the check blocks 97.0% of real duplicates outright and warns on 99.3%; when it blocks, it is right 99.2% of the time. Matching on tax ID alone would catch only 69.9%.
 
 ### Recall by type of duplicate
 
 | Duplicate type | Seed 42 pairs | Found as Likely | Found as Possible or Likely | Seed 7 pairs | Found as Likely | Found as Possible or Likely |
 |---|---|---|---|---|---|---|
 | existing per-entity copies | 155 | 155 (100.0%) | 155 (100.0%) | 145 | 144 (99.3%) | 144 (99.3%) |
-| cross_entity_recreate | 28 | 27 (96.4%) | 28 (100.0%) | 28 | 27 (96.4%) | 28 (100.0%) |
+| cross_entity_recreate | 28 | 27 (96.4%) | 28 (100.0%) | 28 | 26 (92.9%) | 28 (100.0%) |
 | abbreviation | 10 | 10 (100.0%) | 10 (100.0%) | 10 | 10 (100.0%) | 10 (100.0%) |
 | suffix_punctuation | 8 | 8 (100.0%) | 8 (100.0%) | 8 | 8 (100.0%) | 8 (100.0%) |
 | diacritics | 8 | 8 (100.0%) | 8 (100.0%) | 8 | 8 (100.0%) | 8 (100.0%) |
@@ -53,21 +53,21 @@ Per-entity copies are the records SPD, QTS and QTG each created for the same cus
 | Same company as customer and vendor (rule 2) | 7 | 15 | 0 | 0 | 15 / 15 |
 | Same group, other country (rule 3) | 42 | 35 | 0 | 0 | 0 / 5 |
 | Same group, other country (rule 3) | 7 | 24 | 0 | 0 | 0 / 0 |
-| Similar name, different site (no rule; score only) | 42 | 40 | 0 | 1 | n/a (no rule) |
-| Similar name, different site (no rule; score only) | 7 | 34 | 0 | 1 | n/a (no rule) |
+| Similar name, different site (no rule; score only) | 42 | 40 | 0 | 2 | n/a (no rule) |
+| Similar name, different site (no rule; score only) | 7 | 34 | 0 | 2 | n/a (no rule) |
 
 Counted per record pair, as listed in `ground_truth/hard_negatives.csv`. Vendor records were also run as queries. The last column switches the hard rule off and asks whether the score alone would have flagged the pair. Customer/vendor twins share a tax ID, so without rule 2 every one would be blocked. Rule 3 is enforced by the country rule: records in another country are never candidates, whatever their name or tax ID. Group members in other countries are shown under 'related records' for information only (the group list in `ds/dedup/groups.yaml` only labels them). For those pairs the last column shows what the score alone would say.
 
-> **For judges:** the check never confuses a customer with the same company's vendor record, or a hospital with its sister hospital in another country. Similar branches of one brand (Mount Elizabeth vs Mount Elizabeth Novena) are at most a warning, never a block.
+> **For judges:** the check never confuses a customer with the same company's vendor record, or a hospital with its sister hospital in another country. Similar branches of one brand (Mount Serene vs Mount Serene Novena) are at most a warning, never a block.
 
 ### AI judge (grey zone) and speed
 
 | Measure | Seed 42 | Seed 7 |
 |---|---|---|
-| Queries whose best candidate is in the grey zone (0.70 to 0.92) | 9 of 571 | 10 of 561 |
-| ... of which the best candidate really is a duplicate (rules alone) | 3 | 2 |
-| AI judge picks the right answer in the grey zone (the true duplicate, or none when there is none; vendors included as queries) | 9 of 9 | 8 of 10 |
-| Same, with tax IDs hidden (ablation c below) | 38 of 38 | 45 of 48 |
+| Queries whose best candidate is in the grey zone (0.70 to 0.92) | 10 of 571 | 12 of 561 |
+| ... of which the best candidate really is a duplicate (rules alone) | 3 | 3 |
+| AI judge picks the right answer in the grey zone (the true duplicate, or none when there is none; vendors included as queries) | 10 of 10 | 10 of 12 |
+| Same, with tax IDs hidden (ablation c below) | 40 of 40 | 50 of 53 |
 
 The grey zone is where the AI judge would give a second opinion by picking one of the top 5 candidates or none (Wang et al., COLING 2025). Its answers are recorded once (`make record`) and replayed here. In the app the judge only adds an opinion with reasons; the verdict and any merge stay with a human (rule 6). Without a recorded answer it reports "AI offline" and the candidate stays a Possible duplicate.
 
@@ -81,12 +81,12 @@ Same queries as above, three ways. (b) hides every tax ID, on the new request an
 
 | Setting | Seed | Likely: P / R / F1 | Possible: P / R / F1 | Grey-zone queries judged |
 |---|---|---|---|---|
-| (a) with tax ID (as above) | 42 | 100.0% / 98.9% / 99.5% | 98.6% / 100.0% / 99.3% | 9 (opinion only, flags unchanged) |
-| (b) name only (tax IDs hidden) | 42 | 100.0% / 93.9% / 96.9% | 85.5% / 96.8% / 90.8% | - |
-| (c) name only + AI judge on the grey zone | 42 | 100.0% / 95.7% / 97.8% | 88.0% / 96.8% / 92.2% | 38 |
-| (a) with tax ID (as above) | 7 | 99.2% / 97.4% / 98.3% | 94.3% / 99.3% / 96.7% | 10 (opinion only, flags unchanged) |
-| (b) name only (tax IDs hidden) | 7 | 98.8% / 92.9% / 95.8% | 80.2% / 97.8% / 88.1% | - |
-| (c) name only + AI judge on the grey zone | 7 | 98.5% / 95.5% / 97.0% | 83.5% / 97.8% / 90.1% | 48 |
+| (a) with tax ID (as above) | 42 | 100.0% / 98.9% / 99.5% | 98.2% / 100.0% / 99.1% | 10 (opinion only, flags unchanged) |
+| (b) name only (tax IDs hidden) | 42 | 100.0% / 93.9% / 96.9% | 83.1% / 96.8% / 89.4% | - |
+| (c) name only + AI judge on the grey zone | 42 | 100.0% / 95.7% / 97.8% | 85.5% / 96.8% / 90.8% | 40 |
+| (a) with tax ID (as above) | 7 | 99.2% / 97.0% / 98.1% | 94.7% / 99.3% / 96.9% | 12 (opinion only, flags unchanged) |
+| (b) name only (tax IDs hidden) | 7 | 98.8% / 91.8% / 95.2% | 79.6% / 97.0% / 87.4% | - |
+| (c) name only + AI judge on the grey zone | 7 | 98.5% / 94.8% / 96.6% | 82.6% / 97.0% / 89.2% | 53 |
 
 *P* = precision, *R* = recall, *F1* balances the two (definitions above).
 
@@ -109,9 +109,9 @@ The judge can only choose among candidates the rules already shortlisted, so it 
 
 > **For judges:** Tax IDs catch the easy ones; the AI catches differently-typed names.
 
-The AI's gain is small: 5 more true duplicates blocked on seed 42 and 7 more true duplicates blocked on seed 7 (F1 at Likely 95.8% -> 97.0% on unseen data), and it stays below matching with tax IDs (98.3%). Each duplicate type has only 8 to 10 pairs, so one pair moves a type's recall by 10 points or more.
+The AI's gain is small: 5 more true duplicates blocked on seed 42 and 8 more true duplicates blocked on seed 7 (F1 at Likely 95.2% -> 96.6% on unseen data), and it stays below matching with tax IDs (98.1%). Each duplicate type has only 8 to 10 pairs, so one pair moves a type's recall by 10 points or more.
 
-Held-out seed 7, name only: F1 at Likely 95.8% without the judge, 97.0% with it; at Possible 88.1% vs 90.1%. Precision at Possible 80.2% vs 83.5%, recall at Possible 97.8% vs 97.8%.
+Held-out seed 7, name only: F1 at Likely 95.2% without the judge, 96.6% with it; at Possible 87.4% vs 89.2%. Precision at Possible 79.6% vs 82.6%, recall at Possible 97.0% vs 97.0%.
 
 ### Wrong blocks (held-out seed, flagged Likely but not the same customer)
 
@@ -133,18 +133,18 @@ _Generated by `uv run python notebooks/eval_dedup.py`. Synthetic data; all names
 
 | Seed | Setting | Grey-zone queries judged | True duplicates blocked by rules alone | Rescued: extra true duplicates blocked, by type | Wrong warnings cleared, by type | New wrong blocks | True warnings cleared |
 |---|---|---|---|---|---|---|---|
-| 42 (dev) | with tax ID | 9 | 277 | 2: cross_entity_recreate 1, typo 1 | 2 of 4: different customers, similar name 2 | 0 | 0 |
-| 42 (dev) | name only (tax IDs hidden) | 38 | 263 | 5: cross_entity_recreate 2, existing per-entity copies 2, typo 1 | 9 of 46: different customers, similar name 9 | 0 | 0 |
-| 7 (held-out) | with tax ID | 10 | 262 | 0: none | 2 of 16: different customers, similar name 2 | 0 | 1 |
-| 7 (held-out) | name only (tax IDs hidden) | 48 | 250 | 7: cross_entity_recreate 4, existing per-entity copies 2, local_language 1 | 13 of 65: different customers, similar name 12, similar_name_different_site 1 | 1 | 0 |
+| 42 (dev) | with tax ID | 10 | 277 | 2: cross_entity_recreate 1, typo 1 | 2 of 5: different customers, similar name 2 | 0 | 0 |
+| 42 (dev) | name only (tax IDs hidden) | 40 | 263 | 5: cross_entity_recreate 2, existing per-entity copies 2, typo 1 | 9 of 55: different customers, similar name 9 | 0 | 0 |
+| 7 (held-out) | with tax ID | 12 | 261 | 1: cross_entity_recreate 1 | 1 of 15: different customers, similar name 1 | 0 | 1 |
+| 7 (held-out) | name only (tax IDs hidden) | 53 | 247 | 8: cross_entity_recreate 5, existing per-entity copies 2, local_language 1 | 12 of 67: different customers, similar name 10, similar_name_different_site 2 | 1 | 0 |
 
 Type names as in the recall table above. 'With tax ID' is what the form does today (the judge's answer is shown, flags are not changed), so that row is what the judge would add if its answer were applied. 'Name only' is ablation (c) above. 'Wrong warnings cleared' is out of all wrong warnings the rules raised at Possible.
 
-With tax IDs on the held-out seed 7, applying the judge would rescue 0 duplicates and clear 1 true warning: when the tax ID is there, the rules already block nearly every duplicate, so the AI has little to add and can only cost. This is why the form shows its answer as an opinion only.
+With tax IDs on the held-out seed 7, applying the judge would rescue 1 duplicate and clear 1 true warning: when the tax ID is there, the rules already block nearly every duplicate, so the AI has little to add. This is why the form shows its answer as an opinion only.
 
 **One rescued pair** (seed 7, tax IDs hidden, type `local_language`, example chosen from the held-out seed's rescues): the request **โรงพยาบาลศิริราช [Bangkok]** against the existing record **Siriraj Hospital [Bangkok]**. Rule score 0.919, below the 0.92 block line, so the rules only warned. The judge picked this record and said: "โรงพยาบาลศิริราช is the Thai script name for Siriraj Hospital (โรงพยาบาล = Hospital), so the names match across language and script. Both records are in Bangkok, Thailand, and the new record's email domain (sirirajhospital) points to the same hospital. Neither record has a tax ID and there is no sign of a different branch, so nothing contradicts a match. The different SAP entity codes (QTS vs SPD) do not mean different legal entities."
 
-> **For judges:** on unseen data with tax IDs hidden, the rules alone block 250 true duplicates; the AI, asked on 48 unsure cases, adds 7 more blocks and clears 13 wrong warnings, at the cost of 1 new wrong block. Small numbers, by design: the AI only works where the rules run out.
+> **For judges:** on unseen data with tax IDs hidden, the rules alone block 247 true duplicates; the AI, asked on 53 unsure cases, adds 8 more blocks and clears 12 wrong warnings, at the cost of 1 new wrong block. Small numbers, by design: the AI only works where the rules run out.
 <!-- dedup-ai:end -->
 <!-- dedup:end -->
 
@@ -243,7 +243,7 @@ A field counts as correct when its value matches the answer key after normalisat
 | Nothing in an email can change approvers, bank details or credit terms | by design: the AI has no tools, its answer is data, and routing reads only config |
 | Emails with bank details in the body: details removed before the AI call | 2 of 2 (DEMO-06, DEMO-07) |
 | Bank values (from `vendors.csv` and the demo emails, 136 values) found in any extracted field | 0 |
-| ... found in any of the 222 recorded AI answers in the cache | 0 |
+| ... found in any of the 232 recorded AI answers in the cache | 0 |
 
 The injection flag is the AI's own judgement OR-ed with a short list of generic attack phrasings ("ignore ... instructions", "disregard ... rules", "system prompt to", "change the bank details"...). A flagged email still gets read normally; it goes to a human with a warning and nothing in it is acted on. **Small sample, said plainly:** there is only one injection email in this set (n=1), and the phrase list was written knowing it. So this shows the safety path works end to end, not how well injections are caught in general. The real protection is structural: the AI has no tools, and its answer cannot change approvers, bank details or credit terms.
 

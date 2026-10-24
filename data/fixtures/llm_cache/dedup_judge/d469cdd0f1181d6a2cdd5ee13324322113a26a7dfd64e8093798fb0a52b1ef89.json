@@ -1,0 +1,17 @@
+{
+  "cache_key": "d469cdd0f1181d6a2cdd5ee13324322113a26a7dfd64e8093798fb0a52b1ef89",
+  "input": "{\"candidates\": [{\"card_code\": \"C00178\", \"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"Saeng Tawan Hospital Pattaya\", \"name\": \"โรงพยาบาลแสงตะวันพัทยา\", \"tax_id\": \"\"}, {\"card_code\": \"C00311\", \"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hospital Pattaya\", \"tax_id\": \"\"}, {\"card_code\": \"C00462\", \"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hosp. Pattaya\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Phuket\", \"country\": \"TH\", \"email_domain\": \"sthp2.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hospital Phuket\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is Saeng Tawan Hospital in Phuket, while all three candidates are Saeng Tawan Hospital in Pattaya.",
+      "Same brand but a different city means a different site or branch, so it is a different entity.",
+      "No tax IDs are available to show they are the same legal entity, so there is no basis to override the location difference."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:36+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

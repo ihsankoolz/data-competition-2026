@@ -1,0 +1,17 @@
+{
+  "cache_key": "924078846890c4995f00f56df123739bb1630cf6ee48c2b7f08e37efff196082",
+  "input": "{\"candidates\": [{\"card_code\": \"C00235\", \"city\": \"Kuala Lumpur\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Seroja Hospital Kuala Lumpur Sdn Bhd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Kuala Lumpur\", \"country\": \"MY\", \"email_domain\": \"klh.my.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hospital Kuala Lumpur\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names differ in substance: \"Hospital Kuala Lumpur\" (a public hospital name) versus \"Seroja Hospital Kuala Lumpur Sdn Bhd\" (a private company with the brand word \"Seroja\"), so they look like different entities.",
+      "Neither record has a tax ID and the candidate has no email domain, so nothing confirms they are the same legal entity.",
+      "Sharing only the city and country is not enough to treat them as duplicates."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:57+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

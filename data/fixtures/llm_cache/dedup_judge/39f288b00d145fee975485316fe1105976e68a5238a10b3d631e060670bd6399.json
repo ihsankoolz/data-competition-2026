@@ -1,0 +1,17 @@
+{
+  "cache_key": "39f288b00d145fee975485316fe1105976e68a5238a10b3d631e060670bd6399",
+  "input": "{\"candidates\": [{\"card_code\": \"C00454\", \"city\": \"Bangkok 10700\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Siam Hospital Co., Ltd.\", \"tax_id\": \"0105413051859\"}], \"new_record\": {\"city\": \"BKK\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Siam Hospital Co., Ltd. (Bangkok)\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match apart from the '(Bangkok)' qualifier, which only repeats the location; both are Siam Hospital Co., Ltd.",
+      "Both are in Thailand and the city matches (BKK is Bangkok).",
+      "The new record has no tax ID, so there is no conflict, and nothing suggests a different branch or site."
+    ],
+    "selected_card_code": "C00454"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:49+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

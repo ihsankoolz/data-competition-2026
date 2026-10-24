@@ -1,6 +1,6 @@
 {
-  "cache_key": "bbd8ea033872f201e312b5e319fe9600f8cb3bade90efe58e6be2eba21af9e02",
-  "input": "<email>\nFrom domain: kdsh.my.example\nSubject: KPJ Damansara Spec. Hosp.\n\nTuan/Puan,\n\nPlease find attached our PO PR20260091 for KPJ Damansara Spec. Hosp.:\n- 11 kotak HbA1c reagent\n- covid ART kits x 4\n\nPlease deliver by 22 Jul.\n\nKerjasama pihak tuan amat kami hargai. Sila hubungi kami jika ada pertanyaan.\n\nTerima kasih,\nMuthu Raman\n</email>",
+  "cache_key": "7cc2abb151abda9b2e52505d8ce82a6c207885626f65469c99327e9446323800",
+  "input": "<email>\nFrom domain: abush.my.example\nSubject: Anggerik Bandar Utama Spec. Hosp.\n\nTuan/Puan,\n\nPlease find attached our PO PR20260091 for Anggerik Bandar Utama Spec. Hosp.:\n- 11 kotak HbA1c reagent\n- covid ART kits x 4\n\nPlease deliver by 22 Jul.\n\nKerjasama pihak tuan amat kami hargai. Sila hubungi kami jika ada pertanyaan.\n\nTerima kasih,\nMuthu Raman\n</email>",
   "model": "claude-haiku-5-5",
   "output": {
     "category": "purchase_order",
@@ -9,8 +9,8 @@
     "fields": [
       {
         "key": "customer_name",
-        "source_quote": "KPJ Damansara Spec. Hosp.",
-        "value": "KPJ Damansara Spec. Hosp."
+        "source_quote": "Anggerik Bandar Utama Spec. Hosp.",
+        "value": "Anggerik Bandar Utama Spec. Hosp."
       },
       {
         "key": "po_number",
@@ -40,7 +40,7 @@
     ]
   },
   "prompt_version": "interpreter_v2",
-  "recorded_at": "2026-10-22T08:56:10+00:00",
+  "recorded_at": "2026-10-24T07:00:31+00:00",
   "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
   "task": "interpreter"
 }

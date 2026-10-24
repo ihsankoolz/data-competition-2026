@@ -1,0 +1,17 @@
+{
+  "cache_key": "d28fffcc88cd860549ec4866b1d54d447af737c22cfc5dcc0f05b747e92b3fab",
+  "input": "{\"candidates\": [{\"card_code\": \"C00454\", \"city\": \"Bangkok 10700\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Siam Hospital Co., Ltd.\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"BKK\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Siam Hospital Co., Ltd. (Bangkok)\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "Names match apart from the '(Bangkok)' qualifier, which only repeats the location and does not indicate a different branch.",
+      "Both are in Bangkok, Thailand (BKK is the usual abbreviation for Bangkok), and the legal suffix Co., Ltd. is the same.",
+      "Neither record has a tax ID or email domain, so nothing conflicts; the different company entity codes (SPD vs QTS) are expected in the shared database."
+    ],
+    "selected_card_code": "C00454"
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:07:09+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

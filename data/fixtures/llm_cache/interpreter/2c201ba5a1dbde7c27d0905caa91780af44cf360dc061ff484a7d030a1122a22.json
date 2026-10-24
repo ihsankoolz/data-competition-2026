@@ -1,6 +1,6 @@
 {
-  "cache_key": "515a6fac961b6a5799abc02031eaab237cae78909bc29bb4675b49141f2258c1",
-  "input": "<email>\nFrom domain: bhp.th.example\nSubject: Specs needed\n\nสวัสดีครับ\n\nCan you share specs and a price for biosafety cabinet? Bangkok Hospital Pattaya is comparing vendors.\n\nThanks ค่ะ\nSupaporn Inthara\n</email>",
+  "cache_key": "2c201ba5a1dbde7c27d0905caa91780af44cf360dc061ff484a7d030a1122a22",
+  "input": "<email>\nFrom domain: sthp.th.example\nSubject: Specs needed\n\nสวัสดีครับ\n\nCan you share specs and a price for biosafety cabinet? Saeng Tawan Hospital Pattaya is comparing vendors.\n\nThanks ค่ะ\nSupaporn Inthara\n</email>",
   "model": "claude-haiku-5-5",
   "output": {
     "category": "enquiry",
@@ -9,8 +9,8 @@
     "fields": [
       {
         "key": "customer_name",
-        "source_quote": "Bangkok Hospital Pattaya",
-        "value": "Bangkok Hospital Pattaya"
+        "source_quote": "Saeng Tawan Hospital Pattaya",
+        "value": "Saeng Tawan Hospital Pattaya"
       }
     ],
     "injection_suspected": false,
@@ -24,7 +24,7 @@
     ]
   },
   "prompt_version": "interpreter_v2",
-  "recorded_at": "2026-10-22T08:57:52+00:00",
+  "recorded_at": "2026-10-24T07:00:37+00:00",
   "system_sha256": "f60cd870ede9d5e8d0ebf62fa70044382f716567ac2684d1ac0b582a6757f75b",
   "task": "interpreter"
 }

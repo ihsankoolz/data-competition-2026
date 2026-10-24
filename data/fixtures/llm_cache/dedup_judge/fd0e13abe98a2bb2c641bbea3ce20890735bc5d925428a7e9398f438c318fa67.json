@@ -1,0 +1,17 @@
+{
+  "cache_key": "fd0e13abe98a2bb2c641bbea3ce20890735bc5d925428a7e9398f438c318fa67",
+  "input": "{\"candidates\": [{\"card_code\": \"C00200\", \"city\": \"Cheras\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Damansara Jaya Medical Centre Cheras\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Petaling Jaya\", \"country\": \"MY\", \"email_domain\": \"djmcpj.my.example\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Damansara Jaya Medical Centre Petaling Jaya Sdn Bhd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is the Petaling Jaya site, while the candidate is the Cheras site, so they are different branches of the same brand.",
+      "The cities differ (Petaling Jaya vs Cheras) and the site name suffixes differ.",
+      "Neither record has a tax ID or matching email domain to confirm they are the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:54+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

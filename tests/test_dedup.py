@@ -138,7 +138,7 @@ def test_layer2_thai_legal_words_removed():
 
 def test_layer3_dictionary_rumah_sakit_and_benh_vien():
     assert (
-        normalise_name("RS Hermina", "ID").main == normalise_name("Rumah Sakit Hermina", "ID").main
+        normalise_name("RS Puri Kencana", "ID").main == normalise_name("Rumah Sakit Puri Kencana", "ID").main
     )
     assert normalise_name("Bệnh viện Từ Dũ", "VN").main == ("hospital", "tu", "du")
     assert set(normalise_name("Tu Du Hospital", "VN").main) == {"hospital", "tu", "du"}
@@ -218,9 +218,9 @@ def test_explicit_group_id_on_record_is_used():
     "tax_a,tax_b", [("199700001A", "200800002B"), (None, None)], ids=["both-tax-ids", "no-tax-ids"]
 )
 def test_mount_elizabeth_vs_novena_not_likely(tax_a, tax_b):
-    master = [rec("C1", "Mount Elizabeth Hospital Pte Ltd", "SG", FederalTaxID=tax_a)]
+    master = [rec("C1", "Mount Serene Hospital Pte Ltd", "SG", FederalTaxID=tax_a)]
     res = check(
-        BPQuery(CardName="Mount Elizabeth Novena Hospital", Country="SG", FederalTaxID=tax_b),
+        BPQuery(CardName="Mount Serene Novena Hospital", Country="SG", FederalTaxID=tax_b),
         master,
     )
     assert res.verdict != "likely"
@@ -228,8 +228,8 @@ def test_mount_elizabeth_vs_novena_not_likely(tax_a, tax_b):
 
 
 def test_number_mismatch_blocks_likely():
-    master = [rec("C1", "Phyathai 2 Hospital", "TH")]
-    res = check(BPQuery(CardName="Phyathai 1 Hospital", Country="TH"), master)
+    master = [rec("C1", "Phiman 2 Hospital", "TH")]
+    res = check(BPQuery(CardName="Phiman 1 Hospital", Country="TH"), master)
     assert res.verdict != "likely"
 
 

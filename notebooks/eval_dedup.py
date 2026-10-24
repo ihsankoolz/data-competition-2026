@@ -602,7 +602,7 @@ def section(dev: dict, test: dict, abl: list[dict] | None = None) -> str:
         "> **For judges:** the check never confuses a customer with the same company's vendor "
         "record, or a hospital with its sister hospital in another country. Similar branches "
         "of one "
-        "brand (Mount Elizabeth vs Mount Elizabeth Novena) are at most a warning, never a block."
+        "brand (Mount Serene vs Mount Serene Novena) are at most a warning, never a block."
     )
     a("")
     a("### AI judge (grey zone) and speed")
@@ -767,10 +767,10 @@ def ai_section(abl: list[dict]) -> str:
         if r["seed"] != 42 and r["setting"] == "a":
             a(
                 f"With tax IDs on the held-out seed {r['seed']}, applying the judge would rescue "
-                f"{len(r['rescued'])} duplicates and clear {r['lost_warnings']} true "
-                f"warning{'' if r['lost_warnings'] == 1 else 's'}: when the tax ID is there, the "
-                "rules already block nearly every duplicate, so the AI has little to add and "
-                "can only cost. This is why the form shows its answer as an opinion only."
+                f"{len(r['rescued'])} duplicate{'' if len(r['rescued']) == 1 else 's'} and clear "
+                f"{r['lost_warnings']} true warning{'' if r['lost_warnings'] == 1 else 's'}: when "
+                "the tax ID is there, the rules already block nearly every duplicate, so the AI "
+                "has little to add. This is why the form shows its answer as an opinion only."
             )
             a("")
     pool = [

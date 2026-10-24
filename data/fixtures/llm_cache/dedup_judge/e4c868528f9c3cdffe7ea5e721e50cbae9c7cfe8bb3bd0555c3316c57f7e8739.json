@@ -1,0 +1,17 @@
+{
+  "cache_key": "e4c868528f9c3cdffe7ea5e721e50cbae9c7cfe8bb3bd0555c3316c57f7e8739",
+  "input": "{\"candidates\": [{\"card_code\": \"C00494\", \"city\": \"Phuket\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"Saeng Tawan Hospital Phuket\", \"name\": \"โรงพยาบาลแสงตะวันภูเก็ต\", \"tax_id\": \"-\"}], \"new_record\": {\"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"sthp.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hospital Pattaya\", \"tax_id\": \"0105536944442\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is Saeng Tawan Hospital in Pattaya, while the candidate C00494 is the Phuket hospital, so they are different sites of the same brand.",
+      "The cities differ (Pattaya vs Phuket), and a different branch usually means a different entity.",
+      "The candidate has no tax ID to confirm they are the same legal entity, so there is no evidence to override the site difference."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:47+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}
