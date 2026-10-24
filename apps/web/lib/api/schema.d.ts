@@ -538,6 +538,37 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AccountListTotal
+         * @description Totals for one account list over ALL qualifying customers, not only the rows shown.
+         */
+        AccountListTotal: {
+            /**
+             * Customers
+             * @description Customers that qualify for the list
+             */
+            customers: number;
+            /**
+             * Shown
+             * @description Rows returned in the list (top 10)
+             */
+            shown: number;
+            /**
+             * Total Usd
+             * @description Drop-off: sum of value at risk. Whitespace: sum of estimates over rows that are NOT low confidence.
+             */
+            total_usd: number;
+            /**
+             * Low Confidence
+             * @description Rows left out of total_usd (whitespace only)
+             */
+            low_confidence: number;
+            /**
+             * Caption
+             * @description One plain sentence for the UI, says what the total leaves out
+             */
+            caption: string;
+        };
         /** ApprovalDecisionIn */
         ApprovalDecisionIn: {
             /**
@@ -935,12 +966,12 @@ export interface components {
             last_order: string;
             /**
              * Value At Risk Usd
-             * @description Repeat (Product A + C) confirmed-PO value in the prior 3 months minus the last 3 months: the quarterly spend that has gone missing. Listed when the last 3 months are at most half the prior 3, the prior 3 were at least US$5,000, the customer ordered in at least 3 of the 9 months before, and it is not on the lost list.
+             * @description Repeat (Product A + C) confirmed-PO value in the same 3 months last year minus the last 3 months: how much less it ordered than a year earlier (year over year, so seasonal dips do not count). Listed when the last 3 months are at most half the same quarter last year, that quarter was at least US$5,000, the customer ordered in at least 3 of the 9 months before, and it is not on the lost list. Customers with no repeat orders in that quarter last year cannot be compared and are never listed.
              */
             value_at_risk_usd: number;
             /**
              * Change Pct
-             * @description Last 3 months vs the 3 before, % change in repeat spend (-100 = stopped)
+             * @description Last 3 months vs the same 3 months last year, % change in repeat spend (-100 = stopped)
              */
             change_pct: number | null;
             /**
@@ -1674,6 +1705,10 @@ export interface components {
              * @description After merge: top 10 cross-sell gaps by estimated value (country filter applies; lost and fading customers left out). Empty before merge: each record sees only the products bought under it, so the gaps are not real.
              */
             cross_sell_whitespace?: components["schemas"]["WhitespaceOpportunity"][];
+            /** @description After merge: totals over every fading customer. None before. */
+            drop_off_total?: components["schemas"]["AccountListTotal"] | null;
+            /** @description After merge: totals over every cross-sell gap; the US$ total excludes low-confidence rows. None before. */
+            whitespace_total?: components["schemas"]["AccountListTotal"] | null;
             /**
              * Actions
              * @description 3-5, generated from the data
@@ -2052,6 +2087,16 @@ export interface components {
              * @description Median 12-month confirmed-PO spend on the missing family by comparable customers: same country, already buying it and at least one family this customer buys (at least 3 such customers). An estimate, not a forecast.
              */
             est_value_usd: number;
+            /**
+             * Comparable Customers
+             * @description How many comparable customers the median is based on
+             */
+            comparable_customers: number;
+            /**
+             * Low Confidence
+             * @description True when the estimate rests on fewer than 10 comparable customers. Still listed, but left out of the US$ total.
+             */
+            low_confidence: boolean;
             /**
              * Reason
              * @description One plain sentence

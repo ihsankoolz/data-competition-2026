@@ -208,6 +208,7 @@ class _Core:
     families: pd.Series  # customer key -> set of families in the period
     drop_off: pd.DataFrame  # after merge only (empty before): accounts.drop_off_risk
     whitespace: pd.DataFrame  # after merge only (empty before): accounts.whitespace
+    drop_unscored: int  # regular buyers with no orders in the same quarter last year (after)
 
 
 _core_memo: dict[tuple[str, str, str | None], _Core] = {}
@@ -231,12 +232,14 @@ def _compute_core(f: _Frames, view: View, country: str | None) -> _Core:
     cross = _pct(int((families.map(len) >= 2).sum()), len(families))
     lost = _lost(f, orders, key)
     if view == "after":
-        drop = accounts.drop_off_risk(orders12, key, f.months, lost["key"])
+        drop = accounts.drop_off_risk(orders, key, f.months, lost["key"])
         ws = accounts.whitespace(orders12, key, [*lost["key"], *drop["key"]], PRODUCTS)
+        unscored = len(accounts.drop_off_unscored(orders, key, f.months, lost["key"]))
     else:  # before merge a split customer looks fading or narrow when it is not (S1)
-        drop = accounts.drop_off_risk(orders12.iloc[:0], key, f.months, [])
+        drop = accounts.drop_off_risk(orders.iloc[:0], key, f.months, [])
         ws = accounts.whitespace(orders12.iloc[:0], key, [], PRODUCTS)
-    return _Core(orders12, len(families), nrr, bridge, lost, cross, families, drop, ws)
+        unscored = 0
+    return _Core(orders12, len(families), nrr, bridge, lost, cross, families, drop, ws, unscored)
 
 
 def _artefacts(f: _Frames, country: str | None) -> set[str]:
@@ -345,6 +348,18 @@ def _plan_words(b: float) -> str:
     return f"{abs(b):.0f}% too {'low' if b < 0 else 'high'}"
 
 
+def _low_note(ws: pd.DataFrame) -> str:
+    """' (not counting the 7 customers with fewer than 10 similar customers to compare)' or ''."""
+    n = int(ws["low_confidence"].astype(bool).sum()) if len(ws) else 0
+    if not n:
+        return ""
+    who = "customer" if n == 1 else "customers"
+    return (
+        f" (not counting the {n} {who} with fewer than {accounts.WS_CONFIDENT_PEERS} similar "
+        f"customers to compare)"
+    )
+
+
 def _money(x: float) -> str:
     if abs(x) >= 1e6:
         return f"US${x / 1e6:.1f}M"
@@ -432,11 +447,10 @@ def _actions(
                 {
                     "title": f"Check in with the {len(drop)} customers whose orders are fading",
                     "detail": (
-                        f"{len(drop)} regular customers in {where} cut their test-kit and service "
-                        f"orders by half or more in the last 3 months but are not yet on the "
-                        f"lost list. Together they ordered "
-                        f"{_money(float(drop['value_at_risk'].sum()))} less than in the 3 months "
-                        f"before."
+                        f"{len(drop)} regular customers in {where} spent half or less on test "
+                        f"kits and services in the last 3 months than in the same 3 months last "
+                        f"year, but are not yet on the lost list. Together they ordered "
+                        f"{_money(float(drop['value_at_risk'].sum()))} less than a year earlier."
                     ),
                     "evidence": "At risk of dropping off list",
                 }
@@ -451,8 +465,9 @@ def _actions(
                         f"buy test kits (Product A) or services (Product C) that similar "
                         f"customers buy. If each bought its missing line at what similar "
                         f"customers in its country spend, that is about "
-                        f"{_money(float(ws['est_value'].sum()))} a year. Cross-sell penetration "
-                        f"is {core.cross_sell:.0f}%."
+                        f"{_money(accounts.whitespace_total(ws))} a year"
+                        + _low_note(ws)
+                        + f". Cross-sell penetration is {core.cross_sell:.0f}%."
                     ),
                     "evidence": "Cross-sell whitespace list; cross-sell penetration",
                 }
@@ -598,9 +613,11 @@ CAPTIONS: dict[str, dict[str, str]] = {
     "drop_off_risk": {
         "title": "At risk of dropping off",
         "caption": (
-            "Regular customers whose test-kit and service orders in the last 3 months fell to "
-            "half or less of the 3 months before, but who have not stopped yet. The dollar "
-            "figure is how much less they ordered."
+            "Regular customers who spent half or less on test kits and services in the last 3 "
+            "months than in the same 3 months last year, but who have not stopped yet. Comparing "
+            "with the same season last year means holiday dips do not count as a fall. The "
+            "dollar figure is how much less they ordered than a year earlier. Customers with no "
+            "orders in that quarter last year cannot be compared this way and are not listed."
         ),
     },
     "cross_sell_whitespace": {
@@ -609,7 +626,9 @@ CAPTIONS: dict[str, dict[str, str]] = {
             "Customers missing test kits (Product A) or services (Product C) that similar "
             "customers buy. The dollar figure is what similar customers in the same country "
             "typically spend a year on the missing product (the median), so it is an estimate, "
-            "not a forecast. Equipment is left out: it is a one-off purchase."
+            "not a forecast. Equipment is left out: it is a one-off purchase. Rows based on "
+            "fewer than 10 similar customers are marked low confidence and left out of the "
+            "total."
         ),
     },
     "panels": {
@@ -634,6 +653,60 @@ CAPTIONS: dict[str, dict[str, str]] = {
 
 
 # --------------------------------------------------------------------------------------------
+def _shown(shown: int, n: int, what: str) -> str:
+    return f"All {n} {what} shown." if shown == n else f"Top {shown} of {n} {what} shown."
+
+
+def _drop_total(drop: pd.DataFrame, unscored: int) -> dict[str, Any]:
+    n, total = len(drop), round(float(drop["value_at_risk"].sum()), 2) if len(drop) else 0.0
+    shown = min(n, TOP_ACCOUNTS)
+    who, them = ("customer", "it is") if unscored == 1 else ("customers", "they are")
+    return {
+        "customers": n,
+        "shown": shown,
+        "total_usd": total,
+        "low_confidence": 0,
+        "caption": (
+            f"{_shown(shown, n, 'fading customers')} Together they ordered {_money(total)} less "
+            f"than in the same 3 months last year."
+            if n
+            else "No fading customers."
+        )
+        + (
+            f" {unscored} regular {who} with no orders in that quarter last year could not be "
+            f"compared, so {them} not listed."
+            if unscored
+            else ""
+        ),
+    }
+
+
+def _ws_total(ws: pd.DataFrame) -> dict[str, Any]:
+    n = len(ws)
+    low = int(ws["low_confidence"].astype(bool).sum()) if n else 0
+    total = accounts.whitespace_total(ws)
+    shown = min(n, TOP_ACCOUNTS)
+    excl = (
+        f" Total excludes {low} low-confidence {'row' if low == 1 else 'rows'} (fewer than "
+        f"{accounts.WS_CONFIDENT_PEERS} similar customers)."
+        if low
+        else ""
+    )
+    return {
+        "customers": n,
+        "shown": shown,
+        "total_usd": total,
+        "low_confidence": low,
+        "caption": (
+            f"{_shown(shown, n, 'customers with a gap')} The {n - low} confident "
+            f"{'row adds' if n - low == 1 else 'rows add'} up to about {_money(total)} a "
+            f"year.{excl}"
+            if n
+            else "No cross-sell gaps."
+        ),
+    }
+
+
 def regional_view(data_dir: Path, view: View, country: str | None = None) -> dict[str, Any]:
     """-> RegionalView. `data_dir` = data/fixtures/seasonal_trend."""
     if view not in ("before", "after"):
@@ -664,7 +737,7 @@ def regional_view(data_dir: Path, view: View, country: str | None = None) -> dic
             "last_order": f"{r.last_order:%Y-%m-%d}",
             "value_at_risk_usd": r.value_at_risk,
             "change_pct": r.change_pct,
-            "reason": accounts.drop_off_reason(r),
+            "reason": accounts.drop_off_reason(r, f.months),
         }
         for r in core.drop_off.head(TOP_ACCOUNTS).itertuples()
     ]
@@ -676,6 +749,8 @@ def regional_view(data_dir: Path, view: View, country: str | None = None) -> dic
             "buys": list(r.buys),
             "missing": r.missing,
             "est_value_usd": r.est_value,
+            "comparable_customers": int(r.peers),
+            "low_confidence": bool(r.low_confidence),
             "reason": accounts.whitespace_reason(r, COUNTRY_NAMES[r.country]),
         }
         for r in core.whitespace.head(TOP_ACCOUNTS).itertuples()
@@ -693,6 +768,10 @@ def regional_view(data_dir: Path, view: View, country: str | None = None) -> dic
         "panels": _panels(f, country),
         "drop_off_risk": drop_off,
         "cross_sell_whitespace": whitespace,
+        "drop_off_total": _drop_total(core.drop_off, core.drop_unscored)
+        if view == "after"
+        else None,
+        "whitespace_total": _ws_total(core.whitespace) if view == "after" else None,
         "actions": _actions(f, Path(data_dir), view, country, core),
         "captions": {k: dict(v) for k, v in CAPTIONS.items()},
     }
