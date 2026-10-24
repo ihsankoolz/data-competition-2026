@@ -26,7 +26,7 @@ export function SignalPanels({ panels }: { panels: Panel[] }) {
             data-testid={`panel-${p.kind}`}
             className={cn(
               "flex flex-col gap-2 rounded-xl border p-4",
-              demand ? "border-foreground/25 bg-background" : "border-dashed bg-muted/20",
+              demand ? "border-foreground/25 bg-card" : "border-dashed bg-muted/20",
             )}
           >
             <span className="flex items-center justify-between gap-2">

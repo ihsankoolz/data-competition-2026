@@ -210,7 +210,7 @@ function RequestList({
                 data-testid="publish-item"
                 data-req={r.req_id}
                 className={cn(
-                  "flex w-full flex-col gap-1 rounded-xl border p-3.5 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                  "flex w-full flex-col gap-1 rounded-xl border bg-card p-3.5 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                   r.req_id === activeId ? "border-foreground/30 bg-muted/50" : "hover:bg-muted/40",
                 )}
               >
@@ -291,7 +291,7 @@ function PublishPane({
   const allowed = (detail.allowed_actions ?? []).includes("publish");
 
   return (
-    <section className="flex flex-col gap-6 rounded-xl border p-6" data-testid="publish-pane">
+    <section className="flex flex-col gap-6 rounded-xl border bg-card p-6" data-testid="publish-pane">
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <p className="text-sm text-muted-foreground">

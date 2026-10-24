@@ -115,7 +115,7 @@ export function ApprovalsInbox() {
                     data-testid="approval-item"
                     data-req={item.request.req_id}
                     className={cn(
-                      "flex w-full flex-col gap-1.5 rounded-xl border p-4 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                      "flex w-full flex-col gap-1.5 rounded-xl border bg-card p-4 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                       isActive ? "border-foreground/30 bg-muted/50" : "hover:bg-muted/40",
                     )}
                   >
@@ -181,7 +181,7 @@ function TaskPane({
 
   return (
     <section
-      className="flex flex-col gap-6 rounded-xl border p-6"
+      className="flex flex-col gap-6 rounded-xl border bg-card p-6"
       aria-label={`Decide on ${item.request.title}`}
       data-testid="approval-pane"
     >

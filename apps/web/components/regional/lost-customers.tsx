@@ -45,7 +45,7 @@ export function LostCustomers({
         )}
         {view === "after" && <>, each a real customer that has gone quiet</>}.
       </p>
-      <ul className="flex max-h-[26rem] flex-col divide-y overflow-y-auto rounded-xl border">
+      <ul className="flex max-h-[26rem] flex-col divide-y overflow-y-auto rounded-xl border bg-card">
         {sorted.map((l) => (
           <li
             key={l.card_code}

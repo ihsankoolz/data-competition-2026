@@ -41,6 +41,7 @@ import {
   prefillableFields,
   syncRegistrations,
 } from "@/lib/forms/schema";
+import { toastAcrossNavigation } from "@/lib/toasts";
 import { cn } from "@/lib/utils";
 
 import { EmailPicker } from "./email-picker";
@@ -282,7 +283,10 @@ export function NewRequestForm() {
     try {
       const id = await ensureDraft();
       await api.POST("/requests/{req_id}/submit", { path: { req_id: id } });
-      toast.success("Request submitted", { description: "Approvers have been notified." });
+      // The status page opens next; this toast is the one that stays through that change.
+      toastAcrossNavigation(() =>
+        toast.success("Request submitted", { description: "Approvers have been notified." }),
+      );
       announceWorkflowChange();
       router.push(`/requests/${id}`);
     } catch (e) {

@@ -194,7 +194,7 @@ export function RegionalView() {
                   caption: "Value of confirmed POs in the last 12 months, in US dollars.",
                 })}
               />
-              <Heatmap cells={data.heatmap} country={country} />
+              <Heatmap cells={data.heatmap} country={country} captions={captions} />
               <p className="text-xs text-muted-foreground">
                 Merging duplicates does not change these totals: the same orders are grouped under
                 fewer customers.
@@ -203,13 +203,13 @@ export function RegionalView() {
 
             <section aria-labelledby="growth-title" className="flex flex-col gap-5">
               <h2 id="growth-title" className="text-base font-semibold tracking-tight">
-                Growth, last 3 months vs the 3 before
+                Customers and retention
               </h2>
               <dl className="grid grid-cols-3 gap-4" data-testid="growth-kpis">
                 <Kpi
                   testId="kpi-nrr"
                   value={pct(data.nrr_pct)}
-                  label="of last period's spend kept by existing customers"
+                  label="of spend kept from existing customers, last 3 months vs the 3 before"
                   caption={captionOf(captions, "nrr_pct", {
                     title: "Net revenue retention",
                     caption: "Spend this period by last period's customers, as a % of before.",
@@ -217,15 +217,11 @@ export function RegionalView() {
                 />
                 <Kpi
                   testId="kpi-cross-sell"
-                  value={pct(data.cross_sell_pct)}
-                  // D-021: the before-merge figure is meant to be low; the after-merge figure
-                  // sits beside it so the gain from the golden record is the thing you read.
-                  after={view === "before" ? pct(pair.after.cross_sell_pct) : undefined}
-                  label={
-                    view === "before"
-                      ? "of customers buy 2 or more product lines, before and after merge"
-                      : `of customers buy 2 or more product lines (${pct(pair.before.cross_sell_pct)} before merge)`
-                  }
+                  // D-021: before merge is meant to be low; the after-merge figure sits beside it
+                  // on one line in both views, so the gain from the golden record is what you read.
+                  value={pct(pair.before.cross_sell_pct, 0)}
+                  after={pct(pair.after.cross_sell_pct, 0)}
+                  label="Customers buying 2+ product lines (before vs after merge)"
                   caption={captionOf(captions, "cross_sell_pct", {
                     title: "Cross-sell penetration",
                     caption: "Share of active customers buying at least 2 of Products A, B and C.",
@@ -251,7 +247,7 @@ export function RegionalView() {
               )}
               <div className="flex flex-col gap-1">
                 <p className="flex items-center gap-1 text-sm font-medium">
-                  Revenue bridge
+                  Revenue bridge, last 3 months vs the 3 before
                   <MetricInfo
                     caption={captionOf(captions, "bridge", {
                       title: "Revenue bridge",
@@ -260,8 +256,8 @@ export function RegionalView() {
                   />
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  How the prior 3 months became the last 3: plus new customers and those who bought
-                  more, minus those who bought less or stopped.
+                  How sales in the 3 months before became sales in the last 3 months: plus new
+                  customers and those who bought more, minus those who bought less or stopped.
                 </p>
               </div>
               <BridgeChart bridge={data.bridge} />
@@ -338,7 +334,7 @@ function Kpi({
         {caption.title}
         <MetricInfo caption={caption} />
       </dt>
-      <dd className="flex flex-wrap items-baseline gap-x-1.5 text-2xl font-semibold tabular-nums">
+      <dd className="flex items-baseline gap-x-1.5 text-2xl font-semibold whitespace-nowrap tabular-nums">
         <span
           className={cn(after !== undefined && "text-muted-foreground")}
           data-testid={`${testId}-value`}
@@ -347,7 +343,13 @@ function Kpi({
         </span>
         {after !== undefined && (
           <>
-            <span className="text-sm font-normal text-muted-foreground">to</span>
+            <span
+              className="text-lg font-normal text-muted-foreground"
+              role="img"
+              aria-label="becomes"
+            >
+              →
+            </span>
             <span className="text-success-foreground" data-testid={`${testId}-after`}>
               {after}
             </span>

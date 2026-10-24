@@ -197,7 +197,7 @@ export function MessyInbox() {
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search emails"
             />
-            <div className="h-[calc(100dvh-20rem)] min-h-96 overflow-y-auto rounded-xl border">
+            <div className="h-[calc(100dvh-20rem)] min-h-96 overflow-y-auto rounded-xl border bg-card">
               {emails === null ? (
                 <div className="flex flex-col gap-2 p-2">
                   {Array.from({ length: 8 }, (_, i) => (
@@ -393,7 +393,7 @@ function EmailPane({
 
   return (
     <section
-      className="grid grid-cols-[minmax(0,1fr)_minmax(0,22rem)] items-start gap-6 rounded-xl border p-6"
+      className="grid grid-cols-[minmax(0,1fr)_minmax(0,22rem)] items-start gap-6 rounded-xl border bg-card p-6"
       aria-label={email.subject}
       data-testid="email-pane"
     >
@@ -435,13 +435,6 @@ function EmailPane({
             ),
           )}
         </div>
-        {read?.bank_details_stripped && (
-          <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-            <ShieldCheck className="mt-0.5 size-3 shrink-0" />
-            Bank details in this email were removed before the AI read it. They are never sent to
-            the AI, and only Finance can see them.
-          </p>
-        )}
       </div>
 
       <aside className="flex flex-col gap-4" aria-label="What the AI read" data-testid="ai-reading">
@@ -484,6 +477,17 @@ function Reading({
   const lines = read.lines ?? [];
   const missing = read.missing_fields ?? [];
   const questions = read.questions_for_requester ?? [];
+  // Shown right under "Details found", so it is on screen without scrolling (D-021 beat 4).
+  const bankNotice = read.bank_details_stripped ? (
+    <p
+      className="flex items-start gap-1.5 rounded-md bg-success/10 px-2 py-1.5 text-xs text-foreground"
+      data-testid="bank-stripped"
+    >
+      <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-success" />
+      Bank details in this email were removed before the AI read it. They are never sent to the
+      AI, and only Finance can see them.
+    </p>
+  ) : null;
 
   return (
     <>
@@ -541,9 +545,12 @@ function Reading({
         </div>
       )}
 
+      {fields.length === 0 && bankNotice}
+
       {fields.length > 0 && (
         <div className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold">Details found</h3>
+          {bankNotice}
           <ul className="flex flex-col gap-1" data-testid="extracted-fields">
             {fields.map((f) => (
               <li key={f.key}>

@@ -222,7 +222,7 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
           <h2 className="text-base font-semibold">What was asked for</h2>
           <RequestFields detail={detail} />
         </section>
-        <section className="flex flex-col gap-3" aria-label="History">
+        <section className="flex flex-col gap-3" aria-label="History" data-testid="history">
           <h2 className="text-base font-semibold">History</h2>
           <p className="-mt-2 text-xs text-muted-foreground">
             Every change, who made it and when (demo clock). Bank details are never written here.
@@ -401,7 +401,7 @@ function StageFlow({ stages, qrReason }: { stages: Stage[]; qrReason: string | n
           )}
           <div
             className={cn(
-              "flex min-w-0 flex-col gap-3 rounded-xl border p-4",
+              "flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4",
               s.tasks.length > 1 ? "flex-[3]" : "flex-1",
               s.status === "waiting" && "border-dashed bg-muted/20",
               s.status === "done" && "border-success/30",

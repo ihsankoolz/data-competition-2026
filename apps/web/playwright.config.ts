@@ -18,8 +18,12 @@ const SAP_PORT = Number(process.env.E2E_SAP_PORT ?? 8101);
 
 export default defineConfig({
   testDir: "./e2e",
-  // The timed demo walkthrough is a rehearsal tool, run only by `make rehearse` (D-021).
-  testIgnore: process.env.REHEARSE ? [] : ["**/walkthrough.spec.ts"],
+  // The timed demo walkthrough is a rehearsal tool, run only by `make rehearse` (D-021);
+  // the theme screenshots only by `make theme-shots` (D-022 #5).
+  testIgnore: [
+    ...(process.env.REHEARSE ? [] : ["**/walkthrough.spec.ts"]),
+    ...(process.env.THEME_SHOTS ? [] : ["**/theme-shots.spec.ts"]),
+  ],
   fullyParallel: false,
   workers: 1,
   retries: 0,

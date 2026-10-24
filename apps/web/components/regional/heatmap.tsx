@@ -2,8 +2,16 @@
 
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
+import { MetricInfo } from "@/components/analytics/metric-info";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { PRODUCT_LABELS, signedPct, usdFull, usdShort } from "@/lib/analytics";
+import {
+  captionOf,
+  type Captions,
+  PRODUCT_LABELS,
+  signedPct,
+  usdFull,
+  usdShort,
+} from "@/lib/analytics";
 import type { Schema } from "@/lib/api/client";
 import { countryName } from "@/lib/format";
 
@@ -29,6 +37,12 @@ const RAMP = [
 // Steps from here on carry white text: white on L 0.51 is above 4.5:1, on the darkest step about
 // 9:1. Below it, near-black text wins (on L 0.57 black is about 4.9:1, white only 4.3:1).
 const DARK_TEXT_FROM = 9;
+const TEXT_ON_DARK = "oklch(1 0 0)";
+const TEXT_ON_LIGHT = "oklch(0.15 0 0)";
+
+/** Product B (equipment) sells in a few large orders, so its growth swings (D-022 #3). */
+const LUMPY = "B";
+const LUMPY_MARK = "Lumpy: plan from the enquiry pipeline";
 
 const COUNTRIES = ["SG", "MY", "ID", "VN", "TH"] as const;
 const PRODUCTS = ["A", "B", "C"] as const;
@@ -47,7 +61,37 @@ function GrowthMark({ value }: { value: number | null | undefined }) {
   return <Minus className="size-3" aria-hidden />;
 }
 
-export function Heatmap({ cells, country }: { cells: HeatCell[]; country: string | null }) {
+function LumpyTag({ testId }: { testId?: string }) {
+  return (
+    <span
+      className="shrink-0 rounded-sm border border-current/40 px-1 text-[10px] leading-4 font-medium"
+      data-testid={testId}
+    >
+      Lumpy
+    </span>
+  );
+}
+
+export function Heatmap({
+  cells,
+  country,
+  captions,
+}: {
+  cells: HeatCell[];
+  country: string | null;
+  captions: Captions;
+}) {
+  // Each cell's growth is the 12-month headline measure (D-022 #3), not the 3-month change.
+  const growthCap = captionOf(captions, "growth_12m_pct", {
+    title: "Growth (12 months)",
+    caption: "Sales in the last 12 months compared with the 12 months before, as a % change.",
+  });
+  const lumpyCap = captionOf(captions, "product_b_note", {
+    title: "Product B is lumpy",
+    caption:
+      "Equipment sells in a few large orders, so its growth swings from quarter to quarter. " +
+      "Plan it from the enquiry pipeline, not from past growth.",
+  });
   const max = Math.max(0, ...cells.map((c) => c.value_usd));
   const rows = COUNTRIES.filter((c) => cells.some((cell) => cell.country === c));
   const at = (c: string, p: string) => cells.find((x) => x.country === c && x.product === p);
@@ -61,8 +105,8 @@ export function Heatmap({ cells, country }: { cells: HeatCell[]; country: string
         data-testid="heatmap"
       >
         <caption className="sr-only">
-          Confirmed purchase order value by country and product, last 12 months, with growth over
-          the last 3 months
+          Confirmed purchase order value by country and product, last 12 months, with growth: last
+          12 months vs the 12 before
         </caption>
         <thead>
           <tr>
@@ -89,6 +133,7 @@ export function Heatmap({ cells, country }: { cells: HeatCell[]; country: string
                 if (!cell) return <td key={p} className="h-16 rounded-md bg-muted" />;
                 const s = step(cell.value_usd, max);
                 const light = s >= DARK_TEXT_FROM;
+                const lumpy = p === LUMPY;
                 return (
                   <td key={p} className="p-0">
                     <Tooltip>
@@ -100,15 +145,21 @@ export function Heatmap({ cells, country }: { cells: HeatCell[]; country: string
                           className="flex h-16 w-full flex-col justify-between rounded-md px-3 py-2 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/60"
                           style={{
                             backgroundColor: RAMP[s],
-                            color: light ? "#ffffff" : "#0b0b0b",
+                            color: light ? TEXT_ON_DARK : TEXT_ON_LIGHT,
                           }}
                         >
-                          <span className="text-sm font-semibold tabular-nums">
-                            {usdShort(cell.value_usd)}
+                          <span className="flex items-start justify-between gap-2">
+                            <span className="text-sm font-semibold tabular-nums">
+                              {usdShort(cell.value_usd)}
+                            </span>
+                            {lumpy && <LumpyTag testId="lumpy-marker" />}
                           </span>
-                          <span className="flex items-center gap-0.5 text-xs tabular-nums opacity-90">
-                            <GrowthMark value={cell.growth_pct} />
-                            {signedPct(cell.growth_pct)}
+                          <span
+                            className="flex items-center gap-0.5 text-xs tabular-nums opacity-90"
+                            data-testid="heat-growth"
+                          >
+                            <GrowthMark value={cell.growth_12m_pct} />
+                            {signedPct(cell.growth_12m_pct)}
                           </span>
                         </button>
                       </TooltipTrigger>
@@ -120,9 +171,16 @@ export function Heatmap({ cells, country }: { cells: HeatCell[]; country: string
                           <br />
                           {usdFull(cell.value_usd)} of confirmed POs in 12 months.
                           <br />
-                          Last 3 months vs the 3 before: {signedPct(cell.growth_pct)}.
+                          Growth, last 12 months vs the 12 before: {signedPct(cell.growth_12m_pct)}.
                           <br />
                           {cell.customers} {cell.customers === 1 ? "customer" : "customers"}.
+                          {lumpy && (
+                            <>
+                              <br />
+                              <strong className="font-semibold">{LUMPY_MARK}.</strong>{" "}
+                              {lumpyCap.caption}
+                            </>
+                          )}
                         </span>
                       </TooltipContent>
                     </Tooltip>
@@ -148,17 +206,28 @@ export function Heatmap({ cells, country }: { cells: HeatCell[]; country: string
           )}
         </tbody>
       </table>
-      <div className="flex items-center gap-3 text-xs text-muted-foreground" aria-hidden>
-        <span>Less</span>
-        <span className="flex h-2 w-40 overflow-hidden rounded-full">
-          {RAMP.map((c) => (
-            <span key={c} className="flex-1" style={{ backgroundColor: c }} />
-          ))}
-        </span>
-        <span>More sales</span>
-        <span className="ml-auto">
-          Arrow and % = last 3 months vs the 3 before. Hover a cell for customers.
-        </span>
+      <div className="flex flex-col gap-1.5 text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 whitespace-nowrap">
+          <span className="flex items-center gap-3" aria-hidden>
+            <span>Less</span>
+            <span className="flex h-2 w-32 overflow-hidden rounded-full">
+              {RAMP.map((c) => (
+                <span key={c} className="flex-1" style={{ backgroundColor: c }} />
+              ))}
+            </span>
+            <span>More sales</span>
+          </span>
+          <span className="ml-auto">Hover a cell for its customers.</span>
+        </div>
+        <p className="flex items-center gap-1" data-testid="heat-growth-caption">
+          Arrow and %: {growthCap.title.toLowerCase()}, the last 12 months vs the 12 before.
+          <MetricInfo caption={growthCap} />
+        </p>
+        <p className="flex items-center gap-1.5" data-testid="lumpy-note">
+          <LumpyTag />
+          {LUMPY_MARK}.
+          <MetricInfo caption={lumpyCap} />
+        </p>
       </div>
     </div>
   );

@@ -32,6 +32,8 @@ docs/                PRD, decisions, data spec, demo script, progress log
 - `make reset-demo` — restore the database to the seeded demo state (same code path as the in-app "Reset demo" button, `POST /admin/reset-demo`; D-016)
 - `make test` — all Python and web tests
 - `make e2e` — Playwright suite; starts its own SAP mock, API and web on 8101/8100/3100 and stops them (`make e2e E2E_ARGS=dup-panel` for one spec)
+- `make rehearse` — timed demo walkthrough with 1440x900 screenshots (not in `make e2e`)
+- `make theme-shots` — 1440x900 screenshots of theme variants A/B/C into `apps/web/screenshots/themes/` (not in `make e2e`; the active variant is `THEME_VARIANT` in `apps/web/lib/theme.ts`)
 - `make eval` — dedup, classifier and forecast evaluations; writes `docs/results.md`
 
 ## Stack rules

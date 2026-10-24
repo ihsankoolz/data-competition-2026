@@ -57,3 +57,37 @@ test("sort all with AI fills in a type for every email", async ({ page }) => {
   await expect(page.getByTestId("inbox-DEMO-01")).toBeVisible();
   await expect(page.getByTestId("inbox-DEMO-03")).toHaveCount(0);
 });
+
+test("DEMO-07: the bank-details note sits under 'Details found', on screen without scrolling", async ({
+  page,
+}) => {
+  await openAs(page, "weijie", "/inbox");
+  await page.getByLabel("Search emails").fill("Precision");
+  await page.getByTestId("inbox-DEMO-07").click();
+  const pane = page.getByTestId("email-pane");
+  await expect(pane).toContainText("New vendor - Precision Diagnostics Asia");
+  await pane.getByTestId("read-with-ai").click();
+
+  const reading = pane.getByTestId("ai-reading");
+  const note = reading.getByTestId("bank-stripped");
+  await expect(note).toHaveText(
+    "Bank details in this email were removed before the AI read it. They are never sent to " +
+      "the AI, and only Finance can see them.",
+  );
+  const heading = reading.getByRole("heading", { name: "Details found" });
+  const firstField = reading.getByTestId("extracted-fields").locator("li").first();
+  await expect(firstField).toBeVisible();
+
+  // Inside the 1440x900 viewport, with the page not scrolled.
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  const viewport = page.viewportSize()!;
+  const box = (await note.boundingBox())!;
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
+
+  // Just below the heading and above the first extracted field.
+  const h = (await heading.boundingBox())!;
+  const f = (await firstField.boundingBox())!;
+  expect(box.y).toBeGreaterThanOrEqual(h.y + h.height - 1);
+  expect(box.y + box.height).toBeLessThanOrEqual(f.y + 1);
+});

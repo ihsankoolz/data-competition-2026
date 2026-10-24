@@ -60,8 +60,8 @@ export function MergeStrip({
     {
       key: "cross",
       label: "Customers buying 2+ product lines",
-      before: pct(before.cross_sell_pct),
-      after: pct(after.cross_sell_pct),
+      before: pct(before.cross_sell_pct, 0),
+      after: pct(after.cross_sell_pct, 0),
       note: "each company's copy only ever saw its own product",
     },
   ];
@@ -102,6 +102,7 @@ export function MergeStrip({
               </span>
               <ArrowRight
                 className="size-3.5 self-center text-muted-foreground"
+                role="img"
                 aria-label="becomes"
               />
               <span

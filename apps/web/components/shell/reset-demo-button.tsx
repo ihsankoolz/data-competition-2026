@@ -18,12 +18,14 @@ import {
 } from "@/components/ui/dialog";
 import { api, isApiError } from "@/lib/api/client";
 import { announceDemoReset } from "@/lib/demo-events";
+import { clearThemePreview } from "@/lib/theme";
 
 import { useClock } from "./clock-provider";
 import { usePersona } from "./persona-provider";
 
 function explain(e: unknown): string {
-  if (isApiError(e) && e.status === 501) return "Reset isn't available right now. Try again in a moment.";
+  if (isApiError(e) && e.status === 501)
+    return "Reset isn't available right now. Try again in a moment.";
   return isApiError(e) ? e.message : "The demo could not be reset.";
 }
 
@@ -39,6 +41,8 @@ export function ResetDemoButton() {
     setRunning(true);
     try {
       const result = await api.POST("/admin/reset-demo");
+      // A theme preview stored in this browser must not override the theme on camera.
+      clearThemePreview();
       setOpen(false);
       toast.success(`Demo reset in ${(result.duration_ms / 1000).toFixed(1)} seconds`, {
         description: result.sap_mock_reset
