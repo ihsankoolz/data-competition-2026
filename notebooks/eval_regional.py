@@ -30,6 +30,7 @@ import pandas as pd  # noqa: E402
 from ds.analytics import accounts  # noqa: E402
 from ds.analytics import regional as rg  # noqa: E402
 from ds.analytics.golden import golden_clusters  # noqa: E402
+from ds.forecasting import bias  # noqa: E402
 
 FIX = ROOT / "data" / "fixtures" / "seasonal_trend"
 RESULTS = ROOT / "docs" / "results.md"
@@ -352,6 +353,18 @@ def section() -> str:
         f"pipeline, not from past growth."
     )
     L.append("")
+    units = bias.growth(FIX)
+    gap = max(
+        (c for c in rg.COUNTRIES if units[(c, None)] is not None and g12_total[c] is not None),
+        key=lambda c: abs(units[(c, None)] - g12_total[c]),
+    )
+    L.append(
+        f"The forecast backtest measures growth in units ordered; this table is in US$ sales "
+        f"value, so the two differ (e.g. {NAMES[gap]}: {signed(units[(gap, None)])} in units, "
+        f"{signed(g12_total[gap])} in value). The 'growth adjustment' action below uses the "
+        f"backtest's unit basis, because its planning-bias finding is measured in units."
+    )
+    L.append("")
     L.append("### Distortion by country and product")
     L.append("")
     L.append(
@@ -404,7 +417,7 @@ def account_lists(after: dict) -> list[str]:
     low = ws[ws["low_confidence"].astype(bool)]
     total_all = float(ws["est_value"].sum())
     total_ok = accounts.whitespace_total(ws)
-    L = ["### Account lists after merge: drop-off risk and cross-sell whitespace", ""]
+    L = ["### Account lists after merge: drop-off risk and cross-sell gaps", ""]
     L.append(
         f"Both lists use our merged customers (never the answer key) and confirmed POs only, and "
         f"are not shown before merge (a customer split across records looks fading or narrow "
@@ -415,11 +428,13 @@ def account_lists(after: dict) -> list[str]:
         f"({accounts.quarter_label(ly3)}, at least US${accounts.DROP_MIN_LY3_USD:,.0f}), and who "
         f"is not already on the lost list. Comparing with the same season removes holiday dips. "
         f"Regular buyers with no repeat orders in {accounts.quarter_label(ly3)} cannot be "
-        f"compared this way and are left out. *Cross-sell whitespace* is the median yearly spend "
-        f"on the missing test kits or services of similar customers (same country, already "
-        f"buying it and something this customer buys; at least {accounts.WS_MIN_PEERS}). Rows "
-        f"resting on fewer than {accounts.WS_CONFIDENT_PEERS} similar customers are marked low "
-        f"confidence and left out of the US$ total."
+        f"compared this way and are left out: {core.drop_unscored} regular buyers had no orders "
+        f"in the comparison quarter and are not scored. *Cross-sell gaps* (often called "
+        f"whitespace) use the typical yearly spend (median) on the missing test kits or services "
+        f"of similar customers (same country, already buying it and something this customer "
+        f"buys; at least {accounts.WS_MIN_PEERS}). Rows resting on fewer than "
+        f"{accounts.WS_CONFIDENT_PEERS} similar customers are marked low confidence, listed after "
+        f"the confident rows and left out of the US$ total."
     )
     L.append("")
     L.append("| Measure | Value |")
