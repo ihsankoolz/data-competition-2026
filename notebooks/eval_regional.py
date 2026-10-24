@@ -27,8 +27,10 @@ sys.path.insert(0, str(ROOT))
 
 import pandas as pd  # noqa: E402
 
+from ds.analytics import accounts  # noqa: E402
 from ds.analytics import regional as rg  # noqa: E402
 from ds.analytics.golden import golden_clusters  # noqa: E402
+from ds.forecasting import bias  # noqa: E402
 
 FIX = ROOT / "data" / "fixtures" / "seasonal_trend"
 RESULTS = ROOT / "docs" / "results.md"
@@ -126,6 +128,28 @@ def cell_table() -> list[dict]:
             row["growth"] = rg._growth(t3v, p3v)
             rows.append(row)
     return rows
+
+
+# %% headline growth: last 12 months vs the 12 before (D-022 #3)
+def growth_12m() -> tuple[dict[tuple[str, str], float | None], dict[str, float | None]]:
+    """-> ({(country, product): growth_12m_pct from the heatmap}, {country: all products})."""
+    f = rg._frames(FIX)
+    cells = {
+        (c["country"], c["product"]): c["growth_12m_pct"]
+        for c in rg.regional_view(FIX, "after")["heatmap"]
+    }
+    prior = [m - pd.DateOffset(months=12) for m in f.months]
+    total = {}
+    for c in rg.COUNTRIES:
+        g = f.orders[f.orders["country"] == c]
+        now = float(g.loc[g["month"].isin(f.months), "value"].sum())
+        before = float(g.loc[g["month"].isin(prior), "value"].sum())
+        total[c] = rg._growth(now, before)
+    return cells, total
+
+
+def signed(x: float | None) -> str:
+    return "n/a" if x is None else f"{x:+.1f}%"
 
 
 # %%
@@ -296,11 +320,56 @@ def section() -> str:
         "we have and understate how well we keep them."
     )
     L.append("")
+    g12, g12_total = growth_12m()
+    prior12 = [m - pd.DateOffset(months=12) for m in rg._frames(FIX).months]
+    L.append("### Growth by country and product: last 12 months vs the 12 before")
+    L.append("")
+    L.append(
+        f"This is the **headline growth measure** (D-022 #3, `HeatCell.growth_12m_pct`, shown on "
+        f"the heatmap): confirmed-PO value in {before['period'].split(' (')[0]} against "
+        f"{prior12[0]:%b %Y} - {prior12[-1]:%b %Y}, as a % change. Comparing whole years means "
+        f"holiday dips (Lebaran, Songkran, Tet) and single big orders cannot fake a trend. It is "
+        f"a total, so it is identical before and after merging. NRR and the revenue bridge stay "
+        f"'last 3 months vs the 3 before'."
+    )
+    L.append("")
+    L.append(
+        "| Country | Product A (test kits) | Product B (equipment) | Product C (services) | "
+        "All products |"
+    )
+    L.append("|---|---|---|---|---|")
+    for c in rg.COUNTRIES:
+        cols = " | ".join(signed(g12.get((c, p))) for p in rg.PRODUCTS)
+        L.append(f"| {NAMES[c]} | {cols} | **{signed(g12_total[c])}** |")
+    L.append("")
+    scored = {c: v for c, v in g12_total.items() if v is not None}
+    fast = max(scored, key=lambda c: scored[c])
+    b_vals = [v for (c, p), v in g12.items() if p == "B" and v is not None]
+    L.append(
+        f"> **For judges:** over a full year, {NAMES[fast]} is the fastest-growing market "
+        f"({signed(scored[fast])} across all products, test kits {signed(g12.get((fast, 'A')))}). "
+        f"Equipment (Product B) swings from {min(b_vals):+.0f}% to {max(b_vals):+.0f}% between "
+        f"countries because it sells in a few large orders, so we plan it from the enquiry "
+        f"pipeline, not from past growth."
+    )
+    L.append("")
+    units = bias.growth(FIX)
+    gap = max(
+        (c for c in rg.COUNTRIES if units[(c, None)] is not None and g12_total[c] is not None),
+        key=lambda c: abs(units[(c, None)] - g12_total[c]),
+    )
+    L.append(
+        f"The forecast backtest measures growth in units ordered; this table is in US$ sales "
+        f"value, so the two differ (e.g. {NAMES[gap]}: {signed(units[(gap, None)])} in units, "
+        f"{signed(g12_total[gap])} in value). The 'growth adjustment' action below uses the "
+        f"backtest's unit basis, because its planning-bias finding is measured in units."
+    )
+    L.append("")
     L.append("### Distortion by country and product")
     L.append("")
     L.append(
-        "| Country | Product | Growth (last 3 vs prior 3 months) | Customers before / after | "
-        "NRR before | NRR after |"
+        "| Country | Product | Short-term change (last 3 vs prior 3 months) | Customers before / "
+        "after | NRR before | NRR after |"
     )
     L.append("|---|---|---|---|---|---|")
     for r in cells:
@@ -325,6 +394,7 @@ def section() -> str:
         "inflated customer counts come from adding products up across three companies' records."
     )
     L.append("")
+    L.extend(account_lists(after))
     L.append("### Recommended actions (after merge, whole region)")
     L.append("")
     for a in after["actions"]:
@@ -335,6 +405,69 @@ def section() -> str:
         "The first one is the forecasting lesson: plan equipment from the sales pipeline."
     )
     return "\n".join(L)
+
+
+def account_lists(after: dict) -> list[str]:
+    """Drop-off risk (year over year) and cross-sell whitespace (low-confidence rows marked and
+    left out of the total), after merge, whole region (PRD S1, D-022 #4)."""
+    f = rg._frames(FIX)
+    core = rg._core(f, "after", None)
+    drop, ws = core.drop_off, core.whitespace
+    t3, ly3, _ = accounts.drop_off_windows(f.months)
+    low = ws[ws["low_confidence"].astype(bool)]
+    total_all = float(ws["est_value"].sum())
+    total_ok = accounts.whitespace_total(ws)
+    L = ["### Account lists after merge: drop-off risk and cross-sell gaps", ""]
+    L.append(
+        f"Both lists use our merged customers (never the answer key) and confirmed POs only, and "
+        f"are not shown before merge (a customer split across records looks fading or narrow "
+        f"when another record is still buying). Definitions in `ds/analytics/accounts.py`. "
+        f"*Drop-off risk* is year over year: a regular buyer (repeat orders in at least "
+        f"{accounts.DROP_MIN_MONTHS} of the 9 months before) whose test-kit and service spend in "
+        f"{accounts.quarter_label(t3)} was half or less of the same quarter last year "
+        f"({accounts.quarter_label(ly3)}, at least US${accounts.DROP_MIN_LY3_USD:,.0f}), and who "
+        f"is not already on the lost list. Comparing with the same season removes holiday dips. "
+        f"Regular buyers with no repeat orders in {accounts.quarter_label(ly3)} cannot be "
+        f"compared this way and are left out: {core.drop_unscored} regular buyers had no orders "
+        f"in the comparison quarter and are not scored. *Cross-sell gaps* (often called "
+        f"whitespace) use the typical yearly spend (median) on the missing test kits or services "
+        f"of similar customers (same country, already buying it and something this customer "
+        f"buys; at least {accounts.WS_MIN_PEERS}). Rows resting on fewer than "
+        f"{accounts.WS_CONFIDENT_PEERS} similar customers are marked low confidence, listed after "
+        f"the confident rows and left out of the US$ total."
+    )
+    L.append("")
+    L.append("| Measure | Value |")
+    L.append("|---|---|")
+    L.append(f"| Customers at risk of dropping off | {len(drop)} |")
+    L.append(
+        f"| ...ordered less than in the same quarter last year | "
+        f"{money(float(drop['value_at_risk'].sum()))} |"
+    )
+    L.append(
+        f"| Regular buyers not scored (no orders in {accounts.quarter_label(ly3)}) | "
+        f"{core.drop_unscored} |"
+    )
+    L.append(f"| Customers with a cross-sell gap | {len(ws)} |")
+    L.append(
+        f"| ...of which low confidence (under {accounts.WS_CONFIDENT_PEERS} similar) | {len(low)} |"
+    )
+    L.append(f"| Whitespace estimate, all rows | {money(total_all)} a year |")
+    L.append(
+        f"| Whitespace estimate, excluding low-confidence rows (shown in app) | "
+        f"{money(total_ok)} a year |"
+    )
+    L.append("")
+    L.append(
+        f"> **For judges:** after merging, {len(drop)} regular customers spent half or less on "
+        f"test kits and services than in the same quarter last year "
+        f"({money(float(drop['value_at_risk'].sum()))} in total), and {len(ws)} customers are "
+        f"missing a product line their peers buy, worth about {money(total_ok)} a year. We leave "
+        f"out {len(low)} estimates ({money(total_all - total_ok)}) that rest on too few similar "
+        f"customers to trust."
+    )
+    L.append("")
+    return L
 
 
 def write_section(text: str) -> None:

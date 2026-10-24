@@ -1548,6 +1548,49 @@
   },
   "components": {
     "schemas": {
+      "AccountListTotal": {
+        "properties": {
+          "customers": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Customers",
+            "description": "Customers that qualify for the list"
+          },
+          "shown": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Shown",
+            "description": "Rows returned in the list (top 10)"
+          },
+          "total_usd": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Total Usd",
+            "description": "Drop-off: sum of value at risk. Whitespace: sum of estimates over rows that are NOT low confidence."
+          },
+          "low_confidence": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Low Confidence",
+            "description": "Rows left out of total_usd (whitespace only)"
+          },
+          "caption": {
+            "type": "string",
+            "title": "Caption",
+            "description": "One plain sentence for the UI, says what the total leaves out"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customers",
+          "shown",
+          "total_usd",
+          "low_confidence",
+          "caption"
+        ],
+        "title": "AccountListTotal",
+        "description": "Totals for one account list over ALL qualifying customers, not only the rows shown."
+      },
       "ApprovalDecisionIn": {
         "properties": {
           "action": {
@@ -2368,6 +2411,70 @@
           "block_submit"
         ],
         "title": "DedupResult"
+      },
+      "DropOffRisk": {
+        "properties": {
+          "card_code": {
+            "type": "string",
+            "title": "Card Code",
+            "description": "Golden (merged) customer id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "last_order": {
+            "type": "string",
+            "title": "Last Order",
+            "description": "YYYY-MM-DD, latest confirmed PO"
+          },
+          "value_at_risk_usd": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Value At Risk Usd",
+            "description": "Repeat (Product A + C) confirmed-PO value in the same 3 months last year minus the last 3 months: how much less it ordered than a year earlier (year over year, so seasonal dips do not count). Listed when the last 3 months are at most half the same quarter last year, that quarter was at least US$5,000, the customer ordered in at least 3 of the 9 months before, and it is not on the lost list. Customers with no repeat orders in that quarter last year cannot be compared and are never listed."
+          },
+          "change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Pct",
+            "description": "Last 3 months vs the same 3 months last year, % change in repeat spend (-100 = stopped)"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "description": "One plain sentence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_code",
+          "name",
+          "country",
+          "last_order",
+          "value_at_risk_usd",
+          "change_pct",
+          "reason"
+        ],
+        "title": "DropOffRisk",
+        "description": "A real customer (after merge) whose repeat orders are fading but not yet lost (PRD S1)."
       },
       "EmailDetail": {
         "properties": {
@@ -3883,6 +3990,44 @@
             "title": "Panels",
             "description": "POs, enquiries, PRs, MDM requests: separate"
           },
+          "drop_off_risk": {
+            "items": {
+              "$ref": "#/components/schemas/DropOffRisk"
+            },
+            "type": "array",
+            "title": "Drop Off Risk",
+            "description": "After merge: top 10 fading customers by value at risk (country filter applies). Empty before merge: a customer split across records looks like it is fading when another record is still ordering, so the account is not known yet."
+          },
+          "cross_sell_whitespace": {
+            "items": {
+              "$ref": "#/components/schemas/WhitespaceOpportunity"
+            },
+            "type": "array",
+            "title": "Cross Sell Whitespace",
+            "description": "After merge: top 10 cross-sell gaps, confident rows first, then by estimated value (country filter applies; lost and fading customers left out). Empty before merge: each record sees only the products bought under it, so the gaps are not real."
+          },
+          "drop_off_total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccountListTotal"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "After merge: totals over every fading customer. None before."
+          },
+          "whitespace_total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccountListTotal"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "After merge: totals over every cross-sell gap; the US$ total excludes low-confidence rows. None before."
+          },
           "actions": {
             "items": {
               "$ref": "#/components/schemas/RecommendedAction"
@@ -4610,6 +4755,79 @@
         ],
         "title": "ValidationReport",
         "description": "Returned by POST /requests/{req_id}/validate. Submit's 422 body is\n{\"detail\": \"<one sentence>\", \"issues\": [FieldIssue, ...]}."
+      },
+      "WhitespaceOpportunity": {
+        "properties": {
+          "card_code": {
+            "type": "string",
+            "title": "Card Code",
+            "description": "Golden (merged) customer id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "buys": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Buys",
+            "description": "Product families (A/B/C) bought in the last 12 months"
+          },
+          "missing": {
+            "type": "string",
+            "title": "Missing",
+            "description": "The repeat family (A test kits or C services) not bought with the highest estimate. Never B: equipment is a one-off capital purchase, not a yearly spend."
+          },
+          "est_value_usd": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Est Value Usd",
+            "description": "Median 12-month confirmed-PO spend on the missing family by comparable customers: same country, already buying it and at least one family this customer buys (at least 3 such customers). An estimate, not a forecast."
+          },
+          "comparable_customers": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Comparable Customers",
+            "description": "How many comparable customers the median is based on"
+          },
+          "low_confidence": {
+            "type": "boolean",
+            "title": "Low Confidence",
+            "description": "True when the estimate rests on fewer than 10 comparable customers. Still listed, but left out of the US$ total."
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "description": "One plain sentence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_code",
+          "name",
+          "country",
+          "buys",
+          "missing",
+          "est_value_usd",
+          "comparable_customers",
+          "low_confidence",
+          "reason"
+        ],
+        "title": "WhitespaceOpportunity",
+        "description": "A real customer (after merge) that buys some product families but not one (PRD S1)."
       }
     }
   }

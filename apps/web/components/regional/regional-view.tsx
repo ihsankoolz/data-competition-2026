@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { MetricInfo, SectionHeading } from "@/components/analytics/metric-info";
 import { OpsImpactCompact } from "@/components/ops/ops-impact-card";
+import { AccountLists } from "@/components/regional/account-lists";
 import { ActionsList } from "@/components/regional/actions-list";
 import { BridgeChart } from "@/components/regional/bridge-chart";
 import { ForecastPanel } from "@/components/regional/forecast-panel";
@@ -295,6 +296,8 @@ export function RegionalView() {
               })}
             />
           </div>
+
+          <AccountLists data={data} />
         </>
       )}
 
