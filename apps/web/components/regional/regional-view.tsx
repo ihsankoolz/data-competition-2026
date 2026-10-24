@@ -11,6 +11,7 @@ import { ForecastPanel } from "@/components/regional/forecast-panel";
 import { Heatmap } from "@/components/regional/heatmap";
 import { LostCustomers } from "@/components/regional/lost-customers";
 import { MergeStrip } from "@/components/regional/merge-strip";
+import { SeaMap } from "@/components/regional/sea-map";
 import { SignalPanels } from "@/components/regional/signal-panels";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -79,6 +80,8 @@ export function RegionalView() {
 
   const data = pair ? pair[view] : null;
   const captions = data?.captions ?? pair?.before.captions;
+  // Growth per country is the same whatever the filter, so any loaded view can feed the map.
+  const growth = (pair ?? Object.values(pairs)[0])?.after.country_growth ?? null;
 
   return (
     <div className="flex flex-col gap-10">
@@ -172,20 +175,17 @@ export function RegionalView() {
             Try again
           </Button>
         </div>
-      ) : !pair || !data || !captions ? (
-        <div className="flex flex-col gap-8" aria-busy>
-          <Skeleton className="h-32 w-full" />
-          <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-10">
-            <Skeleton className="h-96 w-full" />
-            <Skeleton className="h-96 w-full" />
-          </div>
-          <Skeleton className="h-28 w-full" />
-        </div>
       ) : (
         <>
-          <MergeStrip pair={pair} view={view} country={country} />
+          {pair && data && captions ? (
+            <MergeStrip pair={pair} view={view} country={country} />
+          ) : (
+            <Skeleton className="h-56 w-full" aria-busy />
+          )}
 
-          <div className="grid grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-10">
+          {/* The map stays mounted while a new country loads: its growth is the same for every
+              filter, so it only moves the highlight (D-024 #5). */}
+          <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10">
             <section aria-labelledby="heatmap-title" className="flex flex-col gap-4">
               <SectionHeading
                 id="heatmap-title"
@@ -194,75 +194,116 @@ export function RegionalView() {
                   caption: "Value of confirmed POs in the last 12 months, in US dollars.",
                 })}
               />
-              <Heatmap cells={data.heatmap} country={country} captions={captions} />
-              <p className="text-xs text-muted-foreground">
-                Merging duplicates does not change these totals: the same orders are grouped under
-                fewer customers.
-              </p>
+              {pair && data && captions ? (
+                <>
+                  <Heatmap cells={data.heatmap} country={country} captions={captions} />
+                  <p className="text-xs text-muted-foreground">
+                    Merging duplicates does not change these totals: the same orders are grouped
+                    under fewer customers.
+                  </p>
+                </>
+              ) : (
+                <Skeleton className="h-96 w-full" aria-busy />
+              )}
             </section>
 
-            <section aria-labelledby="growth-title" className="flex flex-col gap-5">
-              <h2 id="growth-title" className="text-base font-semibold tracking-tight">
-                Customers and retention
-              </h2>
-              <dl className="grid grid-cols-3 gap-4" data-testid="growth-kpis">
-                <Kpi
-                  testId="kpi-nrr"
-                  value={pct(data.nrr_pct)}
-                  label="of spend kept from existing customers, last 3 months vs the 3 before"
-                  caption={captionOf(captions, "nrr_pct", {
-                    title: "Net revenue retention",
-                    caption: "Spend this period by last period's customers, as a % of before.",
-                  })}
-                />
-                <Kpi
-                  testId="kpi-cross-sell"
-                  // D-021: before merge is meant to be low; the after-merge figure sits beside it
-                  // on one line in both views, so the gain from the golden record is what you read.
-                  value={pct(pair.before.cross_sell_pct, 0)}
-                  after={pct(pair.after.cross_sell_pct, 0)}
-                  label="Customers buying 2+ product lines (before vs after merge)"
-                  caption={captionOf(captions, "cross_sell_pct", {
-                    title: "Cross-sell penetration",
-                    caption: "Share of active customers buying at least 2 of Products A, B and C.",
-                  })}
-                />
-                <Kpi
-                  testId="kpi-customers"
-                  value={data.customer_count.toLocaleString("en-US")}
-                  label={view === "before" ? "customer records ordered" : "customers ordered"}
-                  caption={captionOf(captions, "customer_count", {
-                    title: "Active customers",
-                    caption: "Customers with at least one confirmed PO in the last 12 months.",
-                  })}
-                />
-              </dl>
-              {view === "before" && pair.after.cross_sell_pct > data.cross_sell_pct && (
-                <p
-                  className="-mt-2 border-l-2 border-success pl-3 text-xs text-muted-foreground"
-                  data-testid="cross-sell-note"
-                >
-                  {"Before the golden record, you can't see who your cross-sell customers are."}
-                </p>
-              )}
+            <section aria-labelledby="map-title" className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <p className="flex items-center gap-1 text-sm font-medium">
-                  Revenue bridge, last 3 months vs the 3 before
+                <h2
+                  id="map-title"
+                  className="flex items-center gap-1.5 text-base font-semibold tracking-tight"
+                >
+                  Growth by country
                   <MetricInfo
-                    caption={captionOf(captions, "bridge", {
-                      title: "Revenue bridge",
-                      caption: "How the prior 3 months' revenue became the last 3 months'.",
+                    caption={captionOf(captions, "growth_12m_pct", {
+                      title: "Growth (12 months)",
+                      caption:
+                        "Sales in the last 12 months compared with the 12 months before, as a % change.",
                     })}
                   />
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  How sales in the 3 months before became sales in the last 3 months: plus new
-                  customers and those who bought more, minus those who bought less or stopped.
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Growth in confirmed-PO value, last 12 full months vs the 12 before.
                 </p>
               </div>
-              <BridgeChart bridge={data.bridge} />
+              <SeaMap growth={growth} country={country} onSelect={setCountry} />
             </section>
           </div>
+        </>
+      )}
+
+      {error && !pair ? null : !pair || !data || !captions ? (
+        <Skeleton className="h-28 w-full" aria-busy />
+      ) : (
+        <>
+          <section aria-labelledby="growth-title" className="flex flex-col gap-5">
+            <h2 id="growth-title" className="text-base font-semibold tracking-tight">
+              Customers and retention
+            </h2>
+            <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10">
+              <div className="flex flex-col gap-5">
+                <dl className="grid grid-cols-3 gap-4" data-testid="growth-kpis">
+                  <Kpi
+                    testId="kpi-nrr"
+                    value={pct(data.nrr_pct)}
+                    label="of spend kept from existing customers, last 3 months vs the 3 before"
+                    caption={captionOf(captions, "nrr_pct", {
+                      title: "Net revenue retention",
+                      caption: "Spend this period by last period's customers, as a % of before.",
+                    })}
+                  />
+                  <Kpi
+                    testId="kpi-cross-sell"
+                    // D-021: before merge is meant to be low; the after-merge figure sits beside it
+                    // on one line in both views, so the gain from the golden record is what you read.
+                    value={pct(pair.before.cross_sell_pct, 0)}
+                    after={pct(pair.after.cross_sell_pct, 0)}
+                    label="Customers buying 2+ product lines (before vs after merge)"
+                    caption={captionOf(captions, "cross_sell_pct", {
+                      title: "Cross-sell penetration",
+                      caption:
+                        "Share of active customers buying at least 2 of Products A, B and C.",
+                    })}
+                  />
+                  <Kpi
+                    testId="kpi-customers"
+                    value={data.customer_count.toLocaleString("en-US")}
+                    label={view === "before" ? "customer records ordered" : "customers ordered"}
+                    caption={captionOf(captions, "customer_count", {
+                      title: "Active customers",
+                      caption: "Customers with at least one confirmed PO in the last 12 months.",
+                    })}
+                  />
+                </dl>
+                {view === "before" && pair.after.cross_sell_pct > data.cross_sell_pct && (
+                  <p
+                    className="-mt-2 border-l-2 border-success pl-3 text-xs text-muted-foreground"
+                    data-testid="cross-sell-note"
+                  >
+                    {"Before the golden record, you can't see who your cross-sell customers are."}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-1">
+                  <p className="flex items-center gap-1 text-sm font-medium">
+                    Revenue bridge, last 3 months vs the 3 before
+                    <MetricInfo
+                      caption={captionOf(captions, "bridge", {
+                        title: "Revenue bridge",
+                        caption: "How the prior 3 months' revenue became the last 3 months'.",
+                      })}
+                    />
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    How sales in the 3 months before became sales in the last 3 months: plus new
+                    customers and those who bought more, minus those who bought less or stopped.
+                  </p>
+                </div>
+                <BridgeChart bridge={data.bridge} />
+              </div>
+            </div>
+          </section>
 
           <section aria-labelledby="panels-title" className="flex flex-col gap-4">
             <SectionHeading
