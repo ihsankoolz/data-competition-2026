@@ -580,9 +580,23 @@ An alert fires when a customer active in the period has not ordered for more tha
 
 > **For judges:** in every country the raw SAP records overstate how many customers we have and understate how well we keep them.
 
+### Growth by country and product: last 12 months vs the 12 before
+
+This is the **headline growth measure** (D-022 #3, `HeatCell.growth_12m_pct`, shown on the heatmap): confirmed-PO value in Oct 2025 - Sep 2026 against Oct 2024 - Sep 2025, as a % change. Comparing whole years means holiday dips (Lebaran, Songkran, Tet) and single big orders cannot fake a trend. It is a total, so it is identical before and after merging. NRR and the revenue bridge stay 'last 3 months vs the 3 before'.
+
+| Country | Product A (test kits) | Product B (equipment) | Product C (services) | All products |
+|---|---|---|---|---|
+| Singapore | -8.1% | -51.5% | +48.3% | **-16.2%** |
+| Malaysia | -3.3% | +73.4% | +93.3% | **+30.2%** |
+| Indonesia | +6.1% | -24.6% | +2.1% | **-1.8%** |
+| Vietnam | +40.5% | +22.1% | +129.8% | **+45.9%** |
+| Thailand | +3.4% | +42.2% | -8.0% | **+11.5%** |
+
+> **For judges:** over a full year, Vietnam is the fastest-growing market (+45.9% across all products, test kits +40.5%). Equipment (Product B) swings from -52% to +73% between countries because it sells in a few large orders, so we plan it from the enquiry pipeline, not from past growth.
+
 ### Distortion by country and product
 
-| Country | Product | Growth (last 3 vs prior 3 months) | Customers before / after | NRR before | NRR after |
+| Country | Product | Short-term change (last 3 vs prior 3 months) | Customers before / after | NRR before | NRR after |
 |---|---|---|---|---|---|
 | Singapore | A | +1.7% | 47 / 45 | 99.4% | 99.4% |
 | Singapore | B | -79.5% | 8 / 8 | 10.4% | 10.4% |
@@ -604,12 +618,28 @@ Growth is a total, so it is the same before and after merging. Inside one produc
 
 > **For judges:** per product, merging changes little; the false alarms and the inflated customer counts come from adding products up across three companies' records.
 
+### Account lists after merge: drop-off risk and cross-sell whitespace
+
+Both lists use our merged customers (never the answer key) and confirmed POs only, and are not shown before merge (a customer split across records looks fading or narrow when another record is still buying). Definitions in `ds/analytics/accounts.py`. *Drop-off risk* is year over year: a regular buyer (repeat orders in at least 3 of the 9 months before) whose test-kit and service spend in Jul-Sep 2026 was half or less of the same quarter last year (Jul-Sep 2025, at least US$5,000), and who is not already on the lost list. Comparing with the same season removes holiday dips. Regular buyers with no repeat orders in Jul-Sep 2025 cannot be compared this way and are left out. *Cross-sell whitespace* is the median yearly spend on the missing test kits or services of similar customers (same country, already buying it and something this customer buys; at least 3). Rows resting on fewer than 10 similar customers are marked low confidence and left out of the US$ total.
+
+| Measure | Value |
+|---|---|
+| Customers at risk of dropping off | 26 |
+| ...ordered less than in the same quarter last year | US$318,904 |
+| Regular buyers not scored (no orders in Jul-Sep 2025) | 21 |
+| Customers with a cross-sell gap | 197 |
+| ...of which low confidence (under 10 similar) | 7 |
+| Whitespace estimate, all rows | US$3,112,465 a year |
+| Whitespace estimate, excluding low-confidence rows (shown in app) | US$2,826,926 a year |
+
+> **For judges:** after merging, 26 regular customers spent half or less on test kits and services than in the same quarter last year (US$318,904 in total), and 197 customers are missing a product line their peers buy, worth about US$2,826,926 a year. We leave out 7 estimates (US$285,539) that rest on too few similar customers to trust.
+
 ### Recommended actions (after merge, whole region)
 
 - **Plan Product B equipment from the enquiry and purchase-request pipeline.** Equipment orders are rare and lumpy, so a moving average of past POs is a poor guide. In the last 3 months the region logged 325 Product B enquiries and purchase requests worth US$15.1M, against US$480k of Product B POs; historically 11% of purchase requests became orders. In the backtest the 6-month Excel average missed regional Product B by 28% of volume. *(From: Enquiries and purchase requests panel; forecast backtest (Product B).)*
 - **Call the 35 customers that have gone quiet.** 35 customers in the region have not ordered for longer than usual (over 90 days, or twice their normal gap). They bought US$560k in the last 12 months. *(From: Lost-customer alerts.)*
-- **Check in with the 30 customers whose orders are fading.** 30 regular customers in the region cut their test-kit and service orders by half or more in the last 3 months but are not yet on the lost list. Together they ordered US$492k less than in the 3 months before. *(From: At risk of dropping off list.)*
-- **Offer the missing product line to 200 customers.** 200 of 319 active customers in the region do not buy test kits (Product A) or services (Product C) that similar customers buy. If each bought its missing line at what similar customers in its country spend, that is about US$3.1M a year. Cross-sell penetration is 29%. *(From: Cross-sell whitespace list; cross-sell penetration.)*
+- **Check in with the 26 customers whose orders are fading.** 26 regular customers in the region spent half or less on test kits and services in the last 3 months than in the same 3 months last year, but are not yet on the lost list. Together they ordered US$319k less than a year earlier. *(From: At risk of dropping off list.)*
+- **Offer the missing product line to 197 customers.** 197 of 319 active customers in the region do not buy test kits (Product A) or services (Product C) that similar customers buy. If each bought its missing line at what similar customers in its country spend, that is about US$2.8M a year (not counting the 7 customers with fewer than 10 similar customers to compare). Cross-sell penetration is 29%. *(From: Cross-sell whitespace list; cross-sell penetration.)*
 - **Add an explicit growth adjustment for markets flagged as growing.** Vietnam's confirmed orders grew 45% last year, and in the forecast backtest the 6-month Excel average planned Vietnam 13% too low: an average of past months trails a rising market. Our statistical forecast planned 17% too low there as well, so it does not fix this on its own. Planners should add a stated, reviewed uplift for Vietnam. *(From: Forecast backtest: planning bias by country.)*
 
 > **For judges:** these are written by fixed rules from the numbers above, not by AI. The first one is the forecasting lesson: plan equipment from the sales pipeline.
