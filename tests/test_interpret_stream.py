@@ -26,7 +26,7 @@ def stream(client, email_id, user="marcus", step_ms=0):
     )
     assert r.status_code == 200, r.text
     assert r.headers["content-type"].startswith("text/event-stream")
-    assert r.headers["cache-control"] == "no-cache"
+    assert r.headers["cache-control"] == "no-cache, no-transform"
     assert r.headers["x-accel-buffering"] == "no"
     steps = []
     for block in r.text.split("\n\n"):

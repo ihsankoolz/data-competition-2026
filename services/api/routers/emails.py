@@ -146,7 +146,9 @@ async def interpret_stream(
     return StreamingResponse(
         events(),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        # no-transform: proxies (Next's gzip on the /api rewrite) must pass events through as they
+        # come, not hold the stream until it ends.
+        headers={"Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"},
     )
 
 

@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   // The "N" dev badge would show in the demo video (D-022 #5). Errors still show their overlay.
   devIndicators: false,
-  // Next's gzip buffers a proxied text/event-stream until it ends, which turned the live AI
-  // trace (D-023 #3) into one burst. Everything here is served on localhost, so gzip buys nothing.
-  compress: false,
   partialPrefetching: true,
   turbopack: {
     rules: {
