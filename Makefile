@@ -58,10 +58,12 @@ rehearse:         ## timed 2:30 demo walkthrough + 1440x900 screenshots -> apps/
 	cd $(WEB) && REHEARSE=1 "$(NODE)" e2e/run.mjs walkthrough
 
 eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
+	@# always regenerate: stale seeds from an older generator silently skew the scores (D-022)
+	rm -rf data/generated/eval
 	LLM_MODE=replay uv run python notebooks/eval_dedup.py
 	LLM_MODE=replay uv run python notebooks/eval_interpreter.py
 	LLM_MODE=replay uv run python notebooks/eval_holdout.py
-	@for s in flat_noisy intermittent; do test -f data/generated/$$s/items.csv || $(MAKE) --no-print-directory data SCENARIO=$$s; done
+	@for s in flat_noisy intermittent; do $(MAKE) --no-print-directory data SCENARIO=$$s; done
 	uv run python notebooks/eval_forecast.py
 	uv run python notebooks/eval_regional.py
 	uv run python notebooks/eval_ops.py

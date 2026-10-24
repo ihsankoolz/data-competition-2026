@@ -1,0 +1,17 @@
+{
+  "cache_key": "c1ad3e31c8b513a0bec0ebbd64c46ef355aaf4e285dd851201f02161c8443993",
+  "input": "{\"candidates\": [{\"card_code\": \"C00306\", \"city\": \"Phuket\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hospital Phuket\", \"tax_id\": \"\"}, {\"card_code\": \"C00332\", \"city\": \"Phuket\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hospital Phuket\", \"tax_id\": \"\"}, {\"card_code\": \"C00494\", \"city\": \"Phuket\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"Saeng Tawan Hospital Phuket\", \"name\": \"โรงพยาบาลแสงตะวันภูเก็ต\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"sthp.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hospital Pattaya\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is Saeng Tawan Hospital Pattaya, while all three candidates are the Phuket site, so they are a different branch of the same brand.",
+      "The city differs (Pattaya vs Phuket), and no tax ID or matching email domain exists to link them as one legal entity.",
+      "C00306, C00332 and C00494 all refer to the Phuket hospital, so none is the same entity as the Pattaya record."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:07:05+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

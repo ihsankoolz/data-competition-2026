@@ -1,0 +1,17 @@
+{
+  "cache_key": "f76267393652b83dfd0d854c9c2b98b8de2a53bbe26c4b553e463024d622ca13",
+  "input": "{\"candidates\": [{\"card_code\": \"C00462\", \"city\": \"Pattaya\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hosp. Pattaya\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Phuket\", \"country\": \"TH\", \"email_domain\": \"sthp2.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Saeng Tawan Hospital Phuket\", \"tax_id\": \"0105633430211\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is in Phuket while the candidate is in Pattaya, so they are different sites of the same brand.",
+      "Name differences (Hospital vs Hosp.) are only abbreviation, but the location suffix differs, indicating separate branches.",
+      "The candidate has no tax ID or email domain to confirm a match, so there is no evidence they are the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:24+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

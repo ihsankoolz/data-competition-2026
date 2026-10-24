@@ -1,0 +1,17 @@
+{
+  "cache_key": "4c77a26d07a1ecc498fb5ae29c03aa2b2174958c0b34480845946b39a6a12351",
+  "input": "{\"candidates\": [{\"card_code\": \"C00098\", \"city\": \"KL\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Seroja Hospital Kuala Lumpur\", \"tax_id\": \"\"}, {\"card_code\": \"C00519\", \"city\": \"Kuala Lumpur\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Seroja Hospital Kuala Lumpur Sdn Bhd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Kuala Lumpur\", \"country\": \"MY\", \"email_domain\": \"klh.my.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hospital Kuala Lumpur\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is \"Hospital Kuala Lumpur\", which is a generic name, while both candidates carry the distinct brand \"Seroja\" that the new record lacks.",
+      "No tax ID, foreign name, or email domain is present on the candidates to confirm they are the same entity as the new record.",
+      "Matching on city and country alone is too weak, since Kuala Lumpur has many hospitals and the missing brand suggests a different entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:39+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

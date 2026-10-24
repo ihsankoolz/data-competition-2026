@@ -1,0 +1,17 @@
+{
+  "cache_key": "941a77198330ae8067e5ba45dd504b5d7b2c0107254010f3516d809a30516f14",
+  "input": "{\"candidates\": [{\"card_code\": \"C00235\", \"city\": \"Kuala Lumpur\", \"country\": \"MY\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Seroja Hospital Kuala Lumpur Sdn Bhd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"Kuala Lumpur\", \"country\": \"MY\", \"email_domain\": \"klh.my.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Hospital Kuala Lumpur\", \"tax_id\": \"200701115926\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The names differ: 'Hospital Kuala Lumpur' vs 'Seroja Hospital Kuala Lumpur Sdn Bhd'. The extra 'Seroja' brand suggests a different hospital, not just a legal suffix or language difference.",
+      "The candidate has no tax ID or email domain, so there is nothing to confirm they are the same entity.",
+      "Only the city and country match, which is not enough to call them the same legal entity."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:42+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

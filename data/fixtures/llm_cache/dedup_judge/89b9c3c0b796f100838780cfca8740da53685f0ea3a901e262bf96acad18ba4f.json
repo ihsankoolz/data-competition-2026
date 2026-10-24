@@ -1,0 +1,17 @@
+{
+  "cache_key": "89b9c3c0b796f100838780cfca8740da53685f0ea3a901e262bf96acad18ba4f",
+  "input": "{\"candidates\": [{\"card_code\": \"C00159\", \"city\": \"Bangkok\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Bua Khao Sukhumvit Hospital\", \"tax_id\": \"\"}, {\"card_code\": \"C00464\", \"city\": \"BKK\", \"country\": \"TH\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"Bua Khao Sukhumvit Hospital\", \"name\": \"โรงพยาบาลบัวขาว สุขุมวิท\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"กรุงเทพมหานคร\", \"country\": \"TH\", \"email_domain\": \"bksh2.th.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Bua Khao Srinakarin Hospital\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is Bua Khao Srinakarin Hospital, while both candidates are Bua Khao Sukhumvit Hospital, which is a different branch/site of the same brand.",
+      "Srinakarin and Sukhumvit are distinct location names, so they indicate separate entities.",
+      "No tax ID or matching email domain is available to link the new record to either candidate."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:34+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}

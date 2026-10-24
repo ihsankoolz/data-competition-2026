@@ -126,7 +126,7 @@ def curated_specs() -> list[NameSpec]:
         ("Jurong Community Hospital", "JCH"),
     ]:
         s.append(_sg_public(local, acr))
-    for local in ["Mount Elizabeth Hospital", "Mount Elizabeth Novena Hospital"]:
+    for local in ["Mount Serene Hospital", "Mount Serene Novena Hospital"]:
         s.append(
             make_spec(
                 "SG",
@@ -138,10 +138,10 @@ def curated_specs() -> list[NameSpec]:
             )
         )
     for local in [
-        "Gleneagles Hospital",
-        "Thomson Medical Centre",
-        "Farrer Park Hospital",
-        "Parkway East Hospital",
+        "Kingsmead Hospital",
+        "Rivervale Medical Centre",
+        "Tanjong Park Hospital",
+        "Eastpoint Hospital",
     ]:
         s.append(
             make_spec("SG", "private_hospital", local, legal=f"{local} Pte Ltd", city="Singapore")
@@ -256,12 +256,12 @@ def curated_specs() -> list[NameSpec]:
     ]:
         s.append(_my_public(local, english, city, acr))
     for local, city, pair in [
-        ("Pantai Hospital Kuala Lumpur", "Kuala Lumpur", "PAIR03"),
-        ("Pantai Hospital Ampang", "Ampang", "PAIR03"),
-        ("KPJ Damansara Specialist Hospital", "Petaling Jaya", "PAIR04"),
-        ("KPJ Ampang Puteri Specialist Hospital", "Ampang", "PAIR04"),
-        ("Columbia Asia Hospital Cheras", "Cheras", "PAIR05"),
-        ("Columbia Asia Hospital Petaling Jaya", "Petaling Jaya", "PAIR05"),
+        ("Seroja Hospital Kuala Lumpur", "Kuala Lumpur", "PAIR03"),
+        ("Seroja Hospital Ampang", "Ampang", "PAIR03"),
+        ("Anggerik Bandar Utama Specialist Hospital", "Petaling Jaya", "PAIR04"),
+        ("Anggerik Ampang Specialist Hospital", "Ampang", "PAIR04"),
+        ("Damansara Jaya Medical Centre Cheras", "Cheras", "PAIR05"),
+        ("Damansara Jaya Medical Centre Petaling Jaya", "Petaling Jaya", "PAIR05"),
     ]:
         s.append(
             make_spec(
@@ -343,12 +343,12 @@ def curated_specs() -> list[NameSpec]:
     ]:
         s.append(_id_public(local, city, acr))
     for local, city, pair in [
-        ("Siloam Kebon Jeruk", "Jakarta", "PAIR06"),
-        ("Siloam Lippo Village", "Tangerang", "PAIR06"),
-        ("Mitra Keluarga Kelapa Gading", "Jakarta", "PAIR07"),
-        ("Mitra Keluarga Bekasi", "Bekasi", "PAIR07"),
-        ("Hermina Jatinegara", "Jakarta", "PAIR08"),
-        ("Hermina Depok", "Depok", "PAIR08"),
+        ("Cendrawasih Kebon Jeruk", "Jakarta", "PAIR06"),
+        ("Cendrawasih Karawaci", "Tangerang", "PAIR06"),
+        ("Nusa Keluarga Kelapa Gading", "Jakarta", "PAIR07"),
+        ("Nusa Keluarga Bekasi", "Bekasi", "PAIR07"),
+        ("Puri Kencana Jatinegara", "Jakarta", "PAIR08"),
+        ("Puri Kencana Depok", "Depok", "PAIR08"),
     ]:
         s.append(
             make_spec(
@@ -431,17 +431,17 @@ def curated_specs() -> list[NameSpec]:
             )
         )
     for local, english, city, pair in [
-        ("Bệnh viện Hoàn Mỹ Sài Gòn", "Hoan My Saigon Hospital", "Ho Chi Minh City", "PAIR09"),
-        ("Bệnh viện Hoàn Mỹ Đà Nẵng", "Hoan My Da Nang Hospital", "Da Nang", "PAIR09"),
+        ("Bệnh viện Ngọc Lan Sài Gòn", "Ngoc Lan Saigon Hospital", "Ho Chi Minh City", "PAIR09"),
+        ("Bệnh viện Ngọc Lan Đà Nẵng", "Ngoc Lan Da Nang Hospital", "Da Nang", "PAIR09"),
         (
-            "Bệnh viện Đa khoa Quốc tế Vinmec Times City",
-            "Vinmec Times City International Hospital",
+            "Bệnh viện Đa khoa Quốc tế Cẩm Tú Long Biên",
+            "Cam Tu Long Bien International Hospital",
             "Hanoi",
             "PAIR10",
         ),
         (
-            "Bệnh viện Đa khoa Quốc tế Vinmec Central Park",
-            "Vinmec Central Park International Hospital",
+            "Bệnh viện Đa khoa Quốc tế Cẩm Tú Thủ Đức",
+            "Cam Tu Thu Duc International Hospital",
             "Ho Chi Minh City",
             "PAIR10",
         ),
@@ -507,12 +507,12 @@ def curated_specs() -> list[NameSpec]:
     ]:
         s.append(_th("public_hospital", local, english, city))
     for local, english, city, pair in [
-        ("โรงพยาบาลกรุงเทพพัทยา", "Bangkok Hospital Pattaya", "Pattaya", "PAIR12"),
-        ("โรงพยาบาลกรุงเทพภูเก็ต", "Bangkok Hospital Phuket", "Phuket", "PAIR12"),
-        ("โรงพยาบาลสมิติเวช สุขุมวิท", "Samitivej Sukhumvit Hospital", "Bangkok", "PAIR13"),
-        ("โรงพยาบาลสมิติเวช ศรีนครินทร์", "Samitivej Srinakarin Hospital", "Bangkok", "PAIR13"),
-        ("โรงพยาบาลพญาไท 1", "Phyathai 1 Hospital", "Bangkok", "PAIR14"),
-        ("โรงพยาบาลพญาไท 2", "Phyathai 2 Hospital", "Bangkok", "PAIR14"),
+        ("โรงพยาบาลแสงตะวันพัทยา", "Saeng Tawan Hospital Pattaya", "Pattaya", "PAIR12"),
+        ("โรงพยาบาลแสงตะวันภูเก็ต", "Saeng Tawan Hospital Phuket", "Phuket", "PAIR12"),
+        ("โรงพยาบาลบัวขาว สุขุมวิท", "Bua Khao Sukhumvit Hospital", "Bangkok", "PAIR13"),
+        ("โรงพยาบาลบัวขาว ศรีนครินทร์", "Bua Khao Srinakarin Hospital", "Bangkok", "PAIR13"),
+        ("โรงพยาบาลพิมาน 1", "Phiman 1 Hospital", "Bangkok", "PAIR14"),
+        ("โรงพยาบาลพิมาน 2", "Phiman 2 Hospital", "Bangkok", "PAIR14"),
     ]:
         s.append(_th("private_hospital", local, english, city, pair_key=pair))
     s.append(

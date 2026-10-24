@@ -1,0 +1,17 @@
+{
+  "cache_key": "0550c580eaba1e207cfd1ae6c076e09f73f108e1a559d228561a50a8b54e9f9e",
+  "input": "{\"candidates\": [{\"card_code\": \"C00089\", \"city\": \"Singapore\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTS\", \"foreign_name\": \"\", \"name\": \"Mount Serene Novena Hospital Pte Ltd\", \"tax_id\": \"\"}, {\"card_code\": \"C00151\", \"city\": \"SINGAPORE\", \"country\": \"SG\", \"email_domain\": \"\", \"entity\": \"QTG\", \"foreign_name\": \"\", \"name\": \"Mount Serene Novena Hospital Pte Ltd\", \"tax_id\": \"\"}], \"new_record\": {\"city\": \"SINGAPORE\", \"country\": \"SG\", \"email_domain\": \"msh.sg.example\", \"entity\": \"SPD\", \"foreign_name\": \"\", \"name\": \"Mount Serene Hospital Pte Ltd\", \"tax_id\": \"\"}}",
+  "model": "claude-sonnet-5-5",
+  "output": {
+    "reasons": [
+      "The new record is \"Mount Serene Hospital Pte Ltd\", while both candidates are \"Mount Serene Novena Hospital Pte Ltd\". The extra \"Novena\" suggests a different site or branch of the same brand.",
+      "No tax ID or email domain is available on either side to confirm they are the same legal entity.",
+      "The two candidates are identical to each other, but that does not make either one a match for the new record."
+    ],
+    "selected_card_code": null
+  },
+  "prompt_version": "dedup_judge_v1",
+  "recorded_at": "2026-10-24T07:06:27+00:00",
+  "system_sha256": "9222f99366b160ba5889f9ef8507cccad0ef62ddddf768e19f5f64a7d368ef9a",
+  "task": "dedup_judge"
+}
