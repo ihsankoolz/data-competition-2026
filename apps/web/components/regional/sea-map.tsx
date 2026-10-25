@@ -41,6 +41,14 @@ const LABEL_AT: Record<Country, [number, number]> = {
   ID: [113.4, -1.0],
   SG: [103.82, 1.35], // the dot itself: Singapore is too small to click as a shape
 };
+/*
+ * Singapore's label sits south of its dot, in the strait off Sumatra's coast, joined to the dot
+ * by a short leader line: beside the dot it lay across the tip of peninsular Malaysia. Pixels
+ * from the dot's centre to the label's top-left corner; left of Indonesia's label.
+ */
+const SG_LABEL_DX = -10;
+const SG_LABEL_DY = 20;
+type Rect = { x: number; y: number; width: number; height: number };
 const LABEL_POSITION: Record<Country, "inside" | "right"> = {
   TH: "inside",
   VN: "right",
@@ -128,7 +136,13 @@ export function SeaMap({
         // element (no re-render). ECharts fires `finished` once a draw and its animation end;
         // the draw effect below marks a draw as pending.
         c.on("finished", () => {
+          // Before the first draw there is no option yet (and nothing to convert against).
+          if (el.dataset.drawn === undefined) return;
           if (el.dataset.drawn === "false") el.dataset.drawn = "true";
+          // Where the Singapore dot is, in pixels from the map's top-left: its label sits away
+          // from it, so tests find the dot from here.
+          const dot = c.convertToPixel({ geoIndex: 0 }, LABEL_AT.SG) as number[] | undefined;
+          if (dot) el.dataset.sgDot = dot.map((v) => Math.round(v)).join(",");
         });
         observer = new ResizeObserver(() => c.resize());
         observer.observe(el);
@@ -195,6 +209,10 @@ export function SeaMap({
                 borderWidth: on ? 2.5 : 1.5,
                 opacity: dim ? 0.4 : 1,
               }
+            : undefined,
+          // Only Singapore's label is moved off its point, so only it has a leader line.
+          labelLine: sg
+            ? { show: true, lineStyle: { color: INK, width: 1, opacity: dim ? 0.4 : 0.7 } }
             : undefined,
           label: {
             position: LABEL_POSITION[code],
@@ -264,6 +282,17 @@ export function SeaMap({
               textBorderWidth: 3,
             },
             emphasis: { scale: false, label: { show: true } },
+            labelLayout: (p: { dataIndex: number; rect: Rect }) => {
+              if (labels[p.dataIndex]?.code !== "SG") return {};
+              const cx = p.rect.x + p.rect.width / 2;
+              const cy = p.rect.y + p.rect.height / 2;
+              return {
+                x: cx + SG_LABEL_DX,
+                y: cy + SG_LABEL_DY,
+                align: "left",
+                verticalAlign: "top",
+              };
+            },
             data: labels,
           },
         ],

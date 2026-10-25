@@ -108,13 +108,69 @@ test("clicking Vietnam filters the page; clicking it again shows all five", asyn
   expect(errors).toEqual([]);
 });
 
+/** The Singapore dot's centre on the page (the map publishes it in `data-sg-dot`). */
+async function sgDot(map: Locator) {
+  await expect(map).toHaveAttribute("data-sg-dot", /^\d+,\d+$/);
+  const [x, y] = (await map.getAttribute("data-sg-dot"))!.split(",").map(Number);
+  const box = (await map.boundingBox())!;
+  return { x: box.x + x!, y: box.y + y! };
+}
+
+const overlaps = (
+  a: { x: number; y: number; width: number; height: number },
+  b: { x: number; y: number; width: number; height: number },
+) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+
+test("Singapore's label sits off Malaysia, south of its dot, joined by a leader line", async ({
+  page,
+}) => {
+  const errors = watchConsole(page);
+  const map = await openMap(page);
+  await map.scrollIntoViewIfNeeded();
+
+  // The whole two-line label of a country: its name and its growth figure (from the map's text
+  // alternative, e.g. "Singapore -16.2%"), each drawn as its own SVG text.
+  const summary = (await map.getAttribute("aria-label"))!;
+  const box = async (name: string) => {
+    const pct = summary.match(new RegExp(`${name} ([+-]?[\\d.]+%)`))![1]!;
+    const a = (await map.getByText(name, { exact: true }).boundingBox())!;
+    const b = (await map.getByText(pct, { exact: true }).boundingBox())!;
+    const x = Math.min(a.x, b.x);
+    const y = Math.min(a.y, b.y);
+    return {
+      x,
+      y,
+      width: Math.max(a.x + a.width, b.x + b.width) - x,
+      height: Math.max(a.y + a.height, b.y + b.height) - y,
+    };
+  };
+  const sg = await box("Singapore");
+  const my = await box("Malaysia");
+  const id = await box("Indonesia");
+  expect(sg.height).toBeGreaterThan(25); // both lines, not just the name
+  expect(overlaps(sg, my)).toBe(false);
+  expect(overlaps(sg, id)).toBe(false);
+
+  // Below the dot (and so below the tip of peninsular Malaysia, which ends at the dot).
+  const dot = await sgDot(map);
+  expect(sg.y).toBeGreaterThan(dot.y + 6);
+  expect(sg.x + sg.width / 2).toBeGreaterThan(dot.x);
+
+  // A short line runs from the dot to the label.
+  const line = map.locator('path[fill="none"][stroke="#10130e"]');
+  await expect(line).toHaveCount(1);
+  const l = (await line.boundingBox())!;
+  expect(l.y).toBeGreaterThanOrEqual(dot.y - 1);
+  expect(l.y + l.height).toBeLessThanOrEqual(sg.y + sg.height);
+  expect(l.height).toBeGreaterThan(4);
+  expect(errors).toEqual([]);
+});
+
 test("the Singapore dot filters to Singapore", async ({ page }) => {
   const errors = watchConsole(page);
   const map = await openMap(page);
 
-  // The dot sits left of its label: label distance 6 px + radius 6 px.
-  const label = await labelBox(map, "Singapore");
-  const dot = { x: label.x - 12, y: label.y + label.height };
+  const dot = await sgDot(map);
   // Hovering the dot shows its tooltip (ECharts needs a fresh move to pick the target).
   await expect(async () => {
     await page.mouse.move(dot.x + 2, dot.y);

@@ -6,9 +6,11 @@
 import { ScatterChart } from "echarts/charts";
 import { GeoComponent, TooltipComponent } from "echarts/components";
 import * as echarts from "echarts/core";
+import { LabelLayout } from "echarts/features";
 import { SVGRenderer } from "echarts/renderers";
 
-// GeoComponent must be registered before registerMap (ECharts 5.3+).
-echarts.use([GeoComponent, ScatterChart, TooltipComponent, SVGRenderer]);
+// GeoComponent must be registered before registerMap (ECharts 5.3+). LabelLayout moves
+// Singapore's label off Malaysia and draws its leader line.
+echarts.use([GeoComponent, ScatterChart, TooltipComponent, LabelLayout, SVGRenderer]);
 
 export const { init, registerMap } = echarts;
