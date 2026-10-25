@@ -204,7 +204,11 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
         onChanged={reload}
       />
 
-      {stages.length > 0 && <StageFlow stages={stages} qrReason={qrReason(detail)} />}
+      {stages.length > 0 && <StageFlow
+          stages={stages}
+          qrReason={qrReason(detail)}
+          published={detail.state === "ACTIVE"}
+        />}
 
       {detail.sap_publish ? (
         <section className="flex flex-col gap-3">
@@ -391,7 +395,15 @@ function qrReason(detail: RequestDetail): string | null {
   return `Needed because this is a diagnostic product sold in ${listNames(selling.map(countryName))}.`;
 }
 
-function StageFlow({ stages, qrReason }: { stages: Stage[]; qrReason: string | null }) {
+function StageFlow({
+  stages,
+  qrReason,
+  published,
+}: {
+  stages: Stage[];
+  qrReason: string | null;
+  published: boolean;
+}) {
   return (
     <ol className="flex items-stretch gap-3" aria-label="Approval stages">
       {stages.map((s, i) => (
@@ -429,6 +441,7 @@ function StageFlow({ stages, qrReason }: { stages: Stage[]; qrReason: string | n
                   key={t.task_id}
                   task={t}
                   note={t.role === "quality_regulatory" ? qrReason : null}
+                  published={published}
                 />
               ))}
             </ul>
@@ -439,8 +452,24 @@ function StageFlow({ stages, qrReason }: { stages: Stage[]; qrReason: string | n
   );
 }
 
-function TaskCard({ task: t, note }: { task: ApprovalTask; note: string | null }) {
+function TaskCard({
+  task: t,
+  note,
+  published,
+}: {
+  task: ApprovalTask;
+  note: string | null;
+  published: boolean;
+}) {
   const open = t.status === "pending" || t.status === "info_requested";
+  // The MDM analyst's approval is the publish step: once the record is live, say so.
+  const status =
+    published && t.role === "mdm_analyst" && t.status === "approved"
+      ? "Published"
+      : TASK_TEXT[t.status];
+  // A reminder logged at the same minute as the decision adds nothing (the clock did not move).
+  const reminderSameAsDecision =
+    !!t.reminded_at && !!t.decided_at && formatSgt(t.reminded_at) === formatSgt(t.decided_at);
   return (
     <li
       className={cn(
@@ -463,7 +492,9 @@ function TaskCard({ task: t, note }: { task: ApprovalTask; note: string | null }
         </span>
       )}
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-xs">{TASK_TEXT[t.status]}</span>
+        <span className="text-xs" data-testid="task-status-text">
+          {status}
+        </span>
         {open && t.sla_state && t.sla_state !== "done" && <SlaBadge state={t.sla_state} />}
       </div>
       {open && t.due_at && (
@@ -472,8 +503,11 @@ function TaskCard({ task: t, note }: { task: ApprovalTask; note: string | null }
       {t.decided_at && !open && (
         <span className="text-xs text-muted-foreground">{formatSgt(t.decided_at)}</span>
       )}
-      {t.reminded_at && (
-        <span className="flex items-center gap-1 text-xs text-warning-foreground">
+      {t.reminded_at && !reminderSameAsDecision && (
+        <span
+          className="flex items-center gap-1 text-xs text-warning-foreground"
+          data-testid="task-reminder"
+        >
           <BellRing className="size-3" /> Reminder sent {formatSgt(t.reminded_at)}
         </span>
       )}

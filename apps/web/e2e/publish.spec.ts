@@ -7,7 +7,7 @@
  */
 import { expect, test } from "@playwright/test";
 
-import { approveAs, openAs, submittedCustomer } from "./workflow-helpers";
+import { approveAs, openAs, resetClock, submittedCustomer } from "./workflow-helpers";
 
 async function approvedCustomer(request: Parameters<typeof submittedCustomer>[0], name: string) {
   let d = await submittedCustomer(request, name);
@@ -64,4 +64,34 @@ test("read-back table: every field matches and the record is active", async ({ p
   await expect(table.getByTestId("sap-active")).toHaveText("Active in SAP");
   await expect(table.locator('[data-testid="readback-row"][data-match="false"]')).toHaveCount(0);
   await expect(table.getByTestId("readback-row").first()).toBeVisible();
+});
+
+test("status cards: Priya's says Published, a reminder at the decision time is hidden", async ({
+  page,
+  request,
+}) => {
+  const amy = { "X-Acting-User": "amy" };
+  const advance = async (data: { days?: number; hours?: number }) =>
+    expect((await request.post("/api/clock/advance", { headers: amy, data })).ok()).toBe(true);
+  await resetClock(request);
+  try {
+    let d = await submittedCustomer(request, "Quillon Status Cards Medical Pte Ltd");
+    await advance({ days: 1 }); // every approver gets a reminder now
+    d = await approveAs(request, d, "daniel"); // same minute as his reminder
+    await advance({ hours: 1 });
+    for (const who of ["weijie", "meiling"]) d = await approveAs(request, d, who);
+    const pub = await request.post(`/api/requests/${d.req_id}/publish`, {
+      headers: { "X-Acting-User": "priya" },
+    });
+    expect(pub.ok(), await pub.text()).toBe(true);
+
+    await openAs(page, "amy", `/requests/${d.req_id}`);
+    const card = (u: string) => page.locator(`[data-testid="task"][data-assignee="${u}"]`);
+    await expect(card("priya").getByTestId("task-status-text")).toHaveText("Published");
+    await expect(card("daniel").getByTestId("task-status-text")).toHaveText("Approved");
+    await expect(card("daniel").getByTestId("task-reminder")).toHaveCount(0);
+    await expect(card("weijie").getByTestId("task-reminder")).toContainText("Reminder sent");
+  } finally {
+    await resetClock(request);
+  }
 });

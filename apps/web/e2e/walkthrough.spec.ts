@@ -6,7 +6,7 @@
  */
 import fs from "node:fs";
 
-import { expect, type Locator, type Page, test } from "@playwright/test";
+import { type APIRequestContext, expect, type Locator, type Page, test } from "@playwright/test";
 
 import { actAs, resetClock } from "./workflow-helpers";
 
@@ -58,6 +58,16 @@ async function type(loc: Locator, text: string) {
   cur.keys += text.length;
   await loc.fill(text);
 }
+/** One simulated hour between approvals, so a reminder and the approval after it show
+ * different times on the status page. */
+async function clockHour(request: APIRequestContext) {
+  const res = await request.post("/api/clock/advance", {
+    headers: { "X-Acting-User": "amy" },
+    data: { hours: 1 },
+  });
+  expect(res.ok(), await res.text()).toBe(true);
+}
+
 async function shot(page: Page, name: string, full = true) {
   const t = Date.now();
   await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: full });
@@ -408,6 +418,7 @@ test("persona walkthrough", async ({ page, request }) => {
       await persona(page, "Wei Jie");
       await machine(() => expect(page.getByTestId("your-turn")).toBeVisible());
       await shot(page, "04d-weijie-your-turn", false);
+      await clockHour(request);
       await click(page.getByTestId("your-turn").getByTestId("approve"));
       await machine(() =>
         expect(page.locator('[data-testid="task"][data-assignee="weijie"]')).toHaveAttribute(
@@ -436,6 +447,7 @@ test("persona walkthrough", async ({ page, request }) => {
         const as = pending.getByTestId("act-as");
         if ((await as.count()) > 0) await click(as);
         await machine(() => expect(page.getByTestId("persona-switcher")).toContainText(name));
+        await clockHour(request);
         await click(page.getByTestId("your-turn").getByTestId("approve"));
         await machine(() =>
           expect(
@@ -469,6 +481,7 @@ test("persona walkthrough", async ({ page, request }) => {
     };
     for (const t of (dj.stages ?? []).flatMap((s) => s.tasks)) {
       if (t.status === "pending") {
+        await clockHour(request);
         await request.post("/api/approvals/" + t.task_id + "/decision", {
           headers: h(t.assignee_user_id),
           data: { action: "approve" },

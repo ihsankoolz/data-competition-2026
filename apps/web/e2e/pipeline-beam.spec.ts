@@ -206,11 +206,11 @@ test("item request: no duplicate check, so the golden record step is not needed"
   await expectStates(page, {
     email: "skipped",
     ai: "skipped",
-    golden: "skipped",
+    golden: "not_needed",
     approvals: "waiting",
     sap: "waiting",
   });
-  await expect(node(page, "golden")).toContainText("No duplicate check for items");
+  await expect(node(page, "golden")).toContainText("Not needed for items");
 });
 
 test("reduced motion: no sweep, static lines only", async ({ page, request }) => {
