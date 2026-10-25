@@ -23,5 +23,5 @@
     "sequenceNumberColor": "#ffffff"
   },
   "flowchart": { "wrappingWidth": 230, "nodeSpacing": 40, "rankSpacing": 55, "curve": "basis" },
-  "sequence": { "wrap": true, "width": 230, "actorMargin": 120, "messageMargin": 34, "noteMargin": 14, "mirrorActors": false }
+  "sequence": { "wrap": true, "width": 230, "actorMargin": 260, "messageMargin": 48, "noteMargin": 22, "messageAlign": "left", "mirrorActors": false }
 }

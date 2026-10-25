@@ -12,8 +12,8 @@ flowchart TB
         direction LR
         INT["Email reader (AI)<br/>bank details removed first;<br/>no tools, answer checked"]
         CHECK["Field checks<br/>required fields, tax IDs,<br/>licence expiry dates"]
-        DUP["Duplicate check<br/>rules first, AI only<br/>when the rules are unsure"]
-        WF["Approvals engine<br/>approvers in parallel,<br/>reminders on a clock"]
+        DUP["Duplicate check<br/>rules first, AI only<br/>when the rules are unsure;<br/>a person decides"]
+        WF["Approvals engine<br/>approvers in parallel,<br/>reminders on a clock;<br/>a person decides"]
         PUB["SAP publisher<br/>create inactive, read back,<br/>then activate"]
         INT -->|pre-filled request| CHECK --> DUP -->|one golden record| WF -->|all approved| PUB
     end
@@ -31,11 +31,14 @@ flowchart TB
 
     DOOR ==> BRAIN
     RULES -.-> BRAIN
-    LLM <-.-> BRAIN
+    LLM <--> BRAIN
     BRAIN ==>|"Login, POST, GET, PATCH, Logout"| B1
     BRAIN --> NOTE
-    BRAIN -.-> AUD
+    BRAIN --> AUD
     B1 ==>|orders and customers, by golden ID| RV
+    LEGEND["Solid = runs in the prototype<br/>Dashed = production path"]
+    LGAP[ ]
+    AUD ~~~ LGAP ~~~ LEGEND
 
     classDef prod fill:#f8f9f4,stroke:#6b7a4b,stroke-width:1px,stroke-dasharray:5 3,color:#2f3524
     classDef core fill:#ffffff,stroke:#4a5a2f,stroke-width:1.5px,color:#1f2418
@@ -47,3 +50,6 @@ flowchart TB
     class INT,LLM ai
     class SL,DB sap
     class RV out
+    classDef legend fill:#ffffff,stroke:#a9b48f,stroke-width:1px,color:#3c4433,font-size:13px
+    class LEGEND legend
+    style LGAP fill:none,stroke:none

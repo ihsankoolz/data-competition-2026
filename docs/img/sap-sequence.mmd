@@ -9,13 +9,13 @@ sequenceDiagram
     PUB->>SL: POST /Login {CompanyDB, UserName, Password}
     SL-->>PUB: 200 SessionId, cookies B1SESSION + ROUTEID
     PUB->>AUD: sap_call: Login (password never logged)
-    PUB->>SL: POST /BusinessPartners {CardCode, CardName, ..., Frozen: tYES}
+    PUB->>SL: POST /BusinessPartners {CardCode, ..., Frozen: tYES}
     SL-->>PUB: 201 Created, record exists but is inactive
     PUB->>AUD: sap_call: POST (bank fields masked)
     PUB->>SL: GET /BusinessPartners('C00123')
     SL-->>PUB: 200 the record as SAP stored it
     PUB->>AUD: sap_call: GET
-    PUB->>PUB: Compare every field sent with every field read back
+    Note right of PUB: Compare every field sent with every field read back
     alt every field matches
         PUB->>SL: PATCH /BusinessPartners('C00123') {Frozen: tNO}
         SL-->>PUB: 204 No Content, record is now active
