@@ -17,7 +17,16 @@ import { cn } from "@/lib/utils";
 
 type RequestDetail = Schema<"RequestDetail">;
 
-export type NodeState = "done" | "current" | "paused" | "waiting" | "skipped" | "rejected";
+/** "not_needed": the step does not apply to this kind of request (no duplicate check for items),
+ * shown as a neutral check so the journey still reads as complete. "skipped": it was bypassed. */
+export type NodeState =
+  | "done"
+  | "current"
+  | "paused"
+  | "waiting"
+  | "skipped"
+  | "not_needed"
+  | "rejected";
 type NodeId = "email" | "ai" | "golden" | "approvals" | "sap";
 type PipelineNode = { id: NodeId; label: string; state: NodeState; caption: string };
 
@@ -30,6 +39,7 @@ const STATE_WORD: Record<NodeState, string> = {
   paused: "Paused",
   waiting: "Not started",
   skipped: "Not needed",
+  not_needed: "Not needed",
   rejected: "Stopped",
 };
 
@@ -67,8 +77,8 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
   const golden: PipelineNode = { id: "golden", label: "Golden record", state: "done", caption: "" };
   if (d.domain === "item" || d.domain === "cost_center")
     Object.assign(golden, {
-      state: "skipped",
-      caption: `No duplicate check for ${d.domain === "item" ? "items" : "cost centers"}`,
+      state: "not_needed",
+      caption: `Not needed for ${d.domain === "item" ? "items" : "cost centers"}`,
     });
   else if (draft) Object.assign(golden, { state: "current", caption: "Not checked yet" });
   else if (linked)
@@ -125,7 +135,10 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
 type SegmentKind = "lit" | "flow" | "paused" | "skip" | "stopped" | "dim";
 
 /** What the line between two neighbouring steps looks like. */
-function segmentKind(a: NodeState, b: NodeState): SegmentKind {
+function segmentKind(from: NodeState, to: NodeState): SegmentKind {
+  // A step that does not apply is passed straight through, like a finished one.
+  const a = from === "not_needed" ? "done" : from;
+  const b = to === "not_needed" ? "done" : to;
   if (a === "done" && b === "done") return "lit";
   if (a === "done" && b === "current") return "flow";
   if (a === "done" && b === "paused") return "paused";
@@ -234,6 +247,7 @@ const DISC_CLASS: Record<NodeState, string> = {
   paused: "border-warning bg-card text-warning-foreground",
   waiting: "border-border bg-muted text-muted-foreground",
   skipped: "border-dashed border-muted-foreground/40 bg-card text-muted-foreground/70",
+  not_needed: "border-muted-foreground/50 bg-card text-muted-foreground",
   rejected: "border-destructive bg-destructive text-destructive-foreground",
 };
 
@@ -261,8 +275,13 @@ function PipelineStep({
         )}
       >
         <Icon className="size-4" aria-hidden />
-        {n.state === "done" && (
-          <span className="absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full bg-success text-white ring-2 ring-card">
+        {(n.state === "done" || n.state === "not_needed") && (
+          <span
+            className={cn(
+              "absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full text-white ring-2 ring-card",
+              n.state === "done" ? "bg-success" : "bg-muted-foreground/70",
+            )}
+          >
             <Check className="size-2.5" strokeWidth={3} aria-hidden />
           </span>
         )}

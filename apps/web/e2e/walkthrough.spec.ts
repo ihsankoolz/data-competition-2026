@@ -6,7 +6,7 @@
  */
 import fs from "node:fs";
 
-import { expect, type Locator, type Page, test } from "@playwright/test";
+import { type APIRequestContext, expect, type Locator, type Page, test } from "@playwright/test";
 
 import { actAs, resetClock } from "./workflow-helpers";
 
@@ -58,6 +58,16 @@ async function type(loc: Locator, text: string) {
   cur.keys += text.length;
   await loc.fill(text);
 }
+/** One simulated hour between approvals, so a reminder and the approval after it show
+ * different times on the status page. */
+async function clockHour(request: APIRequestContext) {
+  const res = await request.post("/api/clock/advance", {
+    headers: { "X-Acting-User": "amy" },
+    data: { hours: 1 },
+  });
+  expect(res.ok(), await res.text()).toBe(true);
+}
+
 async function shot(page: Page, name: string, full = true) {
   const t = Date.now();
   await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: full });
@@ -161,6 +171,19 @@ test("persona walkthrough", async ({ page, request }) => {
       );
       await shot(page, "01c-email-read");
       await shot(page, "01c-email-read-viewport", false);
+      // README shot: scroll the page just enough that "Missing from the email" clears the
+      // sticky Create request bar, keeping the category and details in view.
+      note(
+        "missing-fields scroll px: " +
+          (await pane.getByTestId("missing-fields").evaluate((el) => {
+            const bar = document.querySelector('[data-testid="create-request-bar"]');
+            if (!bar) return 0;
+            const by = el.getBoundingClientRect().bottom - bar.getBoundingClientRect().top + 8;
+            window.scrollBy(0, Math.max(0, by)); // the bar sticks to the viewport
+            return Math.round(by);
+          })),
+      );
+      await shot(page, "01e-email-read-missing", false);
       await click(page.getByTestId("sort-all"));
       const t = Date.now();
       await machine(() =>
@@ -408,6 +431,7 @@ test("persona walkthrough", async ({ page, request }) => {
       await persona(page, "Wei Jie");
       await machine(() => expect(page.getByTestId("your-turn")).toBeVisible());
       await shot(page, "04d-weijie-your-turn", false);
+      await clockHour(request);
       await click(page.getByTestId("your-turn").getByTestId("approve"));
       await machine(() =>
         expect(page.locator('[data-testid="task"][data-assignee="weijie"]')).toHaveAttribute(
@@ -436,6 +460,7 @@ test("persona walkthrough", async ({ page, request }) => {
         const as = pending.getByTestId("act-as");
         if ((await as.count()) > 0) await click(as);
         await machine(() => expect(page.getByTestId("persona-switcher")).toContainText(name));
+        await clockHour(request);
         await click(page.getByTestId("your-turn").getByTestId("approve"));
         await machine(() =>
           expect(
@@ -469,6 +494,7 @@ test("persona walkthrough", async ({ page, request }) => {
     };
     for (const t of (dj.stages ?? []).flatMap((s) => s.tasks)) {
       if (t.status === "pending") {
+        await clockHour(request);
         await request.post("/api/approvals/" + t.task_id + "/decision", {
           headers: h(t.assignee_user_id),
           data: { action: "approve" },
@@ -581,6 +607,12 @@ test("persona walkthrough", async ({ page, request }) => {
       note("map: " + (await map.getAttribute("aria-label")));
       await page.getByTestId("sea-map-panel").scrollIntoViewIfNeeded();
       await shot(page, "06c-regional-map", false);
+      // README shot: the before/after toggle fully in view above the map (clear of the header).
+      await page.getByTestId("merge-toggle").evaluate((el) => {
+        const header = document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+        window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - header - 16);
+      });
+      await shot(page, "06c-regional-toggle-map", false);
       const fp = page.getByTestId("forecast-panel");
       await fp.scrollIntoViewIfNeeded();
       cur.clicks += 1;
