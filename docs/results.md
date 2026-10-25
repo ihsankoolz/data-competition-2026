@@ -566,6 +566,8 @@ Honest notes generated with each run (shown in the app):
 
 An alert fires when a customer active in the period has not ordered for more than 90 days, or more than twice its usual gap between orders. A 'duplicate' alert is a record that stopped ordering while the same customer kept ordering under another record (another company's copy, or a re-created record after a migration).
 
+Merging also raises 2 alerts that no single record showed (one in Singapore and one in Malaysia): the customer's records ordered in turn, so together they look like a more frequent buyer, and the same quiet spell now counts as longer than usual. That is why after merge = before - duplicates + new: 63 - 30 + 2 = 35.
+
 > **For judges:** 30 of 63 'lost customer' alerts in the region were false alarms caused by duplicate records (30 by the answer key). **Vietnam: 7 of 15 lost-customer alerts were duplicates** (7 of 15 by the answer key), and Vietnam's customer count drops from 95 records to 72 real customers.
 
 ### Distortion by country (all products together)

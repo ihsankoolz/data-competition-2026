@@ -107,6 +107,20 @@ def lost_check(gt: dict[str, str]) -> dict:
     return out
 
 
+def new_after_merge() -> dict[str, int]:
+    """Merged customers flagged lost although none of their records was flagged before merge:
+    pooling a customer's records shortens its usual gap between orders, so the same silence
+    crosses the threshold. Per country, plus "all"."""
+    f = rg._frames(FIX)
+    before = rg._core(f, "before", None).lost
+    after = rg._core(f, "after", None).lost
+    flagged = {f.golden.get(k, k) for k in before["key"]}
+    new = after[~after["key"].isin(flagged)]
+    out = {c: int((new["country"] == c).sum()) for c in rg.COUNTRIES}
+    out["all"] = len(new)
+    return out
+
+
 # %% NRR and customer counts per country x product
 def cell_table() -> list[dict]:
     f = rg._frames(FIX)
@@ -288,6 +302,20 @@ def section() -> str:
         "days, or more than twice its usual gap between orders. A 'duplicate' alert is a record "
         "that stopped ordering while the same customer kept ordering under another record "
         "(another company's copy, or a re-created record after a migration)."
+    )
+    L.append("")
+    na = new_after_merge()
+    where = " and ".join(
+        f"{n} in {NAMES[c]}" if n > 1 else f"one in {NAMES[c]}"
+        for c, n in na.items()
+        if c != "all" and n
+    )
+    L.append(
+        f"Merging also raises {na['all']} alert{'s' if na['all'] != 1 else ''} that no single "
+        f"record showed ({where}): the customer's records ordered in turn, so together they look "
+        f"like a more frequent buyer, and the same quiet spell now counts as longer than usual. "
+        f"That is why after merge = before - duplicates + new: {mi['lost_before']} - "
+        f"{mi['lost_that_were_duplicates']} + {na['all']} = {mi['lost_after']}."
     )
     L.append("")
     vn_n, vn_dup, _ = lc["VN"]

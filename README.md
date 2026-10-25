@@ -32,7 +32,7 @@ All at 1440x900, from the automated demo rehearsal (`make rehearse`) on the seed
 | ![The AI reading an email: each detail lights up with its source words](docs/img/screens/01-inbox-trace.png) | ![The duplicate panel: a new request matched to the existing Vietnamese record despite different spelling](docs/img/screens/02-duplicate-panel.png) |
 | **The messy inbox.** The AI reads one email; each detail it extracts points at the words it came from. | **Duplicate check.** "Benh vien Cho Ray" is matched to the existing "Bệnh viện Chợ Rẫy" record by tax ID and name. |
 | ![The status page: a pipeline from email to SAP with each step lit](docs/img/screens/03-status-beam.png) | ![The regional view after merge: map, heatmap and retention](docs/img/screens/04-regional.png) |
-| **Status page.** From email to SAP in five steps: every approver, side by side, and the record now live in SAP. | **Regional view.** After merging duplicates: 30 of 63 "lost" alerts gone, sales by country and product, growth by country on the map. |
+| **Status page.** From email to SAP in five steps: every approver, side by side, and the record now live in SAP. | **Regional view.** After merging duplicates: 30 of 63 "lost" alerts were duplicates; sales by country and product, growth by country on the map. |
 
 ## Headline results
 
