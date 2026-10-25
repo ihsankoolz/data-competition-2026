@@ -1,10 +1,18 @@
 # Messy in, clean out
 
-**A master-data prototype for Lives Group.** SMU DSA Society 2026 Data Case Competition.
+**A master-data prototype for Lives Group.** SMU DSA Society 2026 Data Case Competition. Built solo by Ihsan Alfian.
+
+**Demo video:** `<YouTube link, added Tue>`
+
+**For judges: start here**
+
+1. Watch the demo video (link above).
+2. Read the [Headline results](#headline-results) table.
+3. For the method, caveats and every table: [`docs/results.md`](docs/results.md).
 
 Lives Group's three companies (SPD, QTS and QTG) share one SAP Business One system across Singapore, Malaysia, Indonesia, Vietnam and Thailand. Requests for new customers, vendors and products arrive as free-text emails, in five countries' worth of spellings, scripts and languages. This prototype reads those emails where they arrive, checks the request against the records that already exist so each customer gets **one golden record**, sends it to every approver **at the same time**, and publishes it to SAP Business One with a read-back check. Because each customer now has one ID, the same data gives an **honest regional sales view**: real orders only, no customers that look "lost" because they were re-created under a new name.
 
-It runs on a laptop, offline, with synthetic data. No API key is needed for the demo.
+It runs on a laptop, offline after `make setup`, with synthetic data. No API key is needed for the demo. AI models: Claude Haiku 5.5 reads the emails; Claude Sonnet 5.5 gives a second opinion on duplicates the rules are unsure about (and wrote the 24 unseen test emails). The demo replays their recorded answers.
 
 ---
 
