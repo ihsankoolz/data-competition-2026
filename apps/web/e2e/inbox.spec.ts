@@ -37,6 +37,35 @@ test("read with AI shows category, highlighted quotes and creates a request", as
   await expect(page.getByTestId("prefill-note")).toHaveCount(0);
 });
 
+test("DEMO-01: 'Create request from this email' is on screen at 1440x900 without scrolling", async ({
+  page,
+}) => {
+  await openAs(page, "marcus", "/inbox");
+  await page.getByLabel("Search emails").fill("Cho Ray");
+  await page.getByTestId("inbox-DEMO-01").click();
+  const pane = page.getByTestId("email-pane");
+  await expect(pane).toContainText("New customer - Benh vien Cho Ray");
+  await pane.getByTestId("read-with-ai").click();
+  const reading = pane.getByTestId("ai-reading");
+  await expect(reading).toHaveAttribute("data-trace-state", "done");
+  // Every detail is still listed, and the missing-details questions still show.
+  await expect(reading.getByTestId("extracted-fields").locator("li")).toHaveCount(5);
+  await expect(reading.getByTestId("missing-fields")).toBeVisible();
+
+  const button = reading.getByTestId("create-request");
+  await expect(button).toBeVisible();
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  const viewport = page.viewportSize()!;
+  expect(viewport).toEqual({ width: 1440, height: 900 });
+  const box = (await button.boundingBox())!;
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.x).toBeGreaterThanOrEqual(0);
+  expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
+  expect(box.x + box.width).toBeLessThanOrEqual(viewport.width);
+  // Not covered by anything: a click lands on the button itself.
+  await button.click({ trial: true });
+});
+
 test("an email that gives the AI orders is flagged for a person", async ({ page }) => {
   await openAs(page, "priya", "/inbox");
   await page.getByLabel("Search emails").fill("bank details update");

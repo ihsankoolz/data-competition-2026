@@ -115,6 +115,11 @@ export function quotesOf(view: ReadView): { key: string; quote: string }[] {
   ];
 }
 
+/** Fits half the panel's width: a short label and a short value (a tax ID, a city, a country). */
+function isShort(f: Schema<"QuotedValue">): boolean {
+  return keyLabel(f.key).length <= 18 && valueText(f.value).length <= 16;
+}
+
 export function CategoryChip({ category }: { category: Category }) {
   return (
     <Badge
@@ -308,7 +313,7 @@ export function Reading({
       )}
 
       {showDetails && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           <h3 className="text-sm font-semibold">Details found</h3>
           {bankNotice}
           {!streaming && fields.length === 0 && (
@@ -316,22 +321,26 @@ export function Reading({
               No other details were found in this email.
             </p>
           )}
-          <ul className="flex flex-col gap-1" data-testid="extracted-fields">
+          {/* Two columns: short details (a tax ID, a city) share a row, long ones take the full
+              width, in the order the AI found them. Keeps the action below on screen. */}
+          <ul className="grid grid-cols-2 gap-x-1 gap-y-0.5" data-testid="extracted-fields">
             {fields.map((f) => (
-              <li key={f.key} className={enter}>
+              <li key={f.key} className={cn(isShort(f) ? "col-span-1" : "col-span-2", enter)}>
                 <button
                   type="button"
                   onMouseEnter={() => onFocusKey(f.key)}
                   onFocus={() => onFocusKey(f.key)}
                   onClick={() => onFocusKey(f.key)}
                   className={cn(
-                    "flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "flex w-full flex-col rounded-md px-2 py-1 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                     focusKey === f.key ? "bg-warning/20" : "hover:bg-muted",
                   )}
                   data-testid={`extracted-${f.key}`}
                 >
-                  <span className="text-xs text-muted-foreground">{keyLabel(f.key)}</span>
-                  <span className="text-sm font-medium break-words">{valueText(f.value)}</span>
+                  <span className="text-xs leading-4 text-muted-foreground">{keyLabel(f.key)}</span>
+                  <span className="text-sm leading-5 font-medium break-words">
+                    {valueText(f.value)}
+                  </span>
                 </button>
               </li>
             ))}
@@ -402,7 +411,12 @@ export function Reading({
         </p>
       ) : (
         verdict?.category === "mdm_request" && (
-          <div className="flex flex-col gap-2 border-t pt-4">
+          // Sticks to the bottom of the screen while the reading runs below the fold, so the
+          // next step is always in view; it settles in place once the panel's end scrolls up.
+          <div
+            className="sticky bottom-0 z-10 flex flex-col gap-1.5 border-t bg-card pt-3 pb-4"
+            data-testid="create-request-bar"
+          >
             <Button onClick={onCreate} data-testid="create-request">
               <FilePlus2 data-icon="inline-start" />
               Create request from this email
