@@ -42,6 +42,8 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   await expect(lost.getByTestId("lost-row")).toHaveCount(before);
   await expect(lost.getByTestId("duplicate-marker")).toHaveCount(markers);
   const customersBefore = await page.getByTestId("kpi-customers-value").textContent();
+  const lostNote = page.getByTestId("moving-lost-note");
+  await expect(lostNote).toHaveText("false alarms from old or copied records disappear");
   // Before merge cross-sell is meant to be low; the after-merge figure sits beside it.
   await expect(page.getByTestId("cross-sell-note")).toHaveText(
     "Before the golden record, you can't see who your cross-sell customers are.",
@@ -64,6 +66,11 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   expect(after).toBeLessThan(before);
   await expect(lost.getByTestId("lost-row")).toHaveCount(after);
   await expect(page.getByTestId("kpi-customers-value")).not.toHaveText(customersBefore ?? "");
+  // The strip's caption says how the count moved, and its numbers add up to the arrow.
+  await expect(lostNote).toHaveText(/^\d+ false alarms gone, \d+ newly caught$/);
+  const [gone, caught] = ((await lostNote.textContent()) ?? "").match(/\d+/g)!.map(Number);
+  expect(before - gone + caught).toBe(after);
+  await expect(lostNote.getByRole("button", { name: "What is Newly caught?" })).toBeVisible();
   // After merge: both account lists show real accounts with a US$ value.
   for (const list of ["drop-off-list", "whitespace-list"]) {
     const rows = page.getByTestId(list).getByTestId("account-row");
@@ -95,6 +102,11 @@ test("merge toggle removes duplicate 'lost customers' and changes the numbers", 
   // The country filter narrows the strip and the heatmap.
   await page.getByTestId("country-VN").click();
   await expect(page.getByTestId("merge-headline")).toContainText("in Vietnam");
+  // Nothing newly caught in Vietnam: only the false alarms, no tooltip.
+  await expect(lostNote).toHaveText(/^\d+ false alarms gone$/);
+  await expect(lostNote.getByRole("button")).toHaveCount(0);
+  await page.getByTestId("view-before").click();
+  await expect(lostNote).toHaveText("false alarms from old or copied records disappear");
   await expect(page.getByTestId("heat-cell")).toHaveCount(3);
 
   // POs, enquiries, purchase requests and MDM requests stay separate; MDM has no value.

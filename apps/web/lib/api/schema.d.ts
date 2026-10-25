@@ -1449,6 +1449,36 @@ export interface components {
             /** Message */
             message?: string | null;
         };
+        /**
+         * LostAlertChange
+         * @description How the lost-customer alerts change when duplicates are merged (same in both views).
+         *
+         *     after = before - duplicates + new_after_merge. Note: if two records that are both still lost
+         *     merged into one customer, a third term would be needed; the demo data has none, and the
+         *     tests check the sum per country.
+         */
+        LostAlertChange: {
+            /**
+             * Before
+             * @description Alerts counting every SAP record as a customer
+             */
+            before: number;
+            /**
+             * Duplicates
+             * @description Before-merge alerts on a record whose customer is still ordering under another record (false alarms that merging removes)
+             */
+            duplicates: number;
+            /**
+             * New After Merge
+             * @description Merged customers flagged lost although none of their records was: together the records look like a more frequent buyer, so the same quiet spell counts
+             */
+            new_after_merge: number;
+            /**
+             * After
+             * @description Alerts after merging duplicates
+             */
+            after: number;
+        };
         /** LostCustomer */
         LostCustomer: {
             /**
@@ -1745,6 +1775,7 @@ export interface components {
             customer_count: number;
             /** Lost Customers */
             lost_customers: components["schemas"]["LostCustomer"][];
+            lost_alert_change: components["schemas"]["LostAlertChange"];
             /**
              * Panels
              * @description POs, enquiries, PRs, MDM requests: separate

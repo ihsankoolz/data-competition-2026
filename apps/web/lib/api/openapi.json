@@ -3528,6 +3528,39 @@
         ],
         "title": "JudgeOpinion"
       },
+      "LostAlertChange": {
+        "properties": {
+          "before": {
+            "type": "integer",
+            "title": "Before",
+            "description": "Alerts counting every SAP record as a customer"
+          },
+          "duplicates": {
+            "type": "integer",
+            "title": "Duplicates",
+            "description": "Before-merge alerts on a record whose customer is still ordering under another record (false alarms that merging removes)"
+          },
+          "new_after_merge": {
+            "type": "integer",
+            "title": "New After Merge",
+            "description": "Merged customers flagged lost although none of their records was: together the records look like a more frequent buyer, so the same quiet spell counts"
+          },
+          "after": {
+            "type": "integer",
+            "title": "After",
+            "description": "Alerts after merging duplicates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "before",
+          "duplicates",
+          "new_after_merge",
+          "after"
+        ],
+        "title": "LostAlertChange",
+        "description": "How the lost-customer alerts change when duplicates are merged (same in both views).\n\nafter = before - duplicates + new_after_merge. Note: if two records that are both still lost\nmerged into one customer, a third term would be needed; the demo data has none, and the\ntests check the sum per country."
+      },
       "LostCustomer": {
         "properties": {
           "card_code": {
@@ -4156,6 +4189,9 @@
             "type": "array",
             "title": "Lost Customers"
           },
+          "lost_alert_change": {
+            "$ref": "#/components/schemas/LostAlertChange"
+          },
           "panels": {
             "items": {
               "$ref": "#/components/schemas/PanelCount"
@@ -4230,6 +4266,7 @@
           "cross_sell_pct",
           "customer_count",
           "lost_customers",
+          "lost_alert_change",
           "panels",
           "actions",
           "captions"

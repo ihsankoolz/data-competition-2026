@@ -45,3 +45,18 @@ def test_after_merge_has_fewer_customers_and_lost_alerts(client) -> None:
     m = client.get("/analytics/merge-impact", headers=HEADERS).json()
     assert m["customers_after"] < m["customers_before"]
     assert m["lost_after"] < m["lost_before"]
+
+
+def test_lost_alerts_add_up_after_merge(client) -> None:
+    """63 - 30 duplicates + 2 newly caught = 35 on the demo data, and the same sum per country
+    (the headline card's caption reads these numbers)."""
+    lc = client.get("/analytics/regional?view=after", headers=HEADERS).json()["lost_alert_change"]
+    assert lc == {"before": 63, "duplicates": 30, "new_after_merge": 2, "after": 35}
+    for c in ("SG", "MY", "ID", "VN", "TH"):
+        before = client.get(f"/analytics/regional?view=before&country={c}", headers=HEADERS)
+        after = client.get(f"/analytics/regional?view=after&country={c}", headers=HEADERS)
+        x = after.json()["lost_alert_change"]
+        assert x == before.json()["lost_alert_change"]  # same in both views
+        assert x["before"] == len(before.json()["lost_customers"])
+        assert x["after"] == len(after.json()["lost_customers"])
+        assert x["before"] - x["duplicates"] + x["new_after_merge"] == x["after"], c

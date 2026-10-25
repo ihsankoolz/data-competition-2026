@@ -249,6 +249,27 @@ def _artefacts(f: _Frames, country: str | None) -> set[str]:
     return {k for k in before["key"] if f.golden.get(k, k) not in after_lost}
 
 
+def _lost_alert_change(f: _Frames, country: str | None) -> dict[str, int]:
+    """-> LostAlertChange. Duplicates: before-merge alerts that merging removes. New: merged
+    customers flagged lost although none of their records was flagged before merge (pooling a
+    customer's records shortens its usual gap between orders, so the same silence crosses the
+    threshold)."""
+    before = _core(f, "before", country).lost
+    after = _core(f, "after", country).lost
+    flagged = {f.golden.get(k, k) for k in before["key"]}
+    return {
+        "before": len(before),
+        "duplicates": len(_artefacts(f, country)),
+        "new_after_merge": int((~after["key"].isin(flagged)).sum()),
+        "after": len(after),
+    }
+
+
+def lost_alert_change(data_dir: Path, country: str | None = None) -> dict[str, int]:
+    """Public wrapper for the eval notebook (same numbers as RegionalView.lost_alert_change)."""
+    return _lost_alert_change(_frames(data_dir), country)
+
+
 def _prior12(f: _Frames) -> pd.DataFrame:
     """Confirmed-PO lines in the 12 months before the stated period (12-month growth base)."""
     prior12 = [m - pd.DateOffset(months=12) for m in f.months]
@@ -657,6 +678,13 @@ CAPTIONS: dict[str, dict[str, str]] = {
             "between orders, whichever is longer."
         ),
     },
+    "lost_new_after_merge": {
+        "title": "Newly caught",
+        "caption": (
+            "When a customer's records are merged, it looks like a more frequent buyer, so the "
+            "same quiet spell can now count as lost."
+        ),
+    },
     "drop_off_risk": {
         "title": "At risk of dropping off",
         "caption": (
@@ -837,6 +865,7 @@ def regional_view(data_dir: Path, view: View, country: str | None = None) -> dic
         "cross_sell_pct": core.cross_sell,
         "customer_count": core.customer_count,
         "lost_customers": lost,
+        "lost_alert_change": _lost_alert_change(f, country),
         "panels": _panels(f, country),
         "drop_off_risk": drop_off,
         "cross_sell_whitespace": whitespace,

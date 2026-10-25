@@ -2,7 +2,8 @@
 
 import { ArrowRight } from "lucide-react";
 
-import { pct } from "@/lib/analytics";
+import { MetricInfo } from "@/components/analytics/metric-info";
+import { type Caption, pct } from "@/lib/analytics";
 import type { Schema } from "@/lib/api/client";
 import { countryName } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -15,7 +16,12 @@ type Moving = {
   before: string;
   after: string;
   note: string;
+  info?: Caption;
 };
+
+function plural(n: number, one: string, many: string) {
+  return `${n} ${n === 1 ? one : many}`;
+}
 
 /**
  * The demo beat: what merging duplicate customers changes. Numbers come from the two views
@@ -34,6 +40,18 @@ export function MergeStrip({
   const lostBefore = before.lost_customers.length;
   const dupes = before.lost_customers.filter((l) => l.is_duplicate_artefact).length;
   const where = country ? `in ${countryName(country)}` : "in the region";
+  // After merge, say how the alert count moved (from the API, so it follows the filter):
+  // before - false alarms + newly caught = after. Nothing moved: keep the general caption.
+  const lc = after.lost_alert_change;
+  const lostMoved = view === "after" && (lc.duplicates > 0 || lc.new_after_merge > 0);
+  const lostNote = lostMoved
+    ? [
+        lc.duplicates > 0 && `${plural(lc.duplicates, "false alarm", "false alarms")} gone`,
+        lc.new_after_merge > 0 && `${lc.new_after_merge} newly caught`,
+      ]
+        .filter(Boolean)
+        .join(", ")
+    : "false alarms from old or copied records disappear";
 
   const moving: Moving[] = [
     {
@@ -48,7 +66,9 @@ export function MergeStrip({
       label: "Lost-customer alerts",
       before: String(lostBefore),
       after: String(after.lost_customers.length),
-      note: "false alarms from old or copied records disappear",
+      note: lostNote,
+      info:
+        lostMoved && lc.new_after_merge > 0 ? after.captions.lost_new_after_merge : undefined,
     },
     {
       key: "nrr",
@@ -114,7 +134,13 @@ export function MergeStrip({
                 {m.after}
               </span>
             </dd>
-            <dd className="text-xs text-muted-foreground">{m.note}</dd>
+            <dd
+              className="flex items-center gap-0.5 text-xs text-muted-foreground"
+              data-testid={`moving-${m.key}-note`}
+            >
+              {m.note}
+              {m.info && <MetricInfo caption={m.info} />}
+            </dd>
           </div>
         ))}
       </dl>

@@ -48,6 +48,7 @@ REGIONAL = {
     "cross_sell_pct": 40.0,
     "customer_count": 5,
     "lost_customers": [],
+    "lost_alert_change": {"before": 0, "duplicates": 0, "new_after_merge": 0, "after": 0},
     "panels": [],
     "actions": [],
     "captions": CAPTIONS,

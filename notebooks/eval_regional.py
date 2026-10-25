@@ -108,16 +108,10 @@ def lost_check(gt: dict[str, str]) -> dict:
 
 
 def new_after_merge() -> dict[str, int]:
-    """Merged customers flagged lost although none of their records was flagged before merge:
-    pooling a customer's records shortens its usual gap between orders, so the same silence
-    crosses the threshold. Per country, plus "all"."""
-    f = rg._frames(FIX)
-    before = rg._core(f, "before", None).lost
-    after = rg._core(f, "after", None).lost
-    flagged = {f.golden.get(k, k) for k in before["key"]}
-    new = after[~after["key"].isin(flagged)]
-    out = {c: int((new["country"] == c).sum()) for c in rg.COUNTRIES}
-    out["all"] = len(new)
+    """Merged customers flagged lost although none of their records was (same function as the
+    app's RegionalView.lost_alert_change). Per country, plus "all"."""
+    out = {c: rg.lost_alert_change(FIX, c)["new_after_merge"] for c in rg.COUNTRIES}
+    out["all"] = rg.lost_alert_change(FIX)["new_after_merge"]
     return out
 
 

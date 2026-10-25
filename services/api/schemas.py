@@ -567,6 +567,26 @@ class PanelCount(BaseModel):
     caption: str
 
 
+class LostAlertChange(BaseModel):
+    """How the lost-customer alerts change when duplicates are merged (same in both views).
+
+    after = before - duplicates + new_after_merge. Note: if two records that are both still lost
+    merged into one customer, a third term would be needed; the demo data has none, and the
+    tests check the sum per country.
+    """
+
+    before: int = Field(description="Alerts counting every SAP record as a customer")
+    duplicates: int = Field(
+        description="Before-merge alerts on a record whose customer is still ordering under "
+        "another record (false alarms that merging removes)"
+    )
+    new_after_merge: int = Field(
+        description="Merged customers flagged lost although none of their records was: "
+        "together the records look like a more frequent buyer, so the same quiet spell counts"
+    )
+    after: int = Field(description="Alerts after merging duplicates")
+
+
 class RegionalView(BaseModel):
     view: MergeView
     period: str = Field(description="e.g. 'Oct 2025 - Sep 2026 (last 12 full months)'")
@@ -581,6 +601,7 @@ class RegionalView(BaseModel):
     cross_sell_pct: float = Field(description="% of customers active in 12 months buying >= 2")
     customer_count: int
     lost_customers: list[LostCustomer]
+    lost_alert_change: LostAlertChange
     panels: list[PanelCount] = Field(description="POs, enquiries, PRs, MDM requests: separate")
     drop_off_risk: list[DropOffRisk] = Field(
         default_factory=list,
