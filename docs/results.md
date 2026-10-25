@@ -596,6 +596,31 @@ This is the **headline growth measure** (D-022 #3, `HeatCell.growth_12m_pct`, sh
 
 The forecast backtest measures growth in units ordered; this table is in US$ sales value, so the two differ (e.g. Malaysia: +1.2% in units, +30.2% in value). The 'growth adjustment' action below uses the backtest's unit basis, because its planning-bias finding is measured in units.
 
+### Why is Singapore down 16.2%?
+
+**What was measured.** Singapore's confirmed-PO sales were US$1,721,805 in Oct 2024 - Sep 2025 and US$1,442,310 in Oct 2025 - Sep 2026: a change of -US$279,495 (-16.2%, the total in the growth table above). The change is split two ways (`ds/analytics/change.py`), and each split adds up to the total. Customer types use our merged customers: *new* = no orders in the prior 12 months, *lost* = no orders in the last 12, *expanding* / *shrinking* = ordered in both and spent more / less. *Share* = part / total change; a negative share pushed the other way. Demo data (scenario `seasonal_trend`, seed 42), so the accounts are synthetic.
+
+| Split | Part | Change, last 12 vs prior 12 months | Share of the change | Customers |
+|---|---|---|---|---|
+| Product | Product A (test kits) | -US$77,449 | 28% | 48 |
+| Product | Product B (equipment) | -US$295,470 | 106% | 12 |
+| Product | Product C (services) | US$93,424 | -33% | 16 |
+| Customer type | New (no orders in the prior 12 months) | US$22,491 | -8% | 2 |
+| Customer type | Expanding (ordered in both, more now) | US$301,446 | -108% | 22 |
+| Customer type | Shrinking (ordered in both, less now) | -US$560,456 | 200% | 29 |
+| Customer type | Lost (no orders in the last 12 months) | -US$42,976 | 15% | 4 |
+| **Total** | | **-US$279,495** | **100%** | |
+
+Of the US$560,456 that shrinking customers stopped spending, US$353,809 is equipment: customers who bought a machine in Oct 2024 - Sep 2025 and did not buy another. Test kits and services together (the repeat business) went up 1.4% (US$15,975): test kits -US$77,449, services US$93,424.
+
+*Before merge the customer split looks different:* 10 'lost' records worth -US$320,183 and 9 'new' records worth US$183,665, against 4 really lost customers (-US$42,976) and 2 new ones (US$22,491) after merge. US$277,207 of the 'lost' value sat on records whose customer kept buying under another record, so counting raw records would blame lost customers for 115% of the drop instead of 15%.
+
+**Verdict: mostly one-off equipment.** Product B explains 106% of the change; without it Singapore grew 1.4%. This is not a market in decline.
+
+Worth a call anyway: test kits fell US$77,449 (-8.1%), hidden by services growth. The 5 customers whose test-kit and service orders fell most ordered US$137,089 less than the year before.
+
+> **For judges:** Singapore is down 16.2% because hospitals bought fewer big machines than the year before (equipment sales fell US$295,470, more than the whole US$279,495 drop); its everyday test-kit and service orders grew 1.4%.
+
 ### Distortion by country and product
 
 | Country | Product | Short-term change (last 3 vs prior 3 months) | Customers before / after | NRR before | NRR after |

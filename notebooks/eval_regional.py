@@ -27,7 +27,7 @@ sys.path.insert(0, str(ROOT))
 
 import pandas as pd  # noqa: E402
 
-from ds.analytics import accounts  # noqa: E402
+from ds.analytics import accounts, change  # noqa: E402
 from ds.analytics import regional as rg  # noqa: E402
 from ds.analytics.golden import golden_clusters  # noqa: E402
 from ds.forecasting import bias  # noqa: E402
@@ -365,6 +365,7 @@ def section() -> str:
         f"backtest's unit basis, because its planning-bias finding is measured in units."
     )
     L.append("")
+    L.extend(why_country("SG"))
     L.append("### Distortion by country and product")
     L.append("")
     L.append(
@@ -405,6 +406,122 @@ def section() -> str:
         "The first one is the forecasting lesson: plan equipment from the sales pipeline."
     )
     return "\n".join(L)
+
+
+TYPE_WORDS = {
+    "new": "New (no orders in the prior 12 months)",
+    "expanding": "Expanding (ordered in both, more now)",
+    "shrinking": "Shrinking (ordered in both, less now)",
+    "lost": "Lost (no orders in the last 12 months)",
+}
+
+
+def why_country(country: str) -> list[str]:
+    """Product and customer-type split of one country's 12-month change (`ds.analytics.change`),
+    after merge, with the before-merge customer-type split for comparison."""
+    a = change.country_change_breakdown(FIX, country, "after")
+    b = change.country_change_breakdown(FIX, country, "before")
+    name = NAMES[country]
+    word = "down" if a.change_usd < 0 else "up"
+    tb = {p.label: p for p in b.by_customer_type}
+    ta = {p.label: p for p in a.by_customer_type}
+    prod = {p.label: p for p in a.by_product}
+    L = [f"### Why is {name} {word} {abs(a.growth_pct or 0):.1f}%?", ""]
+    L.append(
+        f"**What was measured.** {name}'s confirmed-PO sales were {money(a.prior_usd)} in "
+        f"{a.prior_period} and {money(a.now_usd)} in {a.period}: a change of "
+        f"{money(a.change_usd)} ({signed(a.growth_pct)}, the total in the growth table above). "
+        f"The change is split two ways (`ds/analytics/change.py`), and each split adds up to the "
+        f"total. Customer types use our merged customers: *new* = no orders in the prior 12 "
+        f"months, *lost* = no orders in the last 12, *expanding* / *shrinking* = ordered in both "
+        f"and spent more / less. *Share* = part / total change; a negative share pushed the other "
+        f"way. Demo data (scenario `seasonal_trend`, seed 42), so the accounts are synthetic."
+    )
+    L.append("")
+    L.append(
+        "| Split | Part | Change, last 12 vs prior 12 months | Share of the change | Customers |"
+    )
+    L.append("|---|---|---|---|---|")
+    for p in a.by_product:
+        L.append(
+            f"| Product | {rg.PRODUCT_NAMES[p.label]} | {money(p.change_usd)} | "
+            f"{p.share_pct:.0f}% | {p.customers} |"
+        )
+    for p in a.by_customer_type:
+        L.append(
+            f"| Customer type | {TYPE_WORDS[p.label]} | {money(p.change_usd)} | "
+            f"{p.share_pct:.0f}% | {p.customers} |"
+        )
+    L.append(f"| **Total** | | **{money(a.change_usd)}** | **100%** | |")
+    L.append("")
+    shrink_b = a.type_by_product[("shrinking", "B")]
+    rep_pct = 100.0 * a.repeat_change_usd / a.repeat_prior_usd if a.repeat_prior_usd else 0.0
+    eq = prod["B"]
+    mostly_b = eq.share_pct >= 50
+    still = tb["lost"].change_usd - ta["lost"].change_usd  # on lost records, customer not lost
+    L.append(
+        f"Of the {money(-ta['shrinking'].change_usd)} that shrinking customers stopped spending, "
+        f"{money(-shrink_b)} is equipment: customers who bought a machine in {a.prior_period} and "
+        f"did not buy another. Test kits and services together (the repeat business) went "
+        f"{'up' if rep_pct >= 0 else 'down'} {abs(rep_pct):.1f}% "
+        f"({money(a.repeat_change_usd)}): test kits {money(prod['A'].change_usd)}, services "
+        f"{money(prod['C'].change_usd)}."
+    )
+    L.append("")
+    L.append(
+        f"*Before merge the customer split looks different:* {tb['lost'].customers} 'lost' "
+        f"records worth {money(tb['lost'].change_usd)} and {tb['new'].customers} 'new' records "
+        f"worth {money(tb['new'].change_usd)}, against {ta['lost'].customers} really lost "
+        f"customers ({money(ta['lost'].change_usd)}) and {ta['new'].customers} new ones "
+        f"({money(ta['new'].change_usd)}) after merge. {money(-still)} of the 'lost' value sat "
+        f"on records whose customer kept buying under another record, so counting raw records "
+        f"would blame lost customers for {abs(tb['lost'].share_pct):.0f}% of the drop instead of "
+        f"{abs(ta['lost'].share_pct):.0f}%."
+    )
+    L.append("")
+    if mostly_b:
+        L.append(
+            f"**Verdict: mostly one-off equipment.** Product B explains {eq.share_pct:.0f}% of "
+            f"the change; without it {name} {'grew' if rep_pct >= 0 else 'fell'} "
+            f"{abs(rep_pct):.1f}%. This is not a market in decline."
+        )
+        drops = a.top_repeat_drops
+        a_word = "fell" if prod["A"].change_usd < 0 else "rose"
+        L.append("")
+        L.append(
+            f"Worth a call anyway: test kits {a_word} {money(abs(prod['A'].change_usd))} "
+            f"({signed(change.growth_of(prod['A']))}), hidden by services growth. The "
+            f"{len(drops)} customers whose test-kit and service orders fell most ordered "
+            f"{money(-sum(d.change_usd for d in drops))} less than the year before."
+        )
+        L.append("")
+        L.append(
+            f"> **For judges:** {name} is down {abs(a.growth_pct or 0):.1f}% because hospitals "
+            f"bought fewer big machines than the year before (equipment sales fell "
+            f"{money(-eq.change_usd)}, more than the whole {money(-a.change_usd)} drop); its "
+            f"everyday test-kit and service orders {'grew' if rep_pct >= 0 else 'fell'} "
+            f"{abs(rep_pct):.1f}%."
+        )
+    else:
+        drops = a.top_repeat_drops
+        L.append(
+            f"**Verdict: real decline in repeat business.** Product B explains only "
+            f"{eq.share_pct:.0f}% of the change."
+        )
+        L.append("")
+        L.append(
+            f"**Recommended action:** call the {len(drops)} customers whose test-kit and service "
+            f"orders fell most, worth {money(-sum(d.change_usd for d in drops))} a year: "
+            + "; ".join(f"{d.name} ({money(d.change_usd)})" for d in drops)
+            + "."
+        )
+        L.append("")
+        L.append(
+            f"> **For judges:** {name}'s fall is not just lumpy equipment: its everyday test-kit "
+            f"and service orders fell {abs(rep_pct):.1f}%."
+        )
+    L.append("")
+    return L
 
 
 def account_lists(after: dict) -> list[str]:
