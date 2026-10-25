@@ -5,6 +5,18 @@
  */
 import { expect, test, type Page } from "@playwright/test";
 
+/** Fails the test even if the offline notice only flickers (it hides again on the next answer). */
+async function watchOfflineNotice(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __sawOffline?: boolean };
+    new MutationObserver(() => {
+      if (document.querySelector('[data-testid="api-offline"]')) w.__sawOffline = true;
+    }).observe(document, { childList: true, subtree: true });
+  });
+  return async () =>
+    page.evaluate(() => !!(window as unknown as { __sawOffline?: boolean }).__sawOffline);
+}
+
 function watch(page: Page) {
   const failed: string[] = [];
   page.on("response", (r) => {
@@ -19,6 +31,7 @@ test("Reset demo three times after idle gaps: no 5xx, no offline notice, no erro
 }) => {
   test.setTimeout(120_000);
   const failed = watch(page);
+  const sawOffline = await watchOfflineNotice(page);
   await page.goto("/requests/new");
   await expect(page.getByTestId("sim-clock-day")).toBeVisible();
 
@@ -32,13 +45,14 @@ test("Reset demo three times after idle gaps: no 5xx, no offline notice, no erro
     await expect(page.getByTestId("sim-clock-day")).toContainText("Day 1");
   }
   await page.waitForTimeout(1_000);
-  await expect(page.getByTestId("api-offline")).toHaveCount(0);
+  expect(await sawOffline()).toBe(false);
   await expect(page.getByText("Reset did not finish")).toHaveCount(0);
   expect(failed).toEqual([]);
 });
 
 test("one dropped clock read is retried silently", async ({ page }) => {
   let dropped = 0;
+  const sawOffline = await watchOfflineNotice(page);
   await page.route("**/api/clock", async (route) => {
     if (route.request().method() === "GET" && dropped === 0) {
       dropped += 1;
@@ -54,6 +68,7 @@ test("one dropped clock read is retried silently", async ({ page }) => {
   });
   await page.goto("/requests/new");
   await expect(page.getByTestId("sim-clock-day")).toContainText("Day");
+  await page.waitForTimeout(500);
   expect(dropped).toBe(1);
-  await expect(page.getByTestId("api-offline")).toHaveCount(0);
+  expect(await sawOffline()).toBe(false);
 });
