@@ -162,7 +162,7 @@ def route(session: Session, req: m.Request, actor: Actor) -> list[m.ApprovalTask
                 "task_assigned",
                 req,
                 f"New request to approve: {_describe(req, names)}. Your part: {role_label(task)}. "
-                f"Please decide by {task.due_at:%a %d %b %H:%M}.",
+                f"Please decide by {clock.format_sgt(task.due_at)}.",
                 task,
             )
     return tasks
@@ -534,7 +534,7 @@ def run_sla_sweep(session: Session) -> int:
             notify(
                 session, task.assignee_user_id, "reminder", req,
                 f"Reminder: {what} is waiting for your approval ({role_label(task)}). "
-                f"It is due {task.due_at:%a %d %b %H:%M}.", task,
+                f"It is due {clock.format_sgt(task.due_at)}.", task,
             )  # fmt: skip
             _audit_task(
                 session, "system", req, task,

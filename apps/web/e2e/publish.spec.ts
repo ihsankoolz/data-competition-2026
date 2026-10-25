@@ -46,6 +46,31 @@ test("Priya publishes in one click and sees the read-back or its empty state", a
   await expect(page.getByTestId("publish-done").locator(`[data-req="${d.req_id}"]`)).toBeVisible();
 });
 
+test("after Publish the pane stays on the published record and shows its read-back", async ({
+  page,
+  request,
+}) => {
+  // Two ready records, so a jump to "the next one" would be visible.
+  await approvedCustomer(request, "Quillon Stay First Medical Pte Ltd");
+  await approvedCustomer(request, "Quillon Stay Second Medical Pte Ltd");
+
+  // Publish whatever the screen selects by default, without clicking the list.
+  await openAs(page, "priya", "/publish");
+  const current = page.getByTestId("publish-waiting").locator('[aria-current="true"]');
+  const reqId = await current.getAttribute("data-req");
+  expect(reqId).toBeTruthy();
+  const pane = page.getByTestId("publish-pane");
+  await pane.getByTestId("publish").click();
+
+  await expect(page.getByTestId("publish-done").locator(`[data-req="${reqId}"]`)).toBeVisible();
+  await expect(
+    page.getByTestId("publish-waiting").getByTestId("publish-item").first(),
+  ).toBeVisible();
+  await expect(pane).toContainText(reqId!);
+  await expect(pane.getByTestId("sap-readback")).toBeVisible();
+  await expect(pane.getByTestId("publish")).toHaveCount(0);
+});
+
 test("read-back table: every field matches and the record is active", async ({ page, request }) => {
   const d = await approvedCustomer(request, "Quillon Readback Medical Pte Ltd");
   const pub = await request.post(`/api/requests/${d.req_id}/publish`, {

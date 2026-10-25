@@ -267,15 +267,15 @@ export function Reading({
             )}
           </div>
           <p className="text-sm" data-testid="confidence">
-            {verdict.method === "keyword_fallback" ? "The keyword rules are" : "The AI is"}{" "}
-            {Math.round(verdict.confidence * 100)}% sure this is{" "}
-            {CATEGORY_WITH_ARTICLE[verdict.category]}.
+            {/* No percentage: the model rates itself 90% on most emails, which says nothing. */}
+            {verdict.method === "keyword_fallback" ? "The keyword rules read" : "The AI reads"} this
+            as {CATEGORY_WITH_ARTICLE[verdict.category]}.
             <span className="text-muted-foreground">
               {" "}
               {view.injection
                 ? "The email seems to give the AI orders, so a person sorts it."
                 : verdict.needs_review
-                  ? "That is below 60%, so a person sorts it."
+                  ? "The AI wasn't sure, so a person sorts it."
                   : CATEGORY_HELP[verdict.category]}
             </span>
           </p>

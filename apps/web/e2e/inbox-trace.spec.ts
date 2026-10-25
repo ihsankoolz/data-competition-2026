@@ -66,7 +66,7 @@ test("DEMO-01: details appear one by one with their words lit up, then the type"
     "data-category",
     "mdm_request",
   );
-  await expect(reading.getByTestId("confidence")).toContainText("% sure");
+  await expect(reading.getByTestId("confidence")).toContainText("The AI reads this as");
   await expect(pane.getByTestId("email-body").getByTestId("quote-highlight").first()).toBeVisible();
   // The finished read is stored like any other: the list row shows its type too.
   await expect(page.getByTestId("inbox-DEMO-01").getByTestId("category-chip")).toBeVisible();

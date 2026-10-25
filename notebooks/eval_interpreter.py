@@ -49,6 +49,8 @@ SHORT = {
     "follow_up": "Follow-up",
     "mdm_request": "Master-data request",
 }
+# The same classes as the inbox names them (apps/web/lib/emails.ts CATEGORY_TEXT), where different.
+APP_NAME = {"purchase_request": "Purchase request", "mdm_request": "New record request"}
 # Not extracted by design: email text never sets payment / credit terms (rule 7).
 EXCLUDED_KEYS = {"payment_terms"}
 MONTHS = {m: i for i, m in enumerate("jan feb mar apr may jun jul aug sep oct nov dec".split(), 1)}
@@ -123,7 +125,8 @@ def confusion(pairs: list[tuple[str, str]]) -> list[str]:
             n = cm[(t, p)]
             cells.append(f"**{n}**" if t == p else (str(n) if n else "."))
         rows.append(
-            f"| {SHORT[t]} | " + " | ".join(cells) + f" | {sum(cm[(t, p)] for p in CLASSES)} |"
+            f"| {SHORT[t]}{f' (app: {APP_NAME[t]})' if t in APP_NAME else ''} | "
+            + " | ".join(cells) + f" | {sum(cm[(t, p)] for p in CLASSES)} |"
         )
     return rows
 
@@ -291,6 +294,12 @@ def section(r: dict) -> str:
     a("")
     a("### Classification: which of the five kinds of email is it?")
     a("")
+    a(
+        "Names here and in the app's inbox: Order (PO) = Purchase order, "
+        + ", ".join(f"{SHORT[c]} = {APP_NAME[c]}" for c in APP_NAME)
+        + ". Enquiry and Follow-up are the same in both."
+    )
+    a("")
     a("| Measure | AI interpreter | Keyword rules (baseline) |")
     a("|---|---|---|")
     a(f"| Macro-F1 (5 classes) | {llm_f1:.3f} | {kw_f1:.3f} |")
@@ -304,7 +313,8 @@ def section(r: dict) -> str:
         f"cost center) | {d_ok} of {d_n} | {kd_ok} of {d_n} |"
     )
     for c in CLASSES:
-        a(f"| F1, {SHORT[c]} | {llm_per[c]:.3f} | {kw_per[c]:.3f} |")
+        app = f" (app: {APP_NAME[c]})" if c in APP_NAME else ""
+        a(f"| F1, {SHORT[c]}{app} | {llm_per[c]:.3f} | {kw_per[c]:.3f} |")
     a("")
     a(
         "*Macro-F1* averages the F1 score of the five classes, so a rare class counts as much "

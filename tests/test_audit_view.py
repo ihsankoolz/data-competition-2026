@@ -81,6 +81,24 @@ def test_other_lists_and_dicts_read_naturally():
     assert len(long) <= 240 and long.endswith("…")
 
 
+def test_coded_fields_show_their_option_label():
+    assert (
+        _line("PayTermsGrpCode", None, 1, domain="customer")
+        == "Amy changed Credit terms: (empty) -> 30 days"
+    )
+    assert _line("PayTermsGrpCode", 1, -1, domain="customer").endswith(
+        "30 days -> Cash on delivery"
+    )
+    assert _line("PayTermsGrpCode", 2, 3, domain="vendor").endswith(
+        "Payment terms: 60 days -> 90 days"
+    )
+    assert _line("ItemsGroupCode", 101, 102).endswith(
+        "Reagents and test kits -> Analysers and equipment"
+    )
+    assert _line("U_IVD", "tNO", "tYES").endswith(": no -> yes")
+    assert _line("Country", "SG", "VN", domain="customer").endswith("Singapore -> Vietnam")
+
+
 def test_bank_edits_stay_value_free():
     line = _line("BPBankAccounts[0].IBAN", "SG123", "SG456", domain="customer")
     assert line == "Amy changed the bank details" and "SG" not in line
@@ -132,3 +150,40 @@ def test_item_request_history_has_no_python_structures(client):
     assert "set the Vietnam registration (VN-3, expires 31 Dec 2030)" in reg
     assert "changed the Singapore registration expiry to 31 Dec 2031" in reg
     assert any("Singapore, Malaysia, Vietnam" in x for x in lines)
+
+
+def _raw(i: int, action: str, actor: str = "amy", **payload):
+    return SimpleNamespace(
+        id=i, ts="2026-10-07T09:00:00+08:00", actor=actor, action=action,
+        entity_type="request", entity_id="REQ-1", payload=json.dumps(payload),
+    )  # fmt: skip
+
+
+def test_bursts_of_bank_edits_and_duplicate_checks_read_as_one_line():
+    bank = [
+        _raw(i, "field_edit", field=f"BPBankAccounts[0].{leaf}", old="x", new="y")
+        for i, leaf in enumerate(("AccountNo", "BankCode", "IBAN"), 1)
+    ]
+    checks = [_raw(i, "dedup_check", summary=f"Duplicate check run by Amy: run {i}") for i in (4, 5, 6)]
+    rows = [*bank, *checks, _raw(7, "field_edit", field="City", old="A", new="B"), bank[0]]
+    lines = [e.summary for e in audit_view.entries(rows, {"amy": "Amy"}, "customer")]
+    assert lines == [
+        "Amy changed the bank details",
+        "Duplicate check run by Amy: run 6",
+        "Amy changed City: A -> B",
+        "Amy changed the bank details",
+    ]
+    # Someone else's edit in between is its own line.
+    rows = [bank[0], _raw(9, "field_edit", "daniel", field="BPBankAccounts[0].IBAN", old=1, new=2)]
+    assert len(audit_view.entries(rows, {"amy": "Amy", "daniel": "Daniel"}, "customer")) == 2
+
+
+def test_notification_dates_read_like_the_app():
+    from datetime import datetime, timedelta, timezone
+
+    assert clock.format_sgt(datetime(2026, 10, 7, 9, 0, tzinfo=clock.SGT)) == "Wed 7 Oct 2026, 9:00 am"
+    utc = datetime(2026, 10, 7, 6, 5, tzinfo=timezone.utc)  # 2:05 pm in Singapore
+    assert clock.format_sgt(utc) == "Wed 7 Oct 2026, 2:05 pm"
+    assert clock.format_sgt(datetime(2026, 10, 8, 0, 30, tzinfo=clock.SGT) + timedelta(hours=12)) == (
+        "Thu 8 Oct 2026, 12:30 pm"
+    )

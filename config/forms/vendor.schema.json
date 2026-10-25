@@ -68,7 +68,7 @@
     "PayTermsGrpCode": {
       "type": "integer",
       "title": "Payment terms",
-      "description": "Our payment terms to the vendor.",
+      "description": "Our payment terms to the vendor. Typed here only; an email can never set payment terms.",
       "oneOf": [
         { "const": 1, "title": "30 days" },
         { "const": 2, "title": "60 days" },

@@ -83,3 +83,11 @@ def test_dedup_query_from_demo_01_form_finds_cho_ray():
     result = check(q, MasterIndex(load_master("data/fixtures/seasonal_trend")), use_judge=False)
     assert result.verdict == "likely" and result.block_submit
     assert result.candidates[0].CardName == "Bệnh viện Chợ Rẫy"
+
+
+def test_terms_fields_say_an_email_can_never_set_them():
+    from ds.forms import load_form_schema
+
+    for domain, words in (("customer", "credit terms"), ("vendor", "payment terms")):
+        help_text = load_form_schema(domain)["properties"]["PayTermsGrpCode"]["description"]
+        assert f"Typed here only; an email can never set {words}." in help_text

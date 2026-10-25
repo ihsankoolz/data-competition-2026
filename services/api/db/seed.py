@@ -57,6 +57,12 @@ def to_str(v: Any) -> str | None:
     return None if _blank(v) else str(v).strip()
 
 
+def to_text(v: Any) -> str | None:
+    """Email text exactly as written: the LLM replay cache key hashes it byte for byte, so even
+    a stripped trailing newline would turn the AI's recorded answer into a keyword fallback."""
+    return None if _blank(v) else str(v)
+
+
 def to_int(v: Any) -> int | None:
     return None if _blank(v) else int(float(str(v).strip()))
 
@@ -284,8 +290,8 @@ FILES: dict[str, FileSpec] = {
             _c("from_name", req=False),
             _c("from_address"),
             _c("to", to_address_list, req=False, dest="to_address"),
-            _c("subject"),
-            _c("body"),
+            _c("subject", to_text),
+            _c("body", to_text),
             _c("attachments", to_list, req=False),
             _c("thread_id", req=False),
         ),

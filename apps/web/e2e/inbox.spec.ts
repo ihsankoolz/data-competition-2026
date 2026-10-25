@@ -21,7 +21,7 @@ test("read with AI shows category, highlighted quotes and creates a request", as
     "data-category",
     "mdm_request",
   );
-  await expect(reading.getByTestId("confidence")).toContainText("% sure");
+  await expect(reading.getByTestId("confidence")).toContainText("The AI reads this as");
   await expect(reading.getByTestId("extracted-fields")).not.toBeEmpty();
   const highlights = pane.getByTestId("email-body").getByTestId("quote-highlight");
   await expect(highlights.first()).toBeVisible();

@@ -28,6 +28,13 @@ _state = {"now": CLOCK_START}
 router = APIRouter()
 
 
+def format_sgt(when: datetime) -> str:
+    """"Wed 7 Oct 2026, 9:00 am" in Singapore time: the same words as the web's `formatSgt`."""
+    d = when.astimezone(SGT) if when.tzinfo else when
+    hour = d.hour % 12 or 12
+    return f"{d:%a} {d.day} {d:%b %Y}, {hour}:{d:%M} {'am' if d.hour < 12 else 'pm'}"
+
+
 def now() -> datetime:
     """Current simulated time (timezone-aware, SGT)."""
     return _state["now"]

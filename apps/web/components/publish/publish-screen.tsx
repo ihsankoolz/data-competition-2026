@@ -168,7 +168,12 @@ export function PublishScreen() {
               key={activeId}
               reqId={activeId}
               canPublish={isAnalyst}
-              onPublished={reload}
+              onPublished={(id) => {
+                // Stay on the record just published so its read-back shows, even when it was
+                // only selected by default and the next ready record would otherwise take over.
+                setSelected(id);
+                reload();
+              }}
             />
           )}
         </div>
@@ -234,7 +239,7 @@ function PublishPane({
 }: {
   reqId: string;
   canPublish: boolean;
-  onPublished: () => void;
+  onPublished: (reqId: string) => void;
 }) {
   const [detail, setDetail] = useState<RequestDetail | null>(null);
   const [readback, setReadback] = useState<SapPublishView | null | "loading">("loading");
@@ -276,7 +281,7 @@ function PublishPane({
           : "The record was sent to SAP.",
       });
       announceWorkflowChange();
-      onPublished();
+      onPublished(reqId);
     } catch (e) {
       setPublishError(explain(e, "Publishing"));
     } finally {

@@ -71,7 +71,7 @@
     "PayTermsGrpCode": {
       "type": "integer",
       "title": "Credit terms",
-      "description": "Approved by Finance.",
+      "description": "Approved by Finance. Typed here only; an email can never set credit terms.",
       "oneOf": [
         { "const": 1, "title": "30 days" },
         { "const": 2, "title": "60 days" },

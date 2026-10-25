@@ -157,16 +157,18 @@ With tax IDs on the held-out seed 7, applying the judge would rescue 1 duplicate
 
 ### Classification: which of the five kinds of email is it?
 
+Names here and in the app's inbox: Order (PO) = Purchase order, Planned order = Purchase request, Master-data request = New record request. Enquiry and Follow-up are the same in both.
+
 | Measure | AI interpreter | Keyword rules (baseline) |
 |---|---|---|
 | Macro-F1 (5 classes) | 1.000 | 0.944 |
 | Accuracy | 100.0% (88 of 88) | 94.3% (83 of 88) |
 | Master-data requests routed to the right form (customer / vendor / item / cost center) | 16 of 16 | 16 of 16 |
 | F1, Order (PO) | 1.000 | 0.939 |
-| F1, Planned order | 1.000 | 0.960 |
+| F1, Planned order (app: Purchase request) | 1.000 | 0.960 |
 | F1, Enquiry | 1.000 | 0.927 |
 | F1, Follow-up | 1.000 | 0.897 |
-| F1, Master-data request | 1.000 | 1.000 |
+| F1, Master-data request (app: New record request) | 1.000 | 1.000 |
 
 *Macro-F1* averages the F1 score of the five classes, so a rare class counts as much as a common one. 1.0 = perfect.
 
@@ -175,20 +177,20 @@ AI interpreter, rows = true class, columns = what it said (88 emails):
 | True class \ Predicted | Order (PO) | Planned order | Enquiry | Follow-up | Master-data request | Total |
 |---|---|---|---|---|---|---|
 | Order (PO) | **25** | . | . | . | . | 25 |
-| Planned order | . | **13** | . | . | . | 13 |
+| Planned order (app: Purchase request) | . | **13** | . | . | . | 13 |
 | Enquiry | . | . | **21** | . | . | 21 |
 | Follow-up | . | . | . | **13** | . | 13 |
-| Master-data request | . | . | . | . | **16** | 16 |
+| Master-data request (app: New record request) | . | . | . | . | **16** | 16 |
 
 Keyword rules (baseline):
 
 | True class \ Predicted | Order (PO) | Planned order | Enquiry | Follow-up | Master-data request | Total |
 |---|---|---|---|---|---|---|
 | Order (PO) | **23** | . | 1 | 1 | . | 25 |
-| Planned order | . | **12** | . | 1 | . | 13 |
+| Planned order (app: Purchase request) | . | **12** | . | 1 | . | 13 |
 | Enquiry | 1 | . | **19** | 1 | . | 21 |
 | Follow-up | . | . | . | **13** | . | 13 |
-| Master-data request | . | . | . | . | **16** | 16 |
+| Master-data request (app: New record request) | . | . | . | . | **16** | 16 |
 
 > **For judges:** the AI sorts 100.0% of these emails into the right pile; hand-written keyword rules manage 94.3%. The rules trip on forwarded threads and unusual phrasings, which they have no word for.
 

@@ -104,6 +104,21 @@ def _field_label(domain: str | None, path: str) -> str:
     return key
 
 
+def _option_label(domain: str | None, key: str, v: Any) -> Any:
+    """A coded value as its option label ("30 days", "Vietnam", "yes"); anything else unchanged."""
+    if v in (None, "", [], {}) or domain not in FORM_DOMAINS:
+        return v
+    prop = load_form_schema(domain)["properties"].get(key, {})  # type: ignore[arg-type]
+    for option in prop.get("oneOf", []):
+        if option.get("const") == v or str(option.get("const")) == str(v):
+            return option.get("title", v)
+    if prop.get("enum") == ["tYES", "tNO"]:
+        return {"tYES": "yes", "tNO": "no"}.get(str(v), v)
+    if key == "Country":
+        return _country(v)
+    return v
+
+
 # (what happened, what it tried to do when it failed)
 _SAP_WORDS = {
     ("POST", "/Login"): ("signed in to SAP", "sign in to SAP"),
@@ -135,18 +150,33 @@ def _sap_summary(p: dict[str, Any]) -> str:
     return f"SAP: {done}"
 
 
+def _is_bank_field(field: str) -> bool:
+    return "Bank" in field or "Account" in field or "IBAN" in field
+
+
+def _noise_kind(row: m.AuditLog) -> str | None:
+    """Rows that repeat in a burst: one bank edit per sub-field, one duplicate check per pause
+    in typing. Each burst reads as one history line."""
+    if row.action == "dedup_check":
+        return "dedup"
+    if row.action == "field_edit" and _is_bank_field(str(json.loads(row.payload).get("field", ""))):
+        return "bank"
+    return None
+
+
 def summarize(row: m.AuditLog, names: dict[str, str], domain: str | None) -> str:
     p: dict[str, Any] = json.loads(row.payload)
     actor = names.get(row.actor) or SPECIAL_ACTORS.get(row.actor, row.actor)
     if row.action == "field_edit":
         field = str(p.get("field", ""))
         label = _field_label(domain, field)
-        if "Bank" in field or "Account" in field or "IBAN" in field:
+        if _is_bank_field(field):
             return f"{actor} changed {label}"
         if field == "registrations":
             return _registrations_summary(actor, p.get("old"), p.get("new"))
         key = field.split("[", 1)[0].split(".", 1)[0]
-        old, new = _short(p.get("old"), 80, key), _short(p.get("new"), 80, key)
+        old = _short(_option_label(domain, field, p.get("old")), 80, key)
+        new = _short(_option_label(domain, field, p.get("new")), 80, key)
         return _clip(f"{actor} changed {label}: {old} -> {new}", 240)
     if row.action == "sap_call":
         return _sap_summary(p)
@@ -168,3 +198,18 @@ def entry(row: m.AuditLog, names: dict[str, str], domain: str | None) -> AuditEn
         entity_id=row.entity_id,
         summary=summarize(row, names, domain),
     )
+
+
+def entries(rows: list[m.AuditLog], names: dict[str, str], domain: str | None) -> list[AuditEntry]:
+    """The timeline for a request. Back-to-back bank edits by one person show once (the first),
+    back-to-back duplicate checks once (the latest result). The audit log itself keeps every row."""
+    kept: list[m.AuditLog] = []
+    for row in rows:
+        kind = _noise_kind(row)
+        prev = kept[-1] if kept else None
+        if kind and prev is not None and _noise_kind(prev) == kind and prev.actor == row.actor:
+            if kind == "dedup":
+                kept[-1] = row
+            continue
+        kept.append(row)
+    return [entry(r, names, domain) for r in kept]

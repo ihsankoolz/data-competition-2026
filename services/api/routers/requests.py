@@ -481,7 +481,7 @@ def get_request_audit(req_id: str, actor: CurrentUser) -> list[AuditEntry]:
         rows = session.scalars(
             select(m.AuditLog).where(m.AuditLog.request_id == req_id).order_by(m.AuditLog.id)
         ).all()
-        return [audit_view.entry(r, names, req.domain.value) for r in rows]
+        return audit_view.entries(list(rows), names, req.domain.value)
 
 
 __all__ = ["router", "tasks_for"]

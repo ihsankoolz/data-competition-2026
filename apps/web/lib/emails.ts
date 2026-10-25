@@ -13,7 +13,7 @@ export const CATEGORY_TEXT: Record<Category, string> = {
   mdm_request: "New record request",
 };
 
-/** For sentences: "The AI is 90% sure this is a new record request." */
+/** For sentences: "The AI reads this as a new record request." */
 export const CATEGORY_WITH_ARTICLE: Record<Category, string> = {
   purchase_order: "a purchase order",
   purchase_request: "a purchase request",
@@ -32,30 +32,39 @@ export const CATEGORY_HELP: Record<Category, string> = {
 
 export const CATEGORIES = Object.keys(CATEGORY_TEXT) as Category[];
 
-const KEY_WORDS: Record<string, string> = {
-  name: "Name",
-  legal_name: "Legal name",
+/**
+ * A plain label for every detail key the interpreter can return (`FieldKey` in
+ * ds/interpreter/prompt.py). tests/test_field_labels.py checks the two lists match.
+ */
+export const FIELD_LABELS: Record<string, string> = {
+  name: "Company name",
   tax_id: "Tax ID",
-  street: "Street",
   city: "City",
+  country: "Country",
   address: "Address",
-  email: "Email",
-  phone: "Phone",
-  contact_name: "Contact",
+  contact_email: "Contact email",
+  purpose: "Purpose",
+  item_name: "Item name",
+  is_ivd: "Diagnostic product (IVD)",
+  selling_countries: "Selling countries",
+  sales_unit: "Sold by (unit)",
+  unit_price_usd: "Unit price (USD)",
+  registration_number_SG: "Registration number (Singapore)",
+  registration_number_MY: "Registration number (Malaysia)",
+  registration_number_ID: "Registration number (Indonesia)",
+  registration_number_VN: "Registration number (Vietnam)",
+  registration_number_TH: "Registration number (Thailand)",
+  center_name: "Cost center name",
+  entity: "Company (legal entity)",
+  effective_from: "Starts on",
   customer_name: "Customer",
   po_number: "PO number",
   requested_date: "Requested date",
-  item_name: "Item name",
-  manufacturer: "Manufacturer",
-  purpose: "Purpose",
-  country: "Country",
-  selling_countries: "Selling countries",
-  ivd: "In-vitro diagnostic",
 };
 
 /** "registration_number_SG" -> "Registration number (Singapore)" */
 export function keyLabel(key: string): string {
-  if (KEY_WORDS[key]) return KEY_WORDS[key];
+  if (FIELD_LABELS[key]) return FIELD_LABELS[key];
   const cc = key.match(/_([A-Z]{2})$/);
   const base = (cc ? key.slice(0, -3) : key).replace(/_/g, " ");
   const words = base.charAt(0).toUpperCase() + base.slice(1);
