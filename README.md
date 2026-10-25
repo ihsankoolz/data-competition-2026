@@ -161,17 +161,14 @@ Items work the same way (`/Items`, `Frozen`). Cost Centers are `ProfitCenters` i
 **Requirements:** [uv](https://docs.astral.sh/uv/) (installs Python 3.11+), Node 22, pnpm, and GNU Make. **On Windows:** run everything in **Git Bash**, and install Make with [Scoop](https://scoop.sh/) (`scoop install make`); the Makefile calls Node directly, so pnpm's `.cmd` shims are not needed at run time.
 
 ```bash
-make setup          # install Python (uv) and Node (pnpm) dependencies
-cp .env.example .env
-# put a key in FIELD_ENCRYPTION_KEY (bank fields are encrypted at rest):
-uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+make setup          # install Python (uv) and Node (pnpm) dependencies; creates .env with an encryption key
 make reset-demo     # load the frozen demo data into data/app.db
 make dev            # API :8000, SAP B1 mock :8001, web app http://localhost:3000
 ```
 
 | Command | What it does |
 |---|---|
-| `make setup` | Install Python (uv) and Node (pnpm) dependencies. |
+| `make setup` | Install Python (uv) and Node (pnpm) dependencies. Creates `.env` from `.env.example` with a new `FIELD_ENCRYPTION_KEY` (bank fields are encrypted at rest); an existing key is never changed. |
 | `make data` | Run the synthetic data generator (seed 42) into `data/generated/`. |
 | `make fixtures` | Freeze the demo dataset into `data/fixtures/` and reload the database. |
 | `make dev` | Run the API (8000), the SAP B1 mock (8001) and the web app (3000). |

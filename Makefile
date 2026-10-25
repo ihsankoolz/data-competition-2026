@@ -17,8 +17,9 @@ export $(foreach v,$(ENV_VARS),$(if $($(v)),$(v)))
 
 .PHONY: setup data fixtures dev dev-api dev-sap dev-web reset-demo test test-py test-web e2e rehearse theme-shots eval api-types record stop
 
-setup:            ## install Python (uv) and Node deps
+setup:            ## install Python (uv) and Node deps; writes .env from .env.example with a new FIELD_ENCRYPTION_KEY if it has none
 	uv sync
+	uv run python -m services.api.ensure_env
 	cd $(WEB) && pnpm install
 
 data:             ## run the generator with the default seed into data/generated/
