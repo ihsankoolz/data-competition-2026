@@ -78,7 +78,10 @@ if (seed.status !== 0) {
   process.exit(seed.status ?? 1);
 }
 
-const server = spawn("uv", ["run", "uvicorn", "services.api.main:app", "--port", port], {
+// --timeout-keep-alive: longer than the Next proxy's 5 s idle pool, or a reused socket that
+// uvicorn is closing comes back as a 500 "socket hang up" (D-025; same value as the Makefile).
+const uvicorn = ["run", "uvicorn", "services.api.main:app", "--port", port];
+const server = spawn("uv", [...uvicorn, "--timeout-keep-alive", "75"], {
   cwd: repoRoot,
   env,
   stdio: "inherit",

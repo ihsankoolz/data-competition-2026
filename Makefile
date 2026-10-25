@@ -31,11 +31,16 @@ fixtures:         ## freeze the demo dataset (seasonal_trend, seed 42) into data
 dev:              ## api (8000), sap_mock (8001) and web (3000) together. Python services do not auto-reload (uvicorn reload hangs on Windows): restart to pick up changes.
 	$(MAKE) -j3 dev-api dev-sap dev-web
 
+# Keep-alive longer than the clients' idle pools (Node's agent behind the Next proxy and httpx
+# both drop idle sockets at 5 s, uvicorn's default). Equal timeouts race: the proxy reuses a socket
+# uvicorn is closing and the browser gets a 500 "socket hang up" (D-025). The client must close first.
+UVICORN_KEEP_ALIVE ?= 75
+
 dev-api:
-	uv run uvicorn services.api.main:app --port 8000
+	uv run uvicorn services.api.main:app --port 8000 --timeout-keep-alive $(UVICORN_KEEP_ALIVE)
 
 dev-sap:
-	uv run uvicorn services.sap_mock.main:app --port 8001
+	uv run uvicorn services.sap_mock.main:app --port 8001 --timeout-keep-alive $(UVICORN_KEEP_ALIVE)
 
 dev-web:
 	cd $(WEB) && "$(NODE)" node_modules/next/dist/bin/next dev --port 3000

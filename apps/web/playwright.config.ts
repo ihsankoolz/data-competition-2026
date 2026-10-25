@@ -44,7 +44,8 @@ export default defineConfig({
   webServer: [
     {
       name: "sap-mock",
-      command: `uv run uvicorn services.sap_mock.main:app --port ${SAP_PORT}`,
+      // Keep-alive past httpx's 5 s idle pool (D-025; same value as the Makefile).
+      command: `uv run uvicorn services.sap_mock.main:app --port ${SAP_PORT} --timeout-keep-alive 75`,
       cwd: REPO_ROOT,
       url: `http://localhost:${SAP_PORT}/b1s/v2/health`,
       reuseExistingServer: false,

@@ -142,6 +142,7 @@ function describeDetail(detail: unknown, status: number): string {
 }
 
 const OFFLINE_MESSAGE = "Can't reach the demo server.";
+const RETRY_AFTER_MS = 300;
 
 /** The headers every call sends; `X-Acting-User` is the header switcher's persona. */
 export function baseHeaders(actingUser?: string | null): Record<string, string> {
@@ -166,24 +167,39 @@ async function request(
   const headers = baseHeaders(options.actingUser);
   if (options.body !== undefined) headers["Content-Type"] = "application/json";
 
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      method: method.toUpperCase(),
-      headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
-      signal: options.signal,
-      cache: "no-store",
-    });
-  } catch (e) {
-    if (e instanceof DOMException && e.name === "AbortError") throw e;
+  // A GET is safe to repeat, so one dropped connection (the proxy's "socket hang up", D-025) is
+  // retried once before the header says the server is offline. Writes are never repeated.
+  const attempts = method === "get" ? 2 : 1;
+  let res: Response | null = null;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      res = await fetch(url, {
+        method: method.toUpperCase(),
+        headers,
+        body: options.body === undefined ? undefined : JSON.stringify(options.body),
+        signal: options.signal,
+        cache: "no-store",
+      });
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") throw e;
+      res = null;
+    }
+    // The Next proxy answers 5xx without a JSON body when the API is down.
+    const reached =
+      res !== null &&
+      (res.status < 500 || !!res.headers.get("content-type")?.includes("application/json"));
+    if (reached || attempt >= attempts) break;
+    await new Promise((resolve) => setTimeout(resolve, RETRY_AFTER_MS));
+    options.signal?.throwIfAborted();
+  }
+
+  if (res === null) {
     reportApiOffline();
     throw new ApiError(OFFLINE_MESSAGE, { status: 0, offline: true });
   }
 
   const isJson = res.headers.get("content-type")?.includes("application/json");
 
-  // The Next proxy answers 5xx without a JSON body when the API is down.
   if (!isJson && res.status >= 500) {
     reportApiOffline();
     throw new ApiError(OFFLINE_MESSAGE, { status: res.status, offline: true });
