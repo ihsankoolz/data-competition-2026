@@ -83,7 +83,11 @@ test("DEMO-01: the draft asks for the read's missing details, copies, and opens 
 
   await draft.getByTestId("copy-reply").click();
   await expect(draft.getByTestId("copy-reply")).toHaveText("Copied");
-  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  // The Windows clipboard hands text back with CRLF line ends.
+  const copied = (await page.evaluate(() => navigator.clipboard.readText())).replace(
+    /\r\n/g,
+    "\n",
+  );
   expect(copied).toBe(
     replyText(
       buildReply({
