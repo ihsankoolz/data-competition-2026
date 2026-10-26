@@ -1581,6 +1581,48 @@ export interface components {
              * @description Plain-English caption for bias_by_country, whatever it shows
              */
             bias_note?: string | null;
+            /**
+             * Pipeline Note
+             * @description One plain line: Product B planned from purchase requests vs the averages
+             */
+            pipeline_note?: string | null;
+            /**
+             * Pipeline Region
+             * @description Product B, whole region: WAPE and bias of all five methods
+             * @default []
+             */
+            pipeline_region?: components["schemas"]["PipelineScore"][];
+            /** @description Next 3 months plan per country x product (Oct-Dec 2026) */
+            plan_next_3m?: components["schemas"]["ForecastPlan"] | null;
+        };
+        /** ForecastPlan */
+        ForecastPlan: {
+            /**
+             * Scenario
+             * @enum {string}
+             */
+            scenario: "seasonal_trend" | "flat_noisy" | "intermittent";
+            /**
+             * Origin
+             * @description Last full month used, YYYY-MM-01
+             */
+            origin: string;
+            /**
+             * Months
+             * @description The 3 planned months, YYYY-MM-01
+             */
+            months: string[];
+            /**
+             * Fast Growing
+             * @description D-020 fast-growing countries
+             */
+            fast_growing: ("SG" | "MY" | "ID" | "VN" | "TH")[];
+            /** Rows */
+            rows: components["schemas"]["PlanRow"][];
+            /** Captions */
+            captions: {
+                [key: string]: components["schemas"]["Caption"];
+            };
         };
         /** ForecastPoint */
         ForecastPoint: {
@@ -2080,6 +2122,77 @@ export interface components {
              * @description ISO-2
              */
             country: string;
+        };
+        /** PipelineScore */
+        PipelineScore: {
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "excel_6m" | "excel_12m" | "combination" | "pipeline_pr" | "pipeline_pr_enq";
+            /** Label */
+            label: string;
+            /**
+             * Wape Pct
+             * @description Error as % of volume; lower is better
+             */
+            wape_pct: number;
+            /**
+             * Bias Pct
+             * @description + = over-forecast, - = under-forecast
+             */
+            bias_pct: number;
+        };
+        /** PlanRow */
+        PlanRow: {
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /** Country Name */
+            country_name: string;
+            /**
+             * Product
+             * @enum {string}
+             */
+            product: "A" | "B" | "C";
+            /**
+             * Excel 6M
+             * @description Units, Oct-Dec together: 3 x the last 6 months' mean
+             */
+            excel_6m: number;
+            /** Excel 6M Monthly */
+            excel_6m_monthly: number[];
+            /**
+             * Combination
+             * @description Units, Oct-Dec together: our combination
+             */
+            combination: number;
+            /** Combination Monthly */
+            combination_monthly: number[];
+            /**
+             * Pipeline Pr
+             * @description Product B only: units from purchase requests x conversion
+             */
+            pipeline_pr?: number | null;
+            /**
+             * Pipeline Pr Enq
+             * @description Product B only: requests and enquiries, averaged
+             */
+            pipeline_pr_enq?: number | null;
+            /**
+             * Growth Adjustment
+             * @description Fast-growing countries only (D-020): units to add on top of the Excel plan; never included in another column
+             */
+            growth_adjustment?: number | null;
+            /**
+             * Growth Adjustment Pct
+             * @description How far the Excel average planned this country too low (%)
+             */
+            growth_adjustment_pct?: number | null;
+            /** Growth Adjustment Caption */
+            growth_adjustment_caption?: string | null;
         };
         /**
          * QuotedValue

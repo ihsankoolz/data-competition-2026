@@ -792,6 +792,17 @@ class ForecastBacktest(BaseModel):
     bias_note: str | None = Field(
         default=None, description="Plain-English caption for bias_by_country, whatever it shows"
     )
+    # session 13 pipeline forecast (clean runs only; see the block below ForecastSummary)
+    pipeline_note: str | None = Field(
+        default=None,
+        description="One plain line: Product B planned from purchase requests vs the averages",
+    )
+    pipeline_region: list["PipelineScore"] = Field(
+        default=[], description="Product B, whole region: WAPE and bias of all five methods"
+    )
+    plan_next_3m: "ForecastPlan | None" = Field(
+        default=None, description="Next 3 months plan per country x product (Oct-Dec 2026)"
+    )
 
 
 class CountryBias(BaseModel):
@@ -811,6 +822,52 @@ class ForecastSummary(BaseModel):
     """All scenarios x clean/dirty, for the scenario switcher and results table."""
 
     runs: list[ForecastBacktest]
+    captions: dict[str, Caption]
+
+
+# ---------------------------------------------------------------- session 13 pipeline forecast
+# Product B planned from purchase requests x a conversion rate (ds/forecasting/pipeline.py),
+# and the forward "Next 3 months plan" (ds/forecasting/plan.py). Attached to clean runs.
+
+
+class PipelineScore(BaseModel):
+    method: Literal["excel_6m", "excel_12m", "combination", "pipeline_pr", "pipeline_pr_enq"]
+    label: str
+    wape_pct: float = Field(description="Error as % of volume; lower is better")
+    bias_pct: float = Field(description="+ = over-forecast, - = under-forecast")
+
+
+class PlanRow(BaseModel):
+    country: CountryCode
+    country_name: str
+    product: ProductFamily
+    excel_6m: float = Field(description="Units, Oct-Dec together: 3 x the last 6 months' mean")
+    excel_6m_monthly: list[float]
+    combination: float = Field(description="Units, Oct-Dec together: our combination")
+    combination_monthly: list[float]
+    pipeline_pr: float | None = Field(
+        default=None, description="Product B only: units from purchase requests x conversion"
+    )
+    pipeline_pr_enq: float | None = Field(
+        default=None, description="Product B only: requests and enquiries, averaged"
+    )
+    growth_adjustment: float | None = Field(
+        default=None,
+        description="Fast-growing countries only (D-020): units to add on top of the Excel plan; "
+        "never included in another column",
+    )
+    growth_adjustment_pct: float | None = Field(
+        default=None, description="How far the Excel average planned this country too low (%)"
+    )
+    growth_adjustment_caption: str | None = None
+
+
+class ForecastPlan(BaseModel):
+    scenario: Scenario
+    origin: str = Field(description="Last full month used, YYYY-MM-01")
+    months: list[str] = Field(description="The 3 planned months, YYYY-MM-01")
+    fast_growing: list[CountryCode] = Field(description="D-020 fast-growing countries")
+    rows: list[PlanRow]
     captions: dict[str, Caption]
 
 
@@ -982,6 +1039,7 @@ class RequiredFieldChange(BaseModel):
 
 
 # Resolves the forward references on RequestDetail (FieldIssue, SapPublishView, InfoRequestView)
-# and ForecastBacktest (CountryBias).
+# and ForecastBacktest (CountryBias; PipelineScore and ForecastPlan, session 13).
 RequestDetail.model_rebuild()
 ForecastBacktest.model_rebuild()
+ForecastSummary.model_rebuild()
