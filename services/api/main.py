@@ -17,6 +17,7 @@ from services.api.routers import (
     analytics,
     approvals,
     audit,
+    cleanup,
     dedup,
     emails,
     forms,
@@ -87,7 +88,7 @@ async def _database_busy(_: Request, exc: OperationalError) -> JSONResponse:
 
 
 app.include_router(clock_router)
-for _module in (forms, emails, dedup, requests, approvals, admin, audit, analytics):
+for _module in (forms, emails, dedup, requests, approvals, admin, audit, analytics, cleanup):
     app.include_router(_module.router)
 
 

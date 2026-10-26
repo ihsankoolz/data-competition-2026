@@ -19,7 +19,12 @@ No LLM is called (rules only), so the result is deterministic and offline. Groun
 from __future__ import annotations
 
 import csv
+from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ds.dedup import MasterIndex
 
 ROOT = Path(__file__).resolve().parents[2]
 CACHE_PATH = ROOT / "data" / "fixtures" / "derived" / "golden_clusters.csv"
@@ -32,23 +37,69 @@ def _customer_codes(data_dir: Path) -> list[str]:
         return [r["CardCode"] for r in csv.DictReader(fh) if r.get("CardType") == "cCustomer"]
 
 
-def likely_links(data_dir: Path) -> set[tuple[str, str]]:
-    """Every customer record pair our duplicate check calls 'Likely' (sorted code pairs)."""
+@dataclass(frozen=True)
+class PairReason:
+    """One reason the duplicate check gives for a pair, in its own plain English."""
+
+    text: str
+    against: bool = False  # True when the reason counts against the match (e.g. different city)
+
+
+@dataclass(frozen=True)
+class LikelyPair:
+    """Two customer records our duplicate check calls 'Likely' the same customer.
+
+    `a` < `b` (CardCodes, sorted). The score, tax-ID flag and reasons come from the direction of
+    the check that gave the highest score (`query` was checked against the other record); ties
+    go to `a` as the query, so the result is deterministic.
+    """
+
+    a: str
+    b: str
+    query: str
+    score: float
+    tax_id_match: bool
+    reasons: tuple[PairReason, ...]
+
+
+def likely_pairs(data_dir: Path, index: MasterIndex | None = None) -> list[LikelyPair]:
+    """Every customer record pair our duplicate check calls 'Likely', with its evidence.
+
+    Sorted by (a, b). `likely_links` and so the golden clusters are built on this function.
+    Pass `index` (built from `load_master(data_dir)`) to reuse one already built.
+    """
     from ds.dedup import BPQuery, MasterIndex, load_master, score_candidates
 
     master = load_master(data_dir)
-    index = MasterIndex(master)
+    if index is None:
+        index = MasterIndex(master)
     likely = index.config.thresholds.likely
-    links: set[tuple[str, str]] = set()
+    best: dict[tuple[str, str], LikelyPair] = {}
     for r in master:
         if r.CardType != "cCustomer":
             continue
         _, scored = score_candidates(index, BPQuery.model_validate(r.model_dump()))
         for c in scored:
-            if c.CardType == "cCustomer" and (c.tax_id_match or c.score >= likely):
-                a, b = sorted((r.CardCode, c.CardCode))
-                links.add((a, b))
-    return links
+            if c.CardType != "cCustomer" or not (c.tax_id_match or c.score >= likely):
+                continue
+            a, b = sorted((r.CardCode, c.CardCode))
+            pair = LikelyPair(
+                a=a,
+                b=b,
+                query=r.CardCode,
+                score=c.score,
+                tax_id_match=c.tax_id_match,
+                reasons=tuple(PairReason(x.text, x.weight < 0) for x in c.reasons),
+            )
+            prev = best.get((a, b))
+            if prev is None or (pair.score, pair.query == a) > (prev.score, prev.query == a):
+                best[(a, b)] = pair
+    return [best[k] for k in sorted(best)]
+
+
+def likely_links(data_dir: Path) -> set[tuple[str, str]]:
+    """Every customer record pair our duplicate check calls 'Likely' (sorted code pairs)."""
+    return {(p.a, p.b) for p in likely_pairs(data_dir)}
 
 
 def compute_clusters(data_dir: Path) -> dict[str, str]:
