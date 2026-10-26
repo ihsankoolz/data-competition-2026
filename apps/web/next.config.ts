@@ -18,9 +18,6 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  async redirects() {
-    return [{ source: "/", destination: "/inbox", permanent: false }];
-  },
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${API_ORIGIN}/:path*` }];
   },

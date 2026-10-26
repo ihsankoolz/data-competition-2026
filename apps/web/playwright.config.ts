@@ -23,6 +23,7 @@ export default defineConfig({
   testIgnore: [
     ...(process.env.REHEARSE ? [] : ["**/walkthrough.spec.ts"]),
     ...(process.env.THEME_SHOTS ? [] : ["**/theme-shots.spec.ts"]),
+    ...(process.env.README_SHOTS ? [] : ["**/readme-shots.spec.ts"]),
   ],
   fullyParallel: false,
   workers: 1,
