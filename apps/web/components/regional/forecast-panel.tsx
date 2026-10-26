@@ -5,6 +5,7 @@ import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "r
 
 import { MetricInfo } from "@/components/analytics/metric-info";
 import { SEGMENT_ON } from "@/components/analytics/segmented";
+import { ForecastPlanBlock } from "@/components/regional/forecast-plan";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   captionOf,
@@ -342,6 +343,12 @@ export function ForecastPanel({ summary }: { summary: Summary }) {
       )}
 
       {bias.length > 0 && <BiasTable rows={bias} note={run?.bias_note ?? null} />}
+
+      {/* session 13: equipment from the request pipeline + next 3 months plan (clean data) */}
+      <ForecastPlanBlock
+        note={clean?.pipeline_note ?? null}
+        plan={clean?.plan_next_3m ?? null}
+      />
     </section>
   );
 }
