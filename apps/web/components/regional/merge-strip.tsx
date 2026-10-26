@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 import { MetricInfo } from "@/components/analytics/metric-info";
 import { type Caption, pct } from "@/lib/analytics";
@@ -103,6 +104,18 @@ export function MergeStrip({
         <p className="max-w-3xl text-sm text-muted-foreground">
           They are customers still ordering under another SAP record. Our duplicate check links them
           (a person confirms every link), and the alerts go away. Total sales do not change.
+        </p>
+        <p
+          className="max-w-3xl text-xs text-muted-foreground"
+          data-testid="merge-cleanup-caption"
+        >
+          After merge uses the links the duplicate check proposes; Priya confirms them in the{" "}
+          <Link
+            href="/cleanup"
+            className="font-medium text-foreground underline underline-offset-2"
+          >
+            Clean-up queue
+          </Link>
         </p>
       </div>
       <dl className="grid grid-cols-4 gap-6">
