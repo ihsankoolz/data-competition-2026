@@ -5,16 +5,24 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import or_, select
 
+from services.api import teams_card
 from services.api.db import models as m
 from services.api.db.session import session_scope
 from services.api.deps import CurrentUser
 from services.api.schemas import (
+    AdaptiveCard,
     ApprovalDecisionIn,
     ApprovalInboxItem,
     Notification,
     RequestDetail,
 )
-from services.api.views import detail_model, summary_model, task_model, tasks_for, user_names
+from services.api.views import (
+    detail_model,
+    summary_model,
+    task_model,
+    tasks_for,
+    user_names,
+)
 from services.api.workflow import engine
 
 router = APIRouter(tags=["approvals"])
@@ -46,7 +54,8 @@ def approval_inbox(actor: CurrentUser) -> list[ApprovalInboxItem]:
                 continue
             out.append(
                 ApprovalInboxItem(
-                    task=task_model(task, names),
+                    # due_local in the viewer's own time: they may be the escalation backup
+                    task=task_model(task, names, {task.assignee_user_id: actor.country}),
                     request=summary_model(req, tasks_for(session, req.req_id), names),
                 )
             )
@@ -80,6 +89,17 @@ def list_notifications(actor: CurrentUser) -> list[Notification]:
             .order_by(m.NotificationRow.created_at.desc(), m.NotificationRow.notification_id.desc())
             .limit(200)
         ).all()
+        task_ids = {r.task_id for r in rows if r.task_id}
+        tasks = (
+            {
+                t.task_id: t
+                for t in session.scalars(
+                    select(m.ApprovalTaskRow).where(m.ApprovalTaskRow.task_id.in_(task_ids))
+                )
+            }
+            if task_ids
+            else {}
+        )
         return [
             Notification(
                 notification_id=r.notification_id,
@@ -89,6 +109,23 @@ def list_notifications(actor: CurrentUser) -> list[Notification]:
                 task_id=r.task_id,
                 message=r.message,
                 created_at=r.created_at,
+                teams_card=teams_card.has_card(r.kind, tasks.get(r.task_id or "")),
             )
             for r in rows
         ]
+
+
+@router.get(
+    "/notifications/{notification_id}/teams-card",
+    response_model=AdaptiveCard,
+    response_model_exclude_none=True,
+    operation_id="notificationTeamsCard",
+)
+def notification_teams_card(notification_id: str, actor: CurrentUser) -> AdaptiveCard:
+    """The Adaptive Card (v1.5) a Teams reminder for this approval would be. Preview only:
+    nothing is sent to Teams, and the card's buttons only work once Power Automate posts it."""
+    with session_scope() as session:
+        note = session.get(m.NotificationRow, notification_id)
+        if note is None or note.user_id != actor.user_id:
+            raise HTTPException(404, f"There is no notification {notification_id} for you.")
+        return teams_card.build(session, note)

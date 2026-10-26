@@ -30,7 +30,7 @@ import { RequestFields } from "@/components/workflow/request-fields";
 import { ReadbackUnavailable, SapReadback } from "@/components/workflow/sap-readback";
 import { useActingUserId } from "@/lib/acting-user";
 import { api, isApiError, type Schema } from "@/lib/api/client";
-import { countryName, formatSgt } from "@/lib/format";
+import { countryName, formatDue, formatSgt } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { type ApprovalTask, requestContext, roleLabel, TASK_TEXT } from "@/lib/workflow";
 
@@ -366,7 +366,7 @@ function YourTurn({
             <span className="text-muted-foreground">
               {" "}
               as {roleLabel(myTask)}
-              {myTask.due_at ? `, due ${formatSgt(myTask.due_at)}` : ""}
+              {myTask.due_at ? `, due ${formatDue(myTask.due_at, myTask.due_local)}` : ""}
             </span>
           </p>
           <DecisionActions taskId={myTask.task_id} title={detail.title} onDecided={onDecided} />
@@ -500,7 +500,9 @@ function TaskCard({
         {open && t.sla_state && t.sla_state !== "done" && <SlaBadge state={t.sla_state} />}
       </div>
       {open && t.due_at && (
-        <span className="text-xs text-muted-foreground">Due {formatSgt(t.due_at)}</span>
+        <span className="text-xs text-muted-foreground" data-testid="task-due">
+          Due {formatDue(t.due_at, t.due_local)}
+        </span>
       )}
       {t.decided_at && !open && (
         <span className="text-xs text-muted-foreground">{formatSgt(t.decided_at)}</span>

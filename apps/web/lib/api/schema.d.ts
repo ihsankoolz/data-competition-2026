@@ -419,6 +419,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/notifications/{notification_id}/teams-card": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Notification Teams Card
+         * @description The Adaptive Card (v1.5) a Teams reminder for this approval would be. Preview only:
+         *     nothing is sent to Teams, and the card's buttons only work once Power Automate posts it.
+         */
+        get: operations["notificationTeamsCard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/reset-demo": {
         parameters: {
             query?: never;
@@ -773,6 +794,34 @@ export interface components {
              */
             caption: string;
         };
+        /**
+         * AdaptiveCard
+         * @description The Teams reminder for one approval task, as Adaptive Card JSON (version 1.5).
+         */
+        AdaptiveCard: {
+            /**
+             * $Schema
+             * @default http://adaptivecards.io/schemas/adaptive-card.json
+             * @constant
+             */
+            $schema?: "http://adaptivecards.io/schemas/adaptive-card.json";
+            /**
+             * Type
+             * @default AdaptiveCard
+             * @constant
+             */
+            type?: "AdaptiveCard";
+            /**
+             * Version
+             * @default 1.5
+             * @constant
+             */
+            version?: "1.5";
+            /** Body */
+            body: (components["schemas"]["CardTextBlock"] | components["schemas"]["CardFactSet"])[];
+            /** Actions */
+            actions: (components["schemas"]["CardActionSubmit"] | components["schemas"]["CardActionOpenUrl"])[];
+        };
         /** ApprovalDecisionIn */
         ApprovalDecisionIn: {
             /**
@@ -847,6 +896,11 @@ export interface components {
              * @enum {string}
              */
             sla_state?: "on_track" | "reminded" | "overdue" | "done";
+            /**
+             * Due Local
+             * @description The due time in the approver's own time, e.g. '8:00 am in Vietnam'; null when it is the same as Singapore time (SG, MY)
+             */
+            due_local?: string | null;
         };
         /** Assumption */
         Assumption: {
@@ -979,6 +1033,75 @@ export interface components {
             title: string;
             /** Caption */
             caption: string;
+        };
+        /** CardActionOpenUrl */
+        CardActionOpenUrl: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "Action.OpenUrl";
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
+        };
+        /** CardActionSubmit */
+        CardActionSubmit: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "Action.Submit";
+            /** Title */
+            title: string;
+            /**
+             * Data
+             * @description Sent back to the bot: action, task_id, req_id
+             */
+            data: {
+                [key: string]: string;
+            };
+        };
+        /** CardFact */
+        CardFact: {
+            /** Title */
+            title: string;
+            /** Value */
+            value: string;
+        };
+        /** CardFactSet */
+        CardFactSet: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "FactSet";
+            /** Facts */
+            facts: components["schemas"]["CardFact"][];
+        };
+        /** CardTextBlock */
+        CardTextBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "TextBlock";
+            /** Text */
+            text: string;
+            /**
+             * Wrap
+             * @default true
+             */
+            wrap?: boolean;
+            /** Size */
+            size?: ("Small" | "Default" | "Medium" | "Large") | null;
+            /** Weight */
+            weight?: ("Lighter" | "Default" | "Bolder") | null;
+            /** Issubtle */
+            isSubtle?: boolean | null;
+            /** Spacing */
+            spacing?: ("None" | "Small" | "Default" | "Medium" | "Large") | null;
         };
         /** CleanupCluster */
         CleanupCluster: {
@@ -2029,6 +2152,12 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /**
+             * Teams Card
+             * @description True when GET /notifications/{id}/teams-card has a card for this notification (an approval task assigned, reminded or escalated to this user)
+             * @default false
+             */
+            teams_card?: boolean;
         };
         /** OpsImpact */
         OpsImpact: {
@@ -3882,6 +4011,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Notification"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    notificationTeamsCard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path: {
+                notification_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdaptiveCard"];
                 };
             };
             /** @description Validation Error */

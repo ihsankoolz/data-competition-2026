@@ -46,6 +46,23 @@ def make_publisher() -> SapPublisher:
     return SapPublisher(client=httpx.Client(timeout=10.0))
 
 
+# What the requestor can do once the record is live (session 13), one plain sentence each.
+NEXT_STEP = {
+    "item": "you can raise sales orders now",
+    "customer": "you can raise sales orders for them now",
+    "vendor": "you can raise purchase orders now",
+    "cost_center": "you can post costs to it now",
+}
+
+
+def live_message(domain: str, title: str, code: str) -> str:
+    """The requestor's notification after a publish, one plain sentence, e.g.
+    'Malaria Pf/Pan Antigen Rapid Test Kit' is live in SAP as A-MAL-001, so you can raise sales
+    orders now.
+    """
+    return f"'{title}' is live in SAP as {code}, so {NEXT_STEP[domain]}."
+
+
 def _next_code(session: Session, prefix: str, column: Any, width: int) -> int:
     pattern = re.compile(rf"^{re.escape(prefix)}(\d+)$")
     numbers = [
@@ -352,6 +369,6 @@ def publish(req_id: str, actor: Actor) -> None:
         )  # fmt: skip
         engine.notify(
             session, req.requestor_user_id, "published", req,
-            f"'{title_of(req.domain.value, plain)}' is now live in SAP as {code}.",
+            live_message(req.domain.value, title_of(req.domain.value, plain), code),
         )  # fmt: skip
     dedup_service.rebuild_index()
