@@ -21,7 +21,7 @@ import yaml
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "config"
 
 Domain = Literal["customer", "vendor", "item", "cost_center"]
-FORM_DOMAINS: tuple[Domain, ...] = ("customer", "vendor", "item")
+FORM_DOMAINS: tuple[Domain, ...] = ("customer", "vendor", "item", "cost_center")
 
 
 @cache
@@ -177,3 +177,6 @@ def _value(v: Any) -> Any:
 def _empty(v: Any) -> bool:
     v = _value(v)
     return v is None or (isinstance(v, (str, list, dict)) and len(v) == 0)
+
+
+is_empty = _empty  # public name for callers outside this module

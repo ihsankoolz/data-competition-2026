@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "New cost center",
+  "description": "A cost center in the shared SAP Business One (called a profit center in the Service Layer: ProfitCenters). The code is generated when MDM publishes it.",
+  "type": "object",
+  "x-domain": "cost_center",
+  "x-sap-note": "In SAP Business One, adding a cost center also creates a matching distribution rule automatically.",
+  "x-order": ["CenterName", "EffectiveFrom", "InWhichDimension", "purpose"],
+  "properties": {
+    "CenterName": {
+      "type": "string",
+      "maxLength": 30,
+      "title": "Cost center name",
+      "description": "Up to 30 characters, for example: QTG VN Service Hanoi.",
+      "x-extract": "center_name"
+    },
+    "EffectiveFrom": {
+      "type": "string",
+      "format": "date",
+      "title": "Effective from",
+      "description": "The first day this cost center can be used.",
+      "x-extract": "effective_from"
+    },
+    "InWhichDimension": {
+      "type": "integer",
+      "title": "Reporting dimension",
+      "description": "Which of SAP's five cost-tracking dimensions this cost center reports under. If you do not choose, dimension 1 is used.",
+      "oneOf": [
+        { "const": 1, "title": "Dimension 1 (the usual choice)" },
+        { "const": 2, "title": "Dimension 2" },
+        { "const": 3, "title": "Dimension 3" },
+        { "const": 4, "title": "Dimension 4" },
+        { "const": 5, "title": "Dimension 5" }
+      ]
+    },
+    "purpose": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "What is this cost center for?",
+      "x-app-only": true
+    }
+  }
+}

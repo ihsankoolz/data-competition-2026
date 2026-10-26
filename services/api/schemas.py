@@ -87,6 +87,9 @@ class FormSpec(BaseModel):
         "selling country when U_IVD = tYES",
     )
     regulated_countries: list[CountryCode] = []
+    sap_note: str | None = Field(
+        default=None, description="A one-line note about what SAP does with this record type"
+    )
 
 
 # ---------------------------------------------------------------- emails / interpreter (M2)
@@ -287,6 +290,12 @@ class ApprovalTask(BaseModel):
     decided_by: str | None = None
     comment: str | None = None
     sla_state: Literal["on_track", "reminded", "overdue", "done"] = "on_track"
+    # session 13: local time zones (display only; due_at and the SLA stay in SGT)
+    due_local: str | None = Field(
+        default=None,
+        description="The due time in the approver's own time, e.g. '8:00 am in Vietnam'; null "
+        "when it is the same as Singapore time (SG, MY)",
+    )
 
 
 class Stage(BaseModel):
@@ -388,6 +397,12 @@ class Notification(BaseModel):
     task_id: str | None = None
     message: str = Field(description="Plain English, e.g. 'Reminder: Amy's item request ...'")
     created_at: datetime
+    # session 13: "See it in Teams"
+    teams_card: bool = Field(
+        default=False,
+        description="True when GET /notifications/{id}/teams-card has a card for this "
+        "notification (an approval task assigned, reminded or escalated to this user)",
+    )
 
 
 # ---------------------------------------------------------------- admin (D-016)
@@ -830,6 +845,17 @@ class ForecastBacktest(BaseModel):
     bias_note: str | None = Field(
         default=None, description="Plain-English caption for bias_by_country, whatever it shows"
     )
+    # session 13 pipeline forecast (clean runs only; see the block below ForecastSummary)
+    pipeline_note: str | None = Field(
+        default=None,
+        description="One plain line: Product B planned from purchase requests vs the averages",
+    )
+    pipeline_region: list["PipelineScore"] = Field(
+        default=[], description="Product B, whole region: WAPE and bias of all five methods"
+    )
+    plan_next_3m: "ForecastPlan | None" = Field(
+        default=None, description="Next 3 months plan per country x product (Oct-Dec 2026)"
+    )
 
 
 class CountryBias(BaseModel):
@@ -849,6 +875,58 @@ class ForecastSummary(BaseModel):
     """All scenarios x clean/dirty, for the scenario switcher and results table."""
 
     runs: list[ForecastBacktest]
+    captions: dict[str, Caption]
+
+
+# ---------------------------------------------------------------- session 13 pipeline forecast
+# Product B planned from purchase requests x a conversion rate (ds/forecasting/pipeline.py),
+# and the forward "Next 3 months plan" (ds/forecasting/plan.py). Attached to clean runs.
+
+
+class PipelineScore(BaseModel):
+    method: Literal["excel_6m", "excel_12m", "combination", "pipeline_pr", "pipeline_pr_enq"]
+    label: str
+    wape_pct: float = Field(description="Error as % of volume; lower is better")
+    bias_pct: float = Field(description="+ = over-forecast, - = under-forecast")
+
+
+class PlanRow(BaseModel):
+    country: CountryCode
+    country_name: str
+    product: ProductFamily
+    excel_6m: float = Field(description="Units, Oct-Dec together: 3 x the last 6 months' mean")
+    excel_6m_monthly: list[float]
+    combination: float = Field(description="Units, Oct-Dec together: our combination")
+    combination_monthly: list[float]
+    pipeline_pr: float | None = Field(
+        default=None, description="Product B only: units from purchase requests x conversion"
+    )
+    pipeline_pr_enq: float | None = Field(
+        default=None, description="Product B only: requests and enquiries, averaged"
+    )
+    growth_adjustment: float | None = Field(
+        default=None,
+        description="Fast-growing countries only (D-020): units to add on top of the Excel plan; "
+        "never included in another column",
+    )
+    growth_adjustment_pct: float | None = Field(
+        default=None,
+        description="How far Excel's plan came out below actual orders in the backtest "
+        "(% of actual orders, all products together)",
+    )
+    growth_adjustment_uplift_pct: float | None = Field(
+        default=None,
+        description="The adjustment as a % of Excel's plan: -b / (1 + b); what closes the gap",
+    )
+    growth_adjustment_caption: str | None = None
+
+
+class ForecastPlan(BaseModel):
+    scenario: Scenario
+    origin: str = Field(description="Last full month used, YYYY-MM-01")
+    months: list[str] = Field(description="The 3 planned months, YYYY-MM-01")
+    fast_growing: list[CountryCode] = Field(description="D-020 fast-growing countries")
+    rows: list[PlanRow]
     captions: dict[str, Caption]
 
 
@@ -965,7 +1043,117 @@ class CleanupDecisionResult(BaseModel):
     total: int
 
 
+# ============================================================================================
+# Session 13 cost center / required fields. Cost Center is now a schema-driven form like the
+# other three (config/forms/cost_center.schema.json). Priya can switch a field between required
+# and optional per record type x country; a request keeps the rules it was created with.
+# ============================================================================================
+
+
+class RequiredFieldRow(BaseModel):
+    field: str = Field(description="Form field (SAP name), e.g. 'EmailAddress'")
+    label: str = Field(description="Plain label, e.g. 'Email'")
+    help: str | None = Field(default=None, description="The form's one-line hint for the field")
+    required: bool = Field(description="True when the field is required right now")
+    standard: bool = Field(description="True when the standard rules (YAML) require it")
+    changed: bool = Field(description="True when this differs from the standard rules")
+    locked: bool = Field(description="True when it can never be made optional")
+    locked_reason: str | None = Field(
+        default=None, description="One plain line on why a locked field must stay required"
+    )
+
+
+class RequiredFieldsView(BaseModel):
+    domain: Domain
+    country: CountryCode
+    fields: list[RequiredFieldRow] = Field(description="In form order")
+    note: str = Field(description="Plain-English caption: applies to new requests only")
+
+
+class RequiredFieldSet(BaseModel):
+    field: str
+    required: bool
+
+
+class RequiredFieldsSave(BaseModel):
+    domain: Domain
+    country: CountryCode
+    fields: list[RequiredFieldSet] = Field(
+        min_length=1, description="The fields to switch. Fields left out are not touched"
+    )
+
+
+class RequiredFieldChange(BaseModel):
+    id: int
+    at: datetime = Field(description="Simulated clock")
+    who: str
+    domain: Domain
+    country: CountryCode
+    field: str
+    field_label: str
+    now_required: bool
+    summary: str = Field(
+        description="Plain English, e.g. 'Priya made Email required for Singapore customers'"
+    )
+
+# ---------------------------------------------------------------- Teams card preview (session 13)
+# A subset of the Adaptive Card 1.5 schema (https://adaptivecards.io/schemas/adaptive-card.json):
+# exactly the elements the reminder card uses. In production Power Automate would post it to the
+# approver in Teams; this prototype only previews it and never sends anything.
+
+
+class CardTextBlock(BaseModel):
+    type: Literal["TextBlock"] = "TextBlock"
+    text: str
+    wrap: bool = True
+    size: Literal["Small", "Default", "Medium", "Large"] | None = None
+    weight: Literal["Lighter", "Default", "Bolder"] | None = None
+    isSubtle: bool | None = None
+    spacing: Literal["None", "Small", "Default", "Medium", "Large"] | None = None
+
+
+class CardFact(BaseModel):
+    title: str
+    value: str
+
+
+class CardFactSet(BaseModel):
+    type: Literal["FactSet"] = "FactSet"
+    facts: list[CardFact]
+
+
+class CardActionSubmit(BaseModel):
+    type: Literal["Action.Submit"] = "Action.Submit"
+    title: str
+    data: dict[str, str] = Field(description="Sent back to the bot: action, task_id, req_id")
+
+
+class CardActionOpenUrl(BaseModel):
+    type: Literal["Action.OpenUrl"] = "Action.OpenUrl"
+    title: str
+    url: str
+
+
+CardElement = Annotated[CardTextBlock | CardFactSet, Field(discriminator="type")]
+CardAction = Annotated[CardActionSubmit | CardActionOpenUrl, Field(discriminator="type")]
+
+
+class AdaptiveCard(BaseModel):
+    """The Teams reminder for one approval task, as Adaptive Card JSON (version 1.5)."""
+
+    model_config = {"populate_by_name": True, "serialize_by_alias": True}
+
+    schema_url: Literal["http://adaptivecards.io/schemas/adaptive-card.json"] = Field(
+        default="http://adaptivecards.io/schemas/adaptive-card.json", alias="$schema"
+    )
+    type: Literal["AdaptiveCard"] = "AdaptiveCard"
+    version: Literal["1.5"] = "1.5"
+    body: list[CardElement]
+    actions: list[CardAction]
+
+
 # Resolves the forward references on RequestDetail (FieldIssue, SapPublishView, InfoRequestView)
-# and ForecastBacktest (CountryBias).
+# and ForecastBacktest (CountryBias; PipelineScore and ForecastPlan, session 13).
 RequestDetail.model_rebuild()
 ForecastBacktest.model_rebuild()
+ForecastSummary.model_rebuild()

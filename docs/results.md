@@ -565,6 +565,129 @@ Honest notes generated with each run (shown in the app):
 - *Sparse ordering, dirty:* In the market where customers order only now and then our method's error is 35.5% of volume against 37.8% for the 6-month Excel average. Ours is better on 11 of 15 country x product series. A 12-month Excel average (35.3%) does as well as ours, so we do not claim a better country-level forecast here. Planning from the spreadsheet view pushes the Excel average's bias up by 10.4 points compared with clean data (-9.8% to +0.6%), because leaked enquiries and requests are counted as orders. The damage is largest for equipment (Product B).
 <!-- forecast:end -->
 
+<!-- pipeline:start -->
+## Equipment forecast from the request pipeline (session 13)
+
+**The question.** The brief asks how data science could improve on the 6-to-12-month Excel average. For equipment (Product B), which customers order rarely and in lumps, the idea is to plan from what customers are asking for now, instead of from past orders.
+
+**The method, fixed before the first run** (`ds/forecasting/pipeline.py`, commit `b4b7e1e`, not changed afterwards):
+
+1. For each country, the equipment *pipeline* in a month is the average of Product B units in purchase requests that month and the 2 months before (a request usually turns into an order within 2 months; `LMAX = 2`).
+2. *Conversion rate* = units ordered over the last 12 months / pipeline units over the same months, from monthly totals only, using only data up to the forecast date. Plan = conversion rate x pipeline. Request months not yet seen are filled with the average of the last 6 months of requests. Plans are floored at zero.
+3. Region = the sum of the 5 country plans. Variant 2 (declared in advance) averages this plan with the same plan built from enquiries.
+
+- *No request-to-order link is used.* Real SAP data does not link a request to the order it became, so the `converted_doc_num` column is never read (a test checks this). Orders that arrive with no earlier request are not modelled separately: the conversion rate is simply units ordered per unit in the pipeline.
+- *What is forecast:* confirmed customer POs only (CLAUDE.md rule 9). Requests and enquiries are only predictors; master-data requests and the spreadsheet view are never read.
+- *Fallback:* if a country had no pipeline at all in the 12-month window, that plan would fall back to the Excel 6-month average. It was used 0 times for requests and 0 times for enquiries, out of 150 country x forecast-date plans (3 scenarios x 5 countries x 10 dates).
+- *Same test as M9:* the same 10 forecast dates, 3 months ahead, the same WAPE and bias pooled over every country, date and month ahead. Clean data, all 3 scenarios, seed 42. Excel 6-month, Excel 12-month and ours are read from the stored M9 results, not refitted.
+
+> **Read this first: the test data favours this method.** The generator creates requests from later orders (data-spec §7 and §12.1, `ds/generator/demand.py` `build_enquiries`): 44.5% of Product B orders in the demo data (44.5% to 45.6% across the 3 scenarios) have a purchase request 0-2 months before them, with nearly the same quantity (the generator setting is 45% of orders, `pr_per_order` B = 0.45; requests that would fall before Oct 2023 are not generated). Measured here from the generator's hidden request-to-order link (`converted_doc_num`), read only for this description of the test data, never by the forecast. So this test favours a pipeline method. A pilot must measure the conversion rate on real data before anyone plans from it.
+
+### Region total, Product B
+
+Each cell is WAPE (bias): error as % of the units customers really ordered (lower is better), and whether the plan ran high (+) or low (-).
+
+| Scenario | Excel 6-month | Excel 12-month | Ours | Pipeline (requests) | Pipeline (requests + enquiries) | Best |
+|---|---|---|---|---|---|---|
+| Seasonal + growth (demo) | 28.4% (+18.7%) | 26.1% (+17.3%) | 36.1% (+16.3%) | 26.5% (+15.8%) | 29.2% (+20.6%) | Excel 12-month |
+| Flat and noisy | 54.1% (+40.4%) | 51.5% (+48.2%) | 55.4% (+45.3%) | 54.2% (+46.3%) | 56.4% (+52.2%) | Excel 12-month |
+| Sparse ordering | 59.8% (-6.6%) | 59.5% (-9.6%) | 67.9% (-9.1%) | 67.9% (-2.8%) | 65.0% (-4.6%) | Excel 12-month |
+
+*Excel 6-month, Excel 12-month and Ours* were fitted by M9 on the region total (top-down). *The pipeline* is built bottom-up as the sum of the 5 country plans. Same forecast dates, months and actuals.
+
+### Country level, Product B (5 countries pooled)
+
+| Scenario | Excel 6-month | Excel 12-month | Ours | Pipeline (requests) | Pipeline (requests + enquiries) | Best |
+|---|---|---|---|---|---|---|
+| Seasonal + growth (demo) | 102.9% (+18.7%) | 99.5% (+17.3%) | 106.1% (+16.7%) | 101.4% (+15.8%) | 99.7% (+20.6%) | Excel 12-month |
+| Flat and noisy | 117.8% (+40.4%) | 117.5% (+48.2%) | 127.1% (+46.7%) | 120.3% (+46.3%) | 119.4% (+52.2%) | Excel 12-month |
+| Sparse ordering | 127.9% (-6.6%) | 119.5% (-9.6%) | 125.9% (-6.3%) | 125.9% (-2.8%) | 121.9% (-4.6%) | Excel 12-month |
+
+Every method is scored on the same 5 country series (from the stored M9 country frame) and the errors are added up before dividing, so a country's misses do not cancel another's.
+
+### Detail: demo scenario, each country, Product B
+
+| Country | Excel 6-month | Excel 12-month | Ours | Pipeline (requests) | Pipeline (requests + enquiries) | Best |
+|---|---|---|---|---|---|---|
+| Singapore | 98.0% (+39.4%) | 94.7% (+41.7%) | 113.2% (+50.4%) | 95.2% (+36.0%) | 90.9% (+36.7%) | Pipeline (requests + enquiries) |
+| Malaysia | 104.2% (+3.4%) | 97.3% (-21.6%) | 94.8% (-31.1%) | 110.9% (-22.1%) | 103.0% (-14.9%) | Ours |
+| Indonesia | 96.8% (+52.4%) | 107.1% (+60.7%) | 110.7% (+63.9%) | 105.8% (+69.1%) | 107.4% (+65.4%) | Excel 6-month |
+| Vietnam | 85.3% (-6.0%) | 84.1% (+6.0%) | 93.9% (-1.3%) | 90.0% (+1.1%) | 87.2% (+13.7%) | Excel 12-month |
+| Thailand | 125.0% (+11.0%) | 111.2% (+8.5%) | 117.6% (+11.9%) | 103.0% (+3.6%) | 106.5% (+9.2%) | Pipeline (requests) |
+
+One country's equipment orders are a handful of units a month, so every method misses by about the whole volume there; judge the method at region level (D-017).
+
+**Verdict (honest).** Region, Product B, primary variant (requests): seasonal + growth (demo): ties with Excel 12-month (26.5% vs 26.1%); flat and noisy: loses to Excel 12-month (54.2% vs 51.5%); sparse ordering: loses to Excel 12-month (67.9% vs 59.5%). Adding enquiries (variant 2) lowers the region error in 1 of 3 scenarios. Even on test data that builds requests out of later orders, the pipeline plan never beats the best average-based method by a point or more, so we do not claim it beats Excel. What it offers is a plan that moves when the pipeline moves, which a pilot should test on real conversion rates.
+
+> **For judges:** for equipment across the region, planning from purchase requests was off by 26.5% of units in the demo market, against 28.4% for the 6-month Excel average, 26.1% for the 12-month one and 36.1% for ours. Effectively a tie with the Excel 12-month average, on data that favours it. Worth a pilot, not a claim.
+
+### Next 3 months plan (Oct - Dec 2026)
+
+Units for the 3 months together, from the last full month (Sep 2026), per country x product. *Excel 6-month* = 3 x the average of the last 6 months. *Ours* = the M9 combination fitted on all 36 months. *Pipeline* = the plan above, equipment only. *Growth adjustment* = shown only for countries that meet the D-020 fast-growing definition in that scenario. In the backtest, Excel's plan for that country came out b% below actual orders (all products together); adding b / (1 - b) to the Excel plan closes that gap (Vietnam, demo: 13% below actual -> +15% on Excel's plan). Shown as units and as % of Excel's plan, on its own; no other column includes it.
+
+**Seasonal + growth (demo)** (fast-growing: Vietnam)
+
+| Country | Product | Excel 6-month | Ours | Pipeline (requests) | Pipeline (requests + enquiries) | Growth adjustment (separate) |
+|---|---|---|---|---|---|---|
+| Singapore | A | 2,321.5 | 2,187.2 | - | - | - |
+| Singapore | B | 3.0 | 3.2 | 3.9 | 3.3 | - |
+| Singapore | C | 12.5 | 15.5 | - | - | - |
+| Malaysia | A | 1,749.0 | 2,023.9 | - | - | - |
+| Malaysia | B | 3.0 | 4.3 | 4.9 | 4.8 | - |
+| Malaysia | C | 34.5 | 24.0 | - | - | - |
+| Indonesia | A | 4,826.5 | 4,601.8 | - | - | - |
+| Indonesia | B | 3.0 | 4.3 | 3.3 | 3.7 | - |
+| Indonesia | C | 47.5 | 37.4 | - | - | - |
+| Vietnam | A | 6,260.0 | 6,443.5 | - | - | +952.0 units (+15% on Excel's plan) |
+| Vietnam | B | 6.5 | 4.4 | 4.7 | 4.7 | +1.0 units (+15% on Excel's plan) |
+| Vietnam | C | 59.5 | 48.9 | - | - | +9.0 units (+15% on Excel's plan) |
+| Thailand | A | 2,693.0 | 2,649.1 | - | - | - |
+| Thailand | B | 5.0 | 6.6 | 5.6 | 5.3 | - |
+| Thailand | C | 27.0 | 37.2 | - | - | - |
+
+**Flat and noisy** (fast-growing: none)
+
+| Country | Product | Excel 6-month | Ours | Pipeline (requests) | Pipeline (requests + enquiries) | Growth adjustment (separate) |
+|---|---|---|---|---|---|---|
+| Singapore | A | 2,427.5 | 2,467.5 | - | - | - |
+| Singapore | B | 3.0 | 4.0 | 3.1 | 2.9 | - |
+| Singapore | C | 9.5 | 11.8 | - | - | - |
+| Malaysia | A | 1,832.0 | 1,875.4 | - | - | - |
+| Malaysia | B | 3.5 | 4.4 | 4.9 | 4.9 | - |
+| Malaysia | C | 28.0 | 16.3 | - | - | - |
+| Indonesia | A | 3,274.0 | 3,388.6 | - | - | - |
+| Indonesia | B | 1.5 | 4.0 | 2.1 | 2.4 | - |
+| Indonesia | C | 30.5 | 46.5 | - | - | - |
+| Vietnam | A | 3,902.0 | 3,556.8 | - | - | - |
+| Vietnam | B | 3.5 | 3.3 | 2.5 | 2.8 | - |
+| Vietnam | C | 27.5 | 32.9 | - | - | - |
+| Thailand | A | 2,394.0 | 2,276.9 | - | - | - |
+| Thailand | B | 4.5 | 5.5 | 5.3 | 4.7 | - |
+| Thailand | C | 23.5 | 25.4 | - | - | - |
+
+**Sparse ordering** (fast-growing: Indonesia, Vietnam)
+
+| Country | Product | Excel 6-month | Ours | Pipeline (requests) | Pipeline (requests + enquiries) | Growth adjustment (separate) |
+|---|---|---|---|---|---|---|
+| Singapore | A | 698.5 | 770.1 | - | - | - |
+| Singapore | B | 4.0 | 2.8 | 2.0 | 2.4 | - |
+| Singapore | C | 10.5 | 14.5 | - | - | - |
+| Malaysia | A | 704.5 | 732.6 | - | - | - |
+| Malaysia | B | 2.5 | 1.8 | 1.7 | 2.1 | - |
+| Malaysia | C | 25.0 | 18.8 | - | - | - |
+| Indonesia | A | 1,886.0 | 1,731.3 | - | - | +351.2 units (+19% on Excel's plan) |
+| Indonesia | B | 2.5 | 1.7 | 1.5 | 1.7 | +0.5 units (+19% on Excel's plan) |
+| Indonesia | C | 46.5 | 38.2 | - | - | +8.7 units (+19% on Excel's plan) |
+| Vietnam | A | 2,234.5 | 2,192.5 | - | - | +287.5 units (+13% on Excel's plan) |
+| Vietnam | B | 4.5 | 3.4 | 4.7 | 3.5 | +0.6 units (+13% on Excel's plan) |
+| Vietnam | C | 57.0 | 51.1 | - | - | +7.3 units (+13% on Excel's plan) |
+| Thailand | A | 1,720.0 | 1,549.1 | - | - | - |
+| Thailand | B | 1.0 | 2.3 | 1.7 | 2.0 | - |
+| Thailand | C | 29.5 | 38.3 | - | - | - |
+
+_Generated by `uv run python notebooks/eval_pipeline.py`. Synthetic data, seed 42; every name, ID and amount is invented._
+<!-- pipeline:end -->
+
 <!-- regional:start -->
 ## Regional view and duplicate damage (PRD M8)
 

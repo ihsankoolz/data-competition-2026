@@ -36,6 +36,16 @@ export function formatSgt(iso: string): string {
   return `${WEEKDAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${hour12}:${minutes} ${period}`;
 }
 
+/**
+ * A due time for an approver: SGT words, plus the approver's own local time
+ * when it differs ("Wed 7 Oct 2026, 9:00 am SGT, 8:00 am in Vietnam"). The
+ * local part comes from the API (`due_local`), so it matches the notification
+ * text word for word. SG and MY approvers see the SGT words only.
+ */
+export function formatDue(iso: string, dueLocal?: string | null): string {
+  return dueLocal ? `${formatSgt(iso)} SGT, ${dueLocal}` : formatSgt(iso);
+}
+
 /** Day 1 is the day the demo clock was last reset. */
 export function demoDay(elapsedHours: number): number {
   return Math.floor(elapsedHours / 24) + 1;

@@ -1,0 +1,267 @@
+{
+ "scenario": "seasonal_trend",
+ "data": "clean",
+ "product": "B",
+ "constants": {
+  "LMAX": 2,
+  "CONVERSION_WINDOW": 12,
+  "REQUEST_FILL_MONTHS": 6,
+  "FALLBACK_EXCEL_MONTHS": 6,
+  "FLOOR": 0.0,
+  "H": 3,
+  "N_WINDOWS": 10,
+  "STEP": 1
+ },
+ "region": [
+  {
+   "method": "excel_6m",
+   "label": "Excel average (last 6 months)",
+   "wape_pct": 28.4,
+   "bias_pct": 18.7
+  },
+  {
+   "method": "excel_12m",
+   "label": "Excel average (last 12 months)",
+   "wape_pct": 26.1,
+   "bias_pct": 17.3
+  },
+  {
+   "method": "combination",
+   "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+   "wape_pct": 36.1,
+   "bias_pct": 16.3
+  },
+  {
+   "method": "pipeline_pr",
+   "label": "Pipeline plan (purchase requests x conversion rate)",
+   "wape_pct": 26.5,
+   "bias_pct": 15.8
+  },
+  {
+   "method": "pipeline_pr_enq",
+   "label": "Pipeline plan (purchase requests and enquiries, averaged)",
+   "wape_pct": 29.2,
+   "bias_pct": 20.6
+  }
+ ],
+ "countries_pooled": [
+  {
+   "method": "excel_6m",
+   "label": "Excel average (last 6 months)",
+   "wape_pct": 102.9,
+   "bias_pct": 18.7
+  },
+  {
+   "method": "excel_12m",
+   "label": "Excel average (last 12 months)",
+   "wape_pct": 99.5,
+   "bias_pct": 17.3
+  },
+  {
+   "method": "combination",
+   "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+   "wape_pct": 106.1,
+   "bias_pct": 16.7
+  },
+  {
+   "method": "pipeline_pr",
+   "label": "Pipeline plan (purchase requests x conversion rate)",
+   "wape_pct": 101.4,
+   "bias_pct": 15.8
+  },
+  {
+   "method": "pipeline_pr_enq",
+   "label": "Pipeline plan (purchase requests and enquiries, averaged)",
+   "wape_pct": 99.7,
+   "bias_pct": 20.6
+  }
+ ],
+ "per_country": [
+  {
+   "country": "SG",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 98.0,
+     "bias_pct": 39.4
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 94.7,
+     "bias_pct": 41.7
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 113.2,
+     "bias_pct": 50.4
+    },
+    {
+     "method": "pipeline_pr",
+     "label": "Pipeline plan (purchase requests x conversion rate)",
+     "wape_pct": 95.2,
+     "bias_pct": 36.0
+    },
+    {
+     "method": "pipeline_pr_enq",
+     "label": "Pipeline plan (purchase requests and enquiries, averaged)",
+     "wape_pct": 90.9,
+     "bias_pct": 36.7
+    }
+   ]
+  },
+  {
+   "country": "MY",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 104.2,
+     "bias_pct": 3.4
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 97.3,
+     "bias_pct": -21.6
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 94.8,
+     "bias_pct": -31.1
+    },
+    {
+     "method": "pipeline_pr",
+     "label": "Pipeline plan (purchase requests x conversion rate)",
+     "wape_pct": 110.9,
+     "bias_pct": -22.1
+    },
+    {
+     "method": "pipeline_pr_enq",
+     "label": "Pipeline plan (purchase requests and enquiries, averaged)",
+     "wape_pct": 103.0,
+     "bias_pct": -14.9
+    }
+   ]
+  },
+  {
+   "country": "ID",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 96.8,
+     "bias_pct": 52.4
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 107.1,
+     "bias_pct": 60.7
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 110.7,
+     "bias_pct": 63.9
+    },
+    {
+     "method": "pipeline_pr",
+     "label": "Pipeline plan (purchase requests x conversion rate)",
+     "wape_pct": 105.8,
+     "bias_pct": 69.1
+    },
+    {
+     "method": "pipeline_pr_enq",
+     "label": "Pipeline plan (purchase requests and enquiries, averaged)",
+     "wape_pct": 107.4,
+     "bias_pct": 65.4
+    }
+   ]
+  },
+  {
+   "country": "VN",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 85.3,
+     "bias_pct": -6.0
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 84.1,
+     "bias_pct": 6.0
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 93.9,
+     "bias_pct": -1.3
+    },
+    {
+     "method": "pipeline_pr",
+     "label": "Pipeline plan (purchase requests x conversion rate)",
+     "wape_pct": 90.0,
+     "bias_pct": 1.1
+    },
+    {
+     "method": "pipeline_pr_enq",
+     "label": "Pipeline plan (purchase requests and enquiries, averaged)",
+     "wape_pct": 87.2,
+     "bias_pct": 13.7
+    }
+   ]
+  },
+  {
+   "country": "TH",
+   "scores": [
+    {
+     "method": "excel_6m",
+     "label": "Excel average (last 6 months)",
+     "wape_pct": 125.0,
+     "bias_pct": 11.0
+    },
+    {
+     "method": "excel_12m",
+     "label": "Excel average (last 12 months)",
+     "wape_pct": 111.2,
+     "bias_pct": 8.5
+    },
+    {
+     "method": "combination",
+     "label": "Our method (ETS + Theta + seasonal naive, averaged)",
+     "wape_pct": 117.6,
+     "bias_pct": 11.9
+    },
+    {
+     "method": "pipeline_pr",
+     "label": "Pipeline plan (purchase requests x conversion rate)",
+     "wape_pct": 103.0,
+     "bias_pct": 3.6
+    },
+    {
+     "method": "pipeline_pr_enq",
+     "label": "Pipeline plan (purchase requests and enquiries, averaged)",
+     "wape_pct": 106.5,
+     "bias_pct": 9.2
+    }
+   ]
+  }
+ ],
+ "fallbacks": {
+  "purchase_request": {
+   "used": 0,
+   "of": 50
+  },
+  "enquiry": {
+   "used": 0,
+   "of": 50
+  }
+ },
+ "note": "Equipment (Product B), whole region: planning from purchase requests x a conversion rate was off by 26.5% of units, against 28.4% for the Excel 6-month average, 26.1% for the 12-month average and 36.1% for ours: effectively a tie with the Excel 12-month average. The test data creates requests from later orders, so this test favours a pipeline method; a pilot must measure the conversion rate on real data."
+}

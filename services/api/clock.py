@@ -8,7 +8,10 @@ time (`restore()`, called at API start-up). Advancing the clock also runs the SL
 
 import logging
 from datetime import datetime, timedelta, timezone
+from functools import lru_cache
+from pathlib import Path
 
+import yaml
 from fastapi import APIRouter
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -29,10 +32,55 @@ router = APIRouter()
 
 
 def format_sgt(when: datetime) -> str:
-    """"Wed 7 Oct 2026, 9:00 am" in Singapore time: the same words as the web's `formatSgt`."""
+    """ "Wed 7 Oct 2026, 9:00 am" in Singapore time: the same words as the web's `formatSgt`."""
     d = when.astimezone(SGT) if when.tzinfo else when
     hour = d.hour % 12 or 12
     return f"{d:%a} {d.day} {d:%b %Y}, {hour}:{d:%M} {'am' if d.hour < 12 else 'pm'}"
+
+
+# ---------------------------------------------------------------- local time (session 13)
+# Display only: due times stay in SGT and every SLA rule runs on SGT. Fixed UTC offsets from
+# config/timezones.yaml, NOT zoneinfo/tzdata: Windows has no system time zone database, no new
+# dependency is allowed, and none of the five countries uses daylight saving.
+
+TIMEZONES_PATH = Path(__file__).resolve().parents[2] / "config" / "timezones.yaml"
+
+
+@lru_cache(maxsize=1)
+def _timezones() -> dict[str, tuple[timezone, str]]:
+    cfg = yaml.safe_load(TIMEZONES_PATH.read_text(encoding="utf-8"))
+    return {
+        code.upper(): (timezone(timedelta(hours=float(c["utc_offset_hours"]))), str(c["phrase"]))
+        for code, c in cfg["countries"].items()
+    }
+
+
+def _clock_words(d: datetime) -> str:
+    hour = d.hour % 12 or 12
+    return f"{hour}:{d:%M} {'am' if d.hour < 12 else 'pm'}"
+
+
+def format_local(when: datetime, country: str | None) -> str | None:
+    """The local part of a due time, or None when the country keeps Singapore time (SG, MY) or
+    is unknown: "8:00 am in Vietnam", "8:00 am Jakarta time", and with the day when it differs
+    from the SGT day: "Wed 7 Oct, 11:30 pm in Vietnam"."""
+    zone = _timezones().get((country or "").upper())
+    if zone is None:
+        return None
+    tz, phrase = zone
+    sgt = when.astimezone(SGT) if when.tzinfo else when.replace(tzinfo=SGT)
+    local = sgt.astimezone(tz)
+    if local.utcoffset() == sgt.utcoffset():
+        return None
+    day = "" if local.date() == sgt.date() else f"{local:%a} {local.day} {local:%b}, "
+    return f"{day}{_clock_words(local)} {phrase}"
+
+
+def format_due(when: datetime, country: str | None) -> str:
+    """A due time for an approver in `country`: plain SGT words for SG and MY (unchanged), and
+    "Wed 7 Oct 2026, 9:00 am SGT, 8:00 am in Vietnam" where the local time differs."""
+    local = format_local(when, country)
+    return format_sgt(when) if local is None else f"{format_sgt(when)} SGT, {local}"
 
 
 def now() -> datetime:

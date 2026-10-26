@@ -12,7 +12,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { type DedupDecision, DuplicatePanel } from "@/components/dedup/duplicate-panel";
+import { ItemDuplicatePanel } from "@/components/dedup/item-duplicate-panel";
 import { useDedupCheck } from "@/components/dedup/use-dedup-check";
+import { useItemDedupCheck } from "@/components/dedup/use-item-dedup-check";
 import { FieldShell, isGroupField, SchemaInput } from "@/components/request-form/fields";
 import { RegistrationsInput } from "@/components/request-form/registrations";
 import { Button } from "@/components/ui/button";
@@ -75,12 +77,11 @@ export function ResubmitForm({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (detail.domain === "cost_center") return;
     let current = true;
     api
       .GET("/forms/{domain}", {
         path: { domain: detail.domain },
-        query: { country: detail.country },
+        query: { country: detail.country, req_id: detail.req_id },
       })
       .then(
         (s) => current && setSpec(s),
@@ -90,7 +91,7 @@ export function ResubmitForm({
     return () => {
       current = false;
     };
-  }, [detail.domain, detail.country]);
+  }, [detail.domain, detail.country, detail.req_id]);
 
   const schema = spec ? asFormSchema(spec) : null;
   const vendor = detail.domain === "vendor";
@@ -151,6 +152,9 @@ export function ResubmitForm({
   const isBusinessPartner = detail.domain === "customer" || vendor;
   const canDecideDuplicate =
     isBusinessPartner && (detail.allowed_actions ?? []).includes("decide_duplicate");
+  // Session 13: items are checked too, so a 409 on resubmit always has a way forward.
+  const canDecideItem =
+    detail.domain === "item" && (detail.allowed_actions ?? []).includes("decide_duplicate");
   const [decision, setDecision] = useState<DedupDecision | null>(() =>
     fromServer(detail.dedup_decision),
   );
@@ -169,7 +173,21 @@ export function ResubmitForm({
   });
   const dedupResult =
     dedup.status === "done" ? dedup.result : dedup.status === "checking" ? dedup.previous : null;
-  const blocked = canDecideDuplicate && !!dedupResult?.block_submit && !decision;
+  const itemDedup = useItemDedupCheck({
+    enabled: canDecideItem && decision?.action !== "link_to_existing",
+    fields: values,
+    requestId: detail.req_id,
+  });
+  const itemResult =
+    itemDedup.status === "done"
+      ? itemDedup.result
+      : itemDedup.status === "checking"
+        ? itemDedup.previous
+        : null;
+  const blocked =
+    ((canDecideDuplicate && !!dedupResult?.block_submit) ||
+      (canDecideItem && !!itemResult?.block_submit)) &&
+    !decision;
 
   async function decide(body: Schema<"DedupDecisionIn">): Promise<boolean> {
     setDeciding(true);
@@ -179,9 +197,9 @@ export function ResubmitForm({
         path: { req_id: detail.req_id },
         body,
       });
-      const name = (dedupResult?.candidates ?? []).find(
-        (c) => c.CardCode === body.card_code,
-      )?.CardName;
+      const name = canDecideItem
+        ? (itemResult?.candidates ?? []).find((c) => c.ItemCode === body.card_code)?.ItemName
+        : (dedupResult?.candidates ?? []).find((c) => c.CardCode === body.card_code)?.CardName;
       if (body.action === "link_to_existing") {
         setDecision({
           action: "link_to_existing",
@@ -245,12 +263,13 @@ export function ResubmitForm({
         className={cn(
           "grid items-start gap-8",
           canDecideDuplicate && "grid-cols-[minmax(0,1fr)_minmax(0,28rem)]",
+          canDecideItem && "grid-cols-[minmax(0,1fr)_minmax(0,24rem)]",
         )}
       >
         <div>
           {specError ? (
             <p className="text-sm text-muted-foreground">{specError}</p>
-          ) : detail.domain === "cost_center" ? null : !schema || !spec ? (
+          ) : !schema || !spec ? (
             <Skeleton className="h-48 w-full" />
           ) : (
             <fieldset className="grid grid-cols-2 gap-x-6 gap-y-5" disabled={sending}>
@@ -294,6 +313,19 @@ export function ResubmitForm({
             </fieldset>
           )}
         </div>
+        {canDecideItem && (
+          <aside data-testid="resubmit-dup-panel">
+            <ItemDuplicatePanel
+              state={itemDedup}
+              typedName={typeof values.ItemName === "string" ? values.ItemName : ""}
+              decision={decision}
+              busy={deciding}
+              error={decisionError}
+              onLink={(card_code) => void decide({ action: "link_to_existing", card_code })}
+              onNotDuplicate={(reason) => decide({ action: "not_duplicate", reason })}
+            />
+          </aside>
+        )}
         {canDecideDuplicate && (
           <aside data-testid="resubmit-dup-panel">
             <DuplicatePanel
@@ -316,7 +348,7 @@ export function ResubmitForm({
         <div className="flex items-center gap-4">
           <Button
             onClick={() => void resubmit()}
-            disabled={sending || blocked || (!spec && detail.domain !== "cost_center")}
+            disabled={sending || blocked || !spec}
             data-testid="resubmit"
           >
             {sending ? (

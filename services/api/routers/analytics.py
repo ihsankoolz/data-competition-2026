@@ -19,7 +19,7 @@ from pydantic import BaseModel, ValidationError
 from sqlalchemy import func, select
 
 from ds.analytics import cycle_time, regional
-from ds.forecasting import backtest
+from ds.forecasting import backtest, pipeline
 from services.api.db import models as m
 from services.api.db.session import REPO_ROOT, session_scope
 from services.api.schemas import (
@@ -56,7 +56,8 @@ def _summary() -> dict[str, Any]:
     result = backtest.forecast_summary(forecast_dir())
     if not result.get("runs"):
         raise FileNotFoundError("no precomputed forecast runs")
-    return result
+    # session 13: Product B pipeline plan and the next 3 months plan, on clean runs
+    return {**result, "runs": [pipeline.attach(r, forecast_dir()) for r in result["runs"]]}
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -131,7 +132,10 @@ def forecast_run(
     return _serve(
         "forecast",
         ForecastBacktest,
-        lambda: backtest.load_backtest(forecast_dir(), scenario, data),  # type: ignore[arg-type]
+        lambda: pipeline.attach(
+            backtest.load_backtest(forecast_dir(), scenario, data),  # type: ignore[arg-type]
+            forecast_dir(),
+        ),
     )
 
 

@@ -85,7 +85,7 @@
           "forms"
         ],
         "summary": "Get Form",
-        "description": "`country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns\nthe shorter foreign-vendor required list (D-020 #2).",
+        "description": "`country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns\nthe shorter foreign-vendor required list (D-020 #2). The admin's required-field toggles for\nthis record type and country are applied on top (session 13); with `req_id`, the toggles that\nrequest was created with are applied instead, so a resubmit shows the rules it started under.",
         "operationId": "getForm",
         "parameters": [
           {
@@ -117,6 +117,22 @@
                 }
               ],
               "title": "Country"
+            }
+          },
+          {
+            "name": "req_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Req Id"
             }
           }
         ],
@@ -1472,6 +1488,67 @@
         }
       }
     },
+    "/notifications/{notification_id}/teams-card": {
+      "get": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "Notification Teams Card",
+        "description": "The Adaptive Card (v1.5) a Teams reminder for this approval would be. Preview only:\nnothing is sent to Teams, and the card's buttons only work once Power Automate posts it.",
+        "operationId": "notificationTeamsCard",
+        "parameters": [
+          {
+            "name": "notification_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Notification Id"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdaptiveCard"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/reset-demo": {
       "post": {
         "tags": [
@@ -1803,6 +1880,205 @@
                     "$ref": "#/components/schemas/ConfigChange"
                   },
                   "title": "Response Listconfigchanges"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/required-fields": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Get Required Fields",
+        "description": "Every field on one form with whether it is required now, whether that is the standard,\nand whether it is locked (with the reason).",
+        "operationId": "getRequiredFields",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "customer",
+                "vendor",
+                "item",
+                "cost_center"
+              ],
+              "type": "string",
+              "title": "Domain"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "SG",
+                "MY",
+                "ID",
+                "VN",
+                "TH"
+              ],
+              "type": "string",
+              "title": "Country"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequiredFieldsView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Save Required Fields",
+        "description": "Switch fields for one record type x country. 403 unless MDM; 422 with a plain sentence for\na locked field (nothing is saved). Each change is audit-logged. New requests only.",
+        "operationId": "saveRequiredFields",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequiredFieldsSave"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequiredFieldsView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/required-field-changes": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List Required Field Changes",
+        "description": "The most recent required-field changes: who, when (simulated clock), what.",
+        "operationId": "listRequiredFieldChanges",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RequiredFieldChange"
+                  },
+                  "title": "Response Listrequiredfieldchanges"
                 }
               }
             }
@@ -2287,6 +2563,77 @@
         "title": "AccountListTotal",
         "description": "Totals for one account list over ALL qualifying customers, not only the rows shown."
       },
+      "AdaptiveCard": {
+        "properties": {
+          "$schema": {
+            "type": "string",
+            "const": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "title": "$Schema",
+            "default": "http://adaptivecards.io/schemas/adaptive-card.json"
+          },
+          "type": {
+            "type": "string",
+            "const": "AdaptiveCard",
+            "title": "Type",
+            "default": "AdaptiveCard"
+          },
+          "version": {
+            "type": "string",
+            "const": "1.5",
+            "title": "Version",
+            "default": "1.5"
+          },
+          "body": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/CardTextBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/CardFactSet"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "FactSet": "#/components/schemas/CardFactSet",
+                  "TextBlock": "#/components/schemas/CardTextBlock"
+                }
+              }
+            },
+            "type": "array",
+            "title": "Body"
+          },
+          "actions": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/CardActionSubmit"
+                },
+                {
+                  "$ref": "#/components/schemas/CardActionOpenUrl"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "Action.OpenUrl": "#/components/schemas/CardActionOpenUrl",
+                  "Action.Submit": "#/components/schemas/CardActionSubmit"
+                }
+              }
+            },
+            "type": "array",
+            "title": "Actions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "body",
+          "actions"
+        ],
+        "title": "AdaptiveCard",
+        "description": "The Teams reminder for one approval task, as Adaptive Card JSON (version 1.5)."
+      },
       "ApprovalDecisionIn": {
         "properties": {
           "action": {
@@ -2504,6 +2851,18 @@
             ],
             "title": "Sla State",
             "default": "on_track"
+          },
+          "due_local": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Local",
+            "description": "The due time in the approver's own time, e.g. '8:00 am in Vietnam'; null when it is the same as Singapore time (SG, MY)"
           }
         },
         "type": "object",
@@ -2806,6 +3165,184 @@
         ],
         "title": "Caption",
         "description": "A metric's plain-English definition, shown under it in the UI."
+      },
+      "CardActionOpenUrl": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "Action.OpenUrl",
+            "title": "Type",
+            "default": "Action.OpenUrl"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "url"
+        ],
+        "title": "CardActionOpenUrl"
+      },
+      "CardActionSubmit": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "Action.Submit",
+            "title": "Type",
+            "default": "Action.Submit"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "data": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Data",
+            "description": "Sent back to the bot: action, task_id, req_id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "data"
+        ],
+        "title": "CardActionSubmit"
+      },
+      "CardFact": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "value"
+        ],
+        "title": "CardFact"
+      },
+      "CardFactSet": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "FactSet",
+            "title": "Type",
+            "default": "FactSet"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/CardFact"
+            },
+            "type": "array",
+            "title": "Facts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "facts"
+        ],
+        "title": "CardFactSet"
+      },
+      "CardTextBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "TextBlock",
+            "title": "Type",
+            "default": "TextBlock"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "wrap": {
+            "type": "boolean",
+            "title": "Wrap",
+            "default": true
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Small",
+                  "Default",
+                  "Medium",
+                  "Large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Lighter",
+                  "Default",
+                  "Bolder"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "isSubtle": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issubtle"
+          },
+          "spacing": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "None",
+                  "Small",
+                  "Default",
+                  "Medium",
+                  "Large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spacing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "CardTextBlock"
       },
       "CleanupCluster": {
         "properties": {
@@ -3995,6 +4532,38 @@
             ],
             "title": "Bias Note",
             "description": "Plain-English caption for bias_by_country, whatever it shows"
+          },
+          "pipeline_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipeline Note",
+            "description": "One plain line: Product B planned from purchase requests vs the averages"
+          },
+          "pipeline_region": {
+            "items": {
+              "$ref": "#/components/schemas/PipelineScore"
+            },
+            "type": "array",
+            "title": "Pipeline Region",
+            "description": "Product B, whole region: WAPE and bias of all five methods",
+            "default": []
+          },
+          "plan_next_3m": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ForecastPlan"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Next 3 months plan per country x product (Oct-Dec 2026)"
           }
         },
         "type": "object",
@@ -4009,6 +4578,71 @@
           "honest_note"
         ],
         "title": "ForecastBacktest"
+      },
+      "ForecastPlan": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "enum": [
+              "seasonal_trend",
+              "flat_noisy",
+              "intermittent"
+            ],
+            "title": "Scenario"
+          },
+          "origin": {
+            "type": "string",
+            "title": "Origin",
+            "description": "Last full month used, YYYY-MM-01"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Months",
+            "description": "The 3 planned months, YYYY-MM-01"
+          },
+          "fast_growing": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "SG",
+                "MY",
+                "ID",
+                "VN",
+                "TH"
+              ]
+            },
+            "type": "array",
+            "title": "Fast Growing",
+            "description": "D-020 fast-growing countries"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PlanRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "captions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Caption"
+            },
+            "type": "object",
+            "title": "Captions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scenario",
+          "origin",
+          "months",
+          "fast_growing",
+          "rows",
+          "captions"
+        ],
+        "title": "ForecastPlan"
       },
       "ForecastPoint": {
         "properties": {
@@ -4243,6 +4877,18 @@
             "type": "array",
             "title": "Regulated Countries",
             "default": []
+          },
+          "sap_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sap Note",
+            "description": "A one-line note about what SAP does with this record type"
           }
         },
         "type": "object",
@@ -5031,6 +5677,12 @@
             "type": "string",
             "format": "date-time",
             "title": "Created At"
+          },
+          "teams_card": {
+            "type": "boolean",
+            "title": "Teams Card",
+            "description": "True when GET /notifications/{id}/teams-card has a card for this notification (an approval task assigned, reminded or escalated to this user)",
+            "default": false
           }
         },
         "type": "object",
@@ -5254,6 +5906,177 @@
         ],
         "title": "Persona",
         "description": "A seeded demo user. The web app sends the chosen `user_id` in the X-Acting-User header."
+      },
+      "PipelineScore": {
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "excel_6m",
+              "excel_12m",
+              "combination",
+              "pipeline_pr",
+              "pipeline_pr_enq"
+            ],
+            "title": "Method"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "wape_pct": {
+            "type": "number",
+            "title": "Wape Pct",
+            "description": "Error as % of volume; lower is better"
+          },
+          "bias_pct": {
+            "type": "number",
+            "title": "Bias Pct",
+            "description": "+ = over-forecast, - = under-forecast"
+          }
+        },
+        "type": "object",
+        "required": [
+          "method",
+          "label",
+          "wape_pct",
+          "bias_pct"
+        ],
+        "title": "PipelineScore"
+      },
+      "PlanRow": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "country_name": {
+            "type": "string",
+            "title": "Country Name"
+          },
+          "product": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C"
+            ],
+            "title": "Product"
+          },
+          "excel_6m": {
+            "type": "number",
+            "title": "Excel 6M",
+            "description": "Units, Oct-Dec together: 3 x the last 6 months' mean"
+          },
+          "excel_6m_monthly": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Excel 6M Monthly"
+          },
+          "combination": {
+            "type": "number",
+            "title": "Combination",
+            "description": "Units, Oct-Dec together: our combination"
+          },
+          "combination_monthly": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Combination Monthly"
+          },
+          "pipeline_pr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipeline Pr",
+            "description": "Product B only: units from purchase requests x conversion"
+          },
+          "pipeline_pr_enq": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipeline Pr Enq",
+            "description": "Product B only: requests and enquiries, averaged"
+          },
+          "growth_adjustment": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment",
+            "description": "Fast-growing countries only (D-020): units to add on top of the Excel plan; never included in another column"
+          },
+          "growth_adjustment_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment Pct",
+            "description": "How far Excel's plan came out below actual orders in the backtest (% of actual orders, all products together)"
+          },
+          "growth_adjustment_uplift_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment Uplift Pct",
+            "description": "The adjustment as a % of Excel's plan: -b / (1 + b); what closes the gap"
+          },
+          "growth_adjustment_caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment Caption"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "country_name",
+          "product",
+          "excel_6m",
+          "excel_6m_monthly",
+          "combination",
+          "combination_monthly"
+        ],
+        "title": "PlanRow"
       },
       "QuotedValue": {
         "properties": {
@@ -6060,6 +6883,248 @@
         "type": "object",
         "title": "RequestUpdate",
         "description": "Partial update of a DRAFT or INFO_REQUESTED request. Every changed field is audited."
+      },
+      "RequiredFieldChange": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At",
+            "description": "Simulated clock"
+          },
+          "who": {
+            "type": "string",
+            "title": "Who"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "field_label": {
+            "type": "string",
+            "title": "Field Label"
+          },
+          "now_required": {
+            "type": "boolean",
+            "title": "Now Required"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "description": "Plain English, e.g. 'Priya made Email required for Singapore customers'"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "at",
+          "who",
+          "domain",
+          "country",
+          "field",
+          "field_label",
+          "now_required",
+          "summary"
+        ],
+        "title": "RequiredFieldChange"
+      },
+      "RequiredFieldRow": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field",
+            "description": "Form field (SAP name), e.g. 'EmailAddress'"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "description": "Plain label, e.g. 'Email'"
+          },
+          "help": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Help",
+            "description": "The form's one-line hint for the field"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required",
+            "description": "True when the field is required right now"
+          },
+          "standard": {
+            "type": "boolean",
+            "title": "Standard",
+            "description": "True when the standard rules (YAML) require it"
+          },
+          "changed": {
+            "type": "boolean",
+            "title": "Changed",
+            "description": "True when this differs from the standard rules"
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "description": "True when it can never be made optional"
+          },
+          "locked_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locked Reason",
+            "description": "One plain line on why a locked field must stay required"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "label",
+          "required",
+          "standard",
+          "changed",
+          "locked"
+        ],
+        "title": "RequiredFieldRow"
+      },
+      "RequiredFieldSet": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "required"
+        ],
+        "title": "RequiredFieldSet"
+      },
+      "RequiredFieldsSave": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredFieldSet"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Fields",
+            "description": "The fields to switch. Fields left out are not touched"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "country",
+          "fields"
+        ],
+        "title": "RequiredFieldsSave"
+      },
+      "RequiredFieldsView": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredFieldRow"
+            },
+            "type": "array",
+            "title": "Fields",
+            "description": "In form order"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "description": "Plain-English caption: applies to new requests only"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "country",
+          "fields",
+          "note"
+        ],
+        "title": "RequiredFieldsView"
       },
       "ResetResult": {
         "properties": {

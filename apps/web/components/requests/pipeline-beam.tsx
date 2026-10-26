@@ -90,8 +90,10 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
         state: draft ? "current" : "done",
         caption: draft ? "A similar item exists: please check" : "Nothing needed a decision",
       });
-    else
+    else if (m === "none")
       Object.assign(golden, { state: draft ? "current" : "done", caption: "No existing item matched" });
+    // No result from the API (an older response): don't claim a check that did not run.
+    else Object.assign(golden, { state: draft ? "current" : "done", caption: "Not checked yet" });
   } else if (draft) Object.assign(golden, { state: "current", caption: "Not checked yet" });
   else if (linked)
     golden.caption = `Linked to ${d.linked_card_name ?? d.linked_card_code ?? "an existing record"}`;

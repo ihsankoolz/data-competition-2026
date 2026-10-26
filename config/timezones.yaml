@@ -1,0 +1,15 @@
+# Local time per country, for DISPLAY only (session 13). SLA logic never reads this file: due
+# times, reminders and escalations all run on the simulated clock in Singapore time (D-007).
+#
+# Fixed UTC offsets on purpose, not zoneinfo/tzdata: Windows has no system time zone database
+# and no new dependency is allowed. None of these five countries uses daylight saving, so a
+# fixed offset is exact.
+#
+# `phrase` is what follows the local time: "8:00 am in Vietnam". Indonesia has three time zones;
+# we use Western Indonesia Time (WIB, Jakarta), so it reads "8:00 am Jakarta time".
+countries:
+  SG: { utc_offset_hours: 8, phrase: "in Singapore" }
+  MY: { utc_offset_hours: 8, phrase: "in Malaysia" }
+  VN: { utc_offset_hours: 7, phrase: "in Vietnam" }
+  TH: { utc_offset_hours: 7, phrase: "in Thailand" }
+  ID: { utc_offset_hours: 7, phrase: "Jakarta time" }

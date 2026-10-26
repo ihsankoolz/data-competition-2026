@@ -13,7 +13,7 @@ import { DecisionActions } from "@/components/workflow/decision-actions";
 import { RequestFields } from "@/components/workflow/request-fields";
 import { useActingUserId } from "@/lib/acting-user";
 import { api, isApiError, type Schema } from "@/lib/api/client";
-import { formatSgt } from "@/lib/format";
+import { formatDue, formatSgt } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { requestContext, roleLabel } from "@/lib/workflow";
 
@@ -126,9 +126,11 @@ export function ApprovalsInbox() {
                     <span className="text-xs text-muted-foreground">
                       {requestContext(item.request)}, from {item.request.requestor_name}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground" data-testid="approval-due">
                       You decide as {roleLabel(item.task)}
-                      {item.task.due_at ? `, due ${formatSgt(item.task.due_at)}` : ""}
+                      {item.task.due_at
+                        ? `, due ${formatDue(item.task.due_at, item.task.due_local)}`
+                        : ""}
                     </span>
                   </button>
                 </li>

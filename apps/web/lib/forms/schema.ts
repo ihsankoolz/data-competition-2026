@@ -21,10 +21,11 @@ export const ENTITY_NAMES: Record<Entity, string> = {
   QTG: "QTG (service)",
 };
 
-export const FORM_DOMAINS: { value: Exclude<Domain, "cost_center">; label: string }[] = [
+export const FORM_DOMAINS: { value: Domain; label: string }[] = [
   { value: "customer", label: "Customer" },
   { value: "vendor", label: "Vendor" },
   { value: "item", label: "Item" },
+  { value: "cost_center", label: "Cost Center" },
 ];
 
 export type FieldSchema = {
@@ -52,6 +53,8 @@ export type FormSchema = {
   description?: string;
   "x-order": string[];
   "x-card-type"?: string;
+  /** A one-line note about what SAP does with this record type. */
+  "x-sap-note"?: string;
   properties: Record<string, FieldSchema>;
 };
 

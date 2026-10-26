@@ -65,7 +65,9 @@ export interface paths {
         /**
          * Get Form
          * @description `country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns
-         *     the shorter foreign-vendor required list (D-020 #2).
+         *     the shorter foreign-vendor required list (D-020 #2). The admin's required-field toggles for
+         *     this record type and country are applied on top (session 13); with `req_id`, the toggles that
+         *     request was created with are applied instead, so a resubmit shows the rules it started under.
          */
         get: operations["getForm"];
         put?: never;
@@ -439,6 +441,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/notifications/{notification_id}/teams-card": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Notification Teams Card
+         * @description The Adaptive Card (v1.5) a Teams reminder for this approval would be. Preview only:
+         *     nothing is sent to Teams, and the card's buttons only work once Power Automate posts it.
+         */
+        get: operations["notificationTeamsCard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/reset-demo": {
         parameters: {
             query?: never;
@@ -522,6 +545,52 @@ export interface paths {
          * @description The most recent rule changes: who, when (simulated clock), before and after.
          */
         get: operations["listConfigChanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/required-fields": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Required Fields
+         * @description Every field on one form with whether it is required now, whether that is the standard,
+         *     and whether it is locked (with the reason).
+         */
+        get: operations["getRequiredFields"];
+        /**
+         * Save Required Fields
+         * @description Switch fields for one record type x country. 403 unless MDM; 422 with a plain sentence for
+         *     a locked field (nothing is saved). Each change is audit-logged. New requests only.
+         */
+        put: operations["saveRequiredFields"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/required-field-changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Required Field Changes
+         * @description The most recent required-field changes: who, when (simulated clock), what.
+         */
+        get: operations["listRequiredFieldChanges"];
         put?: never;
         post?: never;
         delete?: never;
@@ -747,6 +816,34 @@ export interface components {
              */
             caption: string;
         };
+        /**
+         * AdaptiveCard
+         * @description The Teams reminder for one approval task, as Adaptive Card JSON (version 1.5).
+         */
+        AdaptiveCard: {
+            /**
+             * $Schema
+             * @default http://adaptivecards.io/schemas/adaptive-card.json
+             * @constant
+             */
+            $schema?: "http://adaptivecards.io/schemas/adaptive-card.json";
+            /**
+             * Type
+             * @default AdaptiveCard
+             * @constant
+             */
+            type?: "AdaptiveCard";
+            /**
+             * Version
+             * @default 1.5
+             * @constant
+             */
+            version?: "1.5";
+            /** Body */
+            body: (components["schemas"]["CardTextBlock"] | components["schemas"]["CardFactSet"])[];
+            /** Actions */
+            actions: (components["schemas"]["CardActionSubmit"] | components["schemas"]["CardActionOpenUrl"])[];
+        };
         /** ApprovalDecisionIn */
         ApprovalDecisionIn: {
             /**
@@ -821,6 +918,11 @@ export interface components {
              * @enum {string}
              */
             sla_state?: "on_track" | "reminded" | "overdue" | "done";
+            /**
+             * Due Local
+             * @description The due time in the approver's own time, e.g. '8:00 am in Vietnam'; null when it is the same as Singapore time (SG, MY)
+             */
+            due_local?: string | null;
         };
         /** Assumption */
         Assumption: {
@@ -953,6 +1055,75 @@ export interface components {
             title: string;
             /** Caption */
             caption: string;
+        };
+        /** CardActionOpenUrl */
+        CardActionOpenUrl: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "Action.OpenUrl";
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
+        };
+        /** CardActionSubmit */
+        CardActionSubmit: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "Action.Submit";
+            /** Title */
+            title: string;
+            /**
+             * Data
+             * @description Sent back to the bot: action, task_id, req_id
+             */
+            data: {
+                [key: string]: string;
+            };
+        };
+        /** CardFact */
+        CardFact: {
+            /** Title */
+            title: string;
+            /** Value */
+            value: string;
+        };
+        /** CardFactSet */
+        CardFactSet: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "FactSet";
+            /** Facts */
+            facts: components["schemas"]["CardFact"][];
+        };
+        /** CardTextBlock */
+        CardTextBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "TextBlock";
+            /** Text */
+            text: string;
+            /**
+             * Wrap
+             * @default true
+             */
+            wrap?: boolean;
+            /** Size */
+            size?: ("Small" | "Default" | "Medium" | "Large") | null;
+            /** Weight */
+            weight?: ("Lighter" | "Default" | "Bolder") | null;
+            /** Issubtle */
+            isSubtle?: boolean | null;
+            /** Spacing */
+            spacing?: ("None" | "Small" | "Default" | "Medium" | "Large") | null;
         };
         /** CleanupCluster */
         CleanupCluster: {
@@ -1555,6 +1726,48 @@ export interface components {
              * @description Plain-English caption for bias_by_country, whatever it shows
              */
             bias_note?: string | null;
+            /**
+             * Pipeline Note
+             * @description One plain line: Product B planned from purchase requests vs the averages
+             */
+            pipeline_note?: string | null;
+            /**
+             * Pipeline Region
+             * @description Product B, whole region: WAPE and bias of all five methods
+             * @default []
+             */
+            pipeline_region?: components["schemas"]["PipelineScore"][];
+            /** @description Next 3 months plan per country x product (Oct-Dec 2026) */
+            plan_next_3m?: components["schemas"]["ForecastPlan"] | null;
+        };
+        /** ForecastPlan */
+        ForecastPlan: {
+            /**
+             * Scenario
+             * @enum {string}
+             */
+            scenario: "seasonal_trend" | "flat_noisy" | "intermittent";
+            /**
+             * Origin
+             * @description Last full month used, YYYY-MM-01
+             */
+            origin: string;
+            /**
+             * Months
+             * @description The 3 planned months, YYYY-MM-01
+             */
+            months: string[];
+            /**
+             * Fast Growing
+             * @description D-020 fast-growing countries
+             */
+            fast_growing: ("SG" | "MY" | "ID" | "VN" | "TH")[];
+            /** Rows */
+            rows: components["schemas"]["PlanRow"][];
+            /** Captions */
+            captions: {
+                [key: string]: components["schemas"]["Caption"];
+            };
         };
         /** ForecastPoint */
         ForecastPoint: {
@@ -1665,6 +1878,11 @@ export interface components {
              * @default []
              */
             regulated_countries?: ("SG" | "MY" | "ID" | "VN" | "TH")[];
+            /**
+             * Sap Note
+             * @description A one-line note about what SAP does with this record type
+             */
+            sap_note?: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -2062,6 +2280,12 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /**
+             * Teams Card
+             * @description True when GET /notifications/{id}/teams-card has a card for this notification (an approval task assigned, reminded or escalated to this user)
+             * @default false
+             */
+            teams_card?: boolean;
         };
         /** OpsImpact */
         OpsImpact: {
@@ -2155,6 +2379,82 @@ export interface components {
              * @description ISO-2
              */
             country: string;
+        };
+        /** PipelineScore */
+        PipelineScore: {
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "excel_6m" | "excel_12m" | "combination" | "pipeline_pr" | "pipeline_pr_enq";
+            /** Label */
+            label: string;
+            /**
+             * Wape Pct
+             * @description Error as % of volume; lower is better
+             */
+            wape_pct: number;
+            /**
+             * Bias Pct
+             * @description + = over-forecast, - = under-forecast
+             */
+            bias_pct: number;
+        };
+        /** PlanRow */
+        PlanRow: {
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /** Country Name */
+            country_name: string;
+            /**
+             * Product
+             * @enum {string}
+             */
+            product: "A" | "B" | "C";
+            /**
+             * Excel 6M
+             * @description Units, Oct-Dec together: 3 x the last 6 months' mean
+             */
+            excel_6m: number;
+            /** Excel 6M Monthly */
+            excel_6m_monthly: number[];
+            /**
+             * Combination
+             * @description Units, Oct-Dec together: our combination
+             */
+            combination: number;
+            /** Combination Monthly */
+            combination_monthly: number[];
+            /**
+             * Pipeline Pr
+             * @description Product B only: units from purchase requests x conversion
+             */
+            pipeline_pr?: number | null;
+            /**
+             * Pipeline Pr Enq
+             * @description Product B only: requests and enquiries, averaged
+             */
+            pipeline_pr_enq?: number | null;
+            /**
+             * Growth Adjustment
+             * @description Fast-growing countries only (D-020): units to add on top of the Excel plan; never included in another column
+             */
+            growth_adjustment?: number | null;
+            /**
+             * Growth Adjustment Pct
+             * @description How far Excel's plan came out below actual orders in the backtest (% of actual orders, all products together)
+             */
+            growth_adjustment_pct?: number | null;
+            /**
+             * Growth Adjustment Uplift Pct
+             * @description The adjustment as a % of Excel's plan: -b / (1 + b); what closes the gap
+             */
+            growth_adjustment_uplift_pct?: number | null;
+            /** Growth Adjustment Caption */
+            growth_adjustment_caption?: string | null;
         };
         /**
          * QuotedValue
@@ -2535,6 +2835,131 @@ export interface components {
             };
             /** Country */
             country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
+        };
+        /** RequiredFieldChange */
+        RequiredFieldChange: {
+            /** Id */
+            id: number;
+            /**
+             * At
+             * Format: date-time
+             * @description Simulated clock
+             */
+            at: string;
+            /** Who */
+            who: string;
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /** Field */
+            field: string;
+            /** Field Label */
+            field_label: string;
+            /** Now Required */
+            now_required: boolean;
+            /**
+             * Summary
+             * @description Plain English, e.g. 'Priya made Email required for Singapore customers'
+             */
+            summary: string;
+        };
+        /** RequiredFieldRow */
+        RequiredFieldRow: {
+            /**
+             * Field
+             * @description Form field (SAP name), e.g. 'EmailAddress'
+             */
+            field: string;
+            /**
+             * Label
+             * @description Plain label, e.g. 'Email'
+             */
+            label: string;
+            /**
+             * Help
+             * @description The form's one-line hint for the field
+             */
+            help?: string | null;
+            /**
+             * Required
+             * @description True when the field is required right now
+             */
+            required: boolean;
+            /**
+             * Standard
+             * @description True when the standard rules (YAML) require it
+             */
+            standard: boolean;
+            /**
+             * Changed
+             * @description True when this differs from the standard rules
+             */
+            changed: boolean;
+            /**
+             * Locked
+             * @description True when it can never be made optional
+             */
+            locked: boolean;
+            /**
+             * Locked Reason
+             * @description One plain line on why a locked field must stay required
+             */
+            locked_reason?: string | null;
+        };
+        /** RequiredFieldSet */
+        RequiredFieldSet: {
+            /** Field */
+            field: string;
+            /** Required */
+            required: boolean;
+        };
+        /** RequiredFieldsSave */
+        RequiredFieldsSave: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Fields
+             * @description The fields to switch. Fields left out are not touched
+             */
+            fields: components["schemas"]["RequiredFieldSet"][];
+        };
+        /** RequiredFieldsView */
+        RequiredFieldsView: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Fields
+             * @description In form order
+             */
+            fields: components["schemas"]["RequiredFieldRow"][];
+            /**
+             * Note
+             * @description Plain-English caption: applies to new requests only
+             */
+            note: string;
         };
         /** ResetResult */
         ResetResult: {
@@ -3050,6 +3475,7 @@ export interface operations {
         parameters: {
             query?: {
                 country?: string | null;
+                req_id?: string | null;
             };
             header?: never;
             path: {
@@ -3775,6 +4201,40 @@ export interface operations {
             };
         };
     };
+    notificationTeamsCard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path: {
+                notification_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdaptiveCard"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     resetDemo: {
         parameters: {
             query?: never;
@@ -3954,6 +4414,109 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConfigChange"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRequiredFields: {
+        parameters: {
+            query: {
+                domain: "customer" | "vendor" | "item" | "cost_center";
+                country: "SG" | "MY" | "ID" | "VN" | "TH";
+            };
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequiredFieldsView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    saveRequiredFields: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequiredFieldsSave"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequiredFieldsView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listRequiredFieldChanges: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequiredFieldChange"][];
                 };
             };
             /** @description Validation Error */

@@ -2,8 +2,8 @@
 """Item duplicate check (session 13): normaliser, each layer, DEMO-02 stays a no-match, the
 hand-made evaluation is reproducible, and the check never links anything on its own (rule 6).
 
-The examples in the unit tests below were written before `ds/dedup/item_eval_set.yaml` and are
-deliberately different from its pairs, so the thresholds are not fitted to the evaluation set.
+The examples in the unit tests below are deliberately different from the pairs in
+`ds/dedup/item_eval_set.yaml`. The thresholds were committed (a0d13f1) before that set (675d1e1).
 """
 
 from __future__ import annotations

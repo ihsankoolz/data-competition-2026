@@ -1,7 +1,7 @@
 # Item duplicate check (session 13). Loaded by ds.dedup.items.ItemDedupConfig.load().
-# Rules only, no AI (domain rule 6). Thresholds were fixed on hand-written unit-test examples
-# (tests/test_item_dedup.py) BEFORE the hand-made evaluation set (ds/dedup/item_eval_set.yaml)
-# was written, and were not changed after looking at its results.
+# Rules only, no AI (domain rule 6). These thresholds and weights were committed in a0d13f1,
+# before the hand-made evaluation set (ds/dedup/item_eval_set.yaml) was committed in 675d1e1,
+# and are unchanged since (check with: git log -p ds/dedup/items.yaml).
 
 thresholds:
   likely: 0.85      # >= likely, or same catalogue number, or same registration in the same country
