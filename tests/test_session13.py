@@ -222,3 +222,61 @@ def test_teams_card_404s_for_unknown_other_peoples_and_non_task_notifications(cl
     assert info["task_id"] == lan_task and info["teams_card"] is False
     r = card_for(client, "amy", info["notification_id"])
     assert r.status_code == 404 and "not about an approval" in r.json()["detail"]
+
+
+# ---------------------------------------------------------------- part 3: told when it's live
+
+
+@pytest.mark.parametrize(
+    ("domain", "tail"),
+    [
+        ("item", "so you can raise sales orders now."),
+        ("customer", "so you can raise sales orders for them now."),
+        ("vendor", "so you can raise purchase orders now."),
+        ("cost_center", "so you can post costs to it now."),
+    ],
+)
+def test_live_message_says_what_the_requestor_can_do_next(domain, tail):
+    from services.api.workflow.publishing import live_message
+
+    assert live_message(domain, "X", "CODE-1") == f"'X' is live in SAP as CODE-1, {tail}"
+
+
+def test_amy_is_told_demo02_is_live_and_she_can_raise_sales_orders(client, sap_mock):
+    import re
+
+    from tests.test_route_snapshot import _from_email
+
+    domain, fields = _from_email(client, "DEMO-02", "amy")
+    assert domain == "item"
+    fields = {
+        **fields,
+        "U_IVD": "tYES",
+        "selling_countries": ["SG", "MY", "VN"],
+        "registrations": [
+            {"country": c, "reg_no": f"R-{c}", "expiry_date": "2030-12-31"}
+            for c in ("SG", "MY", "VN")
+        ],
+        "product_family": "A",
+    }
+    req = new_request(client, "amy", "item", "SPD", "SG", fields)
+    d = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).json()
+    for (role, country), t in tasks_by_role(d).items():
+        if t["stage"] == 1:
+            r = decide(client, t["task_id"], t["assignee_user_id"])
+            assert r.status_code == 200, (role, country, r.text)
+    r = client.post(f"/requests/{d['req_id']}/publish", headers=H("priya"))
+    assert r.status_code == 200, r.text
+    assert r.json()["state"] == "ACTIVE"
+    (note,) = notes_for(client, "amy", d["req_id"], "published")
+    title = d["title"]
+    assert title.startswith("Malaria")
+    m = re.fullmatch(
+        rf"'{re.escape(title)}' is live in SAP as (A-MAL-\d{{3}}), so you can raise sales "
+        r"orders now\.",
+        note["message"],
+    )
+    assert m, note["message"]
+    code = m.group(1)
+    assert client.get(f"/requests/{d['req_id']}", headers=H("amy")).json()["sap_publish"]
+    assert code in client.get(f"/requests/{d['req_id']}/audit", headers=H("amy")).text
