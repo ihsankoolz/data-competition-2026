@@ -407,8 +407,9 @@ PLAN_CAPTIONS: dict[str, dict[str, str]] = {
     },
     "growth_adjustment": {
         "title": "Growth adjustment",
-        "caption": "Only for fast-growing markets: the units the Excel average fell short by in "
-        "our backtest, shown on its own. It is not added into any other column.",
+        "caption": "Only for fast-growing markets: the extra units, as a % of Excel's plan, that "
+        "close the gap by which Excel's plan came out below actual orders in our backtest. "
+        "Shown on its own, not added into any other column.",
     },
 }
 

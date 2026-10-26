@@ -5461,7 +5461,19 @@
               }
             ],
             "title": "Growth Adjustment Pct",
-            "description": "How far the Excel average planned this country too low (%)"
+            "description": "How far Excel's plan came out below actual orders in the backtest (% of actual orders, all products together)"
+          },
+          "growth_adjustment_uplift_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment Uplift Pct",
+            "description": "The adjustment as a % of Excel's plan: -b / (1 + b); what closes the gap"
           },
           "growth_adjustment_caption": {
             "anyOf": [

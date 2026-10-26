@@ -93,6 +93,33 @@ def verdict(res: dict) -> str:
     return "; ".join(parts)
 
 
+def requested_share(scenario: str) -> tuple[float, int]:
+    """Descriptive check of the TEST DATA only, never used by the forecast: the % of Product B
+    order documents that a purchase request 0-2 calendar months earlier was generated from.
+    This is the one place that reads the generator's hidden request-to-order link
+    (`converted_doc_num`); ds/forecasting/pipeline.py never reads it (a test checks that)."""
+    import pandas as pd
+
+    d = bt.scenario_dir(scenario)
+    items = pd.read_csv(d / "items.csv", dtype=str)
+    fam = dict(zip(items["ItemCode"], items["product_family"], strict=True))
+    orders = pd.read_csv(d / "orders.csv", dtype={"item_code": str})
+    enq = pd.read_csv(d / "enquiries.csv", dtype={"item_code": str})
+    b_orders = orders[orders["item_code"].map(fam) == pl.PRODUCT]
+    om = pd.to_datetime(b_orders["doc_date"]).dt.to_period("M")
+    order_month = dict(zip(b_orders["doc_num"], om, strict=True))
+    prs = enq[(enq["kind"] == "purchase_request") & (enq["item_code"].map(fam) == pl.PRODUCT)]
+    prs = prs.dropna(subset=["converted_doc_num"])
+    linked = set()
+    for doc, when in zip(prs["converted_doc_num"].astype(int), prs["doc_date"], strict=True):
+        if doc in order_month:
+            lag = (order_month[doc] - pd.Period(when, "M")).n
+            if 0 <= lag <= pl.LMAX:
+                linked.add(doc)
+    n = len(order_month)
+    return (100.0 * len(linked) / n if n else 0.0), n
+
+
 def plan_table(plan: dict) -> list[str]:
     L = [
         "| Country | Product | Excel 6-month | Ours | Pipeline (requests) "
@@ -107,8 +134,8 @@ def plan_table(plan: dict) -> list[str]:
         adj = (
             "-"
             if r["growth_adjustment"] is None
-            else f"+{r['growth_adjustment']:,.1f} "
-            f"(Excel planned {r['growth_adjustment_pct']:.0f}% low)"
+            else f"+{r['growth_adjustment']:,.1f} units "
+            f"(+{r['growth_adjustment_uplift_pct']:.0f}% on Excel's plan)"
         )
         L.append(
             f"| {r['country_name']} | {r['product']} | {u(r['excel_6m'])} | {u(r['combination'])} "
@@ -119,6 +146,14 @@ def plan_table(plan: dict) -> list[str]:
 
 def section(res: dict, plans: dict) -> str:
     st = by(res["seasonal_trend"]["region"])
+    share = {s: requested_share(s) for s in bt.SCENARIOS}
+    adj = [r for r in plans["seasonal_trend"]["rows"] if r["growth_adjustment"] is not None]
+    example = (
+        f" ({adj[0]['country_name']}, demo: {adj[0]['growth_adjustment_pct']:.0f}% below actual "
+        f"-> +{adj[0]['growth_adjustment_uplift_pct']:.0f}% on Excel's plan)"
+        if adj
+        else ""
+    )
     fb_used = {s: sum(res[x]["fallbacks"][s]["used"] for x in bt.SCENARIOS) for s in pl.SIGNALS}
     fb_of = sum(res[x]["fallbacks"]["purchase_request"]["of"] for x in bt.SCENARIOS)
     reg = {s: by(res[s]["region"]) for s in bt.SCENARIOS}
@@ -172,9 +207,15 @@ def section(res: dict, plans: dict) -> str:
         "",
         "> **Read this first: the test data favours this method.** The generator creates "
         "requests from later orders (data-spec §7 and §12.1, `ds/generator/demand.py` "
-        "`build_enquiries`): about 45% of Product B orders have a purchase request 0-2 months "
-        "before them, with nearly the same quantity. So this test favours a pipeline method. A "
-        "pilot must measure the conversion rate on real data before anyone plans from it.",
+        f"`build_enquiries`): {share['seasonal_trend'][0]:.1f}% of Product B orders in the demo "
+        f"data ({min(v[0] for v in share.values()):.1f}% to "
+        f"{max(v[0] for v in share.values()):.1f}% across the 3 scenarios) have a purchase "
+        "request 0-2 months before them, with nearly the same quantity (the generator setting "
+        "is 45% of orders, `pr_per_order` B = 0.45; requests that would fall before Oct 2023 "
+        "are not generated). Measured here from the generator's hidden request-to-order link "
+        "(`converted_doc_num`), read only for this description of the test data, never by the "
+        "forecast. So this test favours a pipeline method. A pilot must measure the conversion "
+        "rate on real data before anyone plans from it.",
         "",
         "### Region total, Product B",
         "",
@@ -240,9 +281,10 @@ def section(res: dict, plans: dict) -> str:
         "product. *Excel 6-month* = 3 x the average of the last 6 months. *Ours* = the M9 "
         "combination fitted on all 36 months. *Pipeline* = the plan above, equipment only. "
         "*Growth adjustment* = shown only for countries that meet the D-020 fast-growing "
-        "definition in that scenario: the units that close the gap the backtest measured, where "
-        "the Excel 6-month average planned that country too low (all products pooled). It is a "
-        "separate number; no other column includes it.",
+        "definition in that scenario. In the backtest, Excel's plan for that country came out "
+        "b% below actual orders (all products together); adding b / (1 - b) to the Excel plan "
+        f"closes that gap{example}. Shown as units and as % of Excel's plan, on its own; no "
+        "other column includes it.",
         "",
     ]
     for s in bt.SCENARIOS:

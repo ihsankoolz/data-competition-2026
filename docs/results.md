@@ -535,7 +535,7 @@ Honest notes generated with each run (shown in the app):
 - *Fallback:* if a country had no pipeline at all in the 12-month window, that plan would fall back to the Excel 6-month average. It was used 0 times for requests and 0 times for enquiries, out of 150 country x forecast-date plans (3 scenarios x 5 countries x 10 dates).
 - *Same test as M9:* the same 10 forecast dates, 3 months ahead, the same WAPE and bias pooled over every country, date and month ahead. Clean data, all 3 scenarios, seed 42. Excel 6-month, Excel 12-month and ours are read from the stored M9 results, not refitted.
 
-> **Read this first: the test data favours this method.** The generator creates requests from later orders (data-spec §7 and §12.1, `ds/generator/demand.py` `build_enquiries`): about 45% of Product B orders have a purchase request 0-2 months before them, with nearly the same quantity. So this test favours a pipeline method. A pilot must measure the conversion rate on real data before anyone plans from it.
+> **Read this first: the test data favours this method.** The generator creates requests from later orders (data-spec §7 and §12.1, `ds/generator/demand.py` `build_enquiries`): 44.5% of Product B orders in the demo data (44.5% to 45.6% across the 3 scenarios) have a purchase request 0-2 months before them, with nearly the same quantity (the generator setting is 45% of orders, `pr_per_order` B = 0.45; requests that would fall before Oct 2023 are not generated). Measured here from the generator's hidden request-to-order link (`converted_doc_num`), read only for this description of the test data, never by the forecast. So this test favours a pipeline method. A pilot must measure the conversion rate on real data before anyone plans from it.
 
 ### Region total, Product B
 
@@ -577,7 +577,7 @@ One country's equipment orders are a handful of units a month, so every method m
 
 ### Next 3 months plan (Oct - Dec 2026)
 
-Units for the 3 months together, from the last full month (Sep 2026), per country x product. *Excel 6-month* = 3 x the average of the last 6 months. *Ours* = the M9 combination fitted on all 36 months. *Pipeline* = the plan above, equipment only. *Growth adjustment* = shown only for countries that meet the D-020 fast-growing definition in that scenario: the units that close the gap the backtest measured, where the Excel 6-month average planned that country too low (all products pooled). It is a separate number; no other column includes it.
+Units for the 3 months together, from the last full month (Sep 2026), per country x product. *Excel 6-month* = 3 x the average of the last 6 months. *Ours* = the M9 combination fitted on all 36 months. *Pipeline* = the plan above, equipment only. *Growth adjustment* = shown only for countries that meet the D-020 fast-growing definition in that scenario. In the backtest, Excel's plan for that country came out b% below actual orders (all products together); adding b / (1 - b) to the Excel plan closes that gap (Vietnam, demo: 13% below actual -> +15% on Excel's plan). Shown as units and as % of Excel's plan, on its own; no other column includes it.
 
 **Seasonal + growth (demo)** (fast-growing: Vietnam)
 
@@ -592,9 +592,9 @@ Units for the 3 months together, from the last full month (Sep 2026), per countr
 | Indonesia | A | 4,826.5 | 4,601.8 | - | - | - |
 | Indonesia | B | 3.0 | 4.3 | 3.3 | 3.7 | - |
 | Indonesia | C | 47.5 | 37.4 | - | - | - |
-| Vietnam | A | 6,260.0 | 6,443.5 | - | - | +952.0 (Excel planned 13% low) |
-| Vietnam | B | 6.5 | 4.4 | 4.7 | 4.7 | +1.0 (Excel planned 13% low) |
-| Vietnam | C | 59.5 | 48.9 | - | - | +9.0 (Excel planned 13% low) |
+| Vietnam | A | 6,260.0 | 6,443.5 | - | - | +952.0 units (+15% on Excel's plan) |
+| Vietnam | B | 6.5 | 4.4 | 4.7 | 4.7 | +1.0 units (+15% on Excel's plan) |
+| Vietnam | C | 59.5 | 48.9 | - | - | +9.0 units (+15% on Excel's plan) |
 | Thailand | A | 2,693.0 | 2,649.1 | - | - | - |
 | Thailand | B | 5.0 | 6.6 | 5.6 | 5.3 | - |
 | Thailand | C | 27.0 | 37.2 | - | - | - |
@@ -629,12 +629,12 @@ Units for the 3 months together, from the last full month (Sep 2026), per countr
 | Malaysia | A | 704.5 | 732.6 | - | - | - |
 | Malaysia | B | 2.5 | 1.8 | 1.7 | 2.1 | - |
 | Malaysia | C | 25.0 | 18.8 | - | - | - |
-| Indonesia | A | 1,886.0 | 1,731.3 | - | - | +351.2 (Excel planned 16% low) |
-| Indonesia | B | 2.5 | 1.7 | 1.5 | 1.7 | +0.5 (Excel planned 16% low) |
-| Indonesia | C | 46.5 | 38.2 | - | - | +8.7 (Excel planned 16% low) |
-| Vietnam | A | 2,234.5 | 2,192.5 | - | - | +287.5 (Excel planned 11% low) |
-| Vietnam | B | 4.5 | 3.4 | 4.7 | 3.5 | +0.6 (Excel planned 11% low) |
-| Vietnam | C | 57.0 | 51.1 | - | - | +7.3 (Excel planned 11% low) |
+| Indonesia | A | 1,886.0 | 1,731.3 | - | - | +351.2 units (+19% on Excel's plan) |
+| Indonesia | B | 2.5 | 1.7 | 1.5 | 1.7 | +0.5 units (+19% on Excel's plan) |
+| Indonesia | C | 46.5 | 38.2 | - | - | +8.7 units (+19% on Excel's plan) |
+| Vietnam | A | 2,234.5 | 2,192.5 | - | - | +287.5 units (+13% on Excel's plan) |
+| Vietnam | B | 4.5 | 3.4 | 4.7 | 3.5 | +0.6 units (+13% on Excel's plan) |
+| Vietnam | C | 57.0 | 51.1 | - | - | +7.3 units (+13% on Excel's plan) |
 | Thailand | A | 1,720.0 | 1,549.1 | - | - | - |
 | Thailand | B | 1.0 | 2.3 | 1.7 | 2.0 | - |
 | Thailand | C | 29.5 | 38.3 | - | - | - |

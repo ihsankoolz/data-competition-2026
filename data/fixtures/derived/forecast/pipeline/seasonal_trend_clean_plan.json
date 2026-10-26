@@ -30,6 +30,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -52,6 +53,7 @@
    "pipeline_pr_enq": 3.3,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -74,6 +76,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -96,6 +99,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -118,6 +122,7 @@
    "pipeline_pr_enq": 4.8,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -140,6 +145,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -162,6 +168,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -184,6 +191,7 @@
    "pipeline_pr_enq": 3.7,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -206,6 +214,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -228,7 +237,8 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": 952.0,
    "growth_adjustment_pct": 13.2,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 13% low (orders grew 45% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 15.2,
+   "growth_adjustment_caption": "Excel's plan for Vietnam came out 13% below actual orders in the backtest (all products together). Adding 15% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "VN",
@@ -250,7 +260,8 @@
    "pipeline_pr_enq": 4.7,
    "growth_adjustment": 1.0,
    "growth_adjustment_pct": 13.2,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 13% low (orders grew 45% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 15.2,
+   "growth_adjustment_caption": "Excel's plan for Vietnam came out 13% below actual orders in the backtest (all products together). Adding 15% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "VN",
@@ -272,7 +283,8 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": 9.0,
    "growth_adjustment_pct": 13.2,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 13% low (orders grew 45% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 15.2,
+   "growth_adjustment_caption": "Excel's plan for Vietnam came out 13% below actual orders in the backtest (all products together). Adding 15% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "TH",
@@ -294,6 +306,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -316,6 +329,7 @@
    "pipeline_pr_enq": 5.3,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -338,6 +352,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   }
  ]

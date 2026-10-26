@@ -11,7 +11,9 @@ Per country x product (15 rows) and per scenario, side by side and never blended
   in that scenario (bias.fast_growing): the backtest measured how far the Excel 6-month average
   planned that country too low (all products pooled, clean data, bias_by_country). The
   adjustment is the number of units that closes that measured gap on the Excel plan:
-  excel_3m x (-b) / (1 + b), for b < 0. It is its own column; no other column includes it.
+  excel_3m x (-b) / (1 + b), for b < 0. b is measured against actual orders, so the uplift on
+  the Excel plan, -b / (1 + b), is larger than |b| (VN demo: 13.2% low -> +15.2% on Excel's
+  plan); both are stored. It is its own column; no other column includes it.
 
 Units are rounded to 0.1 so the JSON is byte-stable. Target = confirmed POs only (rule 9).
 """
@@ -106,6 +108,7 @@ def build_plan(scenario: str, derived_dir: Path = bt.DERIVED) -> dict[str, Any]:
                 "pipeline_pr_enq": None,
                 "growth_adjustment": None,
                 "growth_adjustment_pct": None,
+                "growth_adjustment_uplift_pct": None,
                 "growth_adjustment_caption": None,
             }
             if p == pl.PRODUCT:
@@ -113,13 +116,15 @@ def build_plan(scenario: str, derived_dir: Path = bt.DERIVED) -> dict[str, Any]:
                 row["pipeline_pr_enq"] = _r(sum(pipe[c].plans["pipeline_pr_enq"]))
             b = excel_bias.get(c)
             if c in fast and b is not None and b < 0:
-                add = excel_m * PLAN_MONTHS * (-b / 100.0) / (1.0 + b / 100.0)
-                row["growth_adjustment"] = _r(add)
-                row["growth_adjustment_pct"] = round(-b, 1)
+                uplift = (-b / 100.0) / (1.0 + b / 100.0)  # share of the Excel plan to add
+                row["growth_adjustment"] = _r(excel_m * PLAN_MONTHS * uplift)
+                row["growth_adjustment_pct"] = round(-b, 1)  # Excel below actual, % of actual
+                row["growth_adjustment_uplift_pct"] = round(100.0 * uplift, 1)
                 row["growth_adjustment_caption"] = (
-                    f"From the backtest: the Excel average planned {bt.COUNTRY_NAMES[c]} "
-                    f"{-b:.0f}% low (orders grew {gr[(c, None)]:.0f}% last year). Add this many "
-                    f"units on top of the Excel plan to close that gap."
+                    f"Excel's plan for {bt.COUNTRY_NAMES[c]} came out {-b:.0f}% below actual "
+                    f"orders in the backtest (all products together). Adding "
+                    f"{100.0 * uplift:.0f}% to the Excel plan closes that gap. Shown on its own, "
+                    f"not added into any other column."
                 )
             rows.append(row)
     return {

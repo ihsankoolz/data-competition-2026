@@ -31,6 +31,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -53,6 +54,7 @@
    "pipeline_pr_enq": 2.4,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -75,6 +77,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -97,6 +100,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -119,6 +123,7 @@
    "pipeline_pr_enq": 2.1,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -141,6 +146,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -163,7 +169,8 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": 351.2,
    "growth_adjustment_pct": 15.7,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Indonesia 16% low (orders grew 52% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 18.6,
+   "growth_adjustment_caption": "Excel's plan for Indonesia came out 16% below actual orders in the backtest (all products together). Adding 19% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "ID",
@@ -185,7 +192,8 @@
    "pipeline_pr_enq": 1.7,
    "growth_adjustment": 0.5,
    "growth_adjustment_pct": 15.7,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Indonesia 16% low (orders grew 52% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 18.6,
+   "growth_adjustment_caption": "Excel's plan for Indonesia came out 16% below actual orders in the backtest (all products together). Adding 19% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "ID",
@@ -207,7 +215,8 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": 8.7,
    "growth_adjustment_pct": 15.7,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Indonesia 16% low (orders grew 52% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 18.6,
+   "growth_adjustment_caption": "Excel's plan for Indonesia came out 16% below actual orders in the backtest (all products together). Adding 19% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "VN",
@@ -229,7 +238,8 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": 287.5,
    "growth_adjustment_pct": 11.4,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 11% low (orders grew 36% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 12.9,
+   "growth_adjustment_caption": "Excel's plan for Vietnam came out 11% below actual orders in the backtest (all products together). Adding 13% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "VN",
@@ -251,7 +261,8 @@
    "pipeline_pr_enq": 3.5,
    "growth_adjustment": 0.6,
    "growth_adjustment_pct": 11.4,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 11% low (orders grew 36% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 12.9,
+   "growth_adjustment_caption": "Excel's plan for Vietnam came out 11% below actual orders in the backtest (all products together). Adding 13% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "VN",
@@ -273,7 +284,8 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": 7.3,
    "growth_adjustment_pct": 11.4,
-   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 11% low (orders grew 36% last year). Add this many units on top of the Excel plan to close that gap."
+   "growth_adjustment_uplift_pct": 12.9,
+   "growth_adjustment_caption": "Excel's plan for Vietnam came out 11% below actual orders in the backtest (all products together). Adding 13% to the Excel plan closes that gap. Shown on its own, not added into any other column."
   },
   {
    "country": "TH",
@@ -295,6 +307,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -317,6 +330,7 @@
    "pipeline_pr_enq": 2.0,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   },
   {
@@ -339,6 +353,7 @@
    "pipeline_pr_enq": null,
    "growth_adjustment": null,
    "growth_adjustment_pct": null,
+   "growth_adjustment_uplift_pct": null,
    "growth_adjustment_caption": null
   }
  ]
