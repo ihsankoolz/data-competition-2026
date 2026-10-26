@@ -1,5 +1,6 @@
 import {
   ChartColumnBig,
+  Combine,
   FilePlus2,
   Gauge,
   Inbox,
@@ -71,6 +72,13 @@ export const NAV_GROUPS: NavGroup[] = [
         description:
           "Approved records sent to SAP Business One, with what we sent and what SAP saved shown side by side.",
         icon: SendHorizontal,
+      },
+      {
+        href: "/cleanup",
+        label: "Clean-up queue",
+        description:
+          "Existing customer records our duplicate check thinks are the same customer. Confirm each link or mark it as not the same.",
+        icon: Combine,
       },
     ],
   },

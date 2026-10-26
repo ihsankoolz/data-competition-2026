@@ -2003,6 +2003,142 @@
         }
       }
     },
+    "/cleanup/clusters": {
+      "get": {
+        "tags": [
+          "cleanup"
+        ],
+        "summary": "List Clusters",
+        "description": "Every proposed group, most certain first (same tax ID first, then the highest score of\nthe weakest link), with its records side by side, the reasons and the review status.",
+        "operationId": "listCleanupClusters",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(all|not_reviewed|reviewed)$",
+              "description": "all, not_reviewed, reviewed",
+              "default": "all",
+              "title": "Status"
+            },
+            "description": "all, not_reviewed, reviewed"
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleanupQueue"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cleanup/clusters/{cluster_id}/decision": {
+      "post": {
+        "tags": [
+          "cleanup"
+        ],
+        "summary": "Decide Cluster",
+        "description": "Confirm the link, or mark the group as not the same customer (a reason is required).\nOnly the MDM analyst decides. Stored, audited, and never fed into the regional numbers.",
+        "operationId": "decideCleanupCluster",
+        "parameters": [
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cluster Id"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CleanupDecisionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleanupDecisionResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -2608,6 +2744,397 @@
         ],
         "title": "Caption",
         "description": "A metric's plain-English definition, shown under it in the UI."
+      },
+      "CleanupCluster": {
+        "properties": {
+          "cluster_id": {
+            "type": "string",
+            "title": "Cluster Id",
+            "description": "Same id as the golden cluster in the after-merge view"
+          },
+          "certainty": {
+            "type": "string",
+            "title": "Certainty",
+            "description": "Plain-English summary of how certain the check is"
+          },
+          "all_tax_id_match": {
+            "type": "boolean",
+            "title": "All Tax Id Match"
+          },
+          "weakest_score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Weakest Score"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/CleanupRecord"
+            },
+            "type": "array",
+            "title": "Records"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/CleanupLink"
+            },
+            "type": "array",
+            "title": "Links"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_reviewed",
+              "confirmed",
+              "not_same"
+            ],
+            "title": "Status"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CleanupDecisionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "cluster_id",
+          "certainty",
+          "all_tax_id_match",
+          "weakest_score",
+          "records",
+          "links",
+          "status"
+        ],
+        "title": "CleanupCluster"
+      },
+      "CleanupDecisionIn": {
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "confirm",
+              "not_same"
+            ],
+            "title": "Decision"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Required for not_same, at least 10 characters: why these are different customers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "decision"
+        ],
+        "title": "CleanupDecisionIn",
+        "description": "A person's decision on one proposed group. The AI never makes it (rule 6)."
+      },
+      "CleanupDecisionOut": {
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "confirm",
+              "not_same"
+            ],
+            "title": "Decision"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "decided_by": {
+            "type": "string",
+            "title": "Decided By",
+            "description": "Name of the person who decided"
+          },
+          "decided_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Decided At",
+            "description": "Simulated-clock time of the decision"
+          }
+        },
+        "type": "object",
+        "required": [
+          "decision",
+          "decided_by",
+          "decided_at"
+        ],
+        "title": "CleanupDecisionOut"
+      },
+      "CleanupDecisionResult": {
+        "properties": {
+          "cluster": {
+            "$ref": "#/components/schemas/CleanupCluster"
+          },
+          "reviewed": {
+            "type": "integer",
+            "title": "Reviewed"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cluster",
+          "reviewed",
+          "total"
+        ],
+        "title": "CleanupDecisionResult"
+      },
+      "CleanupLink": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "title": "A"
+          },
+          "b": {
+            "type": "string",
+            "title": "B"
+          },
+          "score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "description": "Duplicate-check score, 0 to 1"
+          },
+          "tax_id_match": {
+            "type": "boolean",
+            "title": "Tax Id Match"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/CleanupReason"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "a",
+          "b",
+          "score",
+          "tax_id_match",
+          "reasons"
+        ],
+        "title": "CleanupLink",
+        "description": "Two records the duplicate check calls 'Likely' the same customer."
+      },
+      "CleanupQueue": {
+        "properties": {
+          "clusters": {
+            "items": {
+              "$ref": "#/components/schemas/CleanupCluster"
+            },
+            "type": "array",
+            "title": "Clusters",
+            "description": "Most certain first"
+          },
+          "reviewed": {
+            "type": "integer",
+            "title": "Reviewed"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "can_decide": {
+            "type": "boolean",
+            "title": "Can Decide",
+            "description": "True when the acting user may confirm or reject"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "Why the acting user cannot decide"
+          }
+        },
+        "type": "object",
+        "required": [
+          "clusters",
+          "reviewed",
+          "total",
+          "can_decide"
+        ],
+        "title": "CleanupQueue"
+      },
+      "CleanupReason": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Plain English, from the duplicate check"
+          },
+          "against": {
+            "type": "boolean",
+            "title": "Against",
+            "description": "True when this reason counts against the match"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "against"
+        ],
+        "title": "CleanupReason"
+      },
+      "CleanupRecord": {
+        "properties": {
+          "CardCode": {
+            "type": "string",
+            "title": "Cardcode"
+          },
+          "CardName": {
+            "type": "string",
+            "title": "Cardname"
+          },
+          "CardForeignName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cardforeignname"
+          },
+          "FederalTaxID": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Federaltaxid"
+          },
+          "City": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "Country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "U_Entity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "U Entity"
+          },
+          "Phone1": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone1"
+          },
+          "EmailAddress": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emailaddress"
+          },
+          "CreateDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdate",
+            "description": "ISO date the record was created"
+          },
+          "CreatedBy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdby"
+          },
+          "group_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Name",
+            "description": "Cross-border hospital/lab group (rule 3), when known"
+          }
+        },
+        "type": "object",
+        "required": [
+          "CardCode",
+          "CardName",
+          "Country"
+        ],
+        "title": "CleanupRecord",
+        "description": "One existing customer record in a proposed group. Plain master fields only: bank details\nare never part of this view."
       },
       "ClockAdvance": {
         "properties": {

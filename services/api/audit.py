@@ -44,6 +44,7 @@ class AuditAction(enum.StrEnum):
     sap_call = "sap_call"
     seed = "seed"
     config_change = "config_change"
+    cleanup_decision = "cleanup_decision"
 
 
 class VerifyResult(BaseModel):

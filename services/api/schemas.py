@@ -839,6 +839,91 @@ class OpsImpact(BaseModel):
     caption: str = Field(description="'Modelled, not measured' framing in plain English")
 
 
+# ---------------------------------------------------------------- clean-up queue (D-018 #5)
+
+
+CleanupDecision = Literal["confirm", "not_same"]
+CleanupStatus = Literal["not_reviewed", "confirmed", "not_same"]
+
+
+class CleanupRecord(BaseModel):
+    """One existing customer record in a proposed group. Plain master fields only: bank details
+    are never part of this view."""
+
+    CardCode: str
+    CardName: str
+    CardForeignName: str | None = None
+    FederalTaxID: str | None = None
+    City: str | None = None
+    Country: str
+    U_Entity: str | None = None
+    Phone1: str | None = None
+    EmailAddress: str | None = None
+    CreateDate: str | None = Field(default=None, description="ISO date the record was created")
+    CreatedBy: str | None = None
+    group_name: str | None = Field(
+        default=None, description="Cross-border hospital/lab group (rule 3), when known"
+    )
+
+
+class CleanupReason(BaseModel):
+    text: str = Field(description="Plain English, from the duplicate check")
+    against: bool = Field(description="True when this reason counts against the match")
+
+
+class CleanupLink(BaseModel):
+    """Two records the duplicate check calls 'Likely' the same customer."""
+
+    a: str
+    b: str
+    score: float = Field(ge=0.0, le=1.0, description="Duplicate-check score, 0 to 1")
+    tax_id_match: bool
+    reasons: list[CleanupReason]
+
+
+class CleanupDecisionIn(BaseModel):
+    """A person's decision on one proposed group. The AI never makes it (rule 6)."""
+
+    decision: CleanupDecision
+    reason: str | None = Field(
+        default=None,
+        description="Required for not_same, at least 10 characters: why these are different "
+        "customers",
+    )
+
+
+class CleanupDecisionOut(BaseModel):
+    decision: CleanupDecision
+    reason: str | None = None
+    decided_by: str = Field(description="Name of the person who decided")
+    decided_at: datetime = Field(description="Simulated-clock time of the decision")
+
+
+class CleanupCluster(BaseModel):
+    cluster_id: str = Field(description="Same id as the golden cluster in the after-merge view")
+    certainty: str = Field(description="Plain-English summary of how certain the check is")
+    all_tax_id_match: bool
+    weakest_score: float = Field(ge=0.0, le=1.0)
+    records: list[CleanupRecord]
+    links: list[CleanupLink]
+    status: CleanupStatus
+    decision: CleanupDecisionOut | None = None
+
+
+class CleanupQueue(BaseModel):
+    clusters: list[CleanupCluster] = Field(description="Most certain first")
+    reviewed: int
+    total: int
+    can_decide: bool = Field(description="True when the acting user may confirm or reject")
+    note: str | None = Field(default=None, description="Why the acting user cannot decide")
+
+
+class CleanupDecisionResult(BaseModel):
+    cluster: CleanupCluster
+    reviewed: int
+    total: int
+
+
 # Resolves the forward references on RequestDetail (FieldIssue, SapPublishView, InfoRequestView)
 # and ForecastBacktest (CountryBias).
 RequestDetail.model_rebuild()

@@ -1,0 +1,8502 @@
+{
+ "customer_codes_sha256": "86069c3e9162790f400a34c4b6f7903bf054bce8534e1ffc6daffca36cb62e18",
+ "groups": {
+  "C00008": "Andaman Medical Group",
+  "C00077": "Straits Clinical Group",
+  "C00114": "Andaman Medical Group",
+  "C00136": "Merlion Diagnostics Group",
+  "C00160": "Andaman Medical Group",
+  "C00181": "Garuda Lab Network",
+  "C00183": "Merlion Diagnostics Group",
+  "C00210": "Straits Clinical Group",
+  "C00404": "Merlion Diagnostics Group",
+  "C00414": "Andaman Medical Group",
+  "C00424": "Garuda Lab Network",
+  "C00521": "Merlion Diagnostics Group",
+  "C00523": "Merlion Diagnostics Group",
+  "C00524": "Andaman Medical Group",
+  "C00550": "Garuda Lab Network",
+  "C00568": "Merlion Diagnostics Group",
+  "C00570": "Merlion Diagnostics Group"
+ },
+ "pairs": [
+  {
+   "a": "C00001",
+   "b": "C00445",
+   "query": "C00001",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0303042749"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tdlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00005",
+   "b": "C00033",
+   "query": "C00005",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201601664100"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (zls.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00007",
+   "b": "C00530",
+   "query": "C00007",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (uwh.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00008",
+   "b": "C00114",
+   "query": "C00008",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105451206585"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'medical centre oandaman phuket' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 97% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (amcp.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00008",
+   "b": "C00414",
+   "query": "C00008",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105451206585"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'medical centre oandaman phuket' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00009",
+   "b": "C00194",
+   "query": "C00009",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 00.440.342.7-238.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00009",
+   "b": "C00248",
+   "query": "C00009",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 004403427238000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00009",
+   "b": "C00410",
+   "query": "C00009",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Clinical' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00014",
+   "b": "C00394",
+   "query": "C00014",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 199902452S"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (woodlandshospital.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00015",
+   "b": "C00068",
+   "query": "C00015",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 198982585U"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "'Laboratories' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (banyanlaboratories.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00019",
+   "b": "C00309",
+   "query": "C00019",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 07.477.186.3-528.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Pratama' = 'Primary'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hspc.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00020",
+   "b": "C00106",
+   "query": "C00020",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0376144023"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (gdph.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00021",
+   "b": "C00357",
+   "query": "C00021",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Matches its other name 'Children's Hospital 1'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ch1.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00023",
+   "b": "C00442",
+   "query": "C00023",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 01.521.523.3-818.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Pusat' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00023",
+   "b": "C00545",
+   "query": "C00023",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Pusat' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (dkgh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00026",
+   "b": "C00065",
+   "query": "C00026",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 08.777.074.9-992.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ubcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00026",
+   "b": "C00110",
+   "query": "C00026",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ubcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00027",
+   "b": "C00225",
+   "query": "C00027",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197052917L"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (northstardiagnostics.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00028",
+   "b": "C00091",
+   "query": "C00028",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 062827084502000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nkbh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00028",
+   "b": "C00131",
+   "query": "C00028",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 06.282.708.4-502.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nkbh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00031",
+   "b": "C00316",
+   "query": "C00031",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105613112647"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Sukjai Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (sukjailaboratory.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00035",
+   "b": "C00044",
+   "query": "C00035",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199701647474"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mgh.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00036",
+   "b": "C00369",
+   "query": "C00036",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201958384H"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (lcpn.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00040",
+   "b": "C00274",
+   "query": "C00040",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 038962996871000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RSUP' = 'Rumah Sakit Umum Pusat'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (dmhgh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00043",
+   "b": "C00056",
+   "query": "C00043",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105620542249"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'syam laboratory' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 43% similar; words only in one name: 'syam', 'siam'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (siamlab.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00045",
+   "b": "C00444",
+   "query": "C00045",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0495829037"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Trung Uong' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ctcgh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00049",
+   "b": "C00167",
+   "query": "C00049",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105430917462"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nsh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00050",
+   "b": "C00328",
+   "query": "C00050",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00051",
+   "b": "C00373",
+   "query": "C00051",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198001909471"
+    },
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9833,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00051",
+   "b": "C00522",
+   "query": "C00051",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198001909471"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (spl.my.example)"
+    },
+    {
+     "against": true,
+     "text": "Different city (Johor Bahru vs Johor Baharu)"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00059",
+   "b": "C00510",
+   "query": "C00059",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 09.878.693.7-237.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hccl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00062",
+   "b": "C00412",
+   "query": "C00062",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Supplies' = 'Supply'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00065",
+   "b": "C00110",
+   "query": "C00065",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ubcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00067",
+   "b": "C00124",
+   "query": "C00067",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 200821454I"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tfch.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00069",
+   "b": "C00310",
+   "query": "C00069",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 00.317.056.4-478.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Daerah' = 'Regional'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (dsagh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00069",
+   "b": "C00469",
+   "query": "C00069",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 003170564478000"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Daerah' = 'Regional'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00071",
+   "b": "C00171",
+   "query": "C00071",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0000662008"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tblc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00072",
+   "b": "C00078",
+   "query": "C00072",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 198355932W"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (imc.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00073",
+   "b": "C00107",
+   "query": "C00073",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 199337127D"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (spl.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00073",
+   "b": "C00468",
+   "query": "C00073",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (spl.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00077",
+   "b": "C00210",
+   "query": "C00077",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 200725831H"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Clinical' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Laboratories' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (scl.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00080",
+   "b": "C00180",
+   "query": "C00080",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198101082618"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (lmc.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00085",
+   "b": "C00439",
+   "query": "C00085",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00086",
+   "b": "C00155",
+   "query": "C00086",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105450822470"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital phiman 1' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (p1h.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00086",
+   "b": "C00426",
+   "query": "C00086",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Matches its other name 'Phiman 1 Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital phiman 1' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 94% similar"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9608,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00087",
+   "b": "C00433",
+   "query": "C00087",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199501030999"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (taah.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00089",
+   "b": "C00151",
+   "query": "C00089",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 199570035V"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (msnh.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00091",
+   "b": "C00131",
+   "query": "C00091",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 06.282.708.4-502.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nkbh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00092",
+   "b": "C00182",
+   "query": "C00092",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 076536573709000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pkjh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00092",
+   "b": "C00197",
+   "query": "C00092",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 076536573709000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00094",
+   "b": "C00192",
+   "query": "C00094",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 200300837M"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (alexandrahospital.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00096",
+   "b": "C00168",
+   "query": "C00096",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0428236122"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Phong Kham' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ttgc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00098",
+   "b": "C00519",
+   "query": "C00098",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 200001793446"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (shkl.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00099",
+   "b": "C00199",
+   "query": "C00099",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 01.720.698.3-308.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (duh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00099",
+   "b": "C00306",
+   "query": "C00099",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (duh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00102",
+   "b": "C00399",
+   "query": "C00102",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 01.898.443.7-679.000"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Pusat' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Names are 88% similar; words only in one name: 'central'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (dhsgh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00103",
+   "b": "C00129",
+   "query": "C00103",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198501789386"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bpl.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00105",
+   "b": "C00477",
+   "query": "C00105",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105493673917"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Srinagarind Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00107",
+   "b": "C00468",
+   "query": "C00107",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (spl.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00108",
+   "b": "C00515",
+   "query": "C00108",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0375855645"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bksggh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00108",
+   "b": "C00517",
+   "query": "C00108",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0375855645"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bksggh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00111",
+   "b": "C00378",
+   "query": "C00111",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105617335806"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (wbnh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00114",
+   "b": "C00414",
+   "query": "C00114",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105451206585"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Andaman Medical Centre Phuket'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00119",
+   "b": "C00304",
+   "query": "C00119",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0329474227"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pagh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00121",
+   "b": "C00179",
+   "query": "C00121",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201375960O"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00121",
+   "b": "C00327",
+   "query": "C00121",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201375960O"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00121",
+   "b": "C00432",
+   "query": "C00121",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201375960O"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Ltd Pte, Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00126",
+   "b": "C00128",
+   "query": "C00126",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201101469090"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00127",
+   "b": "C00208",
+   "query": "C00127",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 056900117848000"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00127",
+   "b": "C00275",
+   "query": "C00127",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 05.690.011.7-848.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (cmh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00127",
+   "b": "C00318",
+   "query": "C00127",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'RSCM' = 'Rumah Sakit Cipto Mangunkusumo'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00132",
+   "b": "C00455",
+   "query": "C00132",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0874997129"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (qmlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00133",
+   "b": "C00276",
+   "query": "C00133",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 198022149N"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pmcc.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00134",
+   "b": "C00470",
+   "query": "C00134",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0323516399"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00135",
+   "b": "C00204",
+   "query": "C00135",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199501094122"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00135",
+   "b": "C00453",
+   "query": "C00135",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199501094122"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar; words only in one name: 'ipoh'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (rpbh.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00136",
+   "b": "C00521",
+   "query": "C00136",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Names are 93% similar; words only in one name: 'singapore'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (merliondiagnostics.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00137",
+   "b": "C00338",
+   "query": "C00137",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201857405J"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "'Laboratories' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (vitalislaboratories.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00137",
+   "b": "C00441",
+   "query": "C00137",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201857405J"
+    },
+    {
+     "against": false,
+     "text": "'Laboratories' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Names are 92% similar; words only in one name: 'singapore'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (vitalislaboratories.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00141",
+   "b": "C00422",
+   "query": "C00141",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105460515817"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital sirirach' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 90% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9791,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00144",
+   "b": "C00163",
+   "query": "C00144",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105546952907"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nrh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00144",
+   "b": "C00296",
+   "query": "C00144",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105546952907"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Nopparat Rajathanee Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nrh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00147",
+   "b": "C00386",
+   "query": "C00147",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 200194524B"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00153",
+   "b": "C00271",
+   "query": "C00153",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105517994681"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pcml.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00155",
+   "b": "C00426",
+   "query": "C00155",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Matches its other name 'Phiman 1 Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital phiman 1' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 94% similar"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9608,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00159",
+   "b": "C00464",
+   "query": "C00159",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105592427146"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Bua Khao Sukhumvit Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bksh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00160",
+   "b": "C00524",
+   "query": "C00160",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199301580446"
+    },
+    {
+     "against": false,
+     "text": "Names are 99% similar"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (amcp.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00162",
+   "b": "C00421",
+   "query": "C00162",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105416768865"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (clpl.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00163",
+   "b": "C00296",
+   "query": "C00163",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105546952907"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Nopparat Rajathanee Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nrh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00164",
+   "b": "C00500",
+   "query": "C00164",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'HOSP' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00165",
+   "b": "C00191",
+   "query": "C00165",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0815498361"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Thiet Bi Y Te' = 'Medical Equipment'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tcme.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00165",
+   "b": "C00520",
+   "query": "C00165",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "'Thiet Bi Y Te' = 'Medical Equipment'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00169",
+   "b": "C00249",
+   "query": "C00169",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0145054791"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Phong Kham' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'NHI' = 'Paediatric'"
+    },
+    {
+     "against": false,
+     "text": "'PK' = 'Phong Kham'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (dapnpc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00176",
+   "b": "C00330",
+   "query": "C00176",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0159681091"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00176",
+   "b": "C00494",
+   "query": "C00176",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00178",
+   "b": "C00311",
+   "query": "C00178",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105574861666"
+    },
+    {
+     "against": false,
+     "text": "Matches the other name typed: 'Saeng Tawan Hospital Pattaya'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00178",
+   "b": "C00462",
+   "query": "C00178",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Matches the other name typed: 'Saeng Tawan Hospital Pattaya'"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'HOSP' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00179",
+   "b": "C00327",
+   "query": "C00179",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201375960O"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (jch.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00179",
+   "b": "C00432",
+   "query": "C00179",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201375960O"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Ltd Pte, Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (jch.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00181",
+   "b": "C00424",
+   "query": "C00181",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 084925378850000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Medika' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (gml.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00181",
+   "b": "C00550",
+   "query": "C00181",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 084925378850000"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Medika' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (gml.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00182",
+   "b": "C00197",
+   "query": "C00182",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 076536573709000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00183",
+   "b": "C00404",
+   "query": "C00183",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105406048224"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'meolaioon diagnostics thailand' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 64% similar; words only in one name: 'merlion', 'meolaioon'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mdt.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00186",
+   "b": "C00360",
+   "query": "C00186",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105465325052"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ramathibodihospital.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00191",
+   "b": "C00520",
+   "query": "C00191",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Thiet Bi Y Te' = 'Medical Equipment'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00193",
+   "b": "C00278",
+   "query": "C00193",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 05.755.230.6-265.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ntcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00194",
+   "b": "C00248",
+   "query": "C00194",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 004403427238000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00194",
+   "b": "C00410",
+   "query": "C00194",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Clinical' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00198",
+   "b": "C00385",
+   "query": "C00198",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0433211526"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nldnh.vn.example)"
+    },
+    {
+     "against": true,
+     "text": "Different city (Danang vs Da Nang)"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00199",
+   "b": "C00306",
+   "query": "C00199",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (duh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00200",
+   "b": "C00353",
+   "query": "C00200",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0123338863"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents and ignoring the company type (Cong Ty Co Phan)"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pmgh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00200",
+   "b": "C00472",
+   "query": "C00200",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0123338863"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Cong Ty Co Phan)"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00203",
+   "b": "C00505",
+   "query": "C00203",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0147053834"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "'Xet Nghiem' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Y Khoa' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "Names are 80% similar; words only in one name: 'centre', 'medical'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (aklc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00204",
+   "b": "C00453",
+   "query": "C00204",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199501094122"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar; words only in one name: 'ipoh'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00205",
+   "b": "C00207",
+   "query": "C00205",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0345676184"
+    },
+    {
+     "against": false,
+     "text": "'Xet Nghiem' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Y Khoa' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 84% similar; words only in one name: 'medical', 'centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (vnlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00205",
+   "b": "C00315",
+   "query": "C00205",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0345676184"
+    },
+    {
+     "against": false,
+     "text": "'Xet Nghiem' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Y Khoa' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 80% similar; words only in one name: 'medical', 'centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (vnlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00206",
+   "b": "C00395",
+   "query": "C00206",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 00.187.121.8-425.000"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Pusat' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Names are 92% similar; words only in one name: 'central'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pdigngngh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00207",
+   "b": "C00315",
+   "query": "C00207",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0345676184"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (vnlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00208",
+   "b": "C00275",
+   "query": "C00208",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 05.690.011.7-848.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00208",
+   "b": "C00318",
+   "query": "C00208",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'RSCM' = 'Rumah Sakit Cipto Mangunkusumo'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00209",
+   "b": "C00348",
+   "query": "C00209",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105534126688"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals, punctuation and word order"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'laboratory suphmitr sathr' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00211",
+   "b": "C00234",
+   "query": "C00211",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 94% similar; words only in one name: 'palembang'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hacl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00212",
+   "b": "C00313",
+   "query": "C00212",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Names are 95% similar; words only in one name: 'procurement'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ofcb.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00213",
+   "b": "C00342",
+   "query": "C00213",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0888742081"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tdlc2.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00215",
+   "b": "C00398",
+   "query": "C00215",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Names are 92% similar; words only in one name: 'laboratory', 'dept'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9415,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00218",
+   "b": "C00465",
+   "query": "C00218",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Names are 93% similar; words only in one name: 'procurement'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pmc.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00218",
+   "b": "C00537",
+   "query": "C00218",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00219",
+   "b": "C00367",
+   "query": "C00219",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197974965P"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (avalondiagnostics.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00222",
+   "b": "C00506",
+   "query": "C00222",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199201622915"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (sbh.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00222",
+   "b": "C00527",
+   "query": "C00222",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199201622915"
+    },
+    {
+     "against": false,
+     "text": "Names are 88% similar; words only in one name: 'alor', 'setar'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00224",
+   "b": "C00347",
+   "query": "C00224",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105436095778"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Piyamit Thong Lo Lab'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ptll.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00226",
+   "b": "C00257",
+   "query": "C00226",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201901225813"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (abush.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00228",
+   "b": "C00364",
+   "query": "C00228",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0307921915"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Quoc Te' = 'International'"
+    },
+    {
+     "against": false,
+     "text": "Names are 91% similar; words only in one name: 'general'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9933,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00228",
+   "b": "C00546",
+   "query": "C00228",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0307921915"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Quoc Te' = 'International'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (cttdih.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00230",
+   "b": "C00346",
+   "query": "C00230",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105466749391"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital sngkhlankhrinth' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 31% similar; words only in one name: 'songklanagarind', 'sngkhlankhrinth'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00231",
+   "b": "C00292",
+   "query": "C00231",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0312571586"
+    },
+    {
+     "against": false,
+     "text": "'Xet Nghiem' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Y Khoa' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 81% similar; words only in one name: 'medical', 'centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nvlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00233",
+   "b": "C00303",
+   "query": "C00233",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 06.944.739.2-060.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hsh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00233",
+   "b": "C00390",
+   "query": "C00233",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 069447392060000"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "Names are 93% similar; words only in one name: 'procurement'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hsh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00233",
+   "b": "C00503",
+   "query": "C00233",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 069447392060000"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 44% similar; words only in one name: 'hospital', 'husada', 'rumah'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hsh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00235",
+   "b": "C00250",
+   "query": "C00235",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 198167079O"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (kingsmeadhospital.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00237",
+   "b": "C00474",
+   "query": "C00237",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105603096372"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (บจก., บริษัท)"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'laboratory thaiymed' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00239",
+   "b": "C00559",
+   "query": "C00239",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199501629916"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pgh.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00240",
+   "b": "C00333",
+   "query": "C00240",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 09.688.596.4-146.000"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Clinical' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00247",
+   "b": "C00263",
+   "query": "C00247",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199701636212"
+    },
+    {
+     "against": false,
+     "text": "Names are 89% similar; words only in one name: 'kajang'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00248",
+   "b": "C00410",
+   "query": "C00248",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Clinical' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00251",
+   "b": "C00319",
+   "query": "C00251",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105463459907"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'laboratory metta' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mettalaboratory.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00252",
+   "b": "C00285",
+   "query": "C00252",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0309016304"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00253",
+   "b": "C00446",
+   "query": "C00253",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105449404713"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital mharachnkhrcheiynghaim' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 23% similar; words only in one name: 'mharachnkhrcheiynghaim', 'maharaj', 'nakorn'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mncmh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00254",
+   "b": "C00384",
+   "query": "C00254",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital metta rangsit' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mrh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00260",
+   "b": "C00418",
+   "query": "C00260",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198001284329"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (sha.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00261",
+   "b": "C00457",
+   "query": "C00261",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0331032779"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Phong Kham' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'NHI' = 'Paediatric'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00262",
+   "b": "C00487",
+   "query": "C00262",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 199969400H"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00267",
+   "b": "C00288",
+   "query": "C00267",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 022760493185000"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar; words only in one name: 'pathology'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9843,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00267",
+   "b": "C00552",
+   "query": "C00267",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 02.276.049.3-185.000"
+    },
+    {
+     "against": false,
+     "text": "'RSUD' = 'Rumah Sakit Umum Daerah'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Names are 85% similar; words only in one name: 'regional'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00270",
+   "b": "C00425",
+   "query": "C00270",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197889196B"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "'NUH' = 'National University Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nuh.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00270",
+   "b": "C00435",
+   "query": "C00270",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197889196B"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00270",
+   "b": "C00463",
+   "query": "C00270",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197889196B"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nuh.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00275",
+   "b": "C00318",
+   "query": "C00275",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'RSCM' = 'Rumah Sakit Cipto Mangunkusumo'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00277",
+   "b": "C00381",
+   "query": "C00277",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Names are 97% similar; words only in one name: 'singapore'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9891,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00280",
+   "b": "C00427",
+   "query": "C00280",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105428656949"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd, Company Limited)"
+    },
+    {
+     "against": false,
+     "text": "'MED' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00281",
+   "b": "C00341",
+   "query": "C00281",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (spl2.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00281",
+   "b": "C00365",
+   "query": "C00281",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198301374380"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (spl2.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00283",
+   "b": "C00417",
+   "query": "C00283",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0100894618"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00283",
+   "b": "C00430",
+   "query": "C00283",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 97% similar; words only in one name: 'laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00283",
+   "b": "C00480",
+   "query": "C00283",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 99% similar"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00284",
+   "b": "C00351",
+   "query": "C00284",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105523390463"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00284",
+   "b": "C00460",
+   "query": "C00284",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105523390463"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Suksawat Thong Lo Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (stlc.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00286",
+   "b": "C00335",
+   "query": "C00286",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105609367237"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital tmarwch' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 26% similar; words only in one name: 'police', 'general', 'tmarwch'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pgh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00286",
+   "b": "C00420",
+   "query": "C00286",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105609367237"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pgh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00287",
+   "b": "C00499",
+   "query": "C00287",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 06.309.532.3-994.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "'Pratama' = 'Primary'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (sbpc.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00288",
+   "b": "C00552",
+   "query": "C00288",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 02.276.049.3-185.000"
+    },
+    {
+     "against": false,
+     "text": "'RSUD' = 'Rumah Sakit Umum Daerah'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Names are 81% similar; words only in one name: 'pathology', 'regional'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00289",
+   "b": "C00540",
+   "query": "C00289",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Supplies' = 'Supply'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nms.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00290",
+   "b": "C00539",
+   "query": "C00290",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Pusat' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00291",
+   "b": "C00334",
+   "query": "C00291",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0196754315"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Phu San' = 'Womens'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hogh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00294",
+   "b": "C00507",
+   "query": "C00294",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105419275357"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital phumiphlodulydech' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bah.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00295",
+   "b": "C00343",
+   "query": "C00295",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 02.794.626.2-091.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (kscl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00297",
+   "b": "C00428",
+   "query": "C00297",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 09.030.402.2-738.000"
+    },
+    {
+     "against": false,
+     "text": "Names are 97% similar; words only in one name: 'laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9924,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00299",
+   "b": "C00415",
+   "query": "C00299",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 02.750.844.3-202.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Utama' = 'MAIN'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (suh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00302",
+   "b": "C00547",
+   "query": "C00302",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar; words only in one name: 'singapore'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (kpl.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00303",
+   "b": "C00390",
+   "query": "C00303",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 069447392060000"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 93% similar; words only in one name: 'procurement'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hsh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00303",
+   "b": "C00503",
+   "query": "C00303",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 069447392060000"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 41% similar; words only in one name: 'hospital', 'husada', 'rumah'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hsh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00305",
+   "b": "C00402",
+   "query": "C00305",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0187456359"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pmhnlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00308",
+   "b": "C00516",
+   "query": "C00308",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00310",
+   "b": "C00469",
+   "query": "C00310",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 003170564478000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "'RSUD' = 'Rumah Sakit Umum Daerah'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00311",
+   "b": "C00462",
+   "query": "C00311",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'HOSP' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (sthp.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00314",
+   "b": "C00436",
+   "query": "C00314",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201001764430"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Pusat Perubatan' = 'Medical Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (smc.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00314",
+   "b": "C00526",
+   "query": "C00314",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201001764430"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Pusat Perubatan' = 'Medical Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (smc.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00320",
+   "b": "C00416",
+   "query": "C00320",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 05.520.340.2-459.000"
+    },
+    {
+     "against": false,
+     "text": "Names are 76% similar; words only in one name: 'hospital', 'rspad'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (gsh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00321",
+   "b": "C00434",
+   "query": "C00321",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105613924286"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (chonburihospital.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00322",
+   "b": "C00429",
+   "query": "C00322",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Daerah' = 'Regional'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (dsgh2.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00323",
+   "b": "C00423",
+   "query": "C00323",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0482828415"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Cong Ty Co Phan)"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tadngh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00324",
+   "b": "C00356",
+   "query": "C00324",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105488723749"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00324",
+   "b": "C00536",
+   "query": "C00324",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105488723749"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ptll2.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00326",
+   "b": "C00411",
+   "query": "C00326",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105435884241"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mnrh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00327",
+   "b": "C00432",
+   "query": "C00327",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201375960O"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Ltd Pte, Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (jch.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00330",
+   "b": "C00494",
+   "query": "C00330",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00332",
+   "b": "C00359",
+   "query": "C00332",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 03.440.772.2-795.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00332",
+   "b": "C00489",
+   "query": "C00332",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 034407722795000"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 97% similar"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9889,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00335",
+   "b": "C00420",
+   "query": "C00335",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105609367237"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital tmarwch' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 26% similar; words only in one name: 'tmarwch', 'police', 'general'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pgh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00337",
+   "b": "C00352",
+   "query": "C00337",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 061202662846000"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (kdh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00338",
+   "b": "C00441",
+   "query": "C00338",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201857405J"
+    },
+    {
+     "against": false,
+     "text": "'Laboratories' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Names are 92% similar; words only in one name: 'singapore'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (vitalislaboratories.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00341",
+   "b": "C00365",
+   "query": "C00341",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (spl2.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00345",
+   "b": "C00529",
+   "query": "C00345",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 005799870826000"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bih.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00349",
+   "b": "C00375",
+   "query": "C00349",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0156634639"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Trung Uong' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00351",
+   "b": "C00460",
+   "query": "C00351",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105523390463"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Suksawat Thong Lo Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00353",
+   "b": "C00472",
+   "query": "C00353",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0123338863"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00356",
+   "b": "C00536",
+   "query": "C00356",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105488723749"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00358",
+   "b": "C00467",
+   "query": "C00358",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201101939552"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00359",
+   "b": "C00489",
+   "query": "C00359",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 034407722795000"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 97% similar"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9889,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00361",
+   "b": "C00508",
+   "query": "C00361",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201301716831"
+    },
+    {
+     "against": false,
+     "text": "Names are 99% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (rpzih.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00364",
+   "b": "C00546",
+   "query": "C00364",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0307921915"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "'Quoc Te' = 'International'"
+    },
+    {
+     "against": false,
+     "text": "Names are 91% similar; words only in one name: 'general'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9933,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00368",
+   "b": "C00538",
+   "query": "C00368",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 03.214.040.2-642.000"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (PT)"
+    },
+    {
+     "against": false,
+     "text": "'Laboratorium' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (apcl.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00370",
+   "b": "C00438",
+   "query": "C00370",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105457825192"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'hospital chulalngkr' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Names are 55% similar; words only in one name: 'king', 'memorial'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00371",
+   "b": "C00535",
+   "query": "C00371",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0395971145"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Cong Ty Co Phan)"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mdgh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00373",
+   "b": "C00522",
+   "query": "C00373",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198001909471"
+    },
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": true,
+     "text": "Different city (Johor Bahru vs Johor Baharu)"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00377",
+   "b": "C00419",
+   "query": "C00377",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 200301095592"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (djmcpj.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00382",
+   "b": "C00533",
+   "query": "C00382",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 98% similar"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00383",
+   "b": "C00437",
+   "query": "C00383",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197629191K"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (ntfgh.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00387",
+   "b": "C00400",
+   "query": "C00387",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105630219464"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (จํากัด, บริษัท)"
+    },
+    {
+     "against": false,
+     "text": "Thai script read as 'laboratory chayphruek nnthburi' for comparison"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (cnl.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00390",
+   "b": "C00503",
+   "query": "C00390",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 069447392060000"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 36% similar; words only in one name: 'hospital', 'husada', 'procurement'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hsh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00393",
+   "b": "C00413",
+   "query": "C00393",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105541527991"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mbnc.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00393",
+   "b": "C00560",
+   "query": "C00393",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105541527991"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mbnc.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00397",
+   "b": "C00431",
+   "query": "C00397",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 02.125.852.6-874.000"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 97% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00403",
+   "b": "C00451",
+   "query": "C00403",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Makmal' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "'Patologi' = 'Pathology'"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (wpl.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00405",
+   "b": "C00471",
+   "query": "C00405",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (rmc.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00406",
+   "b": "C00484",
+   "query": "C00406",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199501430260"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (djmcc.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00409",
+   "b": "C00564",
+   "query": "C00409",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0721948309"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Trung Uong' = 'Central'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00413",
+   "b": "C00560",
+   "query": "C00413",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105541527991"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mbnc.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00417",
+   "b": "C00430",
+   "query": "C00417",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 97% similar; words only in one name: 'laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00417",
+   "b": "C00480",
+   "query": "C00417",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 99% similar"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00424",
+   "b": "C00550",
+   "query": "C00424",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 084925378850000"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Medika' = 'Medical'"
+    },
+    {
+     "against": false,
+     "text": "'LAB' = 'Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (gml.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00425",
+   "b": "C00435",
+   "query": "C00425",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197889196B"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "'NUH' = 'National University Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00425",
+   "b": "C00463",
+   "query": "C00425",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197889196B"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "'NUH' = 'National University Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (nuh.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00430",
+   "b": "C00480",
+   "query": "C00430",
+   "reasons": [
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar; words only in one name: 'laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00435",
+   "b": "C00463",
+   "query": "C00435",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 197889196B"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00436",
+   "b": "C00526",
+   "query": "C00436",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201001764430"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Pusat Perubatan' = 'Medical Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (smc.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00440",
+   "b": "C00495",
+   "query": "C00440",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0984775327"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Quoc Te' = 'International'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00442",
+   "b": "C00545",
+   "query": "C00442",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring capitals and punctuation"
+    },
+    {
+     "against": false,
+     "text": "'RSUP' = 'Rumah Sakit Umum Pusat'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00452",
+   "b": "C00461",
+   "query": "C00452",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 199239829J"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (asc.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00452",
+   "b": "C00542",
+   "query": "C00452",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 199239829J"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (asc.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00454",
+   "b": "C00557",
+   "query": "C00454",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 202201155925"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "'Pusat Perubatan' = 'Medical Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00454",
+   "b": "C00566",
+   "query": "C00454",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 202201155925"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Sdn Bhd)"
+    },
+    {
+     "against": false,
+     "text": "'Pusat Perubatan' = 'Medical Centre'"
+    },
+    {
+     "against": false,
+     "text": "'PP' = 'Pusat Perubatan'"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00458",
+   "b": "C00513",
+   "query": "C00458",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0431915181"
+    },
+    {
+     "against": false,
+     "text": "Matches the other name typed: 'Phu My Da Nang International Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (pmdnih.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00459",
+   "b": "C00548",
+   "query": "C00459",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 00.888.070.7-746.000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RSUP' = 'Rumah Sakit Umum Pusat'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'UMUM' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00461",
+   "b": "C00542",
+   "query": "C00461",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 199239829J"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (asc.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00465",
+   "b": "C00537",
+   "query": "C00465",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Names are 93% similar; words only in one name: 'procurement'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00466",
+   "b": "C00518",
+   "query": "C00466",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0931987195"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "'Center' = 'Centre'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hdlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00473",
+   "b": "C00553",
+   "query": "C00473",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 198601085413"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bmc2.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00475",
+   "b": "C00492",
+   "query": "C00475",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105605200771"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00475",
+   "b": "C00514",
+   "query": "C00475",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105605200771"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Co Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (suphamithospital.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00476",
+   "b": "C00525",
+   "query": "C00476",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0882353302"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Trung Tam Xet Nghiem' = 'Laboratory Centre'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (vpctlc.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00481",
+   "b": "C00569",
+   "query": "C00481",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 201701520537"
+    },
+    {
+     "against": false,
+     "text": "Names are 95% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00482",
+   "b": "C00509",
+   "query": "C00482",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105500768401"
+    },
+    {
+     "against": false,
+     "text": "Matches the other name typed: 'Prachasuk Laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (prachasuklaboratory.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00485",
+   "b": "C00558",
+   "query": "C00485",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Names are 85% similar; words only in one name: 'procurement'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (putrajayahospital.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.9235,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00486",
+   "b": "C00528",
+   "query": "C00486",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Names are 96% similar; words only in one name: 'laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (kkh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00486",
+   "b": "C00565",
+   "query": "C00486",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105487127459"
+    },
+    {
+     "against": false,
+     "text": "Matches its other name 'Khon Kaen Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (kkh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00488",
+   "b": "C00497",
+   "query": "C00488",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0317159608"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (hvh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00490",
+   "b": "C00512",
+   "query": "C00490",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0316105709"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 94% similar"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tnh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00490",
+   "b": "C00567",
+   "query": "C00490",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0316105709"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tnh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00492",
+   "b": "C00514",
+   "query": "C00492",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same TIN 0105605200771"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00496",
+   "b": "C00544",
+   "query": "C00496",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same NPWP 068741269688000"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "'RS' = 'Rumah Sakit'"
+    },
+    {
+     "against": false,
+     "text": "'Rumah Sakit' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (cbh.id.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00506",
+   "b": "C00527",
+   "query": "C00506",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199201622915"
+    },
+    {
+     "against": false,
+     "text": "Names are 88% similar; words only in one name: 'alor', 'setar'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 0.97,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00512",
+   "b": "C00567",
+   "query": "C00512",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0316105709"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 94% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (tnh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00515",
+   "b": "C00517",
+   "query": "C00515",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0375855645"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Da Khoa' = 'General'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bksggh.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00523",
+   "b": "C00568",
+   "query": "C00523",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Viet Nam' = 'Vietnam'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00523",
+   "b": "C00570",
+   "query": "C00523",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0317646294"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Viet Nam' = 'Vietnam'"
+    },
+    {
+     "against": false,
+     "text": "'DIAG' = 'Diagnostics'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00528",
+   "b": "C00565",
+   "query": "C00528",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Matches its other name 'Khon Kaen Hospital'"
+    },
+    {
+     "against": false,
+     "text": "Names are 96% similar; words only in one name: 'laboratory'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (kkh.th.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00534",
+   "b": "C00554",
+   "query": "C00534",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201512205F"
+    },
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (bsh.sg.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00534",
+   "b": "C00563",
+   "query": "C00534",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201512205F"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00534",
+   "b": "C00571",
+   "query": "C00534",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00549",
+   "b": "C00562",
+   "query": "C00549",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same MST 0372568519"
+    },
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Benh Vien' = 'Hospital'"
+    },
+    {
+     "against": false,
+     "text": "'Quoc Te' = 'International'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (taih.vn.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00551",
+   "b": "C00561",
+   "query": "C00551",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 199701601164"
+    },
+    {
+     "against": false,
+     "text": "'Klinik' = 'Clinic'"
+    },
+    {
+     "against": false,
+     "text": "Names are 99% similar"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (acjb.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00554",
+   "b": "C00563",
+   "query": "C00554",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same UEN 201512205F"
+    },
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00554",
+   "b": "C00571",
+   "query": "C00554",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after ignoring the company type (Pte Ltd)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00557",
+   "b": "C00566",
+   "query": "C00557",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same SSM no. 202201155925"
+    },
+    {
+     "against": false,
+     "text": "Same name after expanding abbreviations and local words"
+    },
+    {
+     "against": false,
+     "text": "'Pusat Perubatan' = 'Medical Centre'"
+    },
+    {
+     "against": false,
+     "text": "'PP' = 'Pusat Perubatan'"
+    },
+    {
+     "against": false,
+     "text": "Same email domain (mmc.my.example)"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": true
+  },
+  {
+   "a": "C00563",
+   "b": "C00571",
+   "query": "C00563",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Exactly the same name"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  },
+  {
+   "a": "C00568",
+   "b": "C00570",
+   "query": "C00568",
+   "reasons": [
+    {
+     "against": false,
+     "text": "Same name after removing accents"
+    },
+    {
+     "against": false,
+     "text": "'Viet Nam' = 'Vietnam'"
+    },
+    {
+     "against": false,
+     "text": "'DIAG' = 'Diagnostics'"
+    },
+    {
+     "against": false,
+     "text": "Same phone number"
+    },
+    {
+     "against": false,
+     "text": "Same city"
+    }
+   ],
+   "score": 1.0,
+   "tax_id_match": false
+  }
+ ],
+ "version": 1
+}
