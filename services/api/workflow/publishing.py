@@ -146,7 +146,7 @@ def build_payload(
                 CenterCode=code,
                 CenterName=str(f.get("CenterName") or ""),
                 EffectiveFrom=str(f.get("EffectiveFrom") or "") or None,
-                InWhichDimension=1,
+                InWhichDimension=int(f.get("InWhichDimension") or 1),
             ),
             code,
         )

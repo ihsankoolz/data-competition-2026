@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Loader2, Mail, X } from "lucide-react";
+import { ArrowRight, Info, Loader2, Mail, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
@@ -360,8 +360,8 @@ export function NewRequestForm() {
         <div className="flex max-w-2xl flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">New request</h1>
           <p className="text-base text-muted-foreground">
-            Ask for a new customer, vendor or item. The form asks only for what your country needs
-            and warns you before you create a duplicate.
+            Ask for a new customer, vendor, item or cost center. The form asks only for what your
+            country needs and warns you before you create a duplicate.
           </p>
         </div>
         <EmailPicker onPick={pickEmail} picking={picking} />
@@ -479,7 +479,7 @@ export function NewRequestForm() {
         )}
       >
         <form
-          aria-label={`New ${domain} form`}
+          aria-label={`New ${domain.replace("_", " ")} form`}
           className={cn("flex flex-col gap-6", !isBusinessPartner && "max-w-4xl")}
           onSubmit={(e) => {
             e.preventDefault();
@@ -542,6 +542,16 @@ export function NewRequestForm() {
                   );
                 })}
             </fieldset>
+          )}
+
+          {specReady && spec.sap_note && (
+            <p
+              className="flex items-start gap-2 rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground"
+              data-testid="sap-note"
+            >
+              <Info className="mt-0.5 size-4 shrink-0" />
+              <span>{spec.sap_note}</span>
+            </p>
           )}
 
           <div className="flex flex-col gap-3 border-t pt-5">

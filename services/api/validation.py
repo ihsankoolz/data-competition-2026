@@ -30,7 +30,7 @@ from ds.forms import (
     regulated_countries,
 )
 from services.api.bankfields import BANK_KEY
-from services.api.formfields import missing_form_fields
+from services.api.formfields import RequiredOverride, missing_form_fields
 from services.api.schemas import FieldIssue
 
 COUNTRY_NAME = {
@@ -72,9 +72,6 @@ TAX_ID_RULES: dict[str, tuple[re.Pattern[str], str]] = {
 }
 EMAIL = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
 ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
-
-# Cost centres have no form schema: SAP's own limits (`ProfitCenter` in the mock, D-004).
-COST_CENTER_RULES = {"CenterName": ("Cost center name", 30), "EffectiveFrom": ("Effective from", 0)}
 
 
 # SAP codes are never shown to a person: yes/no flags read as plain words.
@@ -210,7 +207,7 @@ def _label(domain: str, field: str, country: str | None) -> str:
         return f"Tax ID ({TAX_NAME[country]})"
     if domain in FORM_DOMAINS:
         return str(load_form_schema(domain)["properties"].get(field, {}).get("title", field))  # type: ignore[arg-type]
-    return {"CenterName": "Cost center name", "EffectiveFrom": "Effective from"}.get(field, field)
+    return field
 
 
 def _issue(field: str, label: str, kind: str, message: str) -> FieldIssue:
@@ -291,29 +288,24 @@ def registration_issues(fields: Mapping[str, Any], today: date) -> list[FieldIss
 
 
 def validate_fields(
-    domain: str, country: str, fields: Mapping[str, Any], today: date
+    domain: str,
+    country: str,
+    fields: Mapping[str, Any],
+    today: date,
+    override: RequiredOverride | None = None,
 ) -> list[FieldIssue]:
-    """All problems with a request's current fields (plain values, i.e. bank unsealed)."""
+    """All problems with a request's current fields (plain values, i.e. bank unsealed).
+    `override` is the request's own required-field toggles (see `RequiredOverride`)."""
     out: list[FieldIssue] = []
     tax_country = str(fields.get("Country") or country) if domain != "item" else None
-    if domain in FORM_DOMAINS:
-        props = load_form_schema(domain)["properties"]  # type: ignore[arg-type]
-        for name, spec in props.items():
-            value = fields.get(name)
-            if _empty(value) or name in ("registrations", BANK_KEY):
-                continue
-            out += _check_value(name, _label(domain, name, tax_country), spec, value, tax_country)
-    else:
-        for name, (label, limit) in COST_CENTER_RULES.items():
-            value = fields.get(name)
-            if _empty(value):
-                continue
-            if name == "EffectiveFrom":
-                out += _check_value(name, label, {"type": "string", "format": "date"}, value)
-            else:
-                out += _check_value(name, label, {"type": "string", "maxLength": limit}, value)
+    props = load_form_schema(domain)["properties"]  # type: ignore[arg-type]
+    for name, spec in props.items():
+        value = fields.get(name)
+        if _empty(value) or name in ("registrations", BANK_KEY):
+            continue
+        out += _check_value(name, _label(domain, name, tax_country), spec, value, tax_country)
 
-    for name in missing_form_fields(domain, country, fields):
+    for name in missing_form_fields(domain, country, fields, override):
         if name.startswith("registrations["):
             cc = name[len("registrations[") : -1]
             label = f"Registration number ({COUNTRY_NAME.get(cc, cc)})"

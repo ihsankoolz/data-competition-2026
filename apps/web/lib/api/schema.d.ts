@@ -65,7 +65,9 @@ export interface paths {
         /**
          * Get Form
          * @description `country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns
-         *     the shorter foreign-vendor required list (D-020 #2).
+         *     the shorter foreign-vendor required list (D-020 #2). The admin's required-field toggles for
+         *     this record type and country are applied on top (session 13); with `req_id`, the toggles that
+         *     request was created with are applied instead, so a resubmit shows the rules it started under.
          */
         get: operations["getForm"];
         put?: never;
@@ -500,6 +502,52 @@ export interface paths {
          * @description The most recent rule changes: who, when (simulated clock), before and after.
          */
         get: operations["listConfigChanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/required-fields": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Required Fields
+         * @description Every field on one form with whether it is required now, whether that is the standard,
+         *     and whether it is locked (with the reason).
+         */
+        get: operations["getRequiredFields"];
+        /**
+         * Save Required Fields
+         * @description Switch fields for one record type x country. 403 unless MDM; 422 with a plain sentence for
+         *     a locked field (nothing is saved). Each change is audit-logged. New requests only.
+         */
+        put: operations["saveRequiredFields"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/required-field-changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Required Field Changes
+         * @description The most recent required-field changes: who, when (simulated clock), what.
+         */
+        get: operations["listRequiredFieldChanges"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1643,6 +1691,11 @@ export interface components {
              * @default []
              */
             regulated_countries?: ("SG" | "MY" | "ID" | "VN" | "TH")[];
+            /**
+             * Sap Note
+             * @description A one-line note about what SAP does with this record type
+             */
+            sap_note?: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -2400,6 +2453,131 @@ export interface components {
             /** Country */
             country?: ("SG" | "MY" | "ID" | "VN" | "TH") | null;
         };
+        /** RequiredFieldChange */
+        RequiredFieldChange: {
+            /** Id */
+            id: number;
+            /**
+             * At
+             * Format: date-time
+             * @description Simulated clock
+             */
+            at: string;
+            /** Who */
+            who: string;
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /** Field */
+            field: string;
+            /** Field Label */
+            field_label: string;
+            /** Now Required */
+            now_required: boolean;
+            /**
+             * Summary
+             * @description Plain English, e.g. 'Priya made Email required for Singapore customers'
+             */
+            summary: string;
+        };
+        /** RequiredFieldRow */
+        RequiredFieldRow: {
+            /**
+             * Field
+             * @description Form field (SAP name), e.g. 'EmailAddress'
+             */
+            field: string;
+            /**
+             * Label
+             * @description Plain label, e.g. 'Email'
+             */
+            label: string;
+            /**
+             * Help
+             * @description The form's one-line hint for the field
+             */
+            help?: string | null;
+            /**
+             * Required
+             * @description True when the field is required right now
+             */
+            required: boolean;
+            /**
+             * Standard
+             * @description True when the standard rules (YAML) require it
+             */
+            standard: boolean;
+            /**
+             * Changed
+             * @description True when this differs from the standard rules
+             */
+            changed: boolean;
+            /**
+             * Locked
+             * @description True when it can never be made optional
+             */
+            locked: boolean;
+            /**
+             * Locked Reason
+             * @description One plain line on why a locked field must stay required
+             */
+            locked_reason?: string | null;
+        };
+        /** RequiredFieldSet */
+        RequiredFieldSet: {
+            /** Field */
+            field: string;
+            /** Required */
+            required: boolean;
+        };
+        /** RequiredFieldsSave */
+        RequiredFieldsSave: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Fields
+             * @description The fields to switch. Fields left out are not touched
+             */
+            fields: components["schemas"]["RequiredFieldSet"][];
+        };
+        /** RequiredFieldsView */
+        RequiredFieldsView: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH";
+            /**
+             * Fields
+             * @description In form order
+             */
+            fields: components["schemas"]["RequiredFieldRow"][];
+            /**
+             * Note
+             * @description Plain-English caption: applies to new requests only
+             */
+            note: string;
+        };
         /** ResetResult */
         ResetResult: {
             /** Ok */
@@ -2914,6 +3092,7 @@ export interface operations {
         parameters: {
             query?: {
                 country?: string | null;
+                req_id?: string | null;
             };
             header?: never;
             path: {
@@ -3782,6 +3961,109 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConfigChange"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getRequiredFields: {
+        parameters: {
+            query: {
+                domain: "customer" | "vendor" | "item" | "cost_center";
+                country: "SG" | "MY" | "ID" | "VN" | "TH";
+            };
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequiredFieldsView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    saveRequiredFields: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequiredFieldsSave"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequiredFieldsView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listRequiredFieldChanges: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequiredFieldChange"][];
                 };
             };
             /** @description Validation Error */

@@ -111,7 +111,6 @@ export function RequestFields({ detail }: { detail: RequestDetail }) {
   const [loaded, setLoaded] = useState<{ key: string; schema: FormSchema | null } | null>(null);
 
   useEffect(() => {
-    if (detail.domain === "cost_center") return;
     let current = true;
     api
       .GET("/forms/{domain}", {
@@ -127,7 +126,7 @@ export function RequestFields({ detail }: { detail: RequestDetail }) {
     };
   }, [detail.domain, detail.country, formKey]);
 
-  const ready = detail.domain === "cost_center" || loaded?.key === formKey;
+  const ready = loaded?.key === formKey;
   const schema = loaded?.key === formKey ? loaded.schema : null;
 
   // Wait for the labels so the list does not jump from SAP names to plain words.

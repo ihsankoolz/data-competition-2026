@@ -85,7 +85,7 @@
           "forms"
         ],
         "summary": "Get Form",
-        "description": "`country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns\nthe shorter foreign-vendor required list (D-020 #2).",
+        "description": "`country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns\nthe shorter foreign-vendor required list (D-020 #2). The admin's required-field toggles for\nthis record type and country are applied on top (session 13); with `req_id`, the toggles that\nrequest was created with are applied instead, so a resubmit shows the rules it started under.",
         "operationId": "getForm",
         "parameters": [
           {
@@ -117,6 +117,22 @@
                 }
               ],
               "title": "Country"
+            }
+          },
+          {
+            "name": "req_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Req Id"
             }
           }
         ],
@@ -1741,6 +1757,205 @@
                     "$ref": "#/components/schemas/ConfigChange"
                   },
                   "title": "Response Listconfigchanges"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/required-fields": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Get Required Fields",
+        "description": "Every field on one form with whether it is required now, whether that is the standard,\nand whether it is locked (with the reason).",
+        "operationId": "getRequiredFields",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "customer",
+                "vendor",
+                "item",
+                "cost_center"
+              ],
+              "type": "string",
+              "title": "Domain"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "SG",
+                "MY",
+                "ID",
+                "VN",
+                "TH"
+              ],
+              "type": "string",
+              "title": "Country"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequiredFieldsView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Save Required Fields",
+        "description": "Switch fields for one record type x country. 403 unless MDM; 422 with a plain sentence for\na locked field (nothing is saved). Each change is audit-logged. New requests only.",
+        "operationId": "saveRequiredFields",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequiredFieldsSave"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequiredFieldsView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/required-field-changes": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List Required Field Changes",
+        "description": "The most recent required-field changes: who, when (simulated clock), what.",
+        "operationId": "listRequiredFieldChanges",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RequiredFieldChange"
+                  },
+                  "title": "Response Listrequiredfieldchanges"
                 }
               }
             }
@@ -4181,6 +4396,18 @@
             "type": "array",
             "title": "Regulated Countries",
             "default": []
+          },
+          "sap_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sap Note",
+            "description": "A one-line note about what SAP does with this record type"
           }
         },
         "type": "object",
@@ -5791,6 +6018,248 @@
         "type": "object",
         "title": "RequestUpdate",
         "description": "Partial update of a DRAFT or INFO_REQUESTED request. Every changed field is audited."
+      },
+      "RequiredFieldChange": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At",
+            "description": "Simulated clock"
+          },
+          "who": {
+            "type": "string",
+            "title": "Who"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "field_label": {
+            "type": "string",
+            "title": "Field Label"
+          },
+          "now_required": {
+            "type": "boolean",
+            "title": "Now Required"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "description": "Plain English, e.g. 'Priya made Email required for Singapore customers'"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "at",
+          "who",
+          "domain",
+          "country",
+          "field",
+          "field_label",
+          "now_required",
+          "summary"
+        ],
+        "title": "RequiredFieldChange"
+      },
+      "RequiredFieldRow": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field",
+            "description": "Form field (SAP name), e.g. 'EmailAddress'"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "description": "Plain label, e.g. 'Email'"
+          },
+          "help": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Help",
+            "description": "The form's one-line hint for the field"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required",
+            "description": "True when the field is required right now"
+          },
+          "standard": {
+            "type": "boolean",
+            "title": "Standard",
+            "description": "True when the standard rules (YAML) require it"
+          },
+          "changed": {
+            "type": "boolean",
+            "title": "Changed",
+            "description": "True when this differs from the standard rules"
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "description": "True when it can never be made optional"
+          },
+          "locked_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locked Reason",
+            "description": "One plain line on why a locked field must stay required"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "label",
+          "required",
+          "standard",
+          "changed",
+          "locked"
+        ],
+        "title": "RequiredFieldRow"
+      },
+      "RequiredFieldSet": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "required"
+        ],
+        "title": "RequiredFieldSet"
+      },
+      "RequiredFieldsSave": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredFieldSet"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Fields",
+            "description": "The fields to switch. Fields left out are not touched"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "country",
+          "fields"
+        ],
+        "title": "RequiredFieldsSave"
+      },
+      "RequiredFieldsView": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredFieldRow"
+            },
+            "type": "array",
+            "title": "Fields",
+            "description": "In form order"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "description": "Plain-English caption: applies to new requests only"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "country",
+          "fields",
+          "note"
+        ],
+        "title": "RequiredFieldsView"
       },
       "ResetResult": {
         "properties": {

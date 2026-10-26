@@ -10,8 +10,12 @@ from services.api.db.session import session_scope
 from services.api.deps import CurrentUser, require_role
 from services.api.schemas import (
     ConfigChange,
+    CountryCode,
     Domain,
     EntityCode,
+    RequiredFieldChange,
+    RequiredFieldsSave,
+    RequiredFieldsView,
     ResetResult,
     RoutingRule,
     RoutingRules,
@@ -21,7 +25,7 @@ from services.api.schemas import (
     RulePreview,
     RulePreviewRequest,
 )
-from services.api.workflow import overrides
+from services.api.workflow import overrides, required_fields
 
 router = APIRouter(tags=["admin"])
 
@@ -91,3 +95,44 @@ def list_config_changes(actor: CurrentUser) -> list[ConfigChange]:
     """The most recent rule changes: who, when (simulated clock), before and after."""
     with session_scope() as session:
         return overrides.recent_changes(session)
+
+
+# ---------------------------------------------------------------- required fields (session 13)
+# Priya switches a form field between required and optional per record type x country. A request
+# keeps the rules it was created with; locked fields can never be made optional.
+
+CAN_EDIT_FIELDS = "change which fields are required"
+
+
+@router.get(
+    "/admin/required-fields", response_model=RequiredFieldsView, operation_id="getRequiredFields"
+)
+def get_required_fields(
+    domain: Annotated[Domain, Query()], country: Annotated[CountryCode, Query()], actor: CurrentUser
+) -> RequiredFieldsView:
+    """Every field on one form with whether it is required now, whether that is the standard,
+    and whether it is locked (with the reason)."""
+    with session_scope() as session:
+        return required_fields.view(session, domain, country)
+
+
+@router.put(
+    "/admin/required-fields", response_model=RequiredFieldsView, operation_id="saveRequiredFields"
+)
+def save_required_fields(body: RequiredFieldsSave, actor: CurrentUser) -> RequiredFieldsView:
+    """Switch fields for one record type x country. 403 unless MDM; 422 with a plain sentence for
+    a locked field (nothing is saved). Each change is audit-logged. New requests only."""
+    require_role(actor, "mdm_analyst", CAN_EDIT_FIELDS)
+    with session_scope(write=True) as session:
+        return required_fields.save(session, actor.user_id, body)
+
+
+@router.get(
+    "/admin/required-field-changes",
+    response_model=list[RequiredFieldChange],
+    operation_id="listRequiredFieldChanges",
+)
+def list_required_field_changes(actor: CurrentUser) -> list[RequiredFieldChange]:
+    """The most recent required-field changes: who, when (simulated clock), what."""
+    with session_scope() as session:
+        return required_fields.recent_changes(session)

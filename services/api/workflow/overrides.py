@@ -291,7 +291,10 @@ def reset_rule(session: Session, actor_id: str, key_in: RuleKey) -> RoutingRule:
 def recent_changes(session: Session, limit: int = RECENT_CHANGES) -> list[ConfigChange]:
     rows = session.scalars(
         select(m.AuditLog)
-        .where(m.AuditLog.action == AuditAction.config_change.value)
+        .where(
+            m.AuditLog.action == AuditAction.config_change.value,
+            m.AuditLog.entity_type == "routing_rule",
+        )
         .order_by(m.AuditLog.id.desc())
         .limit(limit)
     ).all()

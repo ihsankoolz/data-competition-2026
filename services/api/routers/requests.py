@@ -23,6 +23,7 @@ from services.api.db.session import session_scope
 from services.api.deps import CurrentUser
 from services.api.formfields import (
     form_properties,
+    override_for,
     prefill_from_interpretation,
 )
 from services.api.ids import next_id
@@ -50,7 +51,7 @@ from services.api.views import (
     tasks_for,
     user_names,
 )
-from services.api.workflow import engine, publishing
+from services.api.workflow import engine, publishing, required_fields
 
 router = APIRouter(tags=["requests"])
 EDITABLE = (m.RequestState.DRAFT, m.RequestState.INFO_REQUESTED)
@@ -179,6 +180,8 @@ def _new_request(
         updated_at=now,
         source_email_id=source_email_id,
         prefill_quotes=quotes or {},
+        # The required-field toggles in force now; this request keeps them (session 13).
+        required_snapshot=required_fields.snapshot_for(session, domain),
     )
     session.add(req)
     session.flush()
@@ -431,7 +434,9 @@ def submit_request(req_id: str, actor: CurrentUser) -> RequestDetail:
             )
         domain = req.domain.value
         plain = bankfields.unseal(req.payload)
-        issues = validate_fields(domain, req.country, plain, clock.now().date())
+        issues = validate_fields(
+            domain, req.country, plain, clock.now().date(), override_for(req)
+        )
         if issues:
             raise ValidationFailed(submit_sentence(issues), issues)
         if domain in ("customer", "vendor"):
@@ -497,7 +502,9 @@ def validate_request(req_id: str, actor: CurrentUser) -> ValidationReport:
     with session_scope() as session:
         req = _get(session, req_id)
         plain = bankfields.unseal(req.payload)
-        issues = validate_fields(req.domain.value, req.country, plain, clock.now().date())
+        issues = validate_fields(
+            req.domain.value, req.country, plain, clock.now().date(), override_for(req)
+        )
     return ValidationReport(ok=not issues, issues=issues)
 
 

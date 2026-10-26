@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from services.api import bankfields, clock, item_suggestions, sap_readback
 from services.api.db import models as m
 from services.api.deps import Actor
-from services.api.formfields import missing_form_fields, title_of
+from services.api.formfields import missing_form_fields, override_for, title_of
 from services.api.schemas import (
     ApprovalTask,
     DedupDecisionOut,
@@ -215,7 +215,9 @@ def current_issues(req: m.Request, plain: dict[str, Any]) -> list[FieldIssue]:
     """Validation problems shown while the requestor can still edit (empty afterwards)."""
     if req.state not in (m.RequestState.DRAFT, m.RequestState.INFO_REQUESTED):
         return []
-    return validate_fields(req.domain.value, req.country, plain, clock.now().date())
+    return validate_fields(
+        req.domain.value, req.country, plain, clock.now().date(), override_for(req)
+    )
 
 
 def info_request_view(
@@ -257,7 +259,7 @@ def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetai
     return RequestDetail(
         **base.model_dump(),
         fields=bankfields.view(plain, is_finance=actor.is_finance),
-        missing_fields=missing_form_fields(req.domain.value, req.country, plain),
+        missing_fields=missing_form_fields(req.domain.value, req.country, plain, override_for(req)),
         source_email_id=req.source_email_id,
         prefill_quotes={k: str(v) for k, v in (req.prefill_quotes or {}).items()},
         prefill_suggested=item_suggestions.shown_reasons(session, req, plain),
