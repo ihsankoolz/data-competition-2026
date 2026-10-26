@@ -38,6 +38,7 @@ def factory(engine):
 def test_all_tables_are_created(engine):
     assert set(inspect(engine).get_table_names()) == {
         "users",
+        "routing_overrides",
         "business_partners",
         "bank_accounts",
         "items",
