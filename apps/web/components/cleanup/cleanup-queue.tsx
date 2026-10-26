@@ -115,6 +115,12 @@ function RecordsSideBySide({ records }: { records: CleanupRecord[] }) {
   );
 }
 
+// The matcher names each country's tax ID (MST in Vietnam, UEN in Singapore...); say what it is.
+const TAX_ID_NAMES = /\b(UEN|SSM no\.|NPWP|MST|TIN)(?= )/g;
+function plainReason(text: string): string {
+  return text.replace(TAX_ID_NAMES, "tax ID ($1)");
+}
+
 function Reasons({ cluster }: { cluster: Cluster }) {
   const several = cluster.links.length > 1;
   return (
@@ -140,7 +146,7 @@ function Reasons({ cluster }: { cluster: Cluster }) {
                 ) : (
                   <Check className="mt-0.5 size-3.5 shrink-0 text-success" aria-label="supports" />
                 )}
-                {r.text}
+                {plainReason(r.text)}
               </li>
             ))}
           </ul>
