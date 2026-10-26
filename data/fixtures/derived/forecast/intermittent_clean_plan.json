@@ -1,0 +1,345 @@
+{
+ "scenario": "intermittent",
+ "origin": "2026-09-01",
+ "months": [
+  "2026-10-01",
+  "2026-11-01",
+  "2026-12-01"
+ ],
+ "fast_growing": [
+  "ID",
+  "VN"
+ ],
+ "rows": [
+  {
+   "country": "SG",
+   "country_name": "Singapore",
+   "product": "A",
+   "excel_6m": 698.5,
+   "excel_6m_monthly": [
+    232.8,
+    232.8,
+    232.8
+   ],
+   "combination": 770.1,
+   "combination_monthly": [
+    331.5,
+    253.8,
+    184.8
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "SG",
+   "country_name": "Singapore",
+   "product": "B",
+   "excel_6m": 4.0,
+   "excel_6m_monthly": [
+    1.3,
+    1.3,
+    1.3
+   ],
+   "combination": 2.8,
+   "combination_monthly": [
+    1.1,
+    1.0,
+    0.7
+   ],
+   "pipeline_pr": 2.0,
+   "pipeline_pr_enq": 2.4,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "SG",
+   "country_name": "Singapore",
+   "product": "C",
+   "excel_6m": 10.5,
+   "excel_6m_monthly": [
+    3.5,
+    3.5,
+    3.5
+   ],
+   "combination": 14.5,
+   "combination_monthly": [
+    3.9,
+    6.7,
+    3.9
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "MY",
+   "country_name": "Malaysia",
+   "product": "A",
+   "excel_6m": 704.5,
+   "excel_6m_monthly": [
+    234.8,
+    234.8,
+    234.8
+   ],
+   "combination": 732.6,
+   "combination_monthly": [
+    251.3,
+    225.3,
+    256.0
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "MY",
+   "country_name": "Malaysia",
+   "product": "B",
+   "excel_6m": 2.5,
+   "excel_6m_monthly": [
+    0.8,
+    0.8,
+    0.8
+   ],
+   "combination": 1.8,
+   "combination_monthly": [
+    0.5,
+    0.5,
+    0.8
+   ],
+   "pipeline_pr": 1.7,
+   "pipeline_pr_enq": 2.1,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "MY",
+   "country_name": "Malaysia",
+   "product": "C",
+   "excel_6m": 25.0,
+   "excel_6m_monthly": [
+    8.3,
+    8.3,
+    8.3
+   ],
+   "combination": 18.8,
+   "combination_monthly": [
+    1.6,
+    3.6,
+    13.6
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "ID",
+   "country_name": "Indonesia",
+   "product": "A",
+   "excel_6m": 1886.0,
+   "excel_6m_monthly": [
+    628.7,
+    628.7,
+    628.7
+   ],
+   "combination": 1731.3,
+   "combination_monthly": [
+    633.6,
+    538.2,
+    559.5
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": 351.2,
+   "growth_adjustment_pct": 15.7,
+   "growth_adjustment_caption": "From the backtest: the Excel average planned Indonesia 16% low (orders grew 52% last year). Add this many units on top of the Excel plan to close that gap."
+  },
+  {
+   "country": "ID",
+   "country_name": "Indonesia",
+   "product": "B",
+   "excel_6m": 2.5,
+   "excel_6m_monthly": [
+    0.8,
+    0.8,
+    0.8
+   ],
+   "combination": 1.7,
+   "combination_monthly": [
+    0.6,
+    0.6,
+    0.6
+   ],
+   "pipeline_pr": 1.5,
+   "pipeline_pr_enq": 1.7,
+   "growth_adjustment": 0.5,
+   "growth_adjustment_pct": 15.7,
+   "growth_adjustment_caption": "From the backtest: the Excel average planned Indonesia 16% low (orders grew 52% last year). Add this many units on top of the Excel plan to close that gap."
+  },
+  {
+   "country": "ID",
+   "country_name": "Indonesia",
+   "product": "C",
+   "excel_6m": 46.5,
+   "excel_6m_monthly": [
+    15.5,
+    15.5,
+    15.5
+   ],
+   "combination": 38.2,
+   "combination_monthly": [
+    16.9,
+    7.7,
+    13.6
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": 8.7,
+   "growth_adjustment_pct": 15.7,
+   "growth_adjustment_caption": "From the backtest: the Excel average planned Indonesia 16% low (orders grew 52% last year). Add this many units on top of the Excel plan to close that gap."
+  },
+  {
+   "country": "VN",
+   "country_name": "Vietnam",
+   "product": "A",
+   "excel_6m": 2234.5,
+   "excel_6m_monthly": [
+    744.8,
+    744.8,
+    744.8
+   ],
+   "combination": 2192.5,
+   "combination_monthly": [
+    685.9,
+    730.4,
+    776.2
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": 287.5,
+   "growth_adjustment_pct": 11.4,
+   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 11% low (orders grew 36% last year). Add this many units on top of the Excel plan to close that gap."
+  },
+  {
+   "country": "VN",
+   "country_name": "Vietnam",
+   "product": "B",
+   "excel_6m": 4.5,
+   "excel_6m_monthly": [
+    1.5,
+    1.5,
+    1.5
+   ],
+   "combination": 3.4,
+   "combination_monthly": [
+    1.1,
+    0.8,
+    1.5
+   ],
+   "pipeline_pr": 4.7,
+   "pipeline_pr_enq": 3.5,
+   "growth_adjustment": 0.6,
+   "growth_adjustment_pct": 11.4,
+   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 11% low (orders grew 36% last year). Add this many units on top of the Excel plan to close that gap."
+  },
+  {
+   "country": "VN",
+   "country_name": "Vietnam",
+   "product": "C",
+   "excel_6m": 57.0,
+   "excel_6m_monthly": [
+    19.0,
+    19.0,
+    19.0
+   ],
+   "combination": 51.1,
+   "combination_monthly": [
+    27.8,
+    11.4,
+    11.9
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": 7.3,
+   "growth_adjustment_pct": 11.4,
+   "growth_adjustment_caption": "From the backtest: the Excel average planned Vietnam 11% low (orders grew 36% last year). Add this many units on top of the Excel plan to close that gap."
+  },
+  {
+   "country": "TH",
+   "country_name": "Thailand",
+   "product": "A",
+   "excel_6m": 1720.0,
+   "excel_6m_monthly": [
+    573.3,
+    573.3,
+    573.3
+   ],
+   "combination": 1549.1,
+   "combination_monthly": [
+    489.6,
+    581.5,
+    478.1
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "TH",
+   "country_name": "Thailand",
+   "product": "B",
+   "excel_6m": 1.0,
+   "excel_6m_monthly": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "combination": 2.3,
+   "combination_monthly": [
+    0.3,
+    0.3,
+    1.6
+   ],
+   "pipeline_pr": 1.7,
+   "pipeline_pr_enq": 2.0,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  },
+  {
+   "country": "TH",
+   "country_name": "Thailand",
+   "product": "C",
+   "excel_6m": 29.5,
+   "excel_6m_monthly": [
+    9.8,
+    9.8,
+    9.8
+   ],
+   "combination": 38.3,
+   "combination_monthly": [
+    13.2,
+    7.0,
+    18.0
+   ],
+   "pipeline_pr": null,
+   "pipeline_pr_enq": null,
+   "growth_adjustment": null,
+   "growth_adjustment_pct": null,
+   "growth_adjustment_caption": null
+  }
+ ]
+}

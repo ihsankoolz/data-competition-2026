@@ -58,8 +58,10 @@ Exact rules
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -215,3 +217,172 @@ def backtest_frame(series: MonthlySeries) -> pd.DataFrame:
     region = cv.groupby(["cutoff", "ds"], as_index=False)[["y", *VARIANTS]].sum()
     region["country"] = "REGION"
     return pd.concat([cv, region], ignore_index=True)
+
+
+# ============================================================================= runner (phase 2)
+# Everything below scores, stores and serves the method above. It adds no constant to the
+# method and changes none of its rules.
+M9_METHODS = ["excel_6m", "excel_12m", "combination"]
+ALL_METHODS = [*M9_METHODS, *VARIANTS]
+METHOD_LABELS = {**{m: bt.LABELS[m] for m in M9_METHODS}, **VARIANT_LABELS}
+
+
+def score(cv: pd.DataFrame, methods: list[str]) -> list[dict[str, Any]]:
+    """Pooled WAPE and bias (%), the same arithmetic and rounding as `backtest.score`."""
+    total = float(cv["y"].sum())
+    out = []
+    for m in methods:
+        err = cv[m] - cv["y"]
+        wape = 100.0 * float(err.abs().sum()) / total if total else 0.0
+        bias = 100.0 * float(err.sum()) / total if total else 0.0
+        out.append(
+            {
+                "method": m,
+                "label": METHOD_LABELS[m],
+                "wape_pct": round(wape, 1),
+                "bias_pct": round(bias, 1),
+            }
+        )
+    return out
+
+
+def pipeline_path(derived_dir: Path, scenario: str) -> Path:
+    return Path(derived_dir) / "forecast" / f"{scenario}_clean_pipeline.json"
+
+
+def frame_path(derived_dir: Path, scenario: str) -> Path:
+    return Path(derived_dir) / "forecast" / f"{scenario}_clean_pipeline_cv.csv"
+
+
+def _stored_country_b(derived_dir: Path, scenario: str) -> pd.DataFrame:
+    """The stored M9 country x product frame, Product B rows (never refitted)."""
+    from ds.forecasting import bias as fb
+
+    cv = fb.read_frame(fb.frame_path(derived_dir, scenario, "clean"))
+    cv = cv[cv["product"] == PRODUCT].copy()
+    for col in ("cutoff", "ds"):
+        cv[col] = pd.to_datetime(cv[col])
+    return cv[["country", "cutoff", "ds", "y", *M9_METHODS]]
+
+
+def run_scenario(scenario: str, derived_dir: Path = bt.DERIVED) -> tuple[dict, pd.DataFrame]:
+    """Backtest the pipeline plan for one scenario (clean data) and compare with stored M9."""
+    series = load_series(bt.scenario_dir(scenario))
+    cv = backtest_frame(series)
+    countries = cv[cv["country"] != "REGION"]
+    region = cv[cv["country"] == "REGION"]
+
+    stored = _stored_country_b(derived_dir, scenario)
+    joined = countries.merge(stored, on=["country", "cutoff", "ds"], suffixes=("", "_m9"))
+    if len(joined) != len(countries) or len(joined) != len(stored):
+        raise AssertionError(f"{scenario}: origins or months differ from the stored M9 frame")
+    if not np.allclose(joined["y"], joined["y_m9"]):
+        raise AssertionError(f"{scenario}: confirmed-PO actuals differ from the stored M9 frame")
+
+    run = bt.load_backtest(derived_dir, scenario, "clean")
+    m9_region = next(
+        s["scores"] for s in run["series"] if s["level"] == "product" and s["product"] == PRODUCT
+    )
+    per_country = [
+        {"country": c, "scores": score(joined[joined["country"] == c], ALL_METHODS)}
+        for c in bt.COUNTRY_NAMES
+    ]
+    n_origin = len(countries) // H
+    result = {
+        "scenario": scenario,
+        "data": "clean",
+        "product": PRODUCT,
+        "constants": {
+            "LMAX": LMAX,
+            "CONVERSION_WINDOW": CONVERSION_WINDOW,
+            "REQUEST_FILL_MONTHS": REQUEST_FILL_MONTHS,
+            "FALLBACK_EXCEL_MONTHS": FALLBACK_EXCEL_MONTHS,
+            "FLOOR": FLOOR,
+            "H": H,
+            "N_WINDOWS": N_WINDOWS,
+            "STEP": STEP,
+        },
+        # region: M9 numbers fitted top-down on the region total (stored JSON), pipeline built
+        # bottom-up as the sum of the 5 country plans
+        "region": [*m9_region, *score(region, list(VARIANTS))],
+        "countries_pooled": score(joined, ALL_METHODS),
+        "per_country": per_country,
+        "fallbacks": {
+            s: {"used": int(countries[f"fallback_{s}"].sum()) // H, "of": n_origin} for s in SIGNALS
+        },
+    }
+    return result, cv
+
+
+def write_json(obj: Any, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(obj, fh, indent=1, ensure_ascii=False)
+        fh.write("\n")
+
+
+def write_frame(cv: pd.DataFrame, path: Path) -> None:
+    out = cv.copy()
+    for col in ("cutoff", "ds"):
+        out[col] = pd.to_datetime(out[col]).dt.strftime("%Y-%m-%d")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(path, index=False, lineterminator="\n")
+
+
+def load_pipeline(derived_dir: Path, scenario: str) -> dict[str, Any] | None:
+    path = pipeline_path(derived_dir, scenario)
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+TIE_POINTS = 1.0  # same wording rule as the M9 honest note: < 1 point apart = a tie
+FAVOURS = (
+    "The test data creates requests from later orders, so this test favours a pipeline "
+    "method; a pilot must measure the conversion rate on real data."
+)
+
+
+def verdict_words(result: dict[str, Any]) -> str:
+    """Region, Product B, primary variant vs the best M9 method, in words."""
+    by = {s["method"]: s for s in result["region"]}
+    pr = by["pipeline_pr"]["wape_pct"]
+    others = {m: by[m]["wape_pct"] for m in M9_METHODS}
+    best_m = min(others, key=lambda m: (others[m], m))
+    short = {
+        "excel_6m": "the Excel 6-month average",
+        "excel_12m": "the Excel 12-month average",
+        "combination": "our statistical method",
+    }
+    diff = others[best_m] - pr
+    if abs(diff) < TIE_POINTS:
+        return f"effectively a tie with {short[best_m]}"
+    if diff > 0:
+        return f"better than every average-based method ({diff:.1f} points below the best)"
+    return f"{short[best_m]} still does better"
+
+
+def pipeline_note(result: dict[str, Any]) -> str:
+    """One plain-English line for the app: region, Product B, primary variant vs the rest."""
+    by = {s["method"]: s for s in result["region"]}
+    pr = by["pipeline_pr"]["wape_pct"]
+    others = {m: by[m]["wape_pct"] for m in M9_METHODS}
+    verdict = verdict_words(result)
+    return (
+        f"Equipment (Product B), whole region: planning from purchase requests x a conversion "
+        f"rate was off by {pr:.1f}% of units, against {others['excel_6m']:.1f}% for the Excel "
+        f"6-month average, {others['excel_12m']:.1f}% for the 12-month average and "
+        f"{others['combination']:.1f}% for ours: {verdict}. {FAVOURS}"
+    )
+
+
+def main(derived_dir: Path = bt.DERIVED) -> None:
+    for s in bt.SCENARIOS:
+        bt.ensure_scenario(s)
+        result, cv = run_scenario(s, derived_dir)
+        result["note"] = pipeline_note(result)
+        write_json(result, pipeline_path(derived_dir, s))
+        write_frame(cv, frame_path(derived_dir, s))
+        print(f"{s}: {result['note']}")
+
+
+if __name__ == "__main__":
+    main()

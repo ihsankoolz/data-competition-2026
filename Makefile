@@ -77,6 +77,7 @@ eval:             ## dedup, classifier and forecast evaluations -> docs/results.
 	LLM_MODE=replay uv run python notebooks/eval_holdout.py
 	@for s in flat_noisy intermittent; do $(MAKE) --no-print-directory data SCENARIO=$$s; done
 	uv run python notebooks/eval_forecast.py
+	uv run python notebooks/eval_pipeline.py
 	uv run python notebooks/eval_regional.py
 	uv run python notebooks/eval_ops.py
 
