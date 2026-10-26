@@ -33,3 +33,9 @@ test("Start here", async ({ page }) => {
   await page.waitForLoadState("networkidle");
   await shot(page, "05-start-here");
 });
+
+test("Clean-up queue", async ({ page }) => {
+  await open(page, "priya", "/cleanup");
+  await expect(page.getByTestId("cleanup-reasons").first()).toBeVisible({ timeout: 20_000 });
+  await shot(page, "08-cleanup-queue");
+});

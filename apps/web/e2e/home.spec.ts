@@ -109,6 +109,7 @@ test("the sidebar starts with Start here, then the existing screens in the same 
     "My requests",
     "Approvals",
     "Publish to SAP",
+    "Clean-up queue",
     "Regional view",
     "Ops impact",
     "Admin & config",
