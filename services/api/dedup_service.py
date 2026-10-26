@@ -12,8 +12,18 @@ import threading
 from typing import Any
 
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from ds.dedup import BPRecord, DedupResult, MasterIndex, check
+from ds.dedup.items import (
+    ItemDedupResult,
+    ItemIndex,
+    ItemRecord,
+    ItemRegistrationRef,
+    check_item,
+    item_query,
+    load_catalogue,
+)
 from ds.forms import dedup_query
 from services.api.db import models as m
 from services.api.db.session import session_scope
@@ -85,3 +95,41 @@ def run_check(
             block_submit=False,
         )
     return check(query, get_index(), use_judge=use_judge and judge_enabled())
+
+
+# ---------------------------------------------------------------- session 13: item duplicate check
+
+
+def item_records(session: Session) -> list[ItemRecord]:
+    """Every item in the catalogue with its registrations and synthetic catalogue numbers.
+    Read fresh on each check: the catalogue is small (15 demo items plus any published)."""
+    regs: dict[str, list[ItemRegistrationRef]] = {}
+    for code, country, reg_no in session.execute(
+        select(m.ItemRegistration.item_code, m.ItemRegistration.country, m.ItemRegistration.reg_no)
+    ):
+        if reg_no:
+            regs.setdefault(code, []).append(ItemRegistrationRef(country=country, reg_no=reg_no))
+    catalogue = load_catalogue()
+    return [
+        ItemRecord(
+            ItemCode=it.ItemCode,
+            ItemName=it.ItemName,
+            ItemsGroupCode=it.ItemsGroupCode,
+            sales_unit=it.sales_unit,
+            catalogue_numbers=catalogue.get(it.ItemCode, []),
+            registrations=regs.get(it.ItemCode, []),
+        )
+        for it in session.scalars(select(m.Item))
+    ]
+
+
+def item_check(
+    session: Session, fields: dict[str, Any], *, exclude: list[str] | None = None
+) -> ItemDedupResult:
+    """Rules only (rule 6: no AI, never links). `exclude`: the item this request published."""
+    return check_item(item_query(fields, exclude or []), ItemIndex(item_records(session)))
+
+
+def run_item_check(fields: dict[str, Any], *, exclude: list[str] | None = None) -> ItemDedupResult:
+    with session_scope() as session:
+        return item_check(session, fields, exclude=exclude)

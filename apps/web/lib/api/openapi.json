@@ -518,6 +518,68 @@
         }
       }
     },
+    "/dedup/check-item": {
+      "post": {
+        "tags": [
+          "dedup"
+        ],
+        "summary": "Check Item Duplicates",
+        "description": "Session 13: is this new item already in the catalogue? Rules only (no AI, rule 6):\nnormalised name, manufacturer catalogue number (synthetic in the demo) and registration\nnumber per country. Read-only; logged when `request_id` is set.",
+        "operationId": "checkItemDuplicates",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemDedupCheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemDedupResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/requests": {
       "get": {
         "tags": [
@@ -4008,7 +4070,7 @@
               }
             ],
             "title": "Card Code",
-            "description": "Required for link_to_existing"
+            "description": "Required for link_to_existing: the CardCode, or the ItemCode for an item request (session 13)"
           },
           "reason": {
             "anyOf": [
@@ -5138,6 +5200,195 @@
           "ai_status"
         ],
         "title": "Interpretation"
+      },
+      "ItemCandidate": {
+        "properties": {
+          "ItemCode": {
+            "type": "string",
+            "title": "Itemcode"
+          },
+          "ItemName": {
+            "type": "string",
+            "title": "Itemname"
+          },
+          "ItemsGroupCode": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Itemsgroupcode"
+          },
+          "sales_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sales Unit"
+          },
+          "score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score"
+          },
+          "name_score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Name Score"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "likely",
+              "possible"
+            ],
+            "title": "Verdict"
+          },
+          "catalogue_match": {
+            "type": "boolean",
+            "title": "Catalogue Match",
+            "default": false
+          },
+          "registration_match": {
+            "type": "boolean",
+            "title": "Registration Match",
+            "default": false
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/ItemReason"
+            },
+            "type": "array",
+            "title": "Reasons",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "ItemCode",
+          "ItemName",
+          "score",
+          "name_score",
+          "verdict"
+        ],
+        "title": "ItemCandidate",
+        "description": "An existing item that may be the same as the new one."
+      },
+      "ItemDedupCheckRequest": {
+        "properties": {
+          "fields": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fields",
+            "description": "Partial item form fields: ItemName, ItemsGroupCode, manufacturer_catalogue_no, registrations[{country, reg_no}]"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id",
+            "description": "Set when checking an existing draft; the check is logged"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fields"
+        ],
+        "title": "ItemDedupCheckRequest",
+        "description": "What the requester has typed on the item form so far (debounced, and again on submit)."
+      },
+      "ItemDedupResult": {
+        "properties": {
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "likely",
+              "possible",
+              "none"
+            ],
+            "title": "Verdict"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "block_submit": {
+            "type": "boolean",
+            "title": "Block Submit",
+            "description": "True for 'likely': submit waits until a person uses the existing item or says why theirs is different"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/ItemCandidate"
+            },
+            "type": "array",
+            "title": "Candidates",
+            "default": []
+          },
+          "checked_items": {
+            "type": "integer",
+            "title": "Checked Items",
+            "description": "How many existing items were compared",
+            "default": 0
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "verdict",
+          "message",
+          "block_submit"
+        ],
+        "title": "ItemDedupResult"
+      },
+      "ItemReason": {
+        "properties": {
+          "layer": {
+            "type": "string",
+            "enum": [
+              "catalogue",
+              "registration",
+              "name",
+              "evidence"
+            ],
+            "title": "Layer"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Plain English, shown to the requester"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight",
+            "description": "Contribution to the score (+/-)",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "layer",
+          "text"
+        ],
+        "title": "ItemReason"
       },
       "JudgeOpinion": {
         "properties": {
@@ -6397,7 +6648,8 @@
                 "type": "null"
               }
             ],
-            "title": "Linked Card Code"
+            "title": "Linked Card Code",
+            "description": "CardCode of the linked record, or ItemCode for an item request"
           },
           "linked_card_name": {
             "anyOf": [
@@ -6409,7 +6661,24 @@
               }
             ],
             "title": "Linked Card Name",
-            "description": "CardName of the linked existing record (session 5)"
+            "description": "CardName (or ItemName) of the linked existing record (session 5, 13)"
+          },
+          "item_match": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "likely",
+                  "possible",
+                  "none"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Match",
+            "description": "Item requests only: the item duplicate check on the current fields, rules only, never counting the item this request itself published (session 13)"
           },
           "info_request": {
             "anyOf": [

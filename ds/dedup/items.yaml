@@ -1,0 +1,89 @@
+# Item duplicate check (session 13). Loaded by ds.dedup.items.ItemDedupConfig.load().
+# Rules only, no AI (domain rule 6). These thresholds and weights were committed in a0d13f1,
+# before the hand-made evaluation set (ds/dedup/item_eval_set.yaml) was committed in 675d1e1,
+# and are unchanged since (check with: git log -p ds/dedup/items.yaml).
+
+thresholds:
+  likely: 0.85      # >= likely, or same catalogue number, or same registration in the same country
+  possible: 0.60    # >= possible: "Possible duplicate" (warn, never blocks)
+
+max_candidates: 5
+
+name:
+  w_distinctive: 0.6        # share of the score from the distinctive words (not generic, not numbers)
+  w_all: 0.4                # share from all words, weighted (generic words count little)
+  token_ratio_min: 88       # two words count as the same word at or above this rapidfuzz ratio (words of 5+ letters)
+  generic_weight: 0.15      # weight of a generic word (rapid, test, kit, ...)
+  semi_generic_weight: 0.5  # weight of a common but meaningful word (antigen, antibody, service, ...)
+  no_distinctive_cap: 0.30  # if no distinctive word is shared, the name score is at most this
+  number_mismatch_penalty: 0.25  # both names have numbers and they differ: "3-part" vs "5-part"
+
+evidence:
+  catalogue_floor: 0.97          # same manufacturer catalogue number, or the typed number is an existing ItemCode
+  registration_floor: 0.97       # same registration number in the same country
+  catalogue_conflict_penalty: 0.20     # both have a catalogue number and they differ
+  registration_conflict_penalty: 0.15  # both registered in the same country under different numbers
+  group_conflict_penalty: 0.10         # different item group (kit vs analyser vs service)
+
+# Pack sizes and units are removed before comparing (see PACK_PATTERNS in items.py).
+
+# Words that say what kind of thing it is but not which one. "Malaria Antigen Rapid Test Kit"
+# and "SARS-CoV-2 Antigen Rapid Test Kit" share only these, so they must not match.
+generic:
+  [rapid, test, kit, reagent, assay, analyser, device, cassette, strip, cartridge, panel,
+   diagnostic, ivd, detection, combo, card, system, unit, laboratory, automated, digital,
+   instrument, solution, product, new, type, model, version, pack, box, set, refill]
+semi_generic:
+  [antigen, antibody, quantitative, qualitative, service, contract, visit, package,
+   subscription, clinical, cabinet, annual]
+
+stopwords: [of, and, the, for, with, a, an, in, "on", to, per, by]
+
+# Spelling variants and abbreviations, applied to whole words (after lowercasing).
+aliases:
+  ag: antigen
+  ab: antibody
+  abs: antibody
+  analyzer: analyser
+  analyzers: analyser
+  haematology: hematology
+  haemoglobin: hemoglobin
+  centrifuges: centrifuge
+  quant: quantitative
+  qt: quantitative
+  lab: laboratory
+  chem: chemistry
+  auto: automated
+  svc: service
+  srv: service
+  maint: maintenance
+  pm: preventive maintenance
+  preventative: preventive
+  lis: laboratory information system
+  bsc: biosafety cabinet
+  rdt: rapid test
+  covid: sars cov2
+  covid19: sars cov2
+  sarscov2: sars cov2
+  ncov: sars cov2
+  refridgerated: refrigerated
+  yr: year
+  annually: annual
+  yearly: annual
+  ii: "2"
+  iii: "3"
+  iv: "4"
+  creactive: crp
+
+# Multi-word variants, matched on whole words after punctuation is turned into spaces.
+phrases:
+  c reactive protein: crp
+  c reactive: crp
+  glycated hemoglobin: hba1c
+  glycated haemoglobin: hba1c
+  hb a1c: hba1c
+  sars cov 2: sars cov2
+  sars cov: sars cov2
+  bio safety: biosafety
+  centrifuge machine: centrifuge
+  per year: annual

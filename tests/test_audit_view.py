@@ -117,7 +117,8 @@ def test_item_request_history_has_no_python_structures(client):
                 "U_IVD": "tYES",
                 "selling_countries": ["SG", "MY"],
                 "registrations": [
-                    {"country": "SG", "reg_no": "DE2538958", "expiry_date": "2030-08-15"},
+                    # (not an existing item's number: that is a Likely duplicate since session 13)
+                    {"country": "SG", "reg_no": "DE9000001", "expiry_date": "2030-08-15"},
                     {"country": "MY", "reg_no": "MDA-2", "expiry_date": "2030-06-30"},
                 ],
             },
@@ -132,7 +133,7 @@ def test_item_request_history_has_no_python_structures(client):
             "fields": {
                 "selling_countries": ["SG", "MY", "VN"],
                 "registrations": [
-                    {"country": "SG", "reg_no": "DE2538958", "expiry_date": "2031-12-31"},
+                    {"country": "SG", "reg_no": "DE9000001", "expiry_date": "2031-12-31"},
                     {"country": "VN", "reg_no": "VN-3", "expiry_date": "2030-12-31"},
                     {"country": "MY", "reg_no": "MDA-2", "expiry_date": "2030-06-30"},
                 ],

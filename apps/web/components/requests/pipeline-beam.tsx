@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 type RequestDetail = Schema<"RequestDetail">;
 
-/** "not_needed": the step does not apply to this kind of request (no duplicate check for items),
+/** "not_needed": the step does not apply to this kind of request (no duplicate check for cost centers),
  * shown as a neutral check so the journey still reads as complete. "skipped": it was bypassed. */
 export type NodeState =
   | "done"
@@ -73,18 +73,33 @@ export function pipelineNodes(d: RequestDetail): PipelineNode[] {
       }
     : { id: "ai", label: "Read by AI", state: "skipped", caption: "No email to read" };
 
-  // The duplicate check runs for customers and vendors only (the API's submit path).
+  // The duplicate check runs for customers, vendors and (session 13) items; not cost centers.
   const golden: PipelineNode = { id: "golden", label: "Golden record", state: "done", caption: "" };
-  if (d.domain === "item" || d.domain === "cost_center")
-    Object.assign(golden, {
-      state: "not_needed",
-      caption: `Not needed for ${d.domain === "item" ? "items" : "cost centers"}`,
-    });
-  else if (draft) Object.assign(golden, { state: "current", caption: "Not checked yet" });
+  if (d.domain === "cost_center")
+    Object.assign(golden, { state: "not_needed", caption: "Not needed for cost centers" });
+  else if (d.domain === "item" && !linked && d.dedup_decision?.action !== "not_duplicate") {
+    // `item_match` is the rules-only item check on the current fields (never the item itself).
+    const m = d.item_match;
+    if (m === "likely")
+      Object.assign(golden, {
+        state: draft ? "current" : "done",
+        caption: draft ? "Looks like an existing item: decide first" : "Nothing needed a decision",
+      });
+    else if (m === "possible")
+      Object.assign(golden, {
+        state: draft ? "current" : "done",
+        caption: draft ? "A similar item exists: please check" : "Nothing needed a decision",
+      });
+    else if (m === "none")
+      Object.assign(golden, { state: draft ? "current" : "done", caption: "No existing item matched" });
+    // No result from the API (an older response): don't claim a check that did not run.
+    else Object.assign(golden, { state: draft ? "current" : "done", caption: "Not checked yet" });
+  } else if (draft) Object.assign(golden, { state: "current", caption: "Not checked yet" });
   else if (linked)
     golden.caption = `Linked to ${d.linked_card_name ?? d.linked_card_code ?? "an existing record"}`;
   else if (d.dedup_decision?.action === "not_duplicate")
-    golden.caption = "New record, checked by a person";
+    golden.caption =
+      d.domain === "item" ? "New item, checked by a person" : "New record, checked by a person";
   // A "possible" match never blocks submit and leaves no record, so don't claim "none found".
   else golden.caption = "Nothing needed a decision";
 

@@ -148,6 +148,52 @@ With tax IDs on the held-out seed 7, applying the judge would rescue 1 duplicate
 <!-- dedup-ai:end -->
 <!-- dedup:end -->
 
+<!-- item-dedup:start -->
+## Item duplicate check (session 13)
+
+**Hand-made test set of 50 pairs, small, written by us, not generator ground truth; synthetic catalogue numbers.** The generator plants **no** item duplicates, so there is nothing to score against there. Each pair is a new item someone might type and one existing item: 33 pairs are the same product written differently, 17 are look-alikes that are different products. The catalogue numbers in `config/item_catalogue.yaml` were invented for the demo; the registration numbers are the existing rows of `item_registrations.csv`. Rules only, no AI. The thresholds (`ds/dedup/items.yaml`: Likely at 0.85, Possible at 0.60) were fixed before the set was written and not changed after scoring it. Because the same people wrote the rules and the test set, treat these numbers as a sanity check, not a measured accuracy.
+
+| Flagged as | Precision | Recall | Right flags | Wrong flags | Missed |
+|---|---|---|---|---|---|
+| Likely | 100.0% | 93.9% | 31 | 0 | 2 |
+| Likely or Possible | 91.2% | 93.9% | 31 | 3 | 2 |
+
+*Caption:* of the 31 pairs the check called a Likely duplicate, 31 really were; it found 31 of the 33 real duplicates. Precision = right flags / all flags; recall = right flags / all 33 real duplicates. Computed by `notebooks/eval_item_dedup.py` against the 15 demo items (`data/fixtures/seasonal_trend`, seed 42).
+
+### By kind of pair
+
+| Kind | Pairs | Same product? | Likely | Possible | Not flagged |
+|---|---|---|---|---|---|
+| Pack size added (box of 25, 200T, x100) | 5 | yes | 5 | 0 | 0 |
+| Punctuation and capitals | 4 | yes | 3 | 0 | 1 |
+| Abbreviations and spelling (Ag, RDT, analyzer) | 10 | yes | 9 | 0 | 1 |
+| Words in another order | 6 | yes | 6 | 0 | 0 |
+| Same catalogue number (synthetic) | 4 | yes | 4 | 0 | 0 |
+| Same registration number, same country | 4 | yes | 4 | 0 | 0 |
+| New malaria kit (DEMO-02) vs other antigen kits | 2 | no | 0 | 0 | 2 |
+| Dengue NS1 vs Dengue IgG/IgM | 2 | no | 0 | 0 | 2 |
+| The two analysers, and a 3-part vs 5-part | 3 | no | 0 | 0 | 3 |
+| A different centrifuge | 2 | no | 0 | 1 | 1 |
+| Another disease's rapid test | 2 | no | 0 | 0 | 2 |
+| Another reagent kit | 1 | no | 0 | 0 | 1 |
+| Another service contract | 1 | no | 0 | 0 | 1 |
+| Other lab equipment | 2 | no | 0 | 0 | 2 |
+| Same name, different maker's catalogue number | 1 | no | 0 | 1 | 0 |
+| Same name, registered under a different number | 1 | no | 0 | 1 | 0 |
+
+*Caption:* for "yes" rows we want Likely; for "no" rows we want Not flagged. A Possible warns but never blocks submit.
+
+### Misses and wrong flags
+
+- Missed (P08): "5 Part Haematology Analyser" is B-HEM-5P, but the check gave no match.
+- Missed (P14): "Refrigerated Bench-top Centrifuge" is B-CEN-REF, but the check gave no match.
+- Wrong flag (N09): "Non-refrigerated Benchtop Centrifuge" was graded Possible against B-CEN-REF (score 0.82); it is a different product. It warns, it does not block.
+- Wrong flag (N16): "Rapid Dengue NS1 Ag Test Kit" was graded Possible against A-DEN-NS1 (score 0.80); it is a different product. It warns, it does not block.
+- Wrong flag (N17): "Dengue NS1 Antigen Rapid Test" was graded Possible against A-DEN-NS1 (score 0.83); it is a different product. It warns, it does not block.
+
+*Caption:* every pair the check got wrong, listed. None of them was fixed after scoring: changing the rules to pass these pairs would be tuning on the test set.
+<!-- item-dedup:end -->
+
 <!-- interpreter:start -->
 ## Email interpreter (PRD M2)
 

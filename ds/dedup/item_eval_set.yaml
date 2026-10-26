@@ -1,0 +1,75 @@
+# Hand-made test set for the item duplicate check (session 13).
+#
+# Written by us, by hand, from the 15 demo items in data/fixtures/seasonal_trend/items.csv.
+# It is small and it is NOT generator ground truth: the generator plants no item duplicates.
+# Catalogue numbers are the synthetic ones in config/item_catalogue.yaml; registration numbers
+# are the existing rows of item_registrations.csv (or invented ones, marked below).
+# Written after the thresholds in ds/dedup/items.yaml were fixed (git: commit a0d13f1) and not
+# used to tune them.
+#
+# One case = one pair (typed new item, one existing ItemCode) with a label:
+#   same: true  -> the new item IS the existing item (a duplicate we want flagged)
+#   same: false -> a look-alike that is a different product (must not be flagged)
+# A pair counts as flagged at a level when that ItemCode is among the candidates at that level.
+
+cases:
+  # ---------------------------------------------------------------- duplicates: pack size
+  - {id: P01, kind: pack_size, same: true, item: A-DEN-NS1, query: {ItemName: "Rapid Dengue NS1 Ag Test Kit, box of 25"}}
+  - {id: P02, kind: pack_size, same: true, item: A-DEN-IGM, query: {ItemName: "Dengue IgG/IgM Rapid Test Kit (25 tests)"}}
+  - {id: P03, kind: pack_size, same: true, item: A-HBA-1C, query: {ItemName: "HbA1c Reagent Kit 200T"}}
+  - {id: P04, kind: pack_size, same: true, item: A-CRP-QT, query: {ItemName: "CRP Quantitative Reagent x100"}}
+  - {id: P05, kind: pack_size, same: true, item: A-COV-AG, query: {ItemName: "SARS-CoV-2 Antigen Rapid Test Kit - 25 tests/kit"}}
+  # ---------------------------------------------------------------- duplicates: punctuation and case
+  - {id: P06, kind: punctuation, same: true, item: A-DEN-NS1, query: {ItemName: "rapid dengue ns-1 ag test kit"}}
+  - {id: P07, kind: punctuation, same: true, item: A-DEN-IGM, query: {ItemName: "DENGUE IGG / IGM RAPID TEST KIT"}}
+  - {id: P08, kind: punctuation, same: true, item: B-HEM-5P, query: {ItemName: "5 Part Haematology Analyser"}}
+  - {id: P09, kind: punctuation, same: true, item: B-BSC-II, query: {ItemName: "Class-II Biosafety Cabinet"}}
+  # ---------------------------------------------------------------- duplicates: abbreviation and spelling
+  - {id: P10, kind: abbreviation, same: true, item: A-DEN-NS1, query: {ItemName: "Dengue NS1 Antigen RDT"}}
+  - {id: P11, kind: abbreviation, same: true, item: A-COV-AG, query: {ItemName: "COVID-19 Ag Rapid Test"}}
+  - {id: P12, kind: abbreviation, same: true, item: B-HEM-5P, query: {ItemName: "5-part Hematology Analyzer"}}
+  - {id: P13, kind: abbreviation, same: true, item: B-CHE-AUT, query: {ItemName: "Automated Clinical Chem Analyzer"}}
+  - {id: P14, kind: abbreviation, same: true, item: B-CEN-REF, query: {ItemName: "Refrigerated Bench-top Centrifuge"}}
+  - {id: P15, kind: abbreviation, same: true, item: C-LIS-SUB, query: {ItemName: "LIS Subscription"}}
+  - {id: P16, kind: abbreviation, same: true, item: C-SVC-ANN, query: {ItemName: "Annual Analyzer Svc Contract"}}
+  - {id: P17, kind: abbreviation, same: true, item: C-SVC-PM, query: {ItemName: "Preventative Maintenance Visit"}}
+  - {id: P18, kind: abbreviation, same: true, item: A-CRP-QT, query: {ItemName: "C-Reactive Protein Quantitative Reagent"}}
+  - {id: P19, kind: abbreviation, same: true, item: A-HBA-1C, query: {ItemName: "Glycated Haemoglobin (HbA1c) Reagent Kit"}}
+  # ---------------------------------------------------------------- duplicates: word order
+  - {id: P20, kind: word_order, same: true, item: A-DEN-NS1, query: {ItemName: "Test Kit, Rapid, Dengue NS1 Antigen"}}
+  - {id: P21, kind: word_order, same: true, item: B-BSC-II, query: {ItemName: "Biosafety Cabinet Class II"}}
+  - {id: P22, kind: word_order, same: true, item: B-MIC-BIN, query: {ItemName: "Laboratory Microscope, Binocular"}}
+  - {id: P23, kind: word_order, same: true, item: C-SVC-ANN, query: {ItemName: "Service Contract, Annual (Analyser)"}}
+  - {id: P24, kind: word_order, same: true, item: C-TRN-OPS, query: {ItemName: "Training Package for Operators"}}
+  - {id: P25, kind: word_order, same: true, item: C-INS-VAL, query: {ItemName: "Validation and Installation Service"}}
+  # ---------------------------------------------------------------- duplicates: catalogue number reused (synthetic numbers)
+  - {id: P26, kind: catalogue_reuse, same: true, item: A-DEN-NS1, query: {ItemName: "Dengue antigen cassette", manufacturer_catalogue_no: "REF 51-DNS1-25"}}
+  - {id: P27, kind: catalogue_reuse, same: true, item: B-CHE-AUT, query: {ItemName: "Chemistry analyser", manufacturer_catalogue_no: "cx800"}}
+  - {id: P28, kind: catalogue_reuse, same: true, item: B-CEN-REF, query: {ItemName: "Centrifuge", manufacturer_catalogue_no: "CF-4R"}}
+  - {id: P29, kind: catalogue_reuse, same: true, item: A-HBA-1C, query: {ItemName: "New HbA1c kit", manufacturer_catalogue_no: "A-HBA-1C"}}
+  # ---------------------------------------------------------------- duplicates: registration number reused (same country)
+  - {id: P30, kind: registration_reuse, same: true, item: A-DEN-NS1, query: {ItemName: "Dengue combo test", registrations: [{country: VN, reg_no: "24170581ĐKLH/BYT-HTTB"}]}}
+  - {id: P31, kind: registration_reuse, same: true, item: B-HEM-5P, query: {ItemName: "Haematology system", registrations: [{country: SG, reg_no: "DE1881342"}]}}
+  - {id: P32, kind: registration_reuse, same: true, item: A-COV-AG, query: {ItemName: "Covid antigen test", registrations: [{country: ID, reg_no: "AKL 29273959653"}]}}
+  - {id: P33, kind: registration_reuse, same: true, item: A-CRP-QT, query: {ItemName: "Quantitative CRP", registrations: [{country: TH, reg_no: "TH 24-5786928"}]}}
+
+  # ---------------------------------------------------------------- hard negatives: different products
+  - {id: N01, kind: new_malaria_kit, same: false, item: A-COV-AG, query: {ItemName: "Malaria Pf/Pan Antigen Rapid Test Kit"}}
+  - {id: N02, kind: new_malaria_kit, same: false, item: A-DEN-NS1, query: {ItemName: "Malaria Pf/Pan Antigen Rapid Test Kit"}}
+  - {id: N03, kind: dengue_ns1_vs_igg_igm, same: false, item: A-DEN-IGM, query: {ItemName: "Dengue NS1 Ag Rapid Test Kit"}}
+  - {id: N04, kind: dengue_ns1_vs_igg_igm, same: false, item: A-DEN-NS1, query: {ItemName: "Dengue IgG/IgM Rapid Test Kit"}}
+  - {id: N05, kind: two_analysers, same: false, item: B-HEM-5P, query: {ItemName: "Automated Clinical Chemistry Analyser"}}
+  - {id: N06, kind: two_analysers, same: false, item: B-CHE-AUT, query: {ItemName: "5-part Haematology Analyser"}}
+  - {id: N07, kind: two_analysers, same: false, item: B-HEM-5P, query: {ItemName: "3-part Haematology Analyser"}}
+  - {id: N08, kind: other_centrifuge, same: false, item: B-CEN-REF, query: {ItemName: "High-speed Microcentrifuge"}}
+  - {id: N09, kind: other_centrifuge, same: false, item: B-CEN-REF, query: {ItemName: "Non-refrigerated Benchtop Centrifuge"}}
+  - {id: N10, kind: other_antigen_kit, same: false, item: A-COV-AG, query: {ItemName: "Influenza A/B Antigen Rapid Test Kit"}}
+  - {id: N11, kind: other_antigen_kit, same: false, item: A-DEN-IGM, query: {ItemName: "HIV 1/2 Antibody Rapid Test Kit"}}
+  - {id: N12, kind: other_reagent, same: false, item: A-HBA-1C, query: {ItemName: "Glucose Reagent Kit"}}
+  - {id: N13, kind: other_service, same: false, item: C-SVC-ANN, query: {ItemName: "Annual Microscope Service Contract"}}
+  - {id: N14, kind: other_equipment, same: false, item: B-BSC-II, query: {ItemName: "Laminar Flow Cabinet"}}
+  - {id: N15, kind: other_equipment, same: false, item: B-MIC-BIN, query: {ItemName: "Trinocular Laboratory Microscope"}}
+  # same generic name but a different maker's catalogue number (invented number)
+  - {id: N16, kind: same_name_other_maker, same: false, item: A-DEN-NS1, query: {ItemName: "Rapid Dengue NS1 Ag Test Kit", manufacturer_catalogue_no: "REF 77-DNS1-50"}}
+  # registered in the same country under a different number (invented number)
+  - {id: N17, kind: same_name_other_registration, same: false, item: A-DEN-NS1, query: {ItemName: "Dengue NS1 Antigen Rapid Test", registrations: [{country: SG, reg_no: "DE5550001"}]}}

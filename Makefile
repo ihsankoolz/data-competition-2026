@@ -69,10 +69,11 @@ theme-shots:      ## 1440x900 screenshots of theme variants A/B -> apps/web/scre
 readme-shots:     ## 1440x900 README screenshots of Start here, the reply draft, the rules editor and the clean-up queue -> docs/img/screens (not in make e2e)
 	cd $(WEB) && README_SHOTS=1 "$(NODE)" e2e/run.mjs readme-shots
 
-eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
+eval:             ## dedup (customers + hand-made item set), classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
 	@# always regenerate: stale seeds from an older generator silently skew the scores (D-022)
 	rm -rf data/generated/eval
 	LLM_MODE=replay uv run python notebooks/eval_dedup.py
+	uv run python notebooks/eval_item_dedup.py
 	LLM_MODE=replay uv run python notebooks/eval_interpreter.py
 	LLM_MODE=replay uv run python notebooks/eval_holdout.py
 	@for s in flat_noisy intermittent; do $(MAKE) --no-print-directory data SCENARIO=$$s; done

@@ -191,7 +191,7 @@ test("question asked: approvals are paused, nothing sweeps", async ({ page, requ
   expect(errors).toEqual([]);
 });
 
-test("item request: no duplicate check, so the golden record step is not needed", async ({
+test("item request: the golden record step shows the item duplicate check", async ({
   page,
   request,
 }) => {
@@ -206,11 +206,12 @@ test("item request: no duplicate check, so the golden record step is not needed"
   await expectStates(page, {
     email: "skipped",
     ai: "skipped",
-    golden: "not_needed",
+    golden: "current",
     approvals: "waiting",
     sap: "waiting",
   });
-  await expect(node(page, "golden")).toContainText("Not needed for items");
+  // Session 13: items are checked against the catalogue too (rules only, no AI).
+  await expect(node(page, "golden")).toContainText("No existing item matched");
 });
 
 test("reduced motion: no sweep, static lines only", async ({ page, request }) => {

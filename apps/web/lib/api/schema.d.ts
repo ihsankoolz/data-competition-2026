@@ -175,6 +175,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/dedup/check-item": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Item Duplicates
+         * @description Session 13: is this new item already in the catalogue? Rules only (no AI, rule 6):
+         *     normalised name, manufacturer catalogue number (synthetic in the demo) and registration
+         *     number per country. Read-only; logged when `request_id` is set.
+         */
+        post: operations["checkItemDuplicates"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/requests": {
         parameters: {
             query?: never;
@@ -1452,7 +1474,7 @@ export interface components {
             action: "link_to_existing" | "not_duplicate";
             /**
              * Card Code
-             * @description Required for link_to_existing
+             * @description Required for link_to_existing: the CardCode, or the ItemCode for an item request (session 13)
              */
             card_code?: string | null;
             /**
@@ -2009,6 +2031,112 @@ export interface components {
             ai_message?: string | null;
             /** Prompt Version */
             prompt_version?: string | null;
+        };
+        /**
+         * ItemCandidate
+         * @description An existing item that may be the same as the new one.
+         */
+        ItemCandidate: {
+            /** Itemcode */
+            ItemCode: string;
+            /** Itemname */
+            ItemName: string;
+            /** Itemsgroupcode */
+            ItemsGroupCode?: number | null;
+            /** Sales Unit */
+            sales_unit?: string | null;
+            /** Score */
+            score: number;
+            /** Name Score */
+            name_score: number;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "likely" | "possible";
+            /**
+             * Catalogue Match
+             * @default false
+             */
+            catalogue_match?: boolean;
+            /**
+             * Registration Match
+             * @default false
+             */
+            registration_match?: boolean;
+            /**
+             * Reasons
+             * @default []
+             */
+            reasons?: components["schemas"]["ItemReason"][];
+        };
+        /**
+         * ItemDedupCheckRequest
+         * @description What the requester has typed on the item form so far (debounced, and again on submit).
+         */
+        ItemDedupCheckRequest: {
+            /**
+             * Fields
+             * @description Partial item form fields: ItemName, ItemsGroupCode, manufacturer_catalogue_no, registrations[{country, reg_no}]
+             */
+            fields: {
+                [key: string]: unknown;
+            };
+            /**
+             * Request Id
+             * @description Set when checking an existing draft; the check is logged
+             */
+            request_id?: string | null;
+        };
+        /** ItemDedupResult */
+        ItemDedupResult: {
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "likely" | "possible" | "none";
+            /** Message */
+            message: string;
+            /**
+             * Block Submit
+             * @description True for 'likely': submit waits until a person uses the existing item or says why theirs is different
+             */
+            block_submit: boolean;
+            /**
+             * Candidates
+             * @default []
+             */
+            candidates?: components["schemas"]["ItemCandidate"][];
+            /**
+             * Checked Items
+             * @description How many existing items were compared
+             * @default 0
+             */
+            checked_items?: number;
+            /**
+             * Elapsed Ms
+             * @default 0
+             */
+            elapsed_ms?: number;
+        };
+        /** ItemReason */
+        ItemReason: {
+            /**
+             * Layer
+             * @enum {string}
+             */
+            layer: "catalogue" | "registration" | "name" | "evidence";
+            /**
+             * Text
+             * @description Plain English, shown to the requester
+             */
+            text: string;
+            /**
+             * Weight
+             * @description Contribution to the score (+/-)
+             * @default 0
+             */
+            weight?: number;
         };
         /** JudgeOpinion */
         JudgeOpinion: {
@@ -2606,13 +2734,21 @@ export interface components {
                 [key: string]: string;
             };
             dedup_decision?: components["schemas"]["DedupDecisionOut"] | null;
-            /** Linked Card Code */
+            /**
+             * Linked Card Code
+             * @description CardCode of the linked record, or ItemCode for an item request
+             */
             linked_card_code?: string | null;
             /**
              * Linked Card Name
-             * @description CardName of the linked existing record (session 5)
+             * @description CardName (or ItemName) of the linked existing record (session 5, 13)
              */
             linked_card_name?: string | null;
+            /**
+             * Item Match
+             * @description Item requests only: the item duplicate check on the current fields, rules only, never counting the item this request itself published (session 13)
+             */
+            item_match?: ("likely" | "possible" | "none") | null;
             /** @description Set while the request is INFO_REQUESTED: who asked what. The requestor edits and resubmits with POST /requests/{id}/submit (session 5) */
             info_request?: components["schemas"]["InfoRequestView"] | null;
             /**
@@ -3529,6 +3665,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DedupResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    checkItemDuplicates: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ItemDedupCheckRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ItemDedupResult"];
                 };
             };
             /** @description Validation Error */
