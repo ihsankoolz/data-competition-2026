@@ -523,6 +523,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cleanup/clusters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Clusters
+         * @description Every proposed group, most certain first (same tax ID first, then the highest score of
+         *     the weakest link), with its records side by side, the reasons and the review status.
+         */
+        get: operations["listCleanupClusters"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cleanup/clusters/{cluster_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Decide Cluster
+         * @description Confirm the link, or mark the group as not the same customer (a reason is required).
+         *     Only the MDM analyst decides. Stored, audited, and never fed into the regional numbers.
+         */
+        post: operations["decideCleanupCluster"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -770,6 +812,169 @@ export interface components {
             title: string;
             /** Caption */
             caption: string;
+        };
+        /** CleanupCluster */
+        CleanupCluster: {
+            /**
+             * Cluster Id
+             * @description Same id as the golden cluster in the after-merge view
+             */
+            cluster_id: string;
+            /**
+             * Certainty
+             * @description Plain-English summary of how certain the check is
+             */
+            certainty: string;
+            /** All Tax Id Match */
+            all_tax_id_match: boolean;
+            /** Weakest Score */
+            weakest_score: number;
+            /** Records */
+            records: components["schemas"]["CleanupRecord"][];
+            /** Links */
+            links: components["schemas"]["CleanupLink"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_reviewed" | "confirmed" | "not_same";
+            decision?: components["schemas"]["CleanupDecisionOut"] | null;
+        };
+        /**
+         * CleanupDecisionIn
+         * @description A person's decision on one proposed group. The AI never makes it (rule 6).
+         */
+        CleanupDecisionIn: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "confirm" | "not_same";
+            /**
+             * Reason
+             * @description Required for not_same, at least 10 characters: why these are different customers
+             */
+            reason?: string | null;
+        };
+        /** CleanupDecisionOut */
+        CleanupDecisionOut: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "confirm" | "not_same";
+            /** Reason */
+            reason?: string | null;
+            /**
+             * Decided By
+             * @description Name of the person who decided
+             */
+            decided_by: string;
+            /**
+             * Decided At
+             * Format: date-time
+             * @description Simulated-clock time of the decision
+             */
+            decided_at: string;
+        };
+        /** CleanupDecisionResult */
+        CleanupDecisionResult: {
+            cluster: components["schemas"]["CleanupCluster"];
+            /** Reviewed */
+            reviewed: number;
+            /** Total */
+            total: number;
+        };
+        /**
+         * CleanupLink
+         * @description Two records the duplicate check calls 'Likely' the same customer.
+         */
+        CleanupLink: {
+            /** A */
+            a: string;
+            /** B */
+            b: string;
+            /**
+             * Score
+             * @description Duplicate-check score, 0 to 1
+             */
+            score: number;
+            /** Tax Id Match */
+            tax_id_match: boolean;
+            /** Reasons */
+            reasons: components["schemas"]["CleanupReason"][];
+        };
+        /** CleanupQueue */
+        CleanupQueue: {
+            /**
+             * Clusters
+             * @description Most certain first
+             */
+            clusters: components["schemas"]["CleanupCluster"][];
+            /** Reviewed */
+            reviewed: number;
+            /** Total */
+            total: number;
+            /**
+             * Can Decide
+             * @description True when the acting user may confirm or reject
+             */
+            can_decide: boolean;
+            /**
+             * Note
+             * @description Why the acting user cannot decide
+             */
+            note?: string | null;
+        };
+        /** CleanupReason */
+        CleanupReason: {
+            /**
+             * Text
+             * @description Plain English, from the duplicate check
+             */
+            text: string;
+            /**
+             * Against
+             * @description True when this reason counts against the match
+             */
+            against: boolean;
+        };
+        /**
+         * CleanupRecord
+         * @description One existing customer record in a proposed group. Plain master fields only: bank details
+         *     are never part of this view.
+         */
+        CleanupRecord: {
+            /** Cardcode */
+            CardCode: string;
+            /** Cardname */
+            CardName: string;
+            /** Cardforeignname */
+            CardForeignName?: string | null;
+            /** Federaltaxid */
+            FederalTaxID?: string | null;
+            /** City */
+            City?: string | null;
+            /** Country */
+            Country: string;
+            /** U Entity */
+            U_Entity?: string | null;
+            /** Phone1 */
+            Phone1?: string | null;
+            /** Emailaddress */
+            EmailAddress?: string | null;
+            /**
+             * Createdate
+             * @description ISO date the record was created
+             */
+            CreateDate?: string | null;
+            /** Createdby */
+            CreatedBy?: string | null;
+            /**
+             * Group Name
+             * @description Cross-border hospital/lab group (rule 3), when known
+             */
+            group_name?: string | null;
         };
         /** ClockAdvance */
         ClockAdvance: {
@@ -3218,6 +3423,79 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsImpact"];
+                };
+            };
+        };
+    };
+    listCleanupClusters: {
+        parameters: {
+            query?: {
+                /** @description all, not_reviewed, reviewed */
+                status?: string;
+            };
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CleanupQueue"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decideCleanupCluster: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path: {
+                cluster_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CleanupDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CleanupDecisionResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

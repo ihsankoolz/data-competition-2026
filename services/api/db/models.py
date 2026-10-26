@@ -368,6 +368,24 @@ class DedupDecisionRow(Base):
     covered_codes: Mapped[list[str]] = mapped_column(JSON, default=list)
 
 
+class CleanupDecisionRow(Base):
+    """A person's decision on one proposed group in the Clean-up queue (one row per group).
+
+    Decisions are a review record only: they never change the regional numbers, which use the
+    links the duplicate check proposes. Reset demo drops and recreates the table (empty).
+    """
+
+    __tablename__ = "cleanup_decisions"
+
+    cluster_id: Mapped[str] = mapped_column(String(20), primary_key=True)
+    decision: Mapped[str] = mapped_column(String(12))
+    reason: Mapped[str | None] = mapped_column(Text)
+    decided_by: Mapped[str] = mapped_column(String(32))
+    decided_at: Mapped[datetime] = mapped_column(SimTimestamp)
+    # CardCodes in the group when the person decided
+    codes: Mapped[list[str]] = mapped_column(JSON, default=list)
+
+
 class SapPublishRecord(Base):
     """What Priya sees after publishing: the SAP read-back, field by field (D-018 item 3 / M7).
 
