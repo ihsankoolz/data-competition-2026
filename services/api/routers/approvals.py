@@ -21,7 +21,6 @@ from services.api.views import (
     summary_model,
     task_model,
     tasks_for,
-    user_countries,
     user_names,
 )
 from services.api.workflow import engine
@@ -48,7 +47,6 @@ def approval_inbox(actor: CurrentUser) -> list[ApprovalInboxItem]:
             .order_by(m.ApprovalTaskRow.due_at, m.ApprovalTaskRow.task_id)
         ).all()
         names = user_names(session)
-        countries = user_countries(session)
         out: list[ApprovalInboxItem] = []
         for task in tasks:
             req = session.get(m.Request, task.req_id)
@@ -56,7 +54,8 @@ def approval_inbox(actor: CurrentUser) -> list[ApprovalInboxItem]:
                 continue
             out.append(
                 ApprovalInboxItem(
-                    task=task_model(task, names, countries),
+                    # due_local in the viewer's own time: they may be the escalation backup
+                    task=task_model(task, names, {task.assignee_user_id: actor.country}),
                     request=summary_model(req, tasks_for(session, req.req_id), names),
                 )
             )

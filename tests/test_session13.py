@@ -280,3 +280,87 @@ def test_amy_is_told_demo02_is_live_and_she_can_raise_sales_orders(client, sap_m
     code = m.group(1)
     assert client.get(f"/requests/{d['req_id']}", headers=H("amy")).json()["sap_publish"]
     assert code in client.get(f"/requests/{d['req_id']}/audit", headers=H("amy")).text
+
+
+# ---------------------------------------------------------------- part 4: rules editor backup gap
+
+
+@pytest.fixture
+def two_hat_users(client):
+    """Fixture people no one in users.csv matches: a BU Head who also raises requests, and a BU
+    Head whose escalation backup raises requests."""
+    from sqlalchemy import delete, text
+
+    from services.api.db import models as m
+    from services.api.db.session import session_scope
+
+    ids = ("zz.twohat", "zz.lead", "zz.backup")
+    with session_scope(write=True) as s:
+        s.add_all(
+            [
+                m.User(user_id="zz.twohat", name="Tan Two Hats", title="BU Head and sales",
+                       roles=["bu_head", "requestor"], entity="SPD", country="SG"),
+                m.User(user_id="zz.lead", name="Lee Lead", title="BU Head",
+                       roles=["bu_head"], entity="SPD", country="SG"),
+                m.User(user_id="zz.backup", name="Bea Backup", title="Deputy and sales",
+                       roles=["bu_head", "requestor"], entity="SPD", country="SG",
+                       backup_for="zz.lead"),
+            ]
+        )  # fmt: skip
+    yield
+    with session_scope(write=True) as s:
+        s.execute(text("DELETE FROM routing_overrides"))
+        s.execute(delete(m.User).where(m.User.user_id.in_(ids)))
+
+
+def put_rule(client, user_id):
+    return client.put(
+        "/admin/routing-rules",
+        headers=H("priya"),
+        json={
+            "domain": "customer",
+            "entity": "SPD",
+            "country": "SG",
+            "steps": [
+                {"role": "bu_head", "user_id": user_id},
+                {"role": "finance", "user_id": "weijie"},
+            ],
+        },
+    )
+
+
+def test_an_approver_who_also_raises_requests_is_refused(client, two_hat_users):
+    r = put_rule(client, "zz.twohat")
+    assert r.status_code == 422
+    assert r.json()["detail"] == (
+        "Tan Two Hats also raises requests, so they could be the person who raised the request. "
+        "They cannot be an approver here. Choose someone else."
+    )
+
+
+def test_an_approver_whose_backup_raises_requests_is_refused(client, two_hat_users):
+    r = put_rule(client, "zz.lead")
+    assert r.status_code == 422
+    assert r.json()["detail"] == (
+        "Lee Lead's backup (Bea Backup) could be the person who raised the request, so Lee Lead "
+        "cannot be an approver here. Choose someone else."
+    )
+    # the "who would approve this?" preview checks a draft the same way
+    r = client.post(
+        "/admin/routing-rules/preview",
+        headers=H("priya"),
+        json={
+            "domain": "customer",
+            "entity": "SPD",
+            "country": "SG",
+            "steps": [{"role": "bu_head", "user_id": "zz.lead"}],
+        },
+    )
+    assert r.status_code == 422 and "Bea Backup" in r.json()["detail"]
+    rules = client.get("/admin/routing-rules", headers=H("priya")).json()["rules"]
+    assert not any(x["is_override"] for x in rules)  # nothing was saved
+
+
+def test_the_people_in_users_csv_still_save(client, two_hat_users):
+    r = put_rule(client, "kelvin")  # Kelvin Ong: BU Head; no backup who raises requests
+    assert r.status_code == 200, r.text

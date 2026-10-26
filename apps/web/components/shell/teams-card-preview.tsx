@@ -75,7 +75,7 @@ export function TeamsCardPreview({
     document.body.appendChild(a);
     a.click();
     a.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1_000); // after the download starts
   };
 
   return (
@@ -90,9 +90,9 @@ export function TeamsCardPreview({
     >
       <DialogContent className="gap-5 sm:max-w-xl" data-testid="teams-card-preview">
         <DialogHeader>
-          <DialogTitle>How this reminder looks in Teams</DialogTitle>
+          <DialogTitle>How this looks in Teams</DialogTitle>
           <DialogDescription>
-            The approver gets this card in a Teams chat, with the same due time as the notification.
+            The approver gets this card in a Teams chat. The due time matches the notification.
           </DialogDescription>
         </DialogHeader>
 

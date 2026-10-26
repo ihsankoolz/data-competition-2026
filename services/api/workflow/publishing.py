@@ -56,8 +56,10 @@ NEXT_STEP = {
 
 
 def live_message(domain: str, title: str, code: str) -> str:
-    """"'Malaria Pf/Pan Antigen Rapid Test Kit' is live in SAP as A-MAL-001, so you can raise
-    sales orders now." The requestor's notification after a publish."""
+    """The requestor's notification after a publish, one plain sentence, e.g.
+    'Malaria Pf/Pan Antigen Rapid Test Kit' is live in SAP as A-MAL-001, so you can raise sales
+    orders now.
+    """
     return f"'{title}' is live in SAP as {code}, so {NEXT_STEP[domain]}."
 
 

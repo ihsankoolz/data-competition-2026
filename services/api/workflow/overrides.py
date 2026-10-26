@@ -45,6 +45,7 @@ ENTITIES = ("SPD", "QTS", "QTG")
 COUNTRY_DOMAINS = ("customer", "vendor")  # records that carry a country of their own
 STEP_ROLES = ("bu_head", "finance", "business_support", "quality_regulatory")
 MAX_STEPS = 8
+REQUESTOR_ROLE = "requestor"
 RECENT_CHANGES = 20
 
 DOMAIN_WORDS = {
@@ -178,14 +179,16 @@ def check_key(key: RuleKey) -> None:
 
 
 def check_steps(session: Session, steps: list[RuleStepIn]) -> list[dict[str, str]]:
-    """Plain 422s: no approvers, an unknown person, or a person without the step's role."""
+    """Plain 422s: no approvers, an unknown person, a person without the step's role, or a
+    person who (or whose backup) also raises requests."""
     if not steps:
         raise _fail(
             "Add at least one approver. A request needs someone to review it before MDM publishes."
         )
     if len(steps) > MAX_STEPS:
         raise _fail(f"Use at most {MAX_STEPS} approver steps.")
-    users = {u.user_id: u for u in directory(session).users}
+    dir_ = directory(session)
+    users = {u.user_id: u for u in dir_.users}
     seen: set[tuple[str, str]] = set()
     out: list[dict[str, str]] = []
     for step in steps:
@@ -195,6 +198,20 @@ def check_steps(session: Session, steps: list[RuleStepIn]) -> list[dict[str, str
             raise _fail(f"'{step.user_id}' is not a known person, so they cannot approve a step.")
         if step.role not in user.roles:
             raise _fail(f"{user.name} does not hold the {label} role, so cannot take that step.")
+        # Session 13 (D-026 #3 gap): someone who can raise requests, or whose escalation backup
+        # can, could end up approving a request they raised. Maker-checker still blocks that at
+        # decision time; refusing it here stops a rule that would leave a task stuck.
+        if REQUESTOR_ROLE in user.roles:
+            raise _fail(
+                f"{user.name} also raises requests, so they could be the person who raised the "
+                "request. They cannot be an approver here. Choose someone else."
+            )
+        backup = dir_.backup_of(user.user_id)
+        if backup is not None and REQUESTOR_ROLE in backup.roles:
+            raise _fail(
+                f"{user.name}'s backup ({backup.name}) could be the person who raised the "
+                f"request, so {user.name} cannot be an approver here. Choose someone else."
+            )
         if (step.role, step.user_id) in seen:
             raise _fail(f"{user.name} is listed twice as {label}. Remove the repeat.")
         seen.add((step.role, step.user_id))
