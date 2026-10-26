@@ -17,6 +17,7 @@ import Link from "next/link";
 import { use, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { HistoryCheckButton } from "@/components/admin/history-check";
 import { useClock } from "@/components/shell/clock-provider";
 import { usePersona } from "@/components/shell/persona-provider";
 import { Button } from "@/components/ui/button";
@@ -234,6 +235,7 @@ export function RequestStatus({ params }: { params: Promise<{ id: string }> }) {
           <p className="-mt-2 text-xs text-muted-foreground">
             Every change, who made it and when (demo clock). Bank details are never written here.
           </p>
+          <HistoryCheckButton className="-mt-1" />
           <AuditTimeline entries={audit} error={auditError} />
         </section>
       </div>
