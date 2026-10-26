@@ -570,6 +570,8 @@ function EmailPane({
               focusKey={focusKey}
               onFocusKey={showQuote}
               onCreate={onCreate}
+              emailId={emailId}
+              senderName={email.from_name ?? null}
             />
           </>
         )}

@@ -16,6 +16,7 @@ import {
   UserRoundSearch,
 } from "lucide-react";
 
+import { ReplyDraft } from "@/components/inbox/reply-draft";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -211,6 +212,8 @@ export function Reading({
   focusKey,
   onFocusKey,
   onCreate,
+  emailId,
+  senderName,
 }: {
   view: ReadView;
   /** Where the answer comes from; only changes the wording of the status line. */
@@ -220,6 +223,9 @@ export function Reading({
   focusKey: string | null;
   onFocusKey: (key: string) => void;
   onCreate: () => void;
+  /** The open email, for the reply-to-sender draft. */
+  emailId: string;
+  senderName: string | null;
 }) {
   const { fields, lines, verdict, missing } = view;
   const questions = missing?.questions ?? [];
@@ -398,6 +404,17 @@ export function Reading({
             The form asks the requestor for these before anything reaches an approver.
           </p>
         </div>
+      )}
+
+      {/* A new-record request gets a reply asking the sender for what is missing. Not for an email
+          that gives the AI orders: a person checks that sender before anyone replies. */}
+      {!streaming && verdict?.category === "mdm_request" && !view.injection && (
+        <ReplyDraft
+          emailId={emailId}
+          senderName={senderName}
+          missingFields={missingFields}
+          onOpenForm={onCreate}
+        />
       )}
 
       {streaming ? (
