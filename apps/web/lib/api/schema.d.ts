@@ -2317,9 +2317,14 @@ export interface components {
             growth_adjustment?: number | null;
             /**
              * Growth Adjustment Pct
-             * @description How far the Excel average planned this country too low (%)
+             * @description How far Excel's plan came out below actual orders in the backtest (% of actual orders, all products together)
              */
             growth_adjustment_pct?: number | null;
+            /**
+             * Growth Adjustment Uplift Pct
+             * @description The adjustment as a % of Excel's plan: -b / (1 + b); what closes the gap
+             */
+            growth_adjustment_uplift_pct?: number | null;
             /** Growth Adjustment Caption */
             growth_adjustment_caption?: string | null;
         };

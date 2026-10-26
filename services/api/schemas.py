@@ -869,7 +869,13 @@ class PlanRow(BaseModel):
         "never included in another column",
     )
     growth_adjustment_pct: float | None = Field(
-        default=None, description="How far the Excel average planned this country too low (%)"
+        default=None,
+        description="How far Excel's plan came out below actual orders in the backtest "
+        "(% of actual orders, all products together)",
+    )
+    growth_adjustment_uplift_pct: float | None = Field(
+        default=None,
+        description="The adjustment as a % of Excel's plan: -b / (1 + b); what closes the gap",
     )
     growth_adjustment_caption: str | None = None
 

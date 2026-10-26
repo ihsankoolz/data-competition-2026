@@ -52,14 +52,15 @@ export function ForecastPlanBlock({ note, plan }: { note: string | null; plan: P
     <div className="flex max-w-4xl flex-col gap-3" data-testid="plan-block">
       {note && (
         <p className="text-sm leading-relaxed" data-testid="pipeline-note">
-          <span className="font-medium">Planning equipment from requests: </span>
           {note}
         </p>
       )}
       {plan && (
         <>
           <div className="flex flex-col gap-1">
-            <p className="text-sm font-medium">Next 3 months plan ({span}), units</p>
+            <p className="text-sm font-medium">
+              Next 3 months plan ({span}), units (clean data: confirmed orders only)
+            </p>
             <p className="text-xs text-muted-foreground">
               Units to plan per country and product, from the confirmed orders up to the end of{" "}
               {monthName(plan.origin)}. The columns sit side by side so you can compare them; none
@@ -120,7 +121,7 @@ export function ForecastPlanBlock({ note, plan }: { note: string | null; plan: P
                     data-testid={r.growth_adjustment !== null ? "plan-adjustment" : undefined}
                   >
                     {r.growth_adjustment !== null && r.growth_adjustment !== undefined
-                      ? `+${units(r.growth_adjustment)} (Excel ${Math.round(r.growth_adjustment_pct ?? 0)}% low)`
+                      ? `+${units(r.growth_adjustment)} units (+${Math.round(r.growth_adjustment_uplift_pct ?? 0)}% on Excel's plan)`
                       : "-"}
                   </td>
                 </tr>

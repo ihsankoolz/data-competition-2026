@@ -40,12 +40,13 @@ test("forecast: next 3 months plan with the pipeline line and a separate VN adju
   // Only Vietnam carries the adjustment, labelled as its own number with the measured gap.
   await expect(table.getByTestId("plan-adjustment")).toHaveCount(3);
   await expect(block.getByTestId("plan-row-VN-A").getByTestId("plan-adjustment")).toContainText(
-    /^\+[\d,]+ \(Excel \d+% low\)$/,
+    /^\+[\d,]+ units \(\+\d+% on Excel's plan\)$/,
   );
-  await expect(block.getByTestId("plan-row-SG-A")).not.toContainText("low");
+  await expect(block.getByTestId("plan-row-SG-A")).not.toContainText("Excel's plan");
   await expect(block.getByTestId("plan-adjustment-note")).toContainText(
-    /From the backtest: the Excel average planned Vietnam \d+% low/,
+    /Excel's plan for Vietnam came out \d+% below actual orders in the backtest \(all products together\)\. Adding \d+% to the Excel plan closes that gap\./,
   );
+  await expect(block).toContainText("(clean data: confirmed orders only)");
   // Equipment rows carry a requests-based plan; test kits do not.
   await expect(block.getByTestId("plan-row-VN-B").locator("td").nth(3)).not.toHaveText("-");
   await expect(block.getByTestId("plan-row-VN-A").locator("td").nth(3)).toHaveText("-");

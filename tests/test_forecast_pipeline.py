@@ -148,6 +148,12 @@ def test_forward_plan_is_reproducible_and_keeps_the_adjustment_separate():
     # the adjustment closes the measured Excel gap and is not folded into the Excel column
     b = -vn["growth_adjustment_pct"] / 100
     assert vn["growth_adjustment"] == pytest.approx(vn["excel_6m"] * -b / (1 + b), abs=0.2)
+    # the uplift on Excel's plan is stored next to the bias and is larger than it (13% -> 15%)
+    assert vn["growth_adjustment_uplift_pct"] == pytest.approx(100 * -b / (1 + b), abs=0.05)
+    assert vn["growth_adjustment_uplift_pct"] > vn["growth_adjustment_pct"]
+    pct = f"{vn['growth_adjustment_uplift_pct']:.0f}%"
+    assert f"Adding {pct} to the Excel plan closes that gap" in vn["growth_adjustment_caption"]
+    assert "not added into any other column" in vn["growth_adjustment_caption"]
 
 
 def test_forecast_api_serves_the_pipeline_fields():
