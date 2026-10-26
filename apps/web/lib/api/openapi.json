@@ -1432,6 +1432,58 @@
         }
       }
     },
+    "/audit/verify": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Verify Audit",
+        "description": "Walks the whole history log from the first entry and checks that every entry still\nmatches the one before it. Open to every persona; it changes nothing.",
+        "operationId": "verifyAudit",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditVerifyResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/analytics/regional": {
       "get": {
         "tags": [
@@ -2016,6 +2068,56 @@
         ],
         "title": "AuditEntry",
         "description": "One audit row for the status-page timeline (bank values are already masked)."
+      },
+      "AuditVerifyResult": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "checked": {
+            "type": "integer",
+            "title": "Checked",
+            "description": "How many entries were checked and found intact"
+          },
+          "first_broken_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Broken Id",
+            "description": "Number of the first entry that was changed or removed"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Plain-English result to show as it is"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Technical reason, for the logs and tests; not for users"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok",
+          "checked",
+          "message"
+        ],
+        "title": "AuditVerifyResult",
+        "description": "Result of walking the whole audit hash chain (all requests), for the History check."
       },
       "BridgeStep": {
         "properties": {
