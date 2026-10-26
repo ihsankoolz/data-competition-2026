@@ -36,6 +36,7 @@ docs/                PRD, decisions, data spec, demo script, progress log
 - `make theme-shots` — 1440x900 screenshots of theme variants A/B (B is the default, D-023) into `apps/web/screenshots/themes/` (not in `make e2e`; the active variant is `THEME_VARIANT` in `apps/web/lib/theme.ts`)
 - `make eval` — dedup, classifier and forecast evaluations; writes `docs/results.md`
 - `make tamper-demo` — shows the history check catching an edit: changes one entry on a throwaway copy of `data/app.db` (the real file is never written) and prints before/after (not in `make e2e`)
+- `make readme-shots` — 1440x900 README screenshots 05-08 (Start here, reply draft, approval rules, clean-up queue) into `docs/img/screens/` (not in `make e2e`)
 
 ## Stack rules
 

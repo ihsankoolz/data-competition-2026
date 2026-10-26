@@ -59,3 +59,40 @@ Rehearse the main path with `make rehearse`: it walks steps 1–7, prints per-st
 **Needs:** every regulated selling country of an IVD item needs a registration number and an expiry date that is after today. When rehearsing DEMO-02 (malaria kit, SG, MY, VN) type an expiry date for each country, for example `2030-01-10`.
 
 **Automated check:** `tests/test_validation.py::test_optional_beat_lapsed_licence_is_stopped_at_submit`.
+
+## Optional finals beats (session 12)
+
+Four short beats for the live finals or Q&A. None of them is in the recorded video path, and **Reset demo** undoes each one (rule changes and clean-up decisions included).
+
+### Finals beat A: the reply to the sender (adoption, about 20 s)
+
+**Steps:** in the messy inbox, read **DEMO-01** as Marcus and scroll the reading panel to **Reply to sender (draft)**.
+
+**Say:** "Nobody has to change how they ask on day one. When an email comes in, the mailbox answers with this: thanks, only the details we still need, and a link to the form already filled in from their email. It is a fixed template, not AI, and the prototype sends nothing. In production Power Automate sends it from the MDM mailbox." Click **Copy reply** or **Open form** if asked.
+
+**If asked "why not let the AI write the reply?":** a fixed template cannot promise anything, invent a field, or be talked into changing bank details. The AI only reads; it never sends.
+
+### Finals beat B: onboard a new team in 30 seconds (flexibility, about 40 s)
+
+**Steps:**
+
+1. Switch to **Priya** and open **Admin & config**. The editor opens on *Customer · QTG · Vietnam*, Marcus's new business unit.
+2. Under **Add step**, choose *Quality / Regulatory* and *Nguyễn Thị Lan*, and click **Add step**. **Who would approve this?** updates at once.
+3. Click **Save rule**. The change appears under **Recent changes** with who and when.
+4. Optional: switch to **Marcus**, create a Vietnam customer request and submit it. Lan is among the first-stage approvers.
+
+**Say:** "The brief says adding an approval step today means redrafting the email template and the distribution list. Here the MDM team does it in one screen, sees who would approve before saving, and only new requests pick it up. Requests already in approval keep their approvers. No IT ticket."
+
+### Finals beat C: clean up the duplicates already in SAP (Priya, about 30 s)
+
+**Steps:** as **Priya**, open **Clean-up queue**. The first group is two records of the same Vietnamese laboratory, with the same tax ID. Point at the reasons, then click **Confirm link**. The counter moves to "1 of 168 reviewed". On a weaker group, click **Not the same** and type a reason.
+
+**Say:** "The duplicate check doesn't only stop new duplicates; it also finds the ones already in the master: 168 groups, most certain first. Priya confirms each one; the AI never merges. Customer and vendor records, and records in different countries, are never grouped." (168 groups = the 277 proposed links, which `results.md` scores 277 of 277 right on the synthetic data.)
+
+**If asked whether her decisions change the regional numbers:** not in this prototype. The regional "after merge" view uses the links the check proposes, and says so under the toggle with a link to this queue. In production her confirmed links would become the golden IDs.
+
+### Finals beat D: prove the history was not edited (governance, about 20 s)
+
+**Steps:** on any request page, under **History**, click **Check history is untampered**: "Checks the whole history log (all requests): N entries intact." The same check is on **Admin & config**.
+
+**Say:** "Every entry is chained to the one before it, so an edit anywhere breaks the chain from that point on. The check recomputes the chain from the first entry." If there is a terminal, run `make tamper-demo`: it changes one approval in a throwaway copy of the database and shows the check naming that entry. There is deliberately no tamper button in the app.

@@ -280,10 +280,10 @@ AI interpreter on the unseen emails, rows = true class, columns = what it said:
 | True class \ Predicted | Order (PO) | Planned order | Enquiry | Follow-up | Master-data request | Total |
 |---|---|---|---|---|---|---|
 | Order (PO) | **5** | . | . | . | . | 5 |
-| Planned order | . | **4** | 1 | . | . | 5 |
+| Planned order (app: Purchase request) | . | **4** | 1 | . | . | 5 |
 | Enquiry | . | . | **5** | . | . | 5 |
 | Follow-up | . | . | . | **4** | . | 4 |
-| Master-data request | . | . | . | . | **5** | 5 |
+| Master-data request (app: New record request) | . | . | . | . | **5** | 5 |
 
 Emails sorted into the wrong pile: HO-09 (Planned order read as Enquiry).
 

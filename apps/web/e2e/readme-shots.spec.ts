@@ -34,6 +34,20 @@ test("Start here", async ({ page }) => {
   await shot(page, "05-start-here");
 });
 
+test("Reply to sender (draft)", async ({ page }) => {
+  await open(page, "marcus", "/inbox");
+  await page.getByTestId("inbox-DEMO-01").click();
+  const pane = page.getByTestId("email-pane");
+  const read = pane.getByTestId("read-with-ai");
+  if (await read.isVisible()) await read.click();
+  await expect(pane.getByTestId("reply-draft")).toBeVisible({ timeout: 20_000 });
+  // Scroll to the end of the reading panel: the sticky create bar settles below the draft.
+  await pane.evaluate((el) =>
+    window.scrollTo(0, el.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 24),
+  );
+  await shot(page, "06-reply-draft");
+});
+
 test("Clean-up queue", async ({ page }) => {
   await open(page, "priya", "/cleanup");
   await expect(page.getByTestId("cleanup-reasons").first()).toBeVisible({ timeout: 20_000 });
