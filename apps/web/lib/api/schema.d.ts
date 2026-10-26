@@ -438,6 +438,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/audit/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify Audit
+         * @description Walks the whole history log from the first entry and checks that every entry still
+         *     matches the one before it. Open to every persona; it changes nothing.
+         */
+        get: operations["verifyAudit"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/analytics/regional": {
         parameters: {
             query?: never;
@@ -746,6 +767,34 @@ export interface components {
              * @description Plain English, e.g. 'Wei Jie approved (Finance)'
              */
             summary: string;
+        };
+        /**
+         * AuditVerifyResult
+         * @description Result of walking the whole audit hash chain (all requests), for the History check.
+         */
+        AuditVerifyResult: {
+            /** Ok */
+            ok: boolean;
+            /**
+             * Checked
+             * @description How many entries were checked and found intact
+             */
+            checked: number;
+            /**
+             * First Broken Id
+             * @description Number of the first entry that was changed or removed
+             */
+            first_broken_id?: number | null;
+            /**
+             * Message
+             * @description Plain-English result to show as it is
+             */
+            message: string;
+            /**
+             * Reason
+             * @description Technical reason, for the logs and tests; not for users
+             */
+            reason?: string | null;
         };
         /** BridgeStep */
         BridgeStep: {
@@ -3297,6 +3346,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ResetResult"];
+                };
+            };
+        };
+    };
+    verifyAudit: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditVerifyResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
