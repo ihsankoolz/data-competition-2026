@@ -87,7 +87,7 @@ Ranked by rubric impact per hour. Pick from the top.
 - Splink (evaluated; deferred to v2 when real data with more columns exists).
 - LightGBM / global ML forecasting, model fine-tuning.
 - Auto-merge or AI-made approvals.
-- Full custom UI for Cost Center (config + mock endpoint only).
+- ~~Full custom UI for Cost Center (config + mock endpoint only).~~ **Built in session 13 (D-027):** Cost Center is a schema-driven request form like the other three.
 - Real authentication / SSO (production path: Microsoft Entra ID).
 
 ## 6. Architecture

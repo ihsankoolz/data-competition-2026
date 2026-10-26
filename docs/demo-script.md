@@ -60,6 +60,8 @@ Rehearse the main path with `make rehearse`: it walks steps 1–7, prints per-st
 
 **Automated check:** `tests/test_validation.py::test_optional_beat_lapsed_licence_is_stopped_at_submit`.
 
+**Since session 13:** the beat reuses A-CRP-QT's own name and registration numbers, so the new item duplicate check now (correctly) flags it as a **Likely duplicate** of A-CRP-QT first. After step 6, click **Not the same item — explain why** (e.g. "new 200-test pack size, separate SKU") before **Submit** in step 7. `tests/test_validation.py` covers the extra step.
+
 ## Optional finals beats (session 12)
 
 Four short beats for the live finals or Q&A. None of them is in the recorded video path, and **Reset demo** undoes each one (rule changes and clean-up decisions included).
@@ -96,3 +98,31 @@ Four short beats for the live finals or Q&A. None of them is in the recorded vid
 **Steps:** on any request page, under **History**, click **Check history is untampered**: "Checks the whole history log (all requests): N entries intact." The same check is on **Admin & config**.
 
 **Say:** "Every entry is chained to the one before it, so an edit anywhere breaks the chain from that point on. The check recomputes the chain from the first entry." If there is a terminal, run `make tamper-demo`: it changes one approval in a throwaway copy of the database and shows the check naming that entry. There is deliberately no tamper button in the app.
+
+## Optional finals beats (session 13)
+
+Short beats for the live finals or Q&A, none in the recorded video path. **Reset demo** undoes each one.
+
+### Finals beat E: a fourth record type and a required field, no IT (flexibility, about 40 s)
+
+**Steps:** as **Amy**, **New request → Cost Center**: name, start date, submit; the status page asks Finance and the BU Head at once. Then as **Priya**, **Admin & config → Required fields**: *Customer · Singapore*, switch **City** to required, save. Open a new Singapore customer form: City now says Required. Try to switch **Tax ID** off: it is locked, with the reason.
+
+**Say:** "Cost Center is one config file, 43 lines; adding it removed more code than it added. The MDM team changes what a form asks for, per country, without a developer. New requests only, every change in the history log, and anything SAP or the approval route needs is locked."
+
+### Finals beat F: a duplicate item (data quality, about 25 s)
+
+**Steps:** as **Amy**, **New request → Item**, type `Rapid Dengue NS1 Antigen Test Kit, 25 tests`. The panel: **Likely duplicate** of A-DEN-NS1, "same name once pack size, units and punctuation are ignored". Optionally type an existing registration number for Singapore to show "one registration can't belong to two products".
+
+**Say:** "The brief says duplicate items are a recurring problem. Rules only, no AI; a person decides. The generator has no planted item duplicates, so we tested it on 50 pairs we wrote ourselves: treat that as a sanity check, not an accuracy claim."
+
+### Finals beat G: approvers in other countries, and Teams (adoption, about 30 s)
+
+**Steps:** on a request with Nguyễn Thị Lan (Quality / Regulatory, Vietnam) as approver, point at "9:00 am SGT, 8:00 am in Vietnam". Act as Lan, open the bell, click **See it in Teams**: the card with Approve / Ask for info / Reject / Open. Download the card file.
+
+**Say:** "Deadlines run on one clock; each person sees theirs in local time. In production Power Automate posts this exact card in Teams. Nothing is sent from here, and the buttons here do nothing; a person decides in the app. And when Priya publishes, Amy is told: 'live in SAP as A-MAL-001, so you can raise sales orders now', the moment that took 18 days in the brief."
+
+### Finals beat H: can AI beat the Excel average for equipment? (honesty, about 30 s)
+
+**Steps:** **Regional view → forecast panel**, scroll to the line under the backtest and the **Next 3 months plan** table.
+
+**Say:** "We tried planning equipment from the purchase requests customers raise now, method fixed before the first run. Result: a tie with the 12-month Excel average in the demo market, 26.5% against 26.1% error, and worse in the other two, even though our synthetic data builds requests from orders and so favours it. So we would pilot it and measure the real conversion rate before trusting it. The Vietnam column is separate on purpose: Excel ran 13% low there in the backtest, so the column adds 15% on Excel's plan, and you can see it rather than have it buried."
