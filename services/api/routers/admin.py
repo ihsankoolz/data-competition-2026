@@ -13,6 +13,9 @@ from services.api.schemas import (
     CountryCode,
     Domain,
     EntityCode,
+    RequiredFieldChange,
+    RequiredFieldsSave,
+    RequiredFieldsView,
     ResetResult,
     RoutingRule,
     RoutingRules,
@@ -20,9 +23,6 @@ from services.api.schemas import (
     RuleCountry,
     RuleKey,
     RulePreview,
-    RequiredFieldChange,
-    RequiredFieldsSave,
-    RequiredFieldsView,
     RulePreviewRequest,
 )
 from services.api.workflow import overrides, required_fields

@@ -122,7 +122,7 @@ def test_only_the_mdm_analyst_can_change_a_field(client):
     assert put(client, "customer", "SG", {"City": True}).status_code == 200
 
 
-# ---------------------------------------------------------------- making a field optional / required
+# ---------------------------------------------------------------- optional / required
 
 
 def test_make_a_field_optional_for_one_country_only(client):
