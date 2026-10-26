@@ -1410,6 +1410,67 @@
         }
       }
     },
+    "/notifications/{notification_id}/teams-card": {
+      "get": {
+        "tags": [
+          "approvals"
+        ],
+        "summary": "Notification Teams Card",
+        "description": "The Adaptive Card (v1.5) a Teams reminder for this approval would be. Preview only:\nnothing is sent to Teams, and the card's buttons only work once Power Automate posts it.",
+        "operationId": "notificationTeamsCard",
+        "parameters": [
+          {
+            "name": "notification_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Notification Id"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdaptiveCard"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/reset-demo": {
       "post": {
         "tags": [
@@ -2225,6 +2286,77 @@
         "title": "AccountListTotal",
         "description": "Totals for one account list over ALL qualifying customers, not only the rows shown."
       },
+      "AdaptiveCard": {
+        "properties": {
+          "$schema": {
+            "type": "string",
+            "const": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "title": "$Schema",
+            "default": "http://adaptivecards.io/schemas/adaptive-card.json"
+          },
+          "type": {
+            "type": "string",
+            "const": "AdaptiveCard",
+            "title": "Type",
+            "default": "AdaptiveCard"
+          },
+          "version": {
+            "type": "string",
+            "const": "1.5",
+            "title": "Version",
+            "default": "1.5"
+          },
+          "body": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/CardTextBlock"
+                },
+                {
+                  "$ref": "#/components/schemas/CardFactSet"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "FactSet": "#/components/schemas/CardFactSet",
+                  "TextBlock": "#/components/schemas/CardTextBlock"
+                }
+              }
+            },
+            "type": "array",
+            "title": "Body"
+          },
+          "actions": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/CardActionSubmit"
+                },
+                {
+                  "$ref": "#/components/schemas/CardActionOpenUrl"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "Action.OpenUrl": "#/components/schemas/CardActionOpenUrl",
+                  "Action.Submit": "#/components/schemas/CardActionSubmit"
+                }
+              }
+            },
+            "type": "array",
+            "title": "Actions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "body",
+          "actions"
+        ],
+        "title": "AdaptiveCard",
+        "description": "The Teams reminder for one approval task, as Adaptive Card JSON (version 1.5)."
+      },
       "ApprovalDecisionIn": {
         "properties": {
           "action": {
@@ -2756,6 +2888,184 @@
         ],
         "title": "Caption",
         "description": "A metric's plain-English definition, shown under it in the UI."
+      },
+      "CardActionOpenUrl": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "Action.OpenUrl",
+            "title": "Type",
+            "default": "Action.OpenUrl"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "url"
+        ],
+        "title": "CardActionOpenUrl"
+      },
+      "CardActionSubmit": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "Action.Submit",
+            "title": "Type",
+            "default": "Action.Submit"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "data": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Data",
+            "description": "Sent back to the bot: action, task_id, req_id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "data"
+        ],
+        "title": "CardActionSubmit"
+      },
+      "CardFact": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "value"
+        ],
+        "title": "CardFact"
+      },
+      "CardFactSet": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "FactSet",
+            "title": "Type",
+            "default": "FactSet"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/CardFact"
+            },
+            "type": "array",
+            "title": "Facts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "facts"
+        ],
+        "title": "CardFactSet"
+      },
+      "CardTextBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "TextBlock",
+            "title": "Type",
+            "default": "TextBlock"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "wrap": {
+            "type": "boolean",
+            "title": "Wrap",
+            "default": true
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Small",
+                  "Default",
+                  "Medium",
+                  "Large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Lighter",
+                  "Default",
+                  "Bolder"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "isSubtle": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issubtle"
+          },
+          "spacing": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "None",
+                  "Small",
+                  "Default",
+                  "Medium",
+                  "Large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spacing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "CardTextBlock"
       },
       "CleanupCluster": {
         "properties": {

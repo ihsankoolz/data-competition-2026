@@ -122,3 +122,103 @@ def test_the_reminder_carries_the_local_time_too(client):
     r = client.get("/notifications", headers=H("pornthip"))
     reminder = next(n for n in r.json() if n["req_id"] == d["req_id"] and n["kind"] == "reminder")
     assert "SGT, " in reminder["message"] and reminder["message"].endswith("in Thailand.")
+
+
+# ---------------------------------------------------------------- part 2: the Teams card
+
+
+VENDOR_DEMO_07 = {
+    "CardName": "Precision Diagnostics Asia Pte Ltd",
+    "Country": "SG",
+    "FederalTaxID": "201845123K",
+    "Street": "10 Science Park Road",
+    "City": "Singapore",
+    "ZipCode": "117684",
+    "EmailAddress": "ar@precisiondx.sg.example",
+    "PayTermsGrpCode": 1,
+    "BPBankAccounts": [
+        {
+            "BankCode": "DBS",
+            "AccountNo": "072-123456-7",
+            "AccountName": "Precision Diagnostics Asia Pte Ltd",
+            "BICSwiftCode": "DBSSSGSG",
+            "Country": "SG",
+        }
+    ],
+}
+
+
+def notes_for(client, user, req_id, kind=None):
+    return [
+        n
+        for n in client.get("/notifications", headers=H(user)).json()
+        if n["req_id"] == req_id and (kind is None or n["kind"] == kind)
+    ]
+
+
+def card_for(client, user, notification_id):
+    return client.get(f"/notifications/{notification_id}/teams-card", headers=H(user))
+
+
+def facts_of(card):
+    return {
+        f["title"]: f["value"] for b in card["body"] if b["type"] == "FactSet" for f in b["facts"]
+    }
+
+
+def test_teams_card_is_a_valid_adaptive_card_with_four_actions(client):
+    d = ivd_item(client, "Teams Card Malaria Rapid Test")
+    note = notes_for(client, "lan", d["req_id"], "task_assigned")[0]
+    assert note["teams_card"] is True
+    r = card_for(client, "lan", note["notification_id"])
+    assert r.status_code == 200, r.text
+    card = r.json()
+    assert card["type"] == "AdaptiveCard" and card["version"] == "1.5"
+    assert card["$schema"] == "http://adaptivecards.io/schemas/adaptive-card.json"
+    assert {b["type"] for b in card["body"]} <= {"TextBlock", "FactSet"}
+    texts = [b["text"] for b in card["body"] if b["type"] == "TextBlock"]
+    assert "Teams Card Malaria Rapid Test" in texts
+    facts = facts_of(card)
+    assert facts["Request"] == d["req_id"]
+    assert facts["Your part"] == "Quality / Regulatory (VN)"
+    assert facts["Decide by"] == "Wed 7 Oct 2026, 9:00 am SGT, 8:00 am in Vietnam"
+    submits = [a for a in card["actions"] if a["type"] == "Action.Submit"]
+    assert [a["title"] for a in submits] == ["Approve", "Ask for info", "Reject"]
+    assert [a["data"]["action"] for a in submits] == ["approve", "ask_info", "reject"]
+    task_id = tasks_by_role(d)[("quality_regulatory", "VN")]["task_id"]
+    assert all(a["data"]["task_id"] == task_id for a in submits)
+    (open_url,) = [a for a in card["actions"] if a["type"] == "Action.OpenUrl"]
+    assert open_url["title"] == "Open" and open_url["url"].endswith(f"/requests/{d['req_id']}")
+    assert len(card["actions"]) == 4
+    # an SG approver's card shows SGT only
+    daniel = notes_for(client, "daniel", d["req_id"], "task_assigned")[0]
+    card = card_for(client, "daniel", daniel["notification_id"]).json()
+    assert facts_of(card)["Decide by"] == "Wed 7 Oct 2026, 9:00 am"
+
+
+def test_teams_card_never_carries_bank_details_for_the_demo07_vendor(client):
+    req = new_request(client, "amy", "vendor", "SPD", "SG", VENDOR_DEMO_07)
+    r = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy"))
+    assert r.status_code == 200, r.text
+    for user in ("weijie", "daniel", "meiling"):  # Finance too: the card is never unmasked
+        note = notes_for(client, user, req["req_id"], "task_assigned")[0]
+        r = card_for(client, user, note["notification_id"])
+        assert r.status_code == 200, r.text
+        for secret in ("072-123456-7", "0721234567", "DBSSSGSG", "BankCode", "AccountNo"):
+            assert secret not in r.text
+        assert "Bank details are not included" in r.text
+
+
+def test_teams_card_404s_for_unknown_other_peoples_and_non_task_notifications(client):
+    assert card_for(client, "lan", "NTF-99999").status_code == 404
+    d = ivd_item(client, "Teams Card Not Yours Rapid Test")
+    note = notes_for(client, "lan", d["req_id"], "task_assigned")[0]
+    assert card_for(client, "daniel", note["notification_id"]).status_code == 404
+    # the requestor's "needs more information" notification carries a task but is not an approval
+    lan_task = tasks_by_role(d)[("quality_regulatory", "VN")]["task_id"]
+    r = decide(client, lan_task, "lan", "ask_info", "Which lab ran the trial?")
+    assert r.status_code == 200, r.text
+    info = notes_for(client, "amy", d["req_id"], "info_requested")[0]
+    assert info["task_id"] == lan_task and info["teams_card"] is False
+    r = card_for(client, "amy", info["notification_id"])
+    assert r.status_code == 404 and "not about an approval" in r.json()["detail"]
