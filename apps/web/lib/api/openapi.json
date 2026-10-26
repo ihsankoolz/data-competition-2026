@@ -3933,6 +3933,38 @@
             ],
             "title": "Bias Note",
             "description": "Plain-English caption for bias_by_country, whatever it shows"
+          },
+          "pipeline_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipeline Note",
+            "description": "One plain line: Product B planned from purchase requests vs the averages"
+          },
+          "pipeline_region": {
+            "items": {
+              "$ref": "#/components/schemas/PipelineScore"
+            },
+            "type": "array",
+            "title": "Pipeline Region",
+            "description": "Product B, whole region: WAPE and bias of all five methods",
+            "default": []
+          },
+          "plan_next_3m": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ForecastPlan"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Next 3 months plan per country x product (Oct-Dec 2026)"
           }
         },
         "type": "object",
@@ -3947,6 +3979,71 @@
           "honest_note"
         ],
         "title": "ForecastBacktest"
+      },
+      "ForecastPlan": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "enum": [
+              "seasonal_trend",
+              "flat_noisy",
+              "intermittent"
+            ],
+            "title": "Scenario"
+          },
+          "origin": {
+            "type": "string",
+            "title": "Origin",
+            "description": "Last full month used, YYYY-MM-01"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Months",
+            "description": "The 3 planned months, YYYY-MM-01"
+          },
+          "fast_growing": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "SG",
+                "MY",
+                "ID",
+                "VN",
+                "TH"
+              ]
+            },
+            "type": "array",
+            "title": "Fast Growing",
+            "description": "D-020 fast-growing countries"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PlanRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "captions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Caption"
+            },
+            "type": "object",
+            "title": "Captions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scenario",
+          "origin",
+          "months",
+          "fast_growing",
+          "rows",
+          "captions"
+        ],
+        "title": "ForecastPlan"
       },
       "ForecastPoint": {
         "properties": {
@@ -5003,6 +5100,165 @@
         ],
         "title": "Persona",
         "description": "A seeded demo user. The web app sends the chosen `user_id` in the X-Acting-User header."
+      },
+      "PipelineScore": {
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "excel_6m",
+              "excel_12m",
+              "combination",
+              "pipeline_pr",
+              "pipeline_pr_enq"
+            ],
+            "title": "Method"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "wape_pct": {
+            "type": "number",
+            "title": "Wape Pct",
+            "description": "Error as % of volume; lower is better"
+          },
+          "bias_pct": {
+            "type": "number",
+            "title": "Bias Pct",
+            "description": "+ = over-forecast, - = under-forecast"
+          }
+        },
+        "type": "object",
+        "required": [
+          "method",
+          "label",
+          "wape_pct",
+          "bias_pct"
+        ],
+        "title": "PipelineScore"
+      },
+      "PlanRow": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH"
+            ],
+            "title": "Country"
+          },
+          "country_name": {
+            "type": "string",
+            "title": "Country Name"
+          },
+          "product": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C"
+            ],
+            "title": "Product"
+          },
+          "excel_6m": {
+            "type": "number",
+            "title": "Excel 6M",
+            "description": "Units, Oct-Dec together: 3 x the last 6 months' mean"
+          },
+          "excel_6m_monthly": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Excel 6M Monthly"
+          },
+          "combination": {
+            "type": "number",
+            "title": "Combination",
+            "description": "Units, Oct-Dec together: our combination"
+          },
+          "combination_monthly": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Combination Monthly"
+          },
+          "pipeline_pr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipeline Pr",
+            "description": "Product B only: units from purchase requests x conversion"
+          },
+          "pipeline_pr_enq": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipeline Pr Enq",
+            "description": "Product B only: requests and enquiries, averaged"
+          },
+          "growth_adjustment": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment",
+            "description": "Fast-growing countries only (D-020): units to add on top of the Excel plan; never included in another column"
+          },
+          "growth_adjustment_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment Pct",
+            "description": "How far the Excel average planned this country too low (%)"
+          },
+          "growth_adjustment_caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Adjustment Caption"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "country_name",
+          "product",
+          "excel_6m",
+          "excel_6m_monthly",
+          "combination",
+          "combination_monthly"
+        ],
+        "title": "PlanRow"
       },
       "QuotedValue": {
         "properties": {

@@ -384,5 +384,54 @@ def main(derived_dir: Path = bt.DERIVED) -> None:
         print(f"{s}: {result['note']}")
 
 
+# ----------------------------------------------------------------------------- read side (API)
+PLAN_CAPTIONS: dict[str, dict[str, str]] = {
+    "plan": {
+        "title": "Next 3 months plan",
+        "caption": "Units to plan for October to December 2026, from the data up to the end of "
+        "September. Synthetic data.",
+    },
+    "excel_6m": {
+        "title": "Excel 6-month",
+        "caption": "Today's habit: 3 x the average of the last 6 months of confirmed orders.",
+    },
+    "combination": {
+        "title": "Ours",
+        "caption": "Three standard statistical forecasts averaged, learning trend and "
+        "seasonality from 3 years of orders.",
+    },
+    "pipeline_pr": {
+        "title": "From requests",
+        "caption": "Equipment only: units customers asked for in recent purchase requests x the "
+        "share of requested units that became orders over the last 12 months.",
+    },
+    "growth_adjustment": {
+        "title": "Growth adjustment",
+        "caption": "Only for fast-growing markets: the units the Excel average fell short by in "
+        "our backtest, shown on its own. It is not added into any other column.",
+    },
+}
+
+
+def attach(run: dict[str, Any], derived_dir: Path) -> dict[str, Any]:
+    """Add the session 13 fields to a clean M9 run dict (returns a copy): `pipeline_note`,
+    `pipeline_region` (Product B, region scores) and `plan_next_3m`. Dirty runs come back
+    unchanged; a clean run whose files are missing keeps the fields empty."""
+    if run.get("data") != "clean":
+        return run
+    from ds.forecasting import plan as fp
+
+    out = dict(run)
+    res = load_pipeline(derived_dir, run["scenario"])
+    if res is not None:
+        out["pipeline_note"] = res["note"]
+        out["pipeline_region"] = res["region"]
+    ppath = fp.plan_path(derived_dir, run["scenario"])
+    if ppath.exists():
+        plan = json.loads(ppath.read_text(encoding="utf-8"))
+        out["plan_next_3m"] = {**plan, "captions": {k: dict(v) for k, v in PLAN_CAPTIONS.items()}}
+    return out
+
+
 if __name__ == "__main__":
     main()
