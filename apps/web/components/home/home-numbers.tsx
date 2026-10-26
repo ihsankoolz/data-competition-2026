@@ -136,7 +136,7 @@ export function HomeNumbers() {
           before={days(o.amy_before_bd)}
           after={`~${days(Math.round(o.amy_after_bd))}`}
           unit="business days"
-          caption="From request to live in SAP, with every approver deciding at the same time instead of one after another."
+          caption="Modelled, not measured: from request to live in SAP, with every approver deciding at the same time instead of one after another."
         />
       ) : (
         <Pending testId="home-stat-amy-loading" />
