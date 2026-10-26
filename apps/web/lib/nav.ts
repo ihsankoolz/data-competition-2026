@@ -7,6 +7,7 @@ import {
   ListChecks,
   type LucideIcon,
   SendHorizontal,
+  Signpost,
   SlidersHorizontal,
   Stamp,
 } from "lucide-react";
@@ -19,9 +20,21 @@ export type NavItem = {
   icon: LucideIcon;
 };
 
-export type NavGroup = { label: string; items: NavItem[] };
+/** A group without a label (the home page) shows its items with no heading. */
+export type NavGroup = { label?: string; items: NavItem[] };
 
 export const NAV_GROUPS: NavGroup[] = [
+  {
+    items: [
+      {
+        href: "/",
+        label: "Start here",
+        description:
+          "What the prototype does in five steps, the headline numbers, and the demo journeys to walk through.",
+        icon: Signpost,
+      },
+    ],
+  },
   {
     label: "Request flow",
     items: [
