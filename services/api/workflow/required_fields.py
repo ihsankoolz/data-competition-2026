@@ -35,8 +35,6 @@ from services.api.schemas import (
 )
 from services.api.views import user_names
 
-__all__ = ["override_for"]  # (defined in formfields so views.py can use it without a cycle)
-
 COUNTRIES = ("SG", "MY", "ID", "VN", "TH")
 RECENT_CHANGES = 20
 NOTE = (

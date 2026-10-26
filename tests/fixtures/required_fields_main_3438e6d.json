@@ -1,0 +1,222 @@
+{
+ "customer/ID": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ]
+ },
+ "customer/MY": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ]
+ },
+ "customer/SG": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ]
+ },
+ "customer/TH": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ]
+ },
+ "customer/VN": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress"
+  ]
+ },
+ "item/ID": {
+  "missing_when_empty": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ],
+  "required": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ]
+ },
+ "item/MY": {
+  "missing_when_empty": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ],
+  "required": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ]
+ },
+ "item/SG": {
+  "missing_when_empty": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ],
+  "required": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ]
+ },
+ "item/TH": {
+  "missing_when_empty": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ],
+  "required": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ]
+ },
+ "item/VN": {
+  "missing_when_empty": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ],
+  "required": [
+   "ItemName",
+   "U_IVD",
+   "selling_countries"
+  ]
+ },
+ "vendor/ID": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ]
+ },
+ "vendor/MY": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ]
+ },
+ "vendor/SG": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ]
+ },
+ "vendor/TH": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ]
+ },
+ "vendor/VN": {
+  "missing_when_empty": [
+   "CardName",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ],
+  "required": [
+   "CardName",
+   "Country",
+   "FederalTaxID",
+   "Street",
+   "EmailAddress",
+   "BPBankAccounts"
+  ]
+ }
+}

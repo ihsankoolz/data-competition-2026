@@ -12,6 +12,7 @@ from ds.forms import (
 )
 from services.api.db import models as m
 from services.api.db.session import session_scope
+from services.api.formfields import override_for
 from services.api.schemas import Domain, FormSpec
 from services.api.workflow import required_fields
 
@@ -35,7 +36,7 @@ def get_form(domain: Domain, country: str | None = None, req_id: str | None = No
     with session_scope() as session:
         req = session.get(m.Request, req_id) if req_id else None
         if req is not None and req.domain.value == domain:
-            override = required_fields.override_for(req)
+            override = override_for(req)
         else:
             override = required_fields.override_now(session, domain, country)
     required = required_fields.apply(required, override, domain)
