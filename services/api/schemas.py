@@ -360,6 +360,20 @@ class ResetResult(BaseModel):
     sap_mock_reset: bool = Field(description="False if the SAP mock was not reachable")
 
 
+class AuditVerifyResult(BaseModel):
+    """Result of walking the whole audit hash chain (all requests), for the History check."""
+
+    ok: bool
+    checked: int = Field(description="How many entries were checked and found intact")
+    first_broken_id: int | None = Field(
+        default=None, description="Number of the first entry that was changed or removed"
+    )
+    message: str = Field(description="Plain-English result to show as it is")
+    reason: str | None = Field(
+        default=None, description="Technical reason, for the logs and tests; not for users"
+    )
+
+
 class AuditEntry(BaseModel):
     """One audit row for the status-page timeline (bank values are already masked)."""
 

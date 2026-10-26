@@ -11,8 +11,12 @@ function NavLinks({ active }: { active: string | null }) {
   return (
     <nav aria-label="Screens" className="flex flex-col gap-6 px-3 py-6">
       {NAV_GROUPS.map((group) => (
-        <div key={group.label} className="flex flex-col gap-0.5">
-          <h2 className="px-3 pb-1.5 text-xs font-medium text-sidebar-muted-foreground">{group.label}</h2>
+        <div key={group.label ?? group.items[0]?.href} className="flex flex-col gap-0.5">
+          {group.label && (
+            <h2 className="px-3 pb-1.5 text-xs font-medium text-sidebar-muted-foreground">
+              {group.label}
+            </h2>
+          )}
           {group.items.map(({ href, label, icon: Icon }) => {
             const isActive = href === active;
             return (

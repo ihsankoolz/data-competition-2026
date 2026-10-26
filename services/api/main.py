@@ -12,7 +12,16 @@ from sqlalchemy.exc import OperationalError
 from services.api import clock
 from services.api.clock import router as clock_router
 from services.api.personas import PERSONAS
-from services.api.routers import admin, analytics, approvals, dedup, emails, forms, requests
+from services.api.routers import (
+    admin,
+    analytics,
+    approvals,
+    audit,
+    dedup,
+    emails,
+    forms,
+    requests,
+)
 from services.api.schemas import Health, Persona
 from services.api.validation import ValidationFailed
 
@@ -78,7 +87,7 @@ async def _database_busy(_: Request, exc: OperationalError) -> JSONResponse:
 
 
 app.include_router(clock_router)
-for _module in (forms, emails, dedup, requests, approvals, admin, analytics):
+for _module in (forms, emails, dedup, requests, approvals, admin, audit, analytics):
     app.include_router(_module.router)
 
 

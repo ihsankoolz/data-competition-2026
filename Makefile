@@ -15,7 +15,7 @@ ENV_VARS := LLM_MODE ANTHROPIC_API_KEY LLM_MODEL_FAST LLM_MODEL_JUDGE FIELD_ENCR
 $(foreach v,$(ENV_VARS),$(eval $(v) := $(strip $($(v)))))
 export $(foreach v,$(ENV_VARS),$(if $($(v)),$(v)))
 
-.PHONY: setup data fixtures dev dev-api dev-sap dev-web reset-demo test test-py test-web e2e rehearse theme-shots eval api-types record stop
+.PHONY: setup data fixtures dev dev-api dev-sap dev-web reset-demo test test-py test-web e2e rehearse theme-shots readme-shots eval api-types tamper-demo record stop
 
 setup:            ## install Python (uv) and Node deps; writes .env from .env.example with a new FIELD_ENCRYPTION_KEY if it has none
 	uv sync
@@ -66,6 +66,9 @@ rehearse:         ## timed 2:30 demo walkthrough + 1440x900 screenshots -> apps/
 theme-shots:      ## 1440x900 screenshots of theme variants A/B -> apps/web/screenshots/themes (not in make e2e)
 	cd $(WEB) && THEME_SHOTS=1 "$(NODE)" e2e/run.mjs theme-shots
 
+readme-shots:     ## 1440x900 README screenshots of Start here, the reply draft, the rules editor and the clean-up queue -> docs/img/screens (not in make e2e)
+	cd $(WEB) && README_SHOTS=1 "$(NODE)" e2e/run.mjs readme-shots
+
 eval:             ## dedup, classifier and forecast evaluations -> docs/results.md (offline, LLM_MODE=replay)
 	@# always regenerate: stale seeds from an older generator silently skew the scores (D-022)
 	rm -rf data/generated/eval
@@ -80,6 +83,9 @@ eval:             ## dedup, classifier and forecast evaluations -> docs/results.
 api-types:        ## regenerate the typed API client from the FastAPI OpenAPI spec
 	uv run python -m services.api.export_openapi $(WEB)/lib/api/openapi.json
 	cd $(WEB) && "$(NODE)" node_modules/openapi-typescript/bin/cli.js lib/api/openapi.json -o lib/api/schema.d.ts --default-non-nullable false
+
+tamper-demo:     ## show the history check catching an edit, on a throwaway copy of data/app.db (never touches the real file)
+	uv run python -m services.api.tamper_demo
 
 record:           ## record the LLM replay cache: 88 emails + dedup judge cases (needs ANTHROPIC_API_KEY; prints a cost estimate, stops over US$5)
 	LLM_MODE=record uv run python -m ds.interpreter.record

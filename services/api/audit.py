@@ -268,3 +268,12 @@ def verify_chain(session: Session) -> VerifyResult:
             reason="newest rows are missing (log was truncated)",
         )
     return VerifyResult(ok=True, checked=checked)
+
+
+def plain_message(result: VerifyResult) -> str:
+    """The user-facing sentence. The technical reason stays in its own field."""
+    if result.ok:
+        n = result.checked
+        return f"All {n} entries intact." if n != 1 else "The 1 entry is intact."
+    before = "Everything before it is intact." if result.checked else "Nothing comes before it."
+    return f"Entry {result.first_broken_id} was changed or removed. {before}"

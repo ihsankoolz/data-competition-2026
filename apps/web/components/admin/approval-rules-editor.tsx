@@ -458,8 +458,6 @@ export function ApprovalRulesEditor() {
         </div>
       </section>
 
-      {/* History check: another branch adds components/admin/history-check.tsx here. */}
-
       <section
         aria-label="Recent changes"
         data-testid="recent-changes"
