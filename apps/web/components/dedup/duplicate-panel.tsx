@@ -308,12 +308,12 @@ function RelatedRecords({ related }: { related: Schema<"RelatedRecord">[] }) {
   );
 }
 
-function NotDuplicateDialog({
+export function NotDuplicateDialog({
   domain,
   disabled,
   onConfirm,
 }: {
-  domain: "customer" | "vendor";
+  domain: "customer" | "vendor" | "item";
   disabled: boolean;
   onConfirm: (reason: string) => Promise<boolean>;
 }) {
@@ -332,7 +332,7 @@ function NotDuplicateDialog({
     >
       <DialogTrigger asChild>
         <Button variant="outline" disabled={disabled} data-testid="not-duplicate">
-          Not a duplicate — explain why
+          {domain === "item" ? "Not the same item — explain why" : "Not a duplicate — explain why"}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -348,7 +348,11 @@ function NotDuplicateDialog({
             id="not-duplicate-reason"
             rows={3}
             value={reason}
-            placeholder="For example: a different legal entity with its own tax registration."
+            placeholder={
+              domain === "item"
+                ? "For example: a different maker's kit with its own catalogue number."
+                : "For example: a different legal entity with its own tax registration."
+            }
             onChange={(e) => setReason(e.target.value)}
           />
           <p className="text-xs text-muted-foreground">At least {MIN_REASON_LENGTH} characters.</p>

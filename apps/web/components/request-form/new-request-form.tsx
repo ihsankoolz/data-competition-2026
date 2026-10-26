@@ -7,7 +7,9 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { type DedupDecision, DuplicatePanel } from "@/components/dedup/duplicate-panel";
+import { ItemDuplicatePanel } from "@/components/dedup/item-duplicate-panel";
 import { useDedupCheck } from "@/components/dedup/use-dedup-check";
+import { useItemDedupCheck } from "@/components/dedup/use-item-dedup-check";
 import { useClock } from "@/components/shell/clock-provider";
 import { usePersona } from "@/components/shell/persona-provider";
 import { Button } from "@/components/ui/button";
@@ -170,6 +172,8 @@ export function NewRequestForm() {
   const specReady = spec !== null && spec.domain === domain && (spec.country ?? null) === country;
   const schema = specReady ? asFormSchema(spec) : null;
   const isBusinessPartner = domain === "customer" || domain === "vendor";
+  const isItem = domain === "item"; // session 13: items get a duplicate check too
+  const hasDupPanel = isBusinessPartner || isItem;
   // A vendor may be based anywhere (D-020 #2): its address country is a real field, defaulting
   // to the operating country. For customers the operating country is the address country.
   const vendorCountry = domain === "vendor";
@@ -186,18 +190,37 @@ export function NewRequestForm() {
     requestId: reqId,
   });
 
+  const itemDedup = useItemDedupCheck({
+    enabled: isItem && decision?.action !== "link_to_existing",
+    fields: values,
+    requestId: reqId,
+  });
+
   const currentResult = dedup.status === "done" ? dedup.result : null;
-  const candidateKey = (currentResult?.candidates ?? []).map((c) => c.CardCode).join(",");
+  const currentItemResult = itemDedup.status === "done" ? itemDedup.result : null;
+  const candidateKey = isItem
+    ? (currentItemResult?.candidates ?? []).map((c) => c.ItemCode).join(",")
+    : (currentResult?.candidates ?? []).map((c) => c.CardCode).join(",");
+  const anyCurrent = isItem ? currentItemResult : currentResult;
   // A "not a duplicate" reason covers the candidates it was given for, not new ones.
   const activeDecision =
     decision &&
-    (decision.action === "link_to_existing" || !currentResult || decidedFor === candidateKey)
+    (decision.action === "link_to_existing" || !anyCurrent || decidedFor === candidateKey)
       ? decision
       : null;
   const linked = activeDecision?.action === "link_to_existing";
   const blockingResult =
     dedup.status === "done" ? dedup.result : dedup.status === "checking" ? dedup.previous : null;
-  const blocked = isBusinessPartner && !!blockingResult?.block_submit && !activeDecision;
+  const itemBlockingResult =
+    itemDedup.status === "done"
+      ? itemDedup.result
+      : itemDedup.status === "checking"
+        ? itemDedup.previous
+        : null;
+  const blocked =
+    ((isBusinessPartner && !!blockingResult?.block_submit) ||
+      (isItem && !!itemBlockingResult?.block_submit)) &&
+    !activeDecision;
 
   // The country comes from the bar at the top, not from a form field, so count it as filled.
   const missing = specReady ? missingRequired(withCountry, spec) : [];
@@ -246,9 +269,10 @@ export function NewRequestForm() {
     try {
       const id = await ensureDraft();
       await api.POST("/requests/{req_id}/dedup-decision", { path: { req_id: id }, body });
-      const cardName = (currentResult?.candidates ?? []).find(
-        (c) => c.CardCode === body.card_code,
-      )?.CardName;
+      const cardName = isItem
+        ? (currentItemResult?.candidates ?? []).find((c) => c.ItemCode === body.card_code)
+            ?.ItemName
+        : (currentResult?.candidates ?? []).find((c) => c.CardCode === body.card_code)?.CardName;
       setDecision(
         body.action === "link_to_existing"
           ? { action: "link_to_existing", card_code: body.card_code ?? "", card_name: cardName }
@@ -476,11 +500,12 @@ export function NewRequestForm() {
         className={cn(
           "grid items-start gap-8",
           isBusinessPartner && "grid-cols-[minmax(0,1fr)_minmax(0,32rem)]",
+          isItem && "grid-cols-[minmax(0,1fr)_minmax(0,24rem)]",
         )}
       >
         <form
           aria-label={`New ${domain} form`}
-          className={cn("flex flex-col gap-6", !isBusinessPartner && "max-w-4xl")}
+          className={cn("flex flex-col gap-6", !hasDupPanel && "max-w-4xl")}
           onSubmit={(e) => {
             e.preventDefault();
             void submit();
@@ -603,6 +628,20 @@ export function NewRequestForm() {
             )}
           </div>
         </form>
+
+        {isItem && (
+          <aside className="sticky top-24">
+            <ItemDuplicatePanel
+              state={itemDedup}
+              typedName={typeof values.ItemName === "string" ? values.ItemName : ""}
+              decision={activeDecision}
+              busy={deciding}
+              error={decisionError}
+              onLink={(card_code) => void decide({ action: "link_to_existing", card_code })}
+              onNotDuplicate={(reason) => decide({ action: "not_duplicate", reason })}
+            />
+          </aside>
+        )}
 
         {isBusinessPartner && (
           <aside className="sticky top-24">
