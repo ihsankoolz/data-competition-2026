@@ -39,3 +39,17 @@ test("Clean-up queue", async ({ page }) => {
   await expect(page.getByTestId("cleanup-reasons").first()).toBeVisible({ timeout: 20_000 });
   await shot(page, "08-cleanup-queue");
 });
+
+test("Approval rules editor", async ({ page }) => {
+  await open(page, "priya", "/admin");
+  await expect(page.getByTestId("rule-step")).toHaveCount(3, { timeout: 20_000 });
+  await page.getByTestId("add-step-role").selectOption("quality_regulatory");
+  await page.getByTestId("add-step-person").selectOption("lan");
+  await page.getByTestId("add-step").click();
+  await expect(page.getByTestId("rule-preview").getByTestId("preview-task")).toHaveCount(5);
+  await page.getByTestId("rules-editor").evaluate((el) => {
+    const header = document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+    window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - header - 16);
+  });
+  await shot(page, "07-rules-editor");
+});

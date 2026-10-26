@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { ApprovalRulesEditor } from "@/components/admin/approval-rules-editor";
 import { HistoryCheck } from "@/components/admin/history-check";
 import { navItem } from "@/lib/nav";
 
@@ -13,6 +14,7 @@ export default function AdminPage() {
         <h1 className="text-2xl font-semibold tracking-tight">{label}</h1>
         <p className="text-base text-muted-foreground">{description}</p>
       </header>
+      <ApprovalRulesEditor />
       <HistoryCheck />
     </div>
   );

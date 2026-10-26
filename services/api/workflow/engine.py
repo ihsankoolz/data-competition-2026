@@ -30,6 +30,7 @@ from services.api.formfields import title_of
 from services.api.ids import next_id
 from services.api.views import finance_approvers, role_label, tasks_for, user_names
 from services.api.workflow import sla
+from services.api.workflow.overrides import record_country, resolve
 from services.api.workflow.rules import assign, directory, load_rules, plan_tasks
 
 log = logging.getLogger(__name__)
@@ -120,7 +121,12 @@ def _audit_task(
 def route(session: Session, req: m.Request, actor: Actor) -> list[m.ApprovalTaskRow]:
     """Build stages and tasks from the rule table. Stage 1 opens now; later stages wait."""
     plain = bankfields.unseal(req.payload)
-    plans = plan_tasks(req.domain.value, plain)
+    # An admin's saved rule for this record type, entity and country, if any. It is stored on
+    # the request so a later rule change never moves a request already in approval.
+    req.routing_override = resolve(
+        session, req.domain.value, req.entity, record_country(req, plain)
+    )
+    plans = plan_tasks(req.domain.value, plain, req.routing_override)
     dir_ = directory(session)
     names = user_names(session)
     taken: set[tuple[int, str, str]] = set()
@@ -213,7 +219,7 @@ def _resync_tasks(
     task (say, one more selling country for an IVD item) is opened, and a task that is no longer
     needed is cancelled. Approvals already given stay."""
     plain = bankfields.unseal(req.payload)
-    plans = plan_tasks(req.domain.value, plain)
+    plans = plan_tasks(req.domain.value, plain, req.routing_override)  # the route it had at submit
     live = [t for t in tasks if t.status != "cancelled"]
     existing = {(t.stage, t.role, t.country) for t in live}
     wanted = {(p.stage, p.role, p.country) for p in plans}

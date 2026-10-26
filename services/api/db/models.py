@@ -309,6 +309,10 @@ class Request(Base):
     published_key: Mapped[str | None] = mapped_column(
         String(32)
     )  # CardCode / ItemCode / CenterCode
+    # The stage-1 approver steps ([{role, user_id}]) this request was routed with when an admin
+    # override applied; NULL when the YAML rule table applied. Fixed at submit, so editing a rule
+    # later never changes the route of a request already in approval (session 12).
+    routing_override: Mapped[list[dict[str, str]] | None] = mapped_column(JSON, nullable=True)
 
 
 class ApprovalTaskRow(Base):
@@ -334,6 +338,21 @@ class ApprovalTaskRow(Base):
     decided_at: Mapped[datetime | None] = mapped_column(SimTimestamp)
     decided_by: Mapped[str | None] = mapped_column(String(32))
     comment: Mapped[str | None] = mapped_column(Text)
+
+
+class RoutingOverride(Base):
+    """An admin override of stage 1 ("Business review") for one record type x entity x country.
+    `country` is "*" for record types that have no country (items, cost centers). `steps` is the
+    full ordered approver list, each {role, user_id}. No row: the YAML rule table applies."""
+
+    __tablename__ = "routing_overrides"
+
+    domain: Mapped[str] = mapped_column(String(20), primary_key=True)
+    entity: Mapped[str] = mapped_column(String(3), primary_key=True)
+    country: Mapped[str] = mapped_column(String(2), primary_key=True)
+    steps: Mapped[list[dict[str, str]]] = mapped_column(JSON)
+    updated_by: Mapped[str] = mapped_column(String(32))
+    updated_at: Mapped[datetime] = mapped_column(SimTimestamp)
 
 
 class NotificationRow(Base):
