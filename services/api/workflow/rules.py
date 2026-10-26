@@ -54,6 +54,8 @@ class TaskPlan:
     stage_name: str
     role: str
     country: str | None = None
+    # Set only for a stage-1 step from an admin override: this exact person does the task.
+    user_id: str | None = None
 
 
 @dataclass
@@ -80,14 +82,26 @@ def _truthy_ivd(fields: dict[str, Any]) -> bool:
     return fields.get("U_IVD") == "tYES"
 
 
-def plan_tasks(domain: str, fields: dict[str, Any]) -> list[TaskPlan]:
-    """Stages and tasks for a request, from the rule table. Stage-1 tasks run in parallel."""
+def plan_tasks(
+    domain: str,
+    fields: dict[str, Any],
+    override_steps: list[dict[str, str]] | None = None,
+) -> list[TaskPlan]:
+    """Stages and tasks for a request, from the rule table. Stage-1 tasks run in parallel.
+
+    `override_steps` (an admin's saved rule, `[{role, user_id}]`) replaces the stage-1 role list
+    from the YAML; conditional add-ons (IVD Quality/Regulatory, the bank-details rule) still
+    apply on top. None means the YAML applies exactly as before."""
     spec = load_rules().domains.get(domain)
     if spec is None:
         raise ValueError(f"No routing rule for domain {domain!r}")
     plans: list[TaskPlan] = []
     for number, stage in enumerate(spec["stages"], start=1):
         roles = list(stage["roles"])
+        if number == 1 and override_steps:
+            for step in override_steps:
+                plans.append(TaskPlan(number, stage["name"], step["role"], None, step["user_id"]))
+            roles = []
         if number == 1:
             if domain == "item" and _truthy_ivd(fields) and "when_ivd" in stage:
                 roles += stage["when_ivd"]["add_roles"]
@@ -109,6 +123,12 @@ def assign(
 ) -> m.User:
     """The person for one task. `taken` stops two tasks of the same role (for example a second
     Finance approver) from landing on the same person."""
+    if plan.user_id:  # a person named by an admin override
+        person = next((u for u in dir_.users if u.user_id == plan.user_id), None)
+        if person is None:
+            raise ValueError(f"The approver {plan.user_id!r} in the saved rule no longer exists")
+        taken.add((plan.stage, plan.role, person.user_id))
+        return person
     how = load_rules().assignment.get(plan.role, "primary")
     primaries = dir_.primaries(plan.role)
     if not primaries:

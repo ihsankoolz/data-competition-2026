@@ -372,6 +372,88 @@ class AuditEntry(BaseModel):
     summary: str = Field(description="Plain English, e.g. 'Wei Jie approved (Finance)'")
 
 
+# ---------------------------------------------------------------- approval rules (session 12)
+
+StepRole = Literal["bu_head", "finance", "business_support", "quality_regulatory"]
+RuleCountry = Literal["SG", "MY", "ID", "VN", "TH", "*"]
+
+
+class RuleStepIn(BaseModel):
+    role: StepRole
+    user_id: str
+
+
+class RuleStep(BaseModel):
+    role: StepRole
+    role_label: str = Field(description="Plain label, e.g. 'BU Head'")
+    user_id: str
+    name: str
+
+
+class RuleKey(BaseModel):
+    domain: Domain
+    entity: EntityCode
+    country: RuleCountry = Field(
+        description="The record's country; '*' (all countries) for items and cost centers"
+    )
+
+
+class RoutingRule(RuleKey):
+    steps: list[RuleStep] = Field(description="Who reviews in stage 1, in order")
+    is_override: bool = Field(description="False: the standard route from the rule table applies")
+    changed_by: str | None = Field(default=None, description="Name of who saved the override")
+    changed_at: datetime | None = Field(default=None, description="Simulated clock")
+
+
+class RuleRole(BaseModel):
+    role: StepRole
+    label: str
+    people: list[Persona]
+
+
+class RoutingRules(BaseModel):
+    rules: list[RoutingRule]
+    roles: list[RuleRole] = Field(description="Who can be chosen for each step role")
+    publish_note: str = Field(description="The MDM publish stage is shown but not editable")
+
+
+class RoutingRuleSave(RuleKey):
+    steps: list[RuleStepIn]
+
+
+class RulePreviewRequest(RuleKey):
+    steps: list[RuleStepIn] | None = Field(
+        default=None,
+        description="An unsaved draft. Omit it to see the saved rule or the standard route",
+    )
+
+
+class RulePreviewTask(BaseModel):
+    stage: int
+    stage_name: str
+    role: str
+    role_label: str
+    user_id: str
+    name: str
+
+
+class RulePreview(BaseModel):
+    tasks: list[RulePreviewTask]
+    source: Literal["draft", "saved", "standard"]
+
+
+class ConfigChange(BaseModel):
+    id: int
+    at: datetime = Field(description="Simulated clock")
+    who: str
+    domain: Domain
+    entity: EntityCode
+    country: RuleCountry
+    summary: str = Field(description="Plain English, e.g. 'Priya changed the approvers for ...'")
+    before: list[str] = Field(description="'BU Head: Name' lines, in order")
+    after: list[str]
+
+
 # ============================================================================================
 # Session 4 contract (D-018). M8 regional view, M9 forecast backtest, M10 ops impact, field
 # validation, SAP read-back. Money is USD (D-003 fixed FX). Every metric carries a caption.

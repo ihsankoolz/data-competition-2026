@@ -43,6 +43,7 @@ class AuditAction(enum.StrEnum):
     approval = "approval"
     sap_call = "sap_call"
     seed = "seed"
+    config_change = "config_change"
 
 
 class VerifyResult(BaseModel):
