@@ -1,0 +1,28 @@
+# SYNTHETIC DATA. Manufacturer catalogue numbers (the "REF" number printed on the box) for the
+# 15 demo items in data/fixtures/seasonal_trend/items.csv.
+#
+# Every number below was invented for this prototype (session 13, item duplicate check). They are
+# NOT real manufacturer catalogue numbers and do not belong to any real company or product.
+# The generator does not produce them; nothing in docs/results.md outside the "Item duplicate
+# check" section depends on them. Anywhere the app shows one, it says it is synthetic.
+#
+# Format: ItemCode -> list of catalogue numbers. Matching ignores case, spaces, dots, hyphens
+# and a leading "REF", so "REF 51-DNS1-25" and "51dns125" are the same number.
+synthetic: true
+note: Invented for the prototype. Not real manufacturer catalogue numbers.
+items:
+  A-DEN-NS1: ["REF 51-DNS1-25"]
+  A-DEN-IGM: ["REF 51-DGM2-25"]
+  A-HBA-1C: ["REF 63-HBA1C-200"]
+  A-CRP-QT: ["REF 63-CRPQ-100"]
+  A-COV-AG: ["REF 51-SCV2-25"]
+  B-HEM-5P: ["REF HX-5000"]
+  B-CHE-AUT: ["REF CX-800"]
+  B-CEN-REF: ["REF CF-4R"]
+  B-MIC-BIN: ["REF MB-210"]
+  B-BSC-II: ["REF BS2-1200"]
+  C-SVC-ANN: ["REF SVC-ANN-01"]
+  C-SVC-PM: ["REF SVC-PMV-01"]
+  C-LIS-SUB: ["REF LIS-SUB-12"]
+  C-INS-VAL: ["REF SVC-IQOQ-01"]
+  C-TRN-OPS: ["REF TRN-OPS-01"]
