@@ -1432,6 +1432,332 @@
         }
       }
     },
+    "/admin/routing-rules": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List Routing Rules",
+        "description": "Every record type x entity x country with its stage-1 approvers, and whether that is the\nstandard route or a saved override.",
+        "operationId": "listRoutingRules",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingRules"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Save Routing Rule",
+        "description": "Save the full ordered list of stage-1 approvers for one key. 422 with a plain sentence for\nno approvers, an unknown person or someone without the step's role; 403 unless MDM.",
+        "operationId": "saveRoutingRule",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoutingRuleSave"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingRule"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Reset Routing Rule",
+        "description": "Put one key back to the standard route from the rule table.",
+        "operationId": "resetRoutingRule",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "customer",
+                "vendor",
+                "item",
+                "cost_center"
+              ],
+              "type": "string",
+              "title": "Domain"
+            }
+          },
+          {
+            "name": "entity",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "SPD",
+                "QTS",
+                "QTG"
+              ],
+              "type": "string",
+              "title": "Entity"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "SG",
+                "MY",
+                "ID",
+                "VN",
+                "TH",
+                "*"
+              ],
+              "type": "string",
+              "title": "Country"
+            }
+          },
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoutingRule"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/routing-rules/preview": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Preview Routing Rule",
+        "description": "Who would approve a sample request, by the real routing code. Nothing is saved.",
+        "operationId": "previewRoutingRule",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RulePreviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RulePreview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config-changes": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List Config Changes",
+        "description": "The most recent rule changes: who, when (simulated clock), before and after.",
+        "operationId": "listConfigChanges",
+        "parameters": [
+          {
+            "name": "x-acting-user",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "user_id of the persona chosen in the header switcher",
+              "title": "X-Acting-User"
+            },
+            "description": "user_id of the persona chosen in the header switcher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConfigChange"
+                  },
+                  "title": "Response Listconfigchanges"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/analytics/regional": {
       "get": {
         "tags": [
@@ -2227,6 +2553,88 @@
         ],
         "title": "ClockState",
         "description": "Simulated clock. All SLA logic uses `now`, never the wall clock."
+      },
+      "ConfigChange": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At",
+            "description": "Simulated clock"
+          },
+          "who": {
+            "type": "string",
+            "title": "Who"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH",
+              "*"
+            ],
+            "title": "Country"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "description": "Plain English, e.g. 'Priya changed the approvers for ...'"
+          },
+          "before": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Before",
+            "description": "'BU Head: Name' lines, in order"
+          },
+          "after": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "After"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "at",
+          "who",
+          "domain",
+          "entity",
+          "country",
+          "summary",
+          "before",
+          "after"
+        ],
+        "title": "ConfigChange"
       },
       "CountryBias": {
         "properties": {
@@ -4791,6 +5199,384 @@
           "sap_mock_reset"
         ],
         "title": "ResetResult"
+      },
+      "RoutingRule": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH",
+              "*"
+            ],
+            "title": "Country",
+            "description": "The record's country; '*' (all countries) for items and cost centers"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/RuleStep"
+            },
+            "type": "array",
+            "title": "Steps",
+            "description": "Who reviews in stage 1, in order"
+          },
+          "is_override": {
+            "type": "boolean",
+            "title": "Is Override",
+            "description": "False: the standard route from the rule table applies"
+          },
+          "changed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed By",
+            "description": "Name of who saved the override"
+          },
+          "changed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed At",
+            "description": "Simulated clock"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "entity",
+          "country",
+          "steps",
+          "is_override"
+        ],
+        "title": "RoutingRule"
+      },
+      "RoutingRuleSave": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH",
+              "*"
+            ],
+            "title": "Country",
+            "description": "The record's country; '*' (all countries) for items and cost centers"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/RuleStepIn"
+            },
+            "type": "array",
+            "title": "Steps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "entity",
+          "country",
+          "steps"
+        ],
+        "title": "RoutingRuleSave"
+      },
+      "RoutingRules": {
+        "properties": {
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/RoutingRule"
+            },
+            "type": "array",
+            "title": "Rules"
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/RuleRole"
+            },
+            "type": "array",
+            "title": "Roles",
+            "description": "Who can be chosen for each step role"
+          },
+          "publish_note": {
+            "type": "string",
+            "title": "Publish Note",
+            "description": "The MDM publish stage is shown but not editable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rules",
+          "roles",
+          "publish_note"
+        ],
+        "title": "RoutingRules"
+      },
+      "RulePreview": {
+        "properties": {
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/RulePreviewTask"
+            },
+            "type": "array",
+            "title": "Tasks"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "saved",
+              "standard"
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tasks",
+          "source"
+        ],
+        "title": "RulePreview"
+      },
+      "RulePreviewRequest": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vendor",
+              "item",
+              "cost_center"
+            ],
+            "title": "Domain"
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "SPD",
+              "QTS",
+              "QTG"
+            ],
+            "title": "Entity"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SG",
+              "MY",
+              "ID",
+              "VN",
+              "TH",
+              "*"
+            ],
+            "title": "Country",
+            "description": "The record's country; '*' (all countries) for items and cost centers"
+          },
+          "steps": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RuleStepIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Steps",
+            "description": "An unsaved draft. Omit it to see the saved rule or the standard route"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "entity",
+          "country"
+        ],
+        "title": "RulePreviewRequest"
+      },
+      "RulePreviewTask": {
+        "properties": {
+          "stage": {
+            "type": "integer",
+            "title": "Stage"
+          },
+          "stage_name": {
+            "type": "string",
+            "title": "Stage Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "role_label": {
+            "type": "string",
+            "title": "Role Label"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stage",
+          "stage_name",
+          "role",
+          "role_label",
+          "user_id",
+          "name"
+        ],
+        "title": "RulePreviewTask"
+      },
+      "RuleRole": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "bu_head",
+              "finance",
+              "business_support",
+              "quality_regulatory"
+            ],
+            "title": "Role"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "people": {
+            "items": {
+              "$ref": "#/components/schemas/Persona"
+            },
+            "type": "array",
+            "title": "People"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "label",
+          "people"
+        ],
+        "title": "RuleRole"
+      },
+      "RuleStep": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "bu_head",
+              "finance",
+              "business_support",
+              "quality_regulatory"
+            ],
+            "title": "Role"
+          },
+          "role_label": {
+            "type": "string",
+            "title": "Role Label",
+            "description": "Plain label, e.g. 'BU Head'"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "role_label",
+          "user_id",
+          "name"
+        ],
+        "title": "RuleStep"
+      },
+      "RuleStepIn": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "bu_head",
+              "finance",
+              "business_support",
+              "quality_regulatory"
+            ],
+            "title": "Role"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "user_id"
+        ],
+        "title": "RuleStepIn"
       },
       "SapPublishView": {
         "properties": {

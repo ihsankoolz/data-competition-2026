@@ -438,6 +438,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/routing-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Routing Rules
+         * @description Every record type x entity x country with its stage-1 approvers, and whether that is the
+         *     standard route or a saved override.
+         */
+        get: operations["listRoutingRules"];
+        /**
+         * Save Routing Rule
+         * @description Save the full ordered list of stage-1 approvers for one key. 422 with a plain sentence for
+         *     no approvers, an unknown person or someone without the step's role; 403 unless MDM.
+         */
+        put: operations["saveRoutingRule"];
+        post?: never;
+        /**
+         * Reset Routing Rule
+         * @description Put one key back to the standard route from the rule table.
+         */
+        delete: operations["resetRoutingRule"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/routing-rules/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Preview Routing Rule
+         * @description Who would approve a sample request, by the real routing code. Nothing is saved.
+         */
+        post: operations["previewRoutingRule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/config-changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Config Changes
+         * @description The most recent rule changes: who, when (simulated clock), before and after.
+         */
+        get: operations["listConfigChanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/analytics/regional": {
         parameters: {
             query?: never;
@@ -806,6 +876,46 @@ export interface components {
              * @description Simulated hours since the last reset
              */
             elapsed_hours: number;
+        };
+        /** ConfigChange */
+        ConfigChange: {
+            /** Id */
+            id: number;
+            /**
+             * At
+             * Format: date-time
+             * @description Simulated clock
+             */
+            at: string;
+            /** Who */
+            who: string;
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Country
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH" | "*";
+            /**
+             * Summary
+             * @description Plain English, e.g. 'Priya changed the approvers for ...'
+             */
+            summary: string;
+            /**
+             * Before
+             * @description 'BU Head: Name' lines, in order
+             */
+            before: string[];
+            /** After */
+            after: string[];
         };
         /**
          * CountryBias
@@ -2056,6 +2166,169 @@ export interface components {
              */
             sap_mock_reset: boolean;
         };
+        /** RoutingRule */
+        RoutingRule: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Country
+             * @description The record's country; '*' (all countries) for items and cost centers
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH" | "*";
+            /**
+             * Steps
+             * @description Who reviews in stage 1, in order
+             */
+            steps: components["schemas"]["RuleStep"][];
+            /**
+             * Is Override
+             * @description False: the standard route from the rule table applies
+             */
+            is_override: boolean;
+            /**
+             * Changed By
+             * @description Name of who saved the override
+             */
+            changed_by?: string | null;
+            /**
+             * Changed At
+             * @description Simulated clock
+             */
+            changed_at?: string | null;
+        };
+        /** RoutingRuleSave */
+        RoutingRuleSave: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Country
+             * @description The record's country; '*' (all countries) for items and cost centers
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH" | "*";
+            /** Steps */
+            steps: components["schemas"]["RuleStepIn"][];
+        };
+        /** RoutingRules */
+        RoutingRules: {
+            /** Rules */
+            rules: components["schemas"]["RoutingRule"][];
+            /**
+             * Roles
+             * @description Who can be chosen for each step role
+             */
+            roles: components["schemas"]["RuleRole"][];
+            /**
+             * Publish Note
+             * @description The MDM publish stage is shown but not editable
+             */
+            publish_note: string;
+        };
+        /** RulePreview */
+        RulePreview: {
+            /** Tasks */
+            tasks: components["schemas"]["RulePreviewTask"][];
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "draft" | "saved" | "standard";
+        };
+        /** RulePreviewRequest */
+        RulePreviewRequest: {
+            /**
+             * Domain
+             * @enum {string}
+             */
+            domain: "customer" | "vendor" | "item" | "cost_center";
+            /**
+             * Entity
+             * @enum {string}
+             */
+            entity: "SPD" | "QTS" | "QTG";
+            /**
+             * Country
+             * @description The record's country; '*' (all countries) for items and cost centers
+             * @enum {string}
+             */
+            country: "SG" | "MY" | "ID" | "VN" | "TH" | "*";
+            /**
+             * Steps
+             * @description An unsaved draft. Omit it to see the saved rule or the standard route
+             */
+            steps?: components["schemas"]["RuleStepIn"][] | null;
+        };
+        /** RulePreviewTask */
+        RulePreviewTask: {
+            /** Stage */
+            stage: number;
+            /** Stage Name */
+            stage_name: string;
+            /** Role */
+            role: string;
+            /** Role Label */
+            role_label: string;
+            /** User Id */
+            user_id: string;
+            /** Name */
+            name: string;
+        };
+        /** RuleRole */
+        RuleRole: {
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "bu_head" | "finance" | "business_support" | "quality_regulatory";
+            /** Label */
+            label: string;
+            /** People */
+            people: components["schemas"]["Persona"][];
+        };
+        /** RuleStep */
+        RuleStep: {
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "bu_head" | "finance" | "business_support" | "quality_regulatory";
+            /**
+             * Role Label
+             * @description Plain label, e.g. 'BU Head'
+             */
+            role_label: string;
+            /** User Id */
+            user_id: string;
+            /** Name */
+            name: string;
+        };
+        /** RuleStepIn */
+        RuleStepIn: {
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "bu_head" | "finance" | "business_support" | "quality_regulatory";
+            /** User Id */
+            user_id: string;
+        };
         /**
          * SapPublishView
          * @description What Priya sees after publish: the record in the SAP mock and the field-by-field check.
@@ -3092,6 +3365,178 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ResetResult"];
+                };
+            };
+        };
+    };
+    listRoutingRules: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutingRules"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    saveRoutingRule: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoutingRuleSave"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutingRule"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resetRoutingRule: {
+        parameters: {
+            query: {
+                domain: "customer" | "vendor" | "item" | "cost_center";
+                entity: "SPD" | "QTS" | "QTG";
+                country: "SG" | "MY" | "ID" | "VN" | "TH" | "*";
+            };
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoutingRule"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewRoutingRule: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RulePreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RulePreview"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listConfigChanges: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description user_id of the persona chosen in the header switcher */
+                "x-acting-user"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConfigChange"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
