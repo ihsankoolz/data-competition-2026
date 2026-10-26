@@ -104,10 +104,12 @@ def _seed_sample_copy(target: Path, fixtures: Path) -> None:
 
 
 def _pick_entry(conn: sqlite3.Connection) -> sqlite3.Row:
-    """A recognisable entry: an approval from the middle of the log, else any non-first row."""
+    """A recognisable entry: an approval a person made (not the clock's reminders), from the
+    middle of the log, else any non-first row."""
     for action in (AuditAction.approval.value, AuditAction.state_change.value):
         rows = conn.execute(
-            "SELECT id, actor, action, request_id FROM audit_log WHERE action = ? ORDER BY id",
+            "SELECT id, actor, action, request_id FROM audit_log"
+            " WHERE action = ? AND actor != 'system' ORDER BY id",
             (action,),
         ).fetchall()
         if rows:
