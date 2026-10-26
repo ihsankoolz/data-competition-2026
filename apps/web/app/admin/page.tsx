@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { ApprovalRulesEditor } from "@/components/admin/approval-rules-editor";
 import { HistoryCheck } from "@/components/admin/history-check";
+import { RequiredFieldsEditor } from "@/components/admin/required-fields-editor";
 import { navItem } from "@/lib/nav";
 
 export const metadata: Metadata = { title: "Admin \& config" };
@@ -15,6 +16,7 @@ export default function AdminPage() {
         <p className="text-base text-muted-foreground">{description}</p>
       </header>
       <ApprovalRulesEditor />
+      <RequiredFieldsEditor />
       <HistoryCheck />
     </div>
   );

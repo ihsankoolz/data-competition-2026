@@ -75,12 +75,11 @@ export function ResubmitForm({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (detail.domain === "cost_center") return;
     let current = true;
     api
       .GET("/forms/{domain}", {
         path: { domain: detail.domain },
-        query: { country: detail.country },
+        query: { country: detail.country, req_id: detail.req_id },
       })
       .then(
         (s) => current && setSpec(s),
@@ -90,7 +89,7 @@ export function ResubmitForm({
     return () => {
       current = false;
     };
-  }, [detail.domain, detail.country]);
+  }, [detail.domain, detail.country, detail.req_id]);
 
   const schema = spec ? asFormSchema(spec) : null;
   const vendor = detail.domain === "vendor";
@@ -250,7 +249,7 @@ export function ResubmitForm({
         <div>
           {specError ? (
             <p className="text-sm text-muted-foreground">{specError}</p>
-          ) : detail.domain === "cost_center" ? null : !schema || !spec ? (
+          ) : !schema || !spec ? (
             <Skeleton className="h-48 w-full" />
           ) : (
             <fieldset className="grid grid-cols-2 gap-x-6 gap-y-5" disabled={sending}>
@@ -316,7 +315,7 @@ export function ResubmitForm({
         <div className="flex items-center gap-4">
           <Button
             onClick={() => void resubmit()}
-            disabled={sending || blocked || (!spec && detail.domain !== "cost_center")}
+            disabled={sending || blocked || !spec}
             data-testid="resubmit"
           >
             {sending ? (

@@ -27,7 +27,7 @@ export const CATEGORY_HELP: Record<Category, string> = {
   purchase_request: "A customer asking to buy, not yet a confirmed order.",
   enquiry: "A question about price, stock or lead time. A leading sign of demand, not demand.",
   follow_up: "A reply or chaser on an earlier email.",
-  mdm_request: "Someone asking us to create a customer, vendor or item record.",
+  mdm_request: "Someone asking us to create a customer, vendor, item or cost center record.",
 };
 
 export const CATEGORIES = Object.keys(CATEGORY_TEXT) as Category[];

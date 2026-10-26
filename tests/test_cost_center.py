@@ -140,4 +140,18 @@ def test_dimension_defaults_to_one_when_not_chosen(client, sap_mock):
     )
     d = client.post(f"/requests/{d['req_id']}/publish", headers=H("priya")).json()
     assert d["state"] == "ACTIVE"
-    assert sap_mock.app.state.stores["ProfitCenters"][published_key(d["req_id"])]["InWhichDimension"] == 1
+    assert (
+        sap_mock.app.state.stores["ProfitCenters"][published_key(d["req_id"])]["InWhichDimension"]
+        == 1
+    )
+
+
+def test_a_cost_center_email_now_pre_fills_the_form(client):
+    """EM-0066 ("Please open a new cost center QTG VN Service Hanoi ... effective 1 Oct 2026")."""
+    r = client.post("/requests/from-email/EM-0066", headers=H("marcus"))
+    assert r.status_code == 201, r.text
+    d = r.json()
+    assert d["domain"] == "cost_center"
+    assert d["fields"] == {"CenterName": "QTG VN Service Hanoi", "EffectiveFrom": "2026-10-01"}
+    assert d["prefill_quotes"]["CenterName"] == "QTG VN Service Hanoi"
+    assert d["missing_fields"] == [] and d["issues"] == []
