@@ -158,7 +158,7 @@ With tax IDs on the held-out seed 7, applying the judge would rescue 1 duplicate
 | Likely | 100.0% | 93.9% | 31 | 0 | 2 |
 | Likely or Possible | 91.2% | 93.9% | 31 | 3 | 2 |
 
-*Caption:* of the 31 pairs the check called a Likely duplicate, 31 really were; it found 31 of the 33 real duplicates. Precision = right flags / all flags; recall = right flags / all 33 real duplicates. Computed by `notebooks/eval_item_dedup.py` against the 15 demo items (`data/fixtures/seasonal_trend`).
+*Caption:* of the 31 pairs the check called a Likely duplicate, 31 really were; it found 31 of the 33 real duplicates. Precision = right flags / all flags; recall = right flags / all 33 real duplicates. Computed by `notebooks/eval_item_dedup.py` against the 15 demo items (`data/fixtures/seasonal_trend`, seed 42).
 
 ### By kind of pair
 
