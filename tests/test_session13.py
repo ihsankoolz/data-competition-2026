@@ -224,6 +224,40 @@ def test_teams_card_404s_for_unknown_other_peoples_and_non_task_notifications(cl
     assert r.status_code == 404 and "not about an approval" in r.json()["detail"]
 
 
+def test_a_card_for_a_decided_task_says_so_and_offers_only_open(client):
+    d = ivd_item(client, "Teams Card Already Decided Rapid Test")
+    by = tasks_by_role(d)
+    note = notes_for(client, "lan", d["req_id"], "task_assigned")[0]
+    open_card = card_for(client, "lan", note["notification_id"]).json()
+    assert [a["title"] for a in open_card["actions"]] == [
+        "Approve",
+        "Ask for info",
+        "Reject",
+        "Open",
+    ]
+
+    r = decide(client, by[("quality_regulatory", "VN")]["task_id"], "lan")
+    assert r.status_code == 200, r.text
+    r = card_for(client, "lan", note["notification_id"])
+    assert r.status_code == 200, r.text
+    card = r.json()
+    assert [a["type"] for a in card["actions"]] == ["Action.OpenUrl"]
+    assert [a["title"] for a in card["actions"]] == ["Open"]
+    texts = [b["text"] for b in card["body"] if b["type"] == "TextBlock"]
+    assert "Already decided: approved." in texts
+    assert "Decide by" not in facts_of(card)
+
+    # a rejection cancels the other open tasks: their cards say no decision is needed
+    r = decide(client, by[("bu_head", None)]["task_id"], "daniel", "reject", "Not this year")
+    assert r.status_code == 200, r.text
+    meiling = notes_for(client, "meiling", d["req_id"], "task_assigned")[0]
+    card = card_for(client, "meiling", meiling["notification_id"]).json()
+    assert [a["title"] for a in card["actions"]] == ["Open"]
+    assert "No longer needed: this approval was cancelled." in [
+        b["text"] for b in card["body"] if b["type"] == "TextBlock"
+    ]
+
+
 # ---------------------------------------------------------------- part 3: told when it's live
 
 

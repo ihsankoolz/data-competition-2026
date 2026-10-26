@@ -158,7 +158,8 @@ export function TeamsCardPreview({
           <Info className="mt-px size-3.5 shrink-0" />
           <span data-testid="teams-card-note">
             In production, Power Automate sends this card to the approver in Teams. Nothing is sent
-            from here. Bank details are never put in the card.
+            from here. Bank details are never put in the card. The Open link points at this demo; in
+            production it is the MDM app&rsquo;s https address.
           </span>
         </p>
 
@@ -169,7 +170,7 @@ export function TeamsCardPreview({
             disabled={!card}
             data-testid="teams-card-download"
           >
-            <Download /> Download card JSON
+            <Download /> Download the card file (JSON)
           </Button>
         </DialogFooter>
       </DialogContent>

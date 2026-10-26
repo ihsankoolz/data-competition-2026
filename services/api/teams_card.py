@@ -39,6 +39,16 @@ HEADLINE = {
     "escalated": "Overdue approval",
 }
 
+# A card for a task that is no longer open shows what happened and only the Open button, the way
+# a sent Teams card is updated in place once someone has decided.
+CLOSED_STATUS = {
+    "approved": "Already decided: approved.",
+    "rejected": "Already decided: rejected.",
+    "info_requested": "Already decided: more information was asked for. Waiting for the requestor.",
+    "cancelled": "No longer needed: this approval was cancelled.",
+    "waiting": "Not open yet: this step opens when the earlier approvals are done.",
+}
+
 DOMAIN_WORDS = {
     "customer": "Customer",
     "vendor": "Vendor",
@@ -81,7 +91,8 @@ def build(session: Session, note: m.NotificationRow) -> AdaptiveCard:
         ),
         CardFact(title="Your part", value=role_label(task)),
     ]
-    if task.due_at is not None:
+    is_open = task.status == "pending"
+    if is_open and task.due_at is not None:
         due = clock.format_due(task.due_at, recipient.country if recipient else None)
         facts.append(CardFact(title="Decide by", value=due))
 
@@ -91,6 +102,11 @@ def build(session: Session, note: m.NotificationRow) -> AdaptiveCard:
         CardTextBlock(text=title, size="Large", weight="Bolder"),
         CardFactSet(facts=facts),
     ]
+    if not is_open:
+        body.insert(
+            3,  # under the record's name, above the facts
+            CardTextBlock(text=CLOSED_STATUS.get(task.status, "Already decided."), weight="Bolder"),
+        )
     if bankfields.has_bank_details(plain):
         body.append(
             CardTextBlock(
@@ -105,12 +121,15 @@ def build(session: Session, note: m.NotificationRow) -> AdaptiveCard:
             title=label, data={"action": action, "task_id": task.task_id, "req_id": req.req_id}
         )
 
+    open_link = CardActionOpenUrl(title="Open", url=f"{web_origin()}/requests/{req.req_id}")
+    if not is_open:
+        return AdaptiveCard(body=body, actions=[open_link])
     return AdaptiveCard(
         body=body,
         actions=[
             submit("Approve", "approve"),
             submit("Ask for info", "ask_info"),
             submit("Reject", "reject"),
-            CardActionOpenUrl(title="Open", url=f"{web_origin()}/requests/{req.req_id}"),
+            open_link,
         ],
     )

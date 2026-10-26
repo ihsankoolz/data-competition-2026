@@ -84,8 +84,10 @@ export function NotificationsBell() {
   const [items, setItems] = useState<{ user: string; list: Notification[] } | null>(null);
   const [seen, setSeen] = useState<{ user: string; ids: Set<string> } | null>(null);
   const [teamsFor, setTeamsFor] = useState<Notification | null>(null);
-  // Set while the menu closes to open the Teams preview, so focus is not sent back to the bell.
-  const openingPreview = useRef(false);
+  // "See it in Teams" opens its dialog only once the menu has fully closed (from the menu's
+  // close-focus event, which Radix fires after the menu's layer is gone). Opening a modal dialog
+  // while a modal menu is still closing can leave `pointer-events: none` on <body>.
+  const pendingPreview = useRef<Notification | null>(null);
   const now = clock?.now;
 
   const load = useCallback(() => {
@@ -161,9 +163,11 @@ export function NotificationsBell() {
           align="end"
           className="w-96 p-0"
           onCloseAutoFocus={(e) => {
-            if (openingPreview.current) {
-              e.preventDefault();
-              openingPreview.current = false;
+            const next = pendingPreview.current;
+            if (next) {
+              e.preventDefault(); // focus goes into the dialog, not back to the bell
+              pendingPreview.current = null;
+              setTeamsFor(next);
             }
           }}
         >
@@ -211,8 +215,7 @@ export function NotificationsBell() {
                       <DropdownMenuItem
                         className="-mt-1.5 gap-1.5 py-1 pr-3 pl-10 text-xs font-medium text-primary"
                         onSelect={() => {
-                          openingPreview.current = true;
-                          setTeamsFor(n);
+                          pendingPreview.current = n;
                         }}
                         data-testid="see-in-teams"
                         data-req={n.req_id}

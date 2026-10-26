@@ -77,8 +77,22 @@ test("Lan's notification opens a Teams card preview with her local due time", as
   ]);
   expect(download.suggestedFilename()).toBe(`teams-card-${id}.json`);
 
+  await expect(preview.getByTestId("teams-card-download")).toHaveText(
+    "Download the card file (JSON)",
+  );
+  await expect(preview.getByTestId("teams-card-note")).toContainText(
+    "The Open link points at this demo",
+  );
+
   await page.keyboard.press("Escape");
   await expect(preview).toHaveCount(0);
   // Nothing was approved from the preview: the task is still in her inbox.
   await expect(item).toBeVisible();
+  // The page is usable again: a dialog opened from a menu must not leave the body blocked.
+  await expect(page.locator("body")).not.toHaveCSS("pointer-events", "none");
+  // A normal header control still takes a click (Playwright refuses one that would not land).
+  await page.getByTestId("notifications-bell").click();
+  await expect(page.getByTestId("notifications-list")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("notifications-list")).toHaveCount(0);
 });
