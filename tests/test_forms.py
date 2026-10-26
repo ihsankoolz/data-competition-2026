@@ -53,21 +53,31 @@ def test_form_schema_is_consistent(domain):
     assert set(schema["x-order"]) == set(props)
     mapped = extract_to_form_field(domain)
     for key in required_keys(domain, include_form_only=True):
+        if key == "entity":  # chosen on the request itself, not typed into the form
+            continue
         assert key in mapped, f"{domain}: required key {key} has no form field"
 
 
-def test_form_endpoint_lists_required_fields():
+def test_form_endpoint_lists_required_fields(tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
 
+    from services.api.db.session import create_schema, dispose_default, get_engine
     from services.api.main import app
 
+    # /forms reads the required-field toggles, so it needs a (here empty) database.
+    monkeypatch.setenv("APP_DB_PATH", str(tmp_path / "forms.db"))
+    dispose_default()
+    create_schema(get_engine())
     client = TestClient(app)
     spec = client.get("/forms/vendor", params={"country": "VN"}).json()
     assert spec["required"][0] == "CardName"
     assert "BPBankAccounts" in spec["required"]
     item = client.get("/forms/item").json()
     assert item["regulated_countries"] == ["SG", "MY", "ID", "VN", "TH"]
-    assert client.get("/forms/cost_center").status_code == 404
+    cost_center = client.get("/forms/cost_center").json()
+    assert cost_center["required"] == ["CenterName", "EffectiveFrom"]
+    assert "distribution rule" in cost_center["sap_note"]
+    dispose_default()
 
 
 def test_dedup_query_from_demo_01_form_finds_cho_ray():

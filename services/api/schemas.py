@@ -84,6 +84,9 @@ class FormSpec(BaseModel):
         "selling country when U_IVD = tYES",
     )
     regulated_countries: list[CountryCode] = []
+    sap_note: str | None = Field(
+        default=None, description="A one-line note about what SAP does with this record type"
+    )
 
 
 # ---------------------------------------------------------------- emails / interpreter (M2)
@@ -922,6 +925,60 @@ class CleanupDecisionResult(BaseModel):
     cluster: CleanupCluster
     reviewed: int
     total: int
+
+
+# ============================================================================================
+# Session 13 cost center / required fields. Cost Center is now a schema-driven form like the
+# other three (config/forms/cost_center.schema.json). Priya can switch a field between required
+# and optional per record type x country; a request keeps the rules it was created with.
+# ============================================================================================
+
+
+class RequiredFieldRow(BaseModel):
+    field: str = Field(description="Form field (SAP name), e.g. 'EmailAddress'")
+    label: str = Field(description="Plain label, e.g. 'Email'")
+    help: str | None = Field(default=None, description="The form's one-line hint for the field")
+    required: bool = Field(description="True when the field is required right now")
+    standard: bool = Field(description="True when the standard rules (YAML) require it")
+    changed: bool = Field(description="True when this differs from the standard rules")
+    locked: bool = Field(description="True when it can never be made optional")
+    locked_reason: str | None = Field(
+        default=None, description="One plain line on why a locked field must stay required"
+    )
+
+
+class RequiredFieldsView(BaseModel):
+    domain: Domain
+    country: CountryCode
+    fields: list[RequiredFieldRow] = Field(description="In form order")
+    note: str = Field(description="Plain-English caption: applies to new requests only")
+
+
+class RequiredFieldSet(BaseModel):
+    field: str
+    required: bool
+
+
+class RequiredFieldsSave(BaseModel):
+    domain: Domain
+    country: CountryCode
+    fields: list[RequiredFieldSet] = Field(
+        min_length=1, description="The fields to switch. Fields left out are not touched"
+    )
+
+
+class RequiredFieldChange(BaseModel):
+    id: int
+    at: datetime = Field(description="Simulated clock")
+    who: str
+    domain: Domain
+    country: CountryCode
+    field: str
+    field_label: str
+    now_required: bool
+    summary: str = Field(
+        description="Plain English, e.g. 'Priya made Email required for Singapore customers'"
+    )
 
 
 # Resolves the forward references on RequestDetail (FieldIssue, SapPublishView, InfoRequestView)

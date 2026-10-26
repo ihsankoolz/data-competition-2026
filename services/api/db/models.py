@@ -313,6 +313,12 @@ class Request(Base):
     # override applied; NULL when the YAML rule table applied. Fixed at submit, so editing a rule
     # later never changes the route of a request already in approval (session 12).
     routing_override: Mapped[list[dict[str, str]] | None] = mapped_column(JSON, nullable=True)
+    # The admin's required-field toggles for this record type as they stood when the request was
+    # created: {"SG": {"add": [form fields], "drop": [form fields]}, ...}. NULL when there were
+    # none. A later change applies to new requests only (session 13).
+    required_snapshot: Mapped[dict[str, dict[str, list[str]]] | None] = mapped_column(
+        JSON, nullable=True
+    )
 
 
 class ApprovalTaskRow(Base):
@@ -351,6 +357,21 @@ class RoutingOverride(Base):
     entity: Mapped[str] = mapped_column(String(3), primary_key=True)
     country: Mapped[str] = mapped_column(String(2), primary_key=True)
     steps: Mapped[list[dict[str, str]]] = mapped_column(JSON)
+    updated_by: Mapped[str] = mapped_column(String(32))
+    updated_at: Mapped[datetime] = mapped_column(SimTimestamp)
+
+
+class RequiredFieldOverride(Base):
+    """One required-field toggle for a record type x country. A row exists only where the choice
+    differs from `config/required_fields.yaml`: `required` True = made required, False = made
+    optional. No rows: the standard lists apply."""
+
+    __tablename__ = "required_field_overrides"
+
+    domain: Mapped[str] = mapped_column(String(20), primary_key=True)
+    country: Mapped[str] = mapped_column(String(2), primary_key=True)
+    field: Mapped[str] = mapped_column(String(64), primary_key=True)
+    required: Mapped[bool] = mapped_column(Boolean)
     updated_by: Mapped[str] = mapped_column(String(32))
     updated_at: Mapped[datetime] = mapped_column(SimTimestamp)
 

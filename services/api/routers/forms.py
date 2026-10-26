@@ -10,15 +10,20 @@ from ds.forms import (
     regulated_countries,
     required_keys,
 )
+from services.api.db import models as m
+from services.api.db.session import session_scope
 from services.api.schemas import Domain, FormSpec
+from services.api.workflow import required_fields
 
 router = APIRouter(tags=["forms"])
 
 
 @router.get("/forms/{domain}", response_model=FormSpec, operation_id="getForm")
-def get_form(domain: Domain, country: str | None = None) -> FormSpec:
+def get_form(domain: Domain, country: str | None = None, req_id: str | None = None) -> FormSpec:
     """`country` is an ISO 3166 alpha-2 code. For a vendor, a code outside SG/MY/ID/VN/TH returns
-    the shorter foreign-vendor required list (D-020 #2)."""
+    the shorter foreign-vendor required list (D-020 #2). The admin's required-field toggles for
+    this record type and country are applied on top (session 13); with `req_id`, the toggles that
+    request was created with are applied instead, so a resubmit shows the rules it started under."""
     if country is not None and country not in country_names():
         raise HTTPException(status_code=422, detail=f"'{country}' is not a country code.")
     if domain not in FORM_DOMAINS:
@@ -27,7 +32,20 @@ def get_form(domain: Domain, country: str | None = None) -> FormSpec:
     to_field = extract_to_form_field(domain)
     keys = required_keys(domain, country, include_form_only=True, foreign_vendors=True)
     required = sorted({to_field[k] for k in keys if k in to_field}, key=schema["x-order"].index)
-    spec = FormSpec(domain=domain, country=country, json_schema=schema, required=required)
+    with session_scope() as session:
+        req = session.get(m.Request, req_id) if req_id else None
+        if req is not None and req.domain.value == domain:
+            override = required_fields.override_for(req)
+        else:
+            override = required_fields.override_now(session, domain, country)
+    required = required_fields.apply(required, override, domain)
+    spec = FormSpec(
+        domain=domain,
+        country=country,
+        json_schema=schema,
+        required=required,
+        sap_note=schema.get("x-sap-note"),
+    )
     if domain == "item":
         spec.required_per_selling_country = ["reg_no"]
         spec.regulated_countries = regulated_countries()
