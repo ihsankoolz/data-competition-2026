@@ -240,6 +240,23 @@ def test_an_unknown_field_is_refused(client):
     assert r.status_code == 422 and "not a field on the customer form" in r.json()["detail"]
 
 
+def test_the_same_field_twice_in_one_save_is_refused(client):
+    r = client.put(
+        "/admin/required-fields",
+        headers=H("priya"),
+        json={
+            "domain": "customer",
+            "country": "SG",
+            "fields": [{"field": "City", "required": True}, {"field": "City", "required": False}],
+        },
+    )
+    assert r.status_code == 422
+    assert r.json()["detail"] == "City is listed twice. Send each field once."
+    with session_scope() as s:
+        assert s.scalars(select(m.RequiredFieldOverride)).all() == []
+    assert config_changes(client) == []
+
+
 def test_asking_a_locked_field_to_stay_required_is_not_an_error(client):
     assert put(client, "customer", "SG", {"CardName": True}).status_code == 200
     assert config_changes(client) == []

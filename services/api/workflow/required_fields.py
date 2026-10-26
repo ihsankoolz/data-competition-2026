@@ -172,6 +172,12 @@ def save(session: Session, actor_id: str, body: RequiredFieldsSave) -> RequiredF
     locked = LOCKED[body.domain]
     standard = standard_fields(body.domain, body.country)
     toggles = rows_for(session, body.domain, body.country)
+    seen: set[str] = set()
+    for item in body.fields:
+        if item.field in seen:
+            label = props.get(item.field, {}).get("title", item.field)
+            raise _fail(f"{label} is listed twice. Send each field once.")
+        seen.add(item.field)
     for item in body.fields:
         if item.field not in props:
             raise _fail(

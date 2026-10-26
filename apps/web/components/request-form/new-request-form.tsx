@@ -116,7 +116,13 @@ export function NewRequestForm() {
   useEffect(() => {
     if (!contextReady) return;
     let current = true;
-    api.GET("/forms/{domain}", { path: { domain }, query: { country } }).then(
+    api
+      .GET("/forms/{domain}", {
+        path: { domain },
+        // Once a draft exists, show the rules it was created with (session 13).
+        query: { country, req_id: reqId ?? undefined },
+      })
+      .then(
       (next) => {
         if (!current) return;
         setSpec(next);
@@ -127,7 +133,7 @@ export function NewRequestForm() {
     return () => {
       current = false;
     };
-  }, [domain, country, specAttempt, contextReady]);
+  }, [domain, country, specAttempt, contextReady, reqId]);
 
   const clearAll = () => {
     setValues({});
