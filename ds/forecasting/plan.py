@@ -32,7 +32,7 @@ PLAN_MONTHS = bt.H  # 3
 
 
 def plan_path(derived_dir: Path, scenario: str) -> Path:
-    return Path(derived_dir) / "forecast" / f"{scenario}_clean_plan.json"
+    return Path(derived_dir) / "forecast" / "pipeline" / f"{scenario}_clean_plan.json"
 
 
 def _combination_forward(tr: pd.DataFrame) -> pd.DataFrame:

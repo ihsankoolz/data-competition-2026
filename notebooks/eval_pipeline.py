@@ -2,7 +2,7 @@
 # # Equipment forecast from the request pipeline (session 13)
 #
 # Run: `uv run python notebooks/eval_pipeline.py` (offline, about 20 seconds). It regenerates
-# data/fixtures/derived/forecast/<scenario>_clean_pipeline{.json,_cv.csv} and
+# data/fixtures/derived/forecast/pipeline/<scenario>_clean_pipeline{.json,_cv.csv} and
 # <scenario>_clean_plan.json (deterministic), then writes only between
 # `<!-- pipeline:start -->` and `<!-- pipeline:end -->` in docs/results.md (the markers are
 # added once, right after the M9 forecast section; nothing else in the file is touched).

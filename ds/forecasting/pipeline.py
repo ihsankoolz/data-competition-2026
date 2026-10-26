@@ -247,11 +247,11 @@ def score(cv: pd.DataFrame, methods: list[str]) -> list[dict[str, Any]]:
 
 
 def pipeline_path(derived_dir: Path, scenario: str) -> Path:
-    return Path(derived_dir) / "forecast" / f"{scenario}_clean_pipeline.json"
+    return Path(derived_dir) / "forecast" / "pipeline" / f"{scenario}_clean_pipeline.json"
 
 
 def frame_path(derived_dir: Path, scenario: str) -> Path:
-    return Path(derived_dir) / "forecast" / f"{scenario}_clean_pipeline_cv.csv"
+    return Path(derived_dir) / "forecast" / "pipeline" / f"{scenario}_clean_pipeline_cv.csv"
 
 
 def _stored_country_b(derived_dir: Path, scenario: str) -> pd.DataFrame:
