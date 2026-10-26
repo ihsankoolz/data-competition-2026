@@ -9,6 +9,7 @@
     "product_family",
     "ItemsGroupCode",
     "SalesUnit",
+    "manufacturer_catalogue_no",
     "U_IVD",
     "selling_countries",
     "registrations",
@@ -39,6 +40,13 @@
       "title": "Sales unit",
       "description": "For example: box of 25.",
       "x-extract": "sales_unit"
+    },
+    "manufacturer_catalogue_no": {
+      "type": "string",
+      "maxLength": 40,
+      "title": "Manufacturer catalogue no.",
+      "description": "Optional. The REF number on the box. Helps us spot an item we already have. (Demo catalogue numbers are synthetic.)",
+      "x-app-only": true
     },
     "U_IVD": {
       "type": "string",

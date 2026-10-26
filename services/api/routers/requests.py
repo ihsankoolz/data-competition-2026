@@ -56,7 +56,14 @@ router = APIRouter(tags=["requests"])
 EDITABLE = (m.RequestState.DRAFT, m.RequestState.INFO_REQUESTED)
 MIN_REASON_CHARS = 10
 # Changing any of these makes an earlier "not a duplicate" decision meaningless.
-IDENTITY_FIELDS = ("CardName", "CardForeignName", "FederalTaxID", "Country")
+IDENTITY_FIELDS = (
+    "CardName",
+    "CardForeignName",
+    "FederalTaxID",
+    "Country",
+    "ItemName",  # items (session 13)
+    "manufacturer_catalogue_no",
+)
 
 
 # ---------------------------------------------------------------- helpers
@@ -340,14 +347,18 @@ def decide_duplicate(req_id: str, body: DedupDecisionIn, actor: CurrentUser) -> 
         req = _get(session, req_id)
         _require_owner(req, actor)
         domain = req.domain.value
-        if domain not in ("customer", "vendor"):
-            raise HTTPException(409, "Duplicate checks only apply to customers and vendors.")
+        if domain not in ("customer", "vendor", "item"):
+            raise HTTPException(
+                409, "Duplicate checks only apply to customers, vendors and items."
+            )
         if req.state not in EDITABLE:
             raise HTTPException(
                 409,
                 "A duplicate decision can only be made while the request is a draft "
                 "or waiting for your answer.",
             )
+        if domain == "item":
+            return _decide_item_duplicate(session, req, body, actor)
         link: m.BusinessPartner | None = None
         if body.action == "link_to_existing":
             if not body.card_code:
@@ -456,9 +467,103 @@ def submit_request(req_id: str, actor: CurrentUser) -> RequestDetail:
                     f"This looks like a duplicate of {what}. Link your request to the existing "
                     "record, or confirm it is a different company and say why, before you submit.",
                 )
+        if domain == "item":
+            _block_likely_item(session, req, plain)
         engine.submit(session, req, actor)
         session.flush()
         return detail_model(session, req, actor)
+
+
+# ---------------------------------------------------------------- session 13: item duplicates
+
+
+def _latest_decision(session: Session, req_id: str) -> m.DedupDecisionRow | None:
+    return session.scalars(
+        select(m.DedupDecisionRow)
+        .where(m.DedupDecisionRow.req_id == req_id)
+        .order_by(m.DedupDecisionRow.id.desc())
+        .limit(1)
+    ).first()
+
+
+def _block_likely_item(session: Session, req: m.Request, plain: dict[str, Any]) -> None:
+    """409 when the item check says Likely and no person has said why this item is different
+    (for exactly the items the check offered then). Rules only, no AI."""
+    result = dedup_service.item_check(session, plain)
+    if not result.block_submit:
+        return
+    top = result.candidates[0]
+    decision = _latest_decision(session, req.req_id)
+    if (
+        decision
+        and decision.action == "not_duplicate"
+        and top.ItemCode in (decision.covered_codes or [])
+    ):
+        return
+    raise HTTPException(
+        409,
+        f"This looks like an item we already have: {top.ItemCode} {top.ItemName}. Use the "
+        "existing item, or say why yours is a different product, before you submit.",
+    )
+
+
+def _decide_item_duplicate(
+    session: Session, req: m.Request, body: DedupDecisionIn, actor: CurrentUser
+) -> RequestDetail:
+    """Use the existing item (-> LINKED_TO_EXISTING, request cancelled before any approval) or
+    continue with a reason. Always a person's choice; always audited (rule 6)."""
+    req_id = req.req_id
+    item: m.Item | None = None
+    if body.action == "link_to_existing":
+        if not body.card_code:
+            raise HTTPException(422, "Choose which existing item to use (card_code = ItemCode).")
+        item = session.get(m.Item, body.card_code)
+        if item is None:
+            raise HTTPException(422, f"There is no item {body.card_code} in the catalogue.")
+    elif len((body.reason or "").strip()) < MIN_REASON_CHARS:
+        raise HTTPException(
+            422,
+            "Please say why this is a different product, in at least "
+            f"{MIN_REASON_CHARS} characters.",
+        )
+    plain = bankfields.unseal(req.payload)
+    check = dedup_service.item_check(session, plain)  # rules only, no AI
+    now = clock.now()
+    session.add(
+        m.DedupDecisionRow(
+            req_id=req_id, action=body.action, card_code=body.card_code if item else None,
+            reason=(body.reason or "").strip() or None, decided_by=actor.user_id,
+            decided_at=now, verdict_at_decision=check.verdict,
+            covered_codes=[c.ItemCode for c in check.candidates],
+        )
+    )  # fmt: skip
+    if item is not None:
+        summary = (
+            f"{actor.name} chose the existing item {item.ItemCode} ({item.ItemName}); "
+            "no new item and no approvals"
+        )
+    else:
+        summary = f"{actor.name} confirmed it is a different item: {(body.reason or '').strip()}"
+    append_audit(
+        session, actor=actor.user_id, action=AuditAction.dedup_decision,
+        entity_type="request", entity_id=req_id, request_id=req_id,
+        payload={
+            "action": body.action, "item_code": body.card_code if item else None,
+            "reason": body.reason, "verdict_at_decision": check.verdict, "summary": summary,
+        },
+    )  # fmt: skip
+    if item is not None:
+        req.linked_card_code = item.ItemCode
+        for task in tasks_for(session, req_id):
+            if task.status in ("pending", "waiting", "info_requested"):
+                task.status = "cancelled"
+        engine.audit_state(
+            session, req, actor.user_id, m.RequestState.LINKED_TO_EXISTING,
+            f"Using existing item {item.ItemCode}; no new item and no approvals needed",
+        )  # fmt: skip
+    req.updated_at = now
+    session.flush()
+    return detail_model(session, req, actor)
 
 
 @router.post(

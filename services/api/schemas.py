@@ -5,6 +5,9 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field
 
+from ds.dedup.items import ItemCandidate as ItemCandidate  # session 13 contract (re-export)
+from ds.dedup.items import ItemDedupResult as ItemDedupResult
+from ds.dedup.items import ItemReason as ItemReason
 from ds.interpreter.schemas import Category, Interpretation, MdmDomain, OrderLine, QuotedValue
 
 
@@ -198,7 +201,11 @@ class DedupDecisionIn(BaseModel):
     """The human decision on a duplicate warning. The AI never makes it (rule 6)."""
 
     action: Literal["link_to_existing", "not_duplicate"]
-    card_code: str | None = Field(default=None, description="Required for link_to_existing")
+    card_code: str | None = Field(
+        default=None,
+        description="Required for link_to_existing: the CardCode, or the ItemCode for an item "
+        "request (session 13)",
+    )
     reason: str | None = Field(
         default=None,
         description="Required for not_duplicate, at least 10 characters (checked by the API with "
@@ -213,6 +220,32 @@ class DedupDecisionOut(BaseModel):
     decided_by: str
     decided_at: datetime
     verdict_at_decision: Literal["likely", "possible", "none"]
+
+
+# ---------------------------------------------------------------- session 13 item duplicate check
+# Rules only, no AI (rule 6). The result models are defined next to the matcher in
+# `ds/dedup/items.py` (the ds package cannot import the API) and re-exported by the imports at the top of
+# this file as the contract:
+#   ItemCandidate: ItemCode, ItemName, verdict (likely | possible), score, reasons[]
+#   ItemDedupResult: verdict (likely | possible | none), message, block_submit, candidates[]
+# The human decision reuses DedupDecisionIn / POST /requests/{id}/dedup-decision, with the
+# ItemCode in `card_code`; a linked item request is LINKED_TO_EXISTING with the ItemCode in
+# RequestDetail.linked_card_code.
+
+
+class ItemDedupCheckRequest(BaseModel):
+    """What the requester has typed on the item form so far (debounced, and again on submit)."""
+
+    fields: dict[str, Any] = Field(
+        description="Partial item form fields: ItemName, ItemsGroupCode, "
+        "manufacturer_catalogue_no, registrations[{country, reg_no}]"
+    )
+    request_id: str | None = Field(
+        default=None, description="Set when checking an existing draft; the check is logged"
+    )
+
+
+# ---------------------------------------------------------------- end session 13 block
 
 
 # ---------------------------------------------------------------- requests and approvals (M5)
@@ -290,9 +323,17 @@ class RequestDetail(RequestSummary):
         "rules rather than quoted from the email (e.g. item group, product family; session 5)",
     )
     dedup_decision: DedupDecisionOut | None = None
-    linked_card_code: str | None = None
+    linked_card_code: str | None = Field(
+        default=None, description="CardCode of the linked record, or ItemCode for an item request"
+    )
     linked_card_name: str | None = Field(
-        default=None, description="CardName of the linked existing record (session 5)"
+        default=None,
+        description="CardName (or ItemName) of the linked existing record (session 5, 13)",
+    )
+    item_match: Literal["likely", "possible", "none"] | None = Field(
+        default=None,
+        description="Item requests only: the item duplicate check on the current fields, rules "
+        "only, never counting the item this request itself published (session 13)",
     )
     info_request: "InfoRequestView | None" = Field(
         default=None,

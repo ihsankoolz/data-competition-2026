@@ -11,7 +11,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from services.api import bankfields, clock, item_suggestions, sap_readback
+from services.api import bankfields, clock, dedup_service, item_suggestions, sap_readback
 from services.api.db import models as m
 from services.api.deps import Actor
 from services.api.formfields import missing_form_fields, title_of
@@ -144,7 +144,7 @@ def allowed_actions(
     owner = actor.user_id == req.requestor_user_id and actor.has("requestor")
     if owner and req.state in (m.RequestState.DRAFT, m.RequestState.INFO_REQUESTED):
         out += ["edit", "submit"]
-        if req.domain.value in ("customer", "vendor"):
+        if req.domain.value in ("customer", "vendor", "item"):
             out.append("decide_duplicate")
     if req.state in OPEN_STATES and actor.user_id != req.requestor_user_id:
         stage2 = [t for t in tasks if t.stage == 2]
@@ -242,9 +242,22 @@ def info_request_view(
 def linked_card_name(session: Session, req: m.Request) -> str | None:
     if not req.linked_card_code:
         return None
+    if req.domain == m.RequestDomain.item:  # session 13: an item request links to an ItemCode
+        return session.scalar(
+            select(m.Item.ItemName).where(m.Item.ItemCode == req.linked_card_code)
+        )
     return session.scalar(
         select(m.BusinessPartner.CardName).where(m.BusinessPartner.CardCode == req.linked_card_code)
     )
+
+
+def item_match(session: Session, req: m.Request, plain: dict[str, Any]) -> str | None:
+    """Session 13: the item duplicate check on the request's current fields (rules only), for
+    the status beam. The item this request published is never its own match."""
+    if req.domain != m.RequestDomain.item or req.linked_card_code:
+        return None
+    own = [req.published_key] if req.published_key else []
+    return dedup_service.item_check(session, plain, exclude=own).verdict
 
 
 def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetail:
@@ -264,6 +277,7 @@ def detail_model(session: Session, req: m.Request, actor: Actor) -> RequestDetai
         dedup_decision=decision_model(decision, names),
         linked_card_code=req.linked_card_code,
         linked_card_name=linked_card_name(session, req),
+        item_match=item_match(session, req, plain),
         info_request=info_request_view(req, tasks, names),
         stages=stage_models(tasks, names),
         allowed_actions=allowed_actions(actor, req, tasks, decision is not None),  # type: ignore[arg-type]

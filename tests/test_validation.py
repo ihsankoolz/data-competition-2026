@@ -418,6 +418,16 @@ def test_optional_beat_lapsed_licence_is_stopped_at_submit(client):
         },
     )
     assert r.json()["issues"] == []
+    # Since session 13 the item duplicate check flags it too: it has A-CRP-QT's name and
+    # registration numbers. A person decides (rule 6): Amy says why hers is different.
+    r = client.post(f"/requests/{req['req_id']}/submit", headers=H("amy"))
+    assert r.status_code == 409 and "A-CRP-QT" in r.json()["detail"]
+    r = client.post(
+        f"/requests/{req['req_id']}/dedup-decision",
+        headers=H("amy"),
+        json={"action": "not_duplicate", "reason": "Rehearsal of the lapsed licence beat"},
+    )
+    assert r.status_code == 200, r.text
     assert client.post(f"/requests/{req['req_id']}/submit", headers=H("amy")).status_code == 200
 
 
