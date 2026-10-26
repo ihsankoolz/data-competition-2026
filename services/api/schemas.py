@@ -254,6 +254,12 @@ class ApprovalTask(BaseModel):
     decided_by: str | None = None
     comment: str | None = None
     sla_state: Literal["on_track", "reminded", "overdue", "done"] = "on_track"
+    # session 13: local time zones (display only; due_at and the SLA stay in SGT)
+    due_local: str | None = Field(
+        default=None,
+        description="The due time in the approver's own time, e.g. '8:00 am in Vietnam'; null "
+        "when it is the same as Singapore time (SG, MY)",
+    )
 
 
 class Stage(BaseModel):
@@ -347,6 +353,12 @@ class Notification(BaseModel):
     task_id: str | None = None
     message: str = Field(description="Plain English, e.g. 'Reminder: Amy's item request ...'")
     created_at: datetime
+    # session 13: "See it in Teams"
+    teams_card: bool = Field(
+        default=False,
+        description="True when GET /notifications/{id}/teams-card has a card for this "
+        "notification (an approval task assigned, reminded or escalated to this user)",
+    )
 
 
 # ---------------------------------------------------------------- admin (D-016)
@@ -922,6 +934,62 @@ class CleanupDecisionResult(BaseModel):
     cluster: CleanupCluster
     reviewed: int
     total: int
+
+
+# ---------------------------------------------------------------- Teams card preview (session 13)
+# A subset of the Adaptive Card 1.5 schema (https://adaptivecards.io/schemas/adaptive-card.json):
+# exactly the elements the reminder card uses. In production Power Automate would post it to the
+# approver in Teams; this prototype only previews it and never sends anything.
+
+
+class CardTextBlock(BaseModel):
+    type: Literal["TextBlock"] = "TextBlock"
+    text: str
+    wrap: bool = True
+    size: Literal["Small", "Default", "Medium", "Large"] | None = None
+    weight: Literal["Lighter", "Default", "Bolder"] | None = None
+    isSubtle: bool | None = None
+    spacing: Literal["None", "Small", "Default", "Medium", "Large"] | None = None
+
+
+class CardFact(BaseModel):
+    title: str
+    value: str
+
+
+class CardFactSet(BaseModel):
+    type: Literal["FactSet"] = "FactSet"
+    facts: list[CardFact]
+
+
+class CardActionSubmit(BaseModel):
+    type: Literal["Action.Submit"] = "Action.Submit"
+    title: str
+    data: dict[str, str] = Field(description="Sent back to the bot: action, task_id, req_id")
+
+
+class CardActionOpenUrl(BaseModel):
+    type: Literal["Action.OpenUrl"] = "Action.OpenUrl"
+    title: str
+    url: str
+
+
+CardElement = Annotated[CardTextBlock | CardFactSet, Field(discriminator="type")]
+CardAction = Annotated[CardActionSubmit | CardActionOpenUrl, Field(discriminator="type")]
+
+
+class AdaptiveCard(BaseModel):
+    """The Teams reminder for one approval task, as Adaptive Card JSON (version 1.5)."""
+
+    model_config = {"populate_by_name": True, "serialize_by_alias": True}
+
+    schema_url: Literal["http://adaptivecards.io/schemas/adaptive-card.json"] = Field(
+        default="http://adaptivecards.io/schemas/adaptive-card.json", alias="$schema"
+    )
+    type: Literal["AdaptiveCard"] = "AdaptiveCard"
+    version: Literal["1.5"] = "1.5"
+    body: list[CardElement]
+    actions: list[CardAction]
 
 
 # Resolves the forward references on RequestDetail (FieldIssue, SapPublishView, InfoRequestView)

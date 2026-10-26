@@ -799,6 +799,11 @@ export interface components {
              * @enum {string}
              */
             sla_state?: "on_track" | "reminded" | "overdue" | "done";
+            /**
+             * Due Local
+             * @description The due time in the approver's own time, e.g. '8:00 am in Vietnam'; null when it is the same as Singapore time (SG, MY)
+             */
+            due_local?: string | null;
         };
         /** Assumption */
         Assumption: {
@@ -1934,6 +1939,12 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /**
+             * Teams Card
+             * @description True when GET /notifications/{id}/teams-card has a card for this notification (an approval task assigned, reminded or escalated to this user)
+             * @default false
+             */
+            teams_card?: boolean;
         };
         /** OpsImpact */
         OpsImpact: {

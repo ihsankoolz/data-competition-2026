@@ -2442,6 +2442,18 @@
             ],
             "title": "Sla State",
             "default": "on_track"
+          },
+          "due_local": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Local",
+            "description": "The due time in the approver's own time, e.g. '8:00 am in Vietnam'; null when it is the same as Singapore time (SG, MY)"
           }
         },
         "type": "object",
@@ -4780,6 +4792,12 @@
             "type": "string",
             "format": "date-time",
             "title": "Created At"
+          },
+          "teams_card": {
+            "type": "boolean",
+            "title": "Teams Card",
+            "description": "True when GET /notifications/{id}/teams-card has a card for this notification (an approval task assigned, reminded or escalated to this user)",
+            "default": false
           }
         },
         "type": "object",

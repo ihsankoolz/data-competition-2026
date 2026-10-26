@@ -84,6 +84,13 @@ def _describe(req: m.Request, names: dict[str, str]) -> str:
     return f"{who}'s {req.domain.value.replace('_', ' ')} request '{title}' ({req.req_id})"
 
 
+def _due_words(session: Session, task: m.ApprovalTaskRow) -> str:
+    """The due time in SGT, plus the approver's local time where it differs (session 13)."""
+    assert task.due_at is not None
+    person = session.get(m.User, task.assignee_user_id)
+    return clock.format_due(task.due_at, person.country if person else None)
+
+
 def _open_task(task: m.ApprovalTaskRow) -> None:
     rules = load_rules()
     now = clock.now()
@@ -168,7 +175,7 @@ def route(session: Session, req: m.Request, actor: Actor) -> list[m.ApprovalTask
                 "task_assigned",
                 req,
                 f"New request to approve: {_describe(req, names)}. Your part: {role_label(task)}. "
-                f"Please decide by {clock.format_sgt(task.due_at)}.",
+                f"Please decide by {_due_words(session, task)}.",
                 task,
             )
     return tasks
@@ -540,7 +547,7 @@ def run_sla_sweep(session: Session) -> int:
             notify(
                 session, task.assignee_user_id, "reminder", req,
                 f"Reminder: {what} is waiting for your approval ({role_label(task)}). "
-                f"It is due {clock.format_sgt(task.due_at)}.", task,
+                f"It is due {_due_words(session, task)}.", task,
             )  # fmt: skip
             _audit_task(
                 session, "system", req, task,
