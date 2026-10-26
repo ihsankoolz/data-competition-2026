@@ -38,8 +38,17 @@ test("Lan's notification opens a Teams card preview with her local due time", as
   const submitted = await request.post(`/api/requests/${id}/submit`, { headers });
   expect(submitted.ok(), await submitted.text()).toBe(true);
 
-  // Part 1: her inbox card shows SGT and Vietnam time.
-  await openAs(page, "lan", "/approvals");
+  // Part 1: her inbox card shows SGT and Vietnam time. Lan is not one of the
+  // switcher's personas, so act as her from her task card (as a judge would).
+  await openAs(page, "amy", `/requests/${id}`);
+  await page
+    .getByTestId("stage-1")
+    .locator('[data-testid="task"][data-assignee="lan"]')
+    .getByTestId("act-as")
+    .click();
+  await expect(page.getByTestId("persona-switcher")).toContainText("Nguyễn Thị Lan");
+  await page.getByRole("link", { name: "Approvals" }).first().click();
+  await expect(page).toHaveURL(/\/approvals/);
   const item = page.locator(`[data-testid="approval-item"][data-req="${id}"]`);
   await expect(item.getByTestId("approval-due")).toContainText("9:00 am SGT, 8:00 am in Vietnam");
 
