@@ -2,11 +2,11 @@
 
 **A master-data prototype for Lives Group.** SMU DSA Society 2026 Data Case Competition.
 
-**Demo video:** [youtu.be/NmrkBtRNjU4](https://youtu.be/NmrkBtRNjU4) (3 minutes)
+**Demo video:** [youtu.be/NmrkBtRNjU4](https://youtu.be/NmrkBtRNjU4) (3 minutes) **Please watch in 1080p or 720p thank you!**
 
 **For judges: start here**
 
-1. Watch the demo video (link above).
+1. Watch the demo video (link above). **Please watch in 1080p or 720p thank you!**
 2. Read the [Headline results](#headline-results) table.
 3. For the method, caveats and every table: [`docs/results.md`](docs/results.md).
 4. To click through it yourself in five minutes: [`docs/judge-walkthrough.md`](docs/judge-walkthrough.md).
