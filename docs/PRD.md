@@ -6,7 +6,7 @@
 - Master data requests arrive as free-text emails. Fields are missing. The same customer is spelled many ways, in different languages and scripts.
 - Approvals run one after another by email. Amy's item request took **18 days**.
 - Because records are messy and duplicated, the regional sales view is wrong: customers look "lost" when they were just re-created under a new name.
-- **The organisers' hint:** the core challenge is *interpreting incomplete data — the same data with different wording* — and *cross-border issues*.
+- **The core challenge:** *interpreting incomplete data — the same data with different wording* — and *cross-border issues*.
 
 ## 2. The solution spine
 

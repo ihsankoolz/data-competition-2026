@@ -7,7 +7,7 @@ Each decision: what, why, and what we rejected. Agents must follow these. Change
 ## D-001 Solution shape: Option D+ ("Messy in, clean out")
 
 - **Decision:** One connected story. Interpret messy input at entry → golden record → parallel approvals → SAP B1 → honest regional view.
-- **Why:** Judges reward one working causal chain over many thin features. Organisers said the core challenge is "interpreting incomplete data, same data but different wording" and asked us to highlight cross-border issues.
+- **Why:** Judges reward one working causal chain over many thin features. The core challenge is interpreting incomplete data (the same data with different wording) and cross-border issues.
 - **Rejected:** Option A (too broad for one person), Option B (ignores the approval pain that all four personas describe), Option C (M365-native build; kept only as the production story).
 
 ## D-002 Stack
@@ -28,7 +28,7 @@ Each decision: what, why, and what we rejected. Agents must follow these. Change
 | TH | Thailand | THB | TIN | `0105556123456` (13 digits) | Thai script vs romanised ("โรงพยาบาลศิริราช" vs "Siriraj Hospital"), Co., Ltd / PCL |
 
 - All money is reported in **USD** using fixed FX rates stored in config (labelled assumption): SGD 0.74, MYR 0.22, IDR 0.000064, VND 0.000040, THB 0.028.
-- **Why these five:** maximum variety of scripts, suffixes, tax-ID formats and regulators. Directly answers the organisers' "cross-border issues" hint.
+- **Why these five:** maximum variety of scripts, suffixes, tax-ID formats and regulators. Directly exercises the cross-border issues.
 
 ## D-004 SAP B1 Service Layer contract (mock must match)
 
@@ -174,7 +174,7 @@ Each decision: what, why, and what we rejected. Agents must follow these. Change
 - **Fixtures layout (contract between generator and seed loader):** `data/fixtures/seasonal_trend/` mirrors the `data-spec.md` §10 layout exactly (all CSVs, `emails.jsonl`, `users.csv`, `ground_truth/`); `data/fixtures/llm_cache/` holds the replay cache (`.gitkeep` until recorded). `users.csv` columns: `user_id, name, title, roles` (pipe-separated `Role` values from `services/api/schemas.py`), `entity, country, backup_for` (nullable `user_id`). User IDs match `services/api/personas.py` (`amy, marcus, weijie, priya, daniel, nurul, meiling, huimin`) plus one backup per approver role. Ground-truth files are never loaded into the app database.
 - **Field encryption:** bank fields are encrypted at rest with `cryptography` Fernet. The key is read from env `FIELD_ENCRYPTION_KEY` at runtime only; tests generate a key at test time. No key is ever hard-coded or committed.
 
-## D-016 Submission and finals constraints (22 Oct, organisers via Ihsan)
+## D-016 Submission and finals constraints (22 Oct, Ihsan)
 
 - **The GitHub repo must be public at submission.** It stays private until Wed 28 Oct morning, then we run a secret scan and flip it to public before the 10:00 submit. Only `.env.example` is tracked; no keys, tokens or real bank data anywhere in the history.
 - **Finals are a 15-minute presentation + 5-minute Q&A,** with a live demo. The demo must be robust:

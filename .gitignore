@@ -27,3 +27,16 @@ data/app.db-shm
 
 # Claude Code personal settings (also in the global ignore; repo goes public)
 .claude/settings.local.json
+
+# Pre-public hardening: test output, recordings, keys, agent memory
+test-results/
+playwright-report/
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.pem
+*.key
+*.log
+.claude/memory/
+.claude/projects/

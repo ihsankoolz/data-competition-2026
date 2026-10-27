@@ -1,6 +1,6 @@
 # Synthetic data spec
 
-Organisers confirmed: no dataset is provided; synthetic data is fine "as long as reasonable". This file is the **published data-generating process (DGP)**. It goes in the README so judges can see we didn't rig the results.
+No dataset is provided, so all data here is synthetic. This file is the **published data-generating process (DGP)**. It goes in the README so judges can see we didn't rig the results.
 
 - Package: `ds/generator/`. Entry: `python -m ds.generator --scenario seasonal_trend --seed 42 --out data/generated/`.
 - Deterministic: same seed + same params → byte-identical output. All params in `ds/generator/params.yaml` and copied into the output folder.
