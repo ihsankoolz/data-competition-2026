@@ -1,8 +1,8 @@
 # Messy in, clean out
 
-**A master-data prototype for Lives Group.** SMU DSA Society 2026 Data Case Competition. Built solo by Ihsan Alfian.
+**A master-data prototype for Lives Group.** SMU DSA Society 2026 Data Case Competition.
 
-**Demo video:** `<YouTube link, added Tue>`
+**Demo video:** [youtu.be/NmrkBtRNjU4](https://youtu.be/NmrkBtRNjU4) (3 minutes)
 
 **For judges: start here**
 
